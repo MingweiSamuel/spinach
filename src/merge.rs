@@ -8,9 +8,12 @@ use crate::Lattice;
 use crate::LatticeMap;
 
 pub trait Merge<T> {
-    // A "static" method.
+    // "static" methods, since they don't have "self".
+
+    /// Merges consumes OTHER and merges it into VAL.
     fn merge(val: &mut T, other: T);
 
+    /// Compares VAL to OTHER. `Some(Ordering::Greater)` means `merge(VAL, OTHER) == VAL`.
     fn partial_cmp(val: &T, other: &T) -> Option<Ordering>;
 }
 
@@ -160,6 +163,7 @@ impl <K: Eq + Hash, V, F: Merge<V>> Merge<LatticeMap<K, V, F>> for MapUnionMerge
         }
     }
 
+    // TODO: these are awful looking, and also need testing. Could use helper method.
     fn partial_cmp(val: &LatticeMap<K, V, F>, other: &LatticeMap<K, V, F>) -> Option<Ordering> {
         // Ordering::Equal OR Ordering::Greater
         if val.len() >= other.len() {

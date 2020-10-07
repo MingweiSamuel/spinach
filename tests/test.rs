@@ -14,6 +14,19 @@ fn test_counter() {
 }
 
 #[test]
+fn test_opt_counter() {
+    let mut counter: Lattice<Option<i32>, MaxMerge> = Lattice::default();
+    counter.merge(None.into());
+    assert_eq!(&None, counter.reveal());
+    counter.merge(Some(-9_999_999_i32).into());
+    assert_eq!(&Some(-9_999_999_i32), counter.reveal());
+    counter.merge(Some(0_i32).into());
+    assert_eq!(&Some(0_i32), counter.reveal());
+    counter.merge(Some(-100_i32).into());
+    assert_eq!(&Some(0_i32), counter.reveal());
+}
+
+#[test]
 fn test_items() {
     let mut items: Lattice<HashSet<i32>, UnionMerge> = Lattice::default();
     items.merge(Lattice::new([ 1, 2, 3 ].iter().copied().collect()));
