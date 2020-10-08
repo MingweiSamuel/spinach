@@ -8,3 +8,4 @@ include = [ "src/**", "/README.md" ]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+kudzu = { git = "https://github.com/withoutboats/kudzu", rev = "a841e4696e1ca65b9242e1859eee01afde16b6ac" }
