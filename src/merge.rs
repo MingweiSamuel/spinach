@@ -12,7 +12,7 @@ pub trait Merge<T> {
     // "static" methods, since they don't have "self".
 
     /// Merges consumes OTHER and merges it into VAL.
-    fn merge(val: &T, other: T);
+    fn merge(val: &T, other: &T);
 }
 
 
@@ -21,31 +21,24 @@ use std::sync::atomic::{ Ordering, AtomicBool, AtomicUsize };
 
 pub struct MaxMerge;
 impl Merge<AtomicBool> for MaxMerge {
-    fn merge(left: &AtomicBool, rght: AtomicBool) {
-        left.fetch_or(rght.load(Ordering::AcqRel), Ordering::AcqRel);
+    fn merge(left: &AtomicBool, rght: &AtomicBool) {
+        let _old = left.fetch_or(rght.load(Ordering::AcqRel), Ordering::AcqRel);
+    }
+}
+impl Merge<AtomicUsize> for MaxMerge {
+    fn merge(left: &AtomicUsize, rght: &AtomicUsize) {
+        let _old = left.fetch_max(rght.load(Ordering::AcqRel), Ordering::AcqRel);
+    }
+}
+
+pub struct UnionMerge;
+impl <T: Ord + Copy> Merge<Set<T>> for UnionMerge {
+    fn merge(left: &Set<T>, rght: &Set<T>) {
+        left.extend(rght.iter().copied());
     }
 }
 
 pub struct Lattice<T, F: Merge<T>> {
     val: T,
     phantom: std::marker::PhantomData<F>,
-}
-
-impl <T, F: Merge<T>> Lattice<T, F> {
-    pub fn new(val: T) -> Self {
-        Lattice {
-            val: val,
-            phantom: std::marker::PhantomData,
-        }
-    }
-
-    pub fn merge(&self, val: T) {
-        F::merge(&self.val, val);
-    }
-}
-
-#[test]
-fn test_stuff() {
-    let mono_pred: Lattice<AtomicBool, MaxMerge> = Lattice::new(false.into());
-    let _mp = mono_pred;
 }
