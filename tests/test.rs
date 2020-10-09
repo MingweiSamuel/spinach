@@ -1,84 +1,55 @@
-use std::collections::HashSet;
+use std::collections::HashMap;
+use std::cell::RefCell;
 
-use spinach::{ Lattice, LatticeMap };
-use spinach::merge::{ MaxMerge, MinMerge, UnionMerge, MapUnionMerge, LexicographicMerge };
+use spinach::tokio::stream::{ StreamExt };
+use spinach::tokio::sync::mpsc;
+use spinach::tokio::task;
 
-#[test]
-fn test_counter() {
-    let mut counter: Lattice<i32, MaxMerge> = Lattice::default();
-    counter.merge(5_i32.into());
-    counter.merge(4_i32.into());
-    counter.merge(6_i32.into());
-    counter.merge(3_i32.into());
-    assert_eq!(6_i32, counter.into_reveal());
-}
+use spinach::{ Lattice, MergeIntoLattice };
+use spinach::merge::{ MaxMerge, MapUnionMerge };
 
-#[test]
-fn test_opt_counter() {
-    let mut counter: Lattice<Option<i32>, MaxMerge> = Lattice::default();
-    counter.merge(None.into());
-    assert_eq!(&None, counter.reveal());
-    counter.merge(Some(-9_999_999_i32).into());
-    assert_eq!(&Some(-9_999_999_i32), counter.reveal());
-    counter.merge(Some(0_i32).into());
-    assert_eq!(&Some(0_i32), counter.reveal());
-    counter.merge(Some(-100_i32).into());
-    assert_eq!(&Some(0_i32), counter.reveal());
-}
+#[tokio::test]
+async fn my_test() {
+    // Make a uszie -> String map lattice.
+    let kvs: Lattice<HashMap<usize, Lattice<String, MaxMerge>>, MapUnionMerge> = Lattice::default();
+    // Put it in a refcell so I don't have to worry about ownership.
+    let kvs: RefCell<_> = RefCell::new(kvs);
+    // Memory leak it so I don't have to worry about lifetimes.
+    let kvs: &'static _ = Box::leak(Box::new(kvs));
 
-#[test]
-fn test_items() {
-    let mut items: Lattice<HashSet<i32>, UnionMerge> = Lattice::default();
-    items.merge(Lattice::new([ 1, 2, 3 ].iter().copied().collect()));
-    items.merge(Lattice::new([ 2, 3, 4 ].iter().copied().collect()));
-    assert_eq!([ 1, 2, 3, 4 ].iter().copied().collect::<HashSet<i32>>(), items.into_reveal());
-}
 
-#[test]
-fn test_vclock() {
-    type VectorClock = Lattice<LatticeMap<&'static str, u64, MaxMerge>, MapUnionMerge>;
-    let mut vclock: VectorClock = Lattice::default();
-    vclock.merge(Lattice::new(
-        vec![
-            ("Norfolk", 80_u64.into()),
-            ("Oakland", 50_u64.into()),
-            ("SanFran", 20_u64.into()),
-        ]
-        .into_iter().collect()));
-    vclock.merge(Lattice::new(
-        vec![
-            ("Norfolk", 90_u64.into()),
-            ("Norwalk", 50_u64.into()),
-            ("SanFran", 10_u64.into()),
-        ]
-        .into_iter().collect()));
-    println!("VClock:");
-    for (k, v) in vclock.into_reveal() {
-        println!("- {}: {}", k, v.into_reveal());
-    }
-    println!();
-    // TODO: assert.
-}
+    // Create a local task set so I don't have to worry about threads.
+    let local = task::LocalSet::new();
+    local.run_until(async move {
 
-#[test]
-fn test_lexico_str() {
-    let mut lexico_str: Lattice<&'static str, MinMerge> = "qux".into();
-    lexico_str.merge("foo".into());
-    lexico_str.merge("bar".into());
-    lexico_str.merge("zab".into());
-    assert_eq!("bar", lexico_str.into_reveal());
-}
+        let bufsize = 4; // Doesn't really matter since we're on one thread...
+        // MPSC is really not needed since we're on a single thread...
+        let (mut sender, reciever) = mpsc::channel::<usize>(bufsize);
 
-#[test]
-fn test_lexico_tuple() {
-    let mut tup: Lattice<(Lattice<i32, MaxMerge>, Lattice<i32, MinMerge>), LexicographicMerge> = Lattice::default();
-    println!("0 ({}, {})", tup.reveal().0.reveal(), tup.reveal().1.reveal());
-    tup.merge((0.into(), 0.into()).into());
-    println!("1 ({}, {})", tup.reveal().0.reveal(), tup.reveal().1.reveal());
-    tup.merge((1.into(), 1.into()).into());
-    println!("2 ({}, {})", tup.reveal().0.reveal(), tup.reveal().1.reveal());
-    tup.merge((2.into(), 5.into()).into());
-    println!("3 ({}, {})", tup.reveal().0.reveal(), tup.reveal().1.reveal());
-    tup.merge((2.into(), 2.into()).into());
-    println!("4 ({}, {})", tup.reveal().0.reveal(), tup.reveal().1.reveal());
+        // THE ACTUAL code ...
+        reciever.map(|x| x * x)
+            .filter(|x| *x > 10)
+            .map(|x| (x, format!("Hello I am {} :)", x).into()))
+            .map(|(k, v)| {
+                let mut y: HashMap<_, _> = Default::default();
+                y.insert(k, v);
+                y
+            })
+            .merge_into(kvs); // !! This actually opaquely spawns a task to poll...
+
+        // Now pretend this is coming from the outside world somewhere
+        sender.send( 6).await.unwrap();
+        sender.send( 1).await.unwrap(); // Bad style to call .unwrap().
+        sender.send( 2).await.unwrap();
+        sender.send(10).await.unwrap();
+        sender.send( 5).await.unwrap();
+        sender.send(10).await.unwrap();
+        sender.send( 9).await.unwrap();
+    }).await;
+
+    // !! Wait for the opaque task to finish merging everything...
+    local.await;
+
+    // Print out the resulting map.
+    println!("{:#?}", kvs.borrow_mut().reveal());
 }

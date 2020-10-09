@@ -1,34 +1,32 @@
 use crate::merge::Merge;
 
-pub type LatticeMap<K, V, F> = std::collections::HashMap<K, Lattice<V, F>>;
+// LATTICE STRUCT //
 
 pub struct Lattice<T, F: Merge<T>> {
     val: T,
-    merger: std::marker::PhantomData<F>,
+    _phantom: std::marker::PhantomData<F>,
 }
 
 impl <T, F: Merge<T>> Lattice<T, F> {
     pub fn new(val: T) -> Self {
         Lattice {
             val: val,
-            merger: std::marker::PhantomData,
+            _phantom: std::marker::PhantomData,
         }
     }
 
-    pub fn merge(&mut self, other: Self) {
-        F::merge(&mut self.val, other.val)
+    pub fn merge_in(&mut self, val: T) {
+        F::merge(&mut self.val, val);
     }
 
+    // DANGER: Reveals a shared reference to this lattice value.
     pub fn reveal(&self) -> &T {
         &self.val
     }
 
+    // DANGER: Consumes this lattice, revealing it's value.
     pub fn into_reveal(self) -> T {
         self.val
-    }
-
-    pub fn reveal_partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        F::partial_cmp(&self.val, &other.val)
     }
 }
 
@@ -37,7 +35,7 @@ impl <T: Default, F: Merge<T>> Default for Lattice<T, F> {
     fn default() -> Self {
         Lattice {
             val: Default::default(),
-            merger: std::marker::PhantomData,
+            _phantom: std::marker::PhantomData,
         }
     }
 }
@@ -46,5 +44,12 @@ impl <T: Default, F: Merge<T>> Default for Lattice<T, F> {
 impl <T, F: Merge<T>> From<T> for Lattice<T, F> {
     fn from(val: T) -> Self {
         Self::new(val)
+    }
+}
+
+// Not important: lets you debug print... (also kinda illegal).
+impl <T: std::fmt::Debug, F: Merge<T>> std::fmt::Debug for Lattice<T, F> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.val.fmt(f)
     }
 }
