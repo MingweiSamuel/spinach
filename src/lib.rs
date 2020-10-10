@@ -16,15 +16,16 @@ pub use tokio::sync::mpsc;
 
 // STUFF THAT SHOULD BE IN A SEPARATE MODULE BELOW HERE.
 use std::cell::RefCell;
+use std::rc::Rc;
 
 use merge::Merge;
 
 pub trait MergeIntoLattice<T, F: Merge<T>> {
-    fn merge_into(self, target: &'static RefCell<Lattice<T, F>>);
+    fn merge_into(self, target: Rc<RefCell<Lattice<T, F>>>);
 }
 
 impl <T: 'static, F: Merge<T> + 'static, S: Stream<Item = T> + Unpin + 'static> MergeIntoLattice<T, F> for S {
-    fn merge_into(self, target: &'static RefCell<Lattice<T, F>>) {
+    fn merge_into(self, target: Rc<RefCell<Lattice<T, F>>>) {
         let _join_handle = tokio::task::spawn_local(async move {
             let mut stream = self;
             while let Some(item) = stream.next().await {

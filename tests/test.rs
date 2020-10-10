@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::cell::RefCell;
+use std::rc::Rc;
 
 use spinach::tokio::stream::{ StreamExt };
 use spinach::tokio::sync::mpsc;
@@ -8,14 +9,20 @@ use spinach::tokio::task;
 use spinach::{ Lattice, MergeIntoLattice };
 use spinach::merge::{ MaxMerge, MapUnionMerge };
 
+// To run:
+// cargo test -- --nocapture
+
 #[tokio::test]
 async fn my_test() {
     // Make a uszie -> String map lattice.
     let kvs: Lattice<HashMap<usize, Lattice<String, MaxMerge>>, MapUnionMerge> = Lattice::default();
     // Put it in a refcell so I don't have to worry about ownership.
     let kvs: RefCell<_> = RefCell::new(kvs);
-    // Memory leak it so I don't have to worry about lifetimes.
-    let kvs: &'static _ = Box::leak(Box::new(kvs));
+    // Use RC to handle lifetimes.
+    let kvs: Rc<_> = Rc::new(kvs);
+
+    // Make a second RC'd pointer to send to merge_into.
+    let kvs_clone = kvs.clone();
 
 
     // Create a local task set so I don't have to worry about threads.
@@ -35,7 +42,7 @@ async fn my_test() {
                 y.insert(k, v);
                 y
             })
-            .merge_into(kvs); // !! This actually opaquely spawns a task to poll...
+            .merge_into(kvs_clone); // !! This actually opaquely spawns a task to poll...
 
         // Now pretend this is coming from the outside world somewhere
         sender.send( 6).await.unwrap();
