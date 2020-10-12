@@ -1,4 +1,7 @@
+use std::cmp::Ordering;
+
 use crate::merge::Merge;
+
 
 // LATTICE STRUCT //
 
@@ -17,6 +20,10 @@ impl <T, F: Merge<T>> Lattice<T, F> {
 
     pub fn merge_in(&mut self, val: T) {
         F::merge(&mut self.val, val);
+    }
+
+    pub fn reveal_partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        F::partial_cmp(&self.val, &other.val)
     }
 
     // DANGER: Reveals a shared reference to this lattice value.
