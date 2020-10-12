@@ -57,14 +57,14 @@ async fn actor_test() {
         let sender = sender;
         let mut outside_sender = sender.clone();
         local.spawn_local(async move {
-            outside_sender.send(("chancellor", 2013, "Carol T. Christ")).await.unwrap();
+            outside_sender.send(("chancellor", 2017, "Carol T. Christ")).await.unwrap();
             outside_sender.send(("chancellor", 2004, "Robert J. Birgeneau")).await.unwrap();
             outside_sender.send(("trillion_usd_company", 2018, "AAPL")).await.unwrap();
         });
         // And just another task so we can mix messages up.
         let mut outside_sender = sender.clone();
         local.spawn_local(async move {
-            outside_sender.send(("chancellor", 2007, "Nicholas B. Dirks")).await.unwrap();
+            outside_sender.send(("chancellor", 2013, "Nicholas B. Dirks")).await.unwrap();
             outside_sender.send(("trillion_usd_company", 2018, "AMZN")).await.unwrap();
         });
     }
@@ -82,7 +82,7 @@ async fn actor_test() {
     // Result:
     // {
     //     "chancellor": (
-    //         2007,
+    //         2013,
     //         "Nicholas B. Dirks",
     //     ),
     //     "trillion_usd_company": (
