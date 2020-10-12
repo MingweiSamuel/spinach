@@ -18,20 +18,22 @@ pub use tokio::sync::mpsc;
 use std::cell::RefCell;
 use std::rc::Rc;
 
+use std::future::Future;
+use std::pin::Pin;
+
 use merge::Merge;
 
 pub trait MergeIntoLattice<T, F: Merge<T>> {
-    fn merge_into(self, target: Rc<RefCell<Lattice<T, F>>>);
+    fn merge_into(self, target: Rc<RefCell<Lattice<T, F>>>) -> Pin<Box<dyn Future<Output = ()> + 'static>>;
 }
 
 impl <T: 'static, F: Merge<T> + 'static, S: Stream<Item = T> + Unpin + 'static> MergeIntoLattice<T, F> for S {
-    fn merge_into(self, target: Rc<RefCell<Lattice<T, F>>>) {
-        let _join_handle = tokio::task::spawn_local(async move {
+    fn merge_into(self, target: Rc<RefCell<Lattice<T, F>>>) -> Pin<Box<dyn Future<Output = ()> + 'static>> {
+        Box::pin(async move {
             let mut stream = self;
             while let Some(item) = stream.next().await {
                 target.borrow_mut().merge_in(item);
-            }
-        });
+            };
+        })
     }
 }
-

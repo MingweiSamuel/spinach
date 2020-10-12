@@ -15,7 +15,7 @@ use spinach::merge::{ MaxMerge, MapUnionMerge };
 #[tokio::test]
 async fn my_test() {
     // Make a uszie -> String map lattice.
-    let kvs: Lattice<HashMap<usize, Lattice<String, MaxMerge>>, MapUnionMerge> = Lattice::default();
+    let kvs: Lattice<HashMap<usize, Lattice<String, MaxMerge>>, MapUnionMerge> = Default::default();
     // Put it in a refcell so I don't have to worry about ownership.
     let kvs: RefCell<_> = RefCell::new(kvs);
     // Use RC to handle lifetimes.
@@ -24,16 +24,18 @@ async fn my_test() {
     // Make a second RC'd pointer to send to merge_into.
     let kvs_clone = kvs.clone();
 
+    let bufsize = 4;
+    let (sender, reciever) = mpsc::channel::<usize>(bufsize);
 
-    // Create a local task set so I don't have to worry about threads.
+    // Create a local task set so all the futures get run on the current,
+    // so I don't have to worry about multiple threads.
     let local = task::LocalSet::new();
-    local.run_until(async move {
 
-        let bufsize = 4; // Doesn't really matter since we're on one thread...
-        // MPSC is really not needed since we're on a single thread...
-        let (mut sender, reciever) = mpsc::channel::<usize>(bufsize);
 
-        // THE ACTUAL code ...
+    // Pretend this is a task for the actor. It reads from the receiver, runs
+    // those values through the pipeline, and sends them to the KVS sink.
+    // (Using this strat, we'd probably need a task per sink per actor).
+    local.spawn_local(
         reciever.map(|x| x * x)
             .filter(|x| *x > 10)
             .map(|x| (x, format!("Hello I am {} :)", x).into()))
@@ -42,19 +44,32 @@ async fn my_test() {
                 y.insert(k, v);
                 y
             })
-            .merge_into(kvs_clone); // !! This actually opaquely spawns a task to poll...
+            .merge_into(kvs_clone));
 
-        // Now pretend this is coming from the outside world somewhere
-        sender.send( 6).await.unwrap();
-        sender.send( 1).await.unwrap(); // Bad style to call .unwrap().
-        sender.send( 2).await.unwrap();
-        sender.send(10).await.unwrap();
-        sender.send( 5).await.unwrap();
-        sender.send(10).await.unwrap();
-        sender.send( 9).await.unwrap();
-    }).await;
+    {
+        let sender = sender;
+        // Now pretend these are messages from the outside world.
+        let mut outside_sender = sender.clone();
+        local.spawn_local(async move {
+            outside_sender.send( 6).await.unwrap();
+            outside_sender.send( 1).await.unwrap();
+            outside_sender.send( 2).await.unwrap();
+            outside_sender.send(10).await.unwrap();
+        });
+        // And just another task so we can mix messages up.
+        let mut outside_sender = sender.clone();
+        local.spawn_local(async move {
+            outside_sender.send( 5).await.unwrap();
+            outside_sender.send(10).await.unwrap();
+            outside_sender.send( 9).await.unwrap();
+        });
+    }
 
-    // !! Wait for the opaque task to finish merging everything...
+    // At this point everything is already running.
+    // In reality we would stop here and let things run forever, I guess.
+    // But let's stop the system and see what happened.
+
+    // Wait for the actor to finish processing everything.
     local.await;
 
     // Print out the resulting map.
