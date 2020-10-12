@@ -260,8 +260,8 @@ impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, Lattice<V, F>>> for MapInte
     }
 }
 
-pub struct LexicographicMerge;
-impl <A, B, AF: Merge<A>, BF: Merge<B>> Merge<(Lattice<A, AF>, Lattice<B, BF>)> for LexicographicMerge {
+pub struct DominatingPairMerge;
+impl <A, B, AF: Merge<A>, BF: Merge<B>> Merge<(Lattice<A, AF>, Lattice<B, BF>)> for DominatingPairMerge {
     fn merge(val: &mut (Lattice<A, AF>, Lattice<B, BF>), other: (Lattice<A, AF>, Lattice<B, BF>)) {
         let cmp = val.0.reveal_partial_cmp(&other.0);
         match cmp {

@@ -7,25 +7,29 @@ use spinach::tokio::sync::mpsc;
 use spinach::tokio::task;
 
 use spinach::{ Lattice, MergeIntoLattice };
-use spinach::merge::{ MaxMerge, MapUnionMerge };
+use spinach::merge::{ MaxMerge, MinMerge, MapUnionMerge, DominatingPairMerge };
 
 // To run:
 // cargo test -- --nocapture
 
 #[tokio::test]
-async fn my_test() {
-    // Make a uszie -> String map lattice.
-    let kvs: Lattice<HashMap<usize, Lattice<String, MaxMerge>>, MapUnionMerge> = Default::default();
-    // Put it in a refcell so I don't have to worry about ownership.
+async fn actor_test() {
+    // Alias for a versioned string with a simple counter clock.
+    // Conflicting versions are resolved by taking the earlier string alphabetically (MinMerge).
+    type VersionedString = Lattice<
+        (Lattice<usize, MaxMerge>, Lattice<&'static str, MinMerge>),
+        DominatingPairMerge>;
+    // KVS for mapping strings to `VersionedString`s.
+    let kvs: Lattice<HashMap<&'static str, VersionedString>, MapUnionMerge> = Default::default();
+
+    // Put it in a refcell to not worry about aliasing.
     let kvs: RefCell<_> = RefCell::new(kvs);
-    // Use RC to handle lifetimes.
+    // Use RC to handle ownership & lifetimes.
     let kvs: Rc<_> = Rc::new(kvs);
 
-    // Make a second RC'd pointer to send to merge_into.
-    let kvs_clone = kvs.clone();
-
+    // Channel for buffering messages.
     let bufsize = 4;
-    let (sender, reciever) = mpsc::channel::<usize>(bufsize);
+    let (sender, reciever) = mpsc::channel::<(&'static str, usize, &'static str)>(bufsize);
 
     // Create a local task set so all the futures get run on the current,
     // so I don't have to worry about multiple threads.
@@ -35,35 +39,36 @@ async fn my_test() {
     // Pretend this is a task for the actor. It reads from the receiver, runs
     // those values through the pipeline, and sends them to the KVS sink.
     // (Using this strat, we'd probably need a task per sink per actor).
+    let kvs_into = kvs.clone(); // Copy RC (increments) to give to sender.
     local.spawn_local(
-        reciever.map(|x| x * x)
-            .filter(|x| *x > 10)
-            .map(|x| (x, format!("Hello I am {} :)", x).into()))
-            .map(|(k, v)| {
+        reciever
+            .filter(|(_, _, v)| !v.contains("Christ")) // No swearing allowed.
+            .map(|(k, t, v)| {
                 let mut y: HashMap<_, _> = Default::default();
-                y.insert(k, v);
+                y.insert(k, (t.into(), v.into()).into());
                 y
             })
-            .merge_into(kvs_clone));
+            .merge_into(kvs_into));
 
+
+    // Send some stuff.
+    // Pretend these are messages from the outside world.
     {
         let sender = sender;
-        // Now pretend these are messages from the outside world.
         let mut outside_sender = sender.clone();
         local.spawn_local(async move {
-            outside_sender.send( 6).await.unwrap();
-            outside_sender.send( 1).await.unwrap();
-            outside_sender.send( 2).await.unwrap();
-            outside_sender.send(10).await.unwrap();
+            outside_sender.send(("chancellor", 2013, "Carol T. Christ")).await.unwrap();
+            outside_sender.send(("chancellor", 2004, "Robert J. Birgeneau")).await.unwrap();
+            outside_sender.send(("trillion_usd_company", 2018, "AAPL")).await.unwrap();
         });
         // And just another task so we can mix messages up.
         let mut outside_sender = sender.clone();
         local.spawn_local(async move {
-            outside_sender.send( 5).await.unwrap();
-            outside_sender.send(10).await.unwrap();
-            outside_sender.send( 9).await.unwrap();
+            outside_sender.send(("chancellor", 2007, "Nicholas B. Dirks")).await.unwrap();
+            outside_sender.send(("trillion_usd_company", 2018, "AMZN")).await.unwrap();
         });
     }
+
 
     // At this point everything is already running.
     // In reality we would stop here and let things run forever, I guess.
@@ -74,4 +79,15 @@ async fn my_test() {
 
     // Print out the resulting map.
     println!("{:#?}", kvs.borrow_mut().reveal());
+    // Result:
+    // {
+    //     "chancellor": (
+    //         2007,
+    //         "Nicholas B. Dirks",
+    //     ),
+    //     "trillion_usd_company": (
+    //         2018,
+    //         "AAPL",
+    //     ),
+    // }
 }

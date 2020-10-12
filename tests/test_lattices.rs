@@ -1,7 +1,7 @@
 use std::collections::{ HashMap, HashSet };
 
 use spinach::Lattice;
-use spinach::merge::{ MaxMerge, MinMerge, UnionMerge, MapUnionMerge }; //, LexicographicMerge };
+use spinach::merge::{ MaxMerge, MinMerge, UnionMerge, MapUnionMerge, DominatingPairMerge };
 
 #[test]
 fn test_counter() {
@@ -69,16 +69,16 @@ fn test_lexico_str() {
     assert_eq!("bar", lexico_str.into_reveal());
 }
 
-// #[test]
-// fn test_lexico_tuple() {
-//     let mut tup: Lattice<(Lattice<i32, MaxMerge>, Lattice<i32, MinMerge>), LexicographicMerge> = Lattice::default();
-//     println!("0 ({}, {})", tup.reveal().0.reveal(), tup.reveal().1.reveal());
-//     tup.merge_in((0.into(), 0.into()).into());
-//     println!("1 ({}, {})", tup.reveal().0.reveal(), tup.reveal().1.reveal());
-//     tup.merge_in((1.into(), 1.into()).into());
-//     println!("2 ({}, {})", tup.reveal().0.reveal(), tup.reveal().1.reveal());
-//     tup.merge_in((2.into(), 5.into()).into());
-//     println!("3 ({}, {})", tup.reveal().0.reveal(), tup.reveal().1.reveal());
-//     tup.merge_in((2.into(), 2.into()).into());
-//     println!("4 ({}, {})", tup.reveal().0.reveal(), tup.reveal().1.reveal());
-// }
+#[test]
+fn test_lexico_tuple() {
+    let mut tup: Lattice<(Lattice<i32, MaxMerge>, Lattice<i32, MinMerge>), DominatingPairMerge> = Lattice::default();
+    println!("0 ({}, {})", tup.reveal().0.reveal(), tup.reveal().1.reveal());
+    tup.merge_in((0.into(), 0.into()).into());
+    println!("1 ({}, {})", tup.reveal().0.reveal(), tup.reveal().1.reveal());
+    tup.merge_in((1.into(), 1.into()).into());
+    println!("2 ({}, {})", tup.reveal().0.reveal(), tup.reveal().1.reveal());
+    tup.merge_in((2.into(), 5.into()).into());
+    println!("3 ({}, {})", tup.reveal().0.reveal(), tup.reveal().1.reveal());
+    tup.merge_in((2.into(), 2.into()).into());
+    println!("4 ({}, {})", tup.reveal().0.reveal(), tup.reveal().1.reveal());
+}
