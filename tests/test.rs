@@ -21,6 +21,7 @@ async fn actor_test() {
     let kvs: Lattice<HashMap<&'static str, VersionedString>, MapUnionMerge> = Default::default();
 
     // Channel for buffering messages.
+    // The "mailbox". Use sender to add messages, and receiver to get messages out.
     let bufsize = 4;
     let (sender, reciever) = mpsc::channel::<(&'static str, usize, &'static str)>(bufsize);
 
@@ -33,6 +34,7 @@ async fn actor_test() {
     // those values through the pipeline, and sends them to the KVS sink.
     // (Using this strat, we'd probably need a task per sink per actor).
     let kvs_result = local.spawn_local(
+        // Read out messages from the mailbox.
         reciever
             .filter(|(_, _, v)| !v.contains("Christ")) // No swearing allowed.
             .map(|(k, t, v)| {
@@ -40,13 +42,15 @@ async fn actor_test() {
                 y.insert(k, (t.into(), v.into()).into());
                 y
             })
+            // This takes ownership of the KVS, then returns it, but returns it
+            // with the future's resolution. So kvs_result contains kvs.
             .merge_into(kvs));
 
 
     // Send some stuff.
     // Pretend these are messages from the outside world.
     {
-        let sender = sender;
+        let sender = sender; // (Move sender inside this scope so it gets closed, allowing the merge_into to exit.)
         let mut outside_sender = sender.clone();
         local.spawn_local(async move {
             outside_sender.send(("chancellor", 2017, "Carol T. Christ")).await.unwrap();
