@@ -1,6 +1,4 @@
 use std::collections::HashMap;
-use std::cell::RefCell;
-use std::rc::Rc;
 
 use spinach::tokio::stream::{ StreamExt };
 use spinach::tokio::sync::mpsc;
@@ -22,11 +20,6 @@ async fn actor_test() {
     // KVS for mapping strings to `VersionedString`s.
     let kvs: Lattice<HashMap<&'static str, VersionedString>, MapUnionMerge> = Default::default();
 
-    // Put it in a refcell to not worry about aliasing.
-    let kvs: RefCell<_> = RefCell::new(kvs);
-    // Use RC to handle ownership & lifetimes.
-    let kvs: Rc<_> = Rc::new(kvs);
-
     // Channel for buffering messages.
     let bufsize = 4;
     let (sender, reciever) = mpsc::channel::<(&'static str, usize, &'static str)>(bufsize);
@@ -39,8 +32,7 @@ async fn actor_test() {
     // Pretend this is a task for the actor. It reads from the receiver, runs
     // those values through the pipeline, and sends them to the KVS sink.
     // (Using this strat, we'd probably need a task per sink per actor).
-    let kvs_into = kvs.clone(); // Copy RC (increments) to give to sender.
-    local.spawn_local(
+    let kvs_result = local.spawn_local(
         reciever
             .filter(|(_, _, v)| !v.contains("Christ")) // No swearing allowed.
             .map(|(k, t, v)| {
@@ -48,7 +40,7 @@ async fn actor_test() {
                 y.insert(k, (t.into(), v.into()).into());
                 y
             })
-            .merge_into(kvs_into));
+            .merge_into(kvs));
 
 
     // Send some stuff.
@@ -76,9 +68,10 @@ async fn actor_test() {
 
     // Wait for the actor to finish processing everything.
     local.await;
+    let kvs = kvs_result.await.expect("Failed to get final KVS.");
 
     // Print out the resulting map.
-    println!("{:#?}", kvs.borrow_mut().reveal());
+    println!("{:#?}", kvs.reveal());
     // Result:
     // {
     //     "chancellor": (
