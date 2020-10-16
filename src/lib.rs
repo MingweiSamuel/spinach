@@ -1,6 +1,10 @@
 // Re-export tokio.
 pub use tokio;
 
+// Bring lattice to the top level.
+mod lattice;
+pub use lattice::*;
+
 // Keep merge as a module.
 pub mod merge;
 
@@ -8,6 +12,6 @@ pub mod merge;
 mod merge_into_lattice;
 pub use merge_into_lattice::*;
 
-// Bring lattice to the top level.
-mod lattice;
-pub use lattice::*;
+pub mod pipe;
+
+

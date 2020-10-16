@@ -59,7 +59,7 @@ async fn actor_test() {
     {
         let sender = sender; // (Move sender inside this scope so it gets
                              // closed, allowing the merge_into to exit.)
-        let mut outside_sender = sender.clone();
+        let outside_sender = sender.clone();
         // Outside world 1.
         local.spawn_local(async move {
             outside_sender.send(("chancellor", 2017, "Carol T. Christ"))
@@ -71,7 +71,7 @@ async fn actor_test() {
         });
         // And just another task so we can mix messages up.
         // Outside world 2.
-        let mut outside_sender = sender.clone();
+        let outside_sender = sender.clone();
         local.spawn_local(async move {
             outside_sender.send(("chancellor", 2013, "Nicholas B. Dirks"))
                 .await.unwrap();
