@@ -19,7 +19,7 @@ pub trait Merge<T> {
 
 pub struct MaxMerge;
 impl <T: Ord> Merge<T> for MaxMerge {
-    fn merge(val: &mut T, other: T) {
+    fn merge(val: &mut T, other: T) -> T {
         if *val < other {
             *val = other;
         }
@@ -149,13 +149,14 @@ impl <T: Eq + Ord> Merge<BTreeSet<T>> for IntersectMerge {
 pub struct MapUnionMerge;
 impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, Lattice<V, F>>> for MapUnionMerge {
     fn merge(val: &mut HashMap<K, Lattice<V, F>>, other: HashMap<K, Lattice<V, F>>) {
-        for (k, v) in other {
+        for (k, other_v) in other {
             match val.entry(k) {
-                Entry::Occupied(mut kv) => {
-                    kv.get_mut().merge_in(v.into_reveal());
+                Entry::Occupied(occ_entry) => {
+                    let mut occ_entry = occ_entry;
+                    occ_entry.get_mut().merge_in(other_v.into_reveal());
                 },
-                Entry::Vacant(kv) => {
-                    kv.insert(v);
+                Entry::Vacant(vac_entry) => {
+                    vac_entry.insert(other_v);
                 },
             }
         }
