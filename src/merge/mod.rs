@@ -92,6 +92,56 @@ impl <T: Eq + Ord> Merge<BTreeSet<T>> for UnionMerge {
         }
     }
 }
+// impl <T: Eq + Hash> Merge<HashSet<T>, T> for UnionMerge {
+//     fn merge(val: &mut HashSet<T>, other: T) {
+//         val.insert(other);
+//     }
+
+//     fn partial_cmp(val: &HashSet<T>, other: &T) -> Option<Ordering> {
+//         if val.is_empty() {
+//             // LHS is empty set, empty is less than singleton.
+//             Some(Ordering::Less)
+//         }
+//         else if val.contains(other) {
+//             // LHS contains RHS, LHS is equal or greater.
+//             if 1 == val.len() {
+//                 Some(Ordering::Equal)
+//             }
+//             else {
+//                 Some(Ordering::Greater)
+//             }
+//         }
+//         else {
+//             // LHS does not contain the RHS, sets are disjoint.
+//             None
+//         }
+//     }
+// }
+// impl <T: Eq + Ord> Merge<BTreeSet<T>, T> for UnionMerge {
+//     fn merge(val: &mut BTreeSet<T>, other: T) {
+//         val.insert(other);
+//     }
+
+//     fn partial_cmp(val: &BTreeSet<T>, other: &T) -> Option<Ordering> {
+//         if val.is_empty() {
+//             // LHS is empty set, empty is less than singleton.
+//             Some(Ordering::Less)
+//         }
+//         else if val.contains(other) {
+//             // LHS contains RHS, LHS is equal or greater.
+//             if 1 == val.len() {
+//                 Some(Ordering::Equal)
+//             }
+//             else {
+//                 Some(Ordering::Greater)
+//             }
+//         }
+//         else {
+//             // LHS does not contain the RHS, sets are disjoint.
+//             None
+//         }
+//     }
+// }
 
 pub struct IntersectMerge;
 impl <T: Eq + Hash> Merge<HashSet<T>> for IntersectMerge {
@@ -206,6 +256,44 @@ impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, Lattice<V, F>>> for MapUnio
         }
     }
 }
+// impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, Lattice<V, F>>, ( K, Lattice<V, F> )> for MapUnionMerge {
+//     fn merge(val: &mut HashMap<K, Lattice<V, F>>, other: ( K, Lattice<V, F> )) {
+//         let (k, v) = other;
+//         match val.entry(k) {
+//             Entry::Occupied(mut kv) => {
+//                 kv.get_mut().merge_in(v.into_reveal());
+//             },
+//             Entry::Vacant(kv) => {
+//                 kv.insert(v);
+//             },
+//         }
+//     }
+
+//     fn partial_cmp(val: &HashMap<K, Lattice<V, F>>, other: &( K, Lattice<V, F> )) -> Option<Ordering> {
+//         let &(ref k, ref other_val) = other;
+//         if val.is_empty() {
+//             // LHS is empty set, empty is less than singleton.
+//             Some(Ordering::Less)
+//         }
+//         else if let Some(lhs_val) = val.get(k) {
+//             // LHS contains RHS, LHS is equal or greater.
+//             let val_cmp = lhs_val.reveal_partial_cmp(other_val);
+//             if 1 == val.len() || Some(Ordering::Greater) == val_cmp || None == val_cmp {
+//                 val_cmp
+//             }
+//             else if Some(Ordering::Equal) == val_cmp {
+//                 Some(Ordering::Greater)
+//             }
+//             else {
+//                 None
+//             }
+//         }
+//         else {
+//             // LHS does not contain the RHS, sets are disjoint.
+//             None
+//         }
+//     }
+// }
 
 pub struct MapIntersectionMerge;
 impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, Lattice<V, F>>> for MapIntersectionMerge {

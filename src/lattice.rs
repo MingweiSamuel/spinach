@@ -12,7 +12,7 @@ pub struct Lattice<T, F: Merge<T>> {
 
 impl <T, F: Merge<T>> Lattice<T, F> {
     pub fn new(val: T) -> Self {
-        Lattice {
+        Self {
             val: val,
             _phantom: std::marker::PhantomData,
         }
