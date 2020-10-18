@@ -37,11 +37,11 @@ pub fn test() {
 
     type Triple = ( &'static str, usize, &'static str );
     let builder = UnconnectedPipe::<FilterPipe<_, _>>::new(|( _, _, v ): &Triple| !v.contains("Christ"));
-    let builder = builder::ChainedUnconnected::new(builder, UnconnectedPipe::<MapPipe<Triple, _, _>>::new(|( k, t, v ): Triple| {
+    let builder = builder::ChainedUnconnected::new(builder, UnconnectedPipe::<MapPipe<_, _, _>>::new(|( k, t, v )| {
         vec![ ( k, t, v ), ( k, t - 1, "other str" ) ]
     }));
-    let builder = builder::ChainedUnconnected::new(builder, UnconnectedPipe::<FlattenPipe<Vec<Triple>, _>>::new(()));
-    let builder = builder::ChainedUnconnected::new(builder, UnconnectedPipe::<MapPipe<Triple, _, _>>::new(|( k, t, v ): Triple| {
+    let builder = builder::ChainedUnconnected::new(builder, UnconnectedPipe::<FlattenPipe<_, _>>::new(()));
+    let builder = builder::ChainedUnconnected::new(builder, UnconnectedPipe::<MapPipe<_, _, _>>::new(|( k, t, v ): Triple| {
         let mut y: HashMap<_, _> = Default::default();
         y.insert(k, ( t.into(), v.into() ).into());
         y
