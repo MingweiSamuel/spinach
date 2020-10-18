@@ -100,5 +100,25 @@ async fn pipe_test() {
     local.await;
 
     println!("{:#?}", tank_one.get_lattice().borrow().reveal());
+    // {
+    //     "chancellor": (
+    //         2013,
+    //         "Nicholas B. Dirks",
+    //     ),
+    //     "trillion_usd_company": (
+    //         2018,
+    //         "AAPL",
+    //     ),
+    // }
     println!("{:#?}", tank_two.get_lattice().borrow().reveal());
+    // {
+    //     "dog": (
+    //         1706,
+    //         "Dachshund",
+    //     ),
+    //     "ml_framework": (
+    //         0,
+    //         "Keras",
+    //     ),
+    // }
 }
