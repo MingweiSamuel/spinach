@@ -19,39 +19,6 @@ mod tank;
 pub use tank::Tank;
 
 
-///
-pub fn test() {
-    use std::collections::HashMap;
-
-    use crate::Lattice;
-    use crate::merge::{ MaxMerge, MinMerge, DominatingPairMerge, MapUnionMerge };
-
-    type VersionedString = Lattice<
-        (Lattice<usize, MaxMerge>, Lattice<&'static str, MinMerge>),
-        DominatingPairMerge>;
-    type AnnaMap = Lattice<
-        HashMap<&'static str, VersionedString>,
-        MapUnionMerge>;
-
-    let tank = Tank::new(AnnaMap::default());
-
-    type Triple = ( &'static str, usize, &'static str );
-    let builder = UnconnectedPipe::<FilterPipe<_, _>>::new(|( _, _, v ): &Triple| !v.contains("Christ"));
-    let builder = builder::ChainedUnconnected::new(builder, UnconnectedPipe::<MapPipe<_, _, _>>::new(|( k, t, v )| {
-        vec![ ( k, t, v ), ( k, t - 1, "other str" ) ]
-    }));
-    let builder = builder::ChainedUnconnected::new(builder, UnconnectedPipe::<FlattenPipe<_, _>>::new(()));
-    let builder = builder::ChainedUnconnected::new(builder, UnconnectedPipe::<MapPipe<_, _, _>>::new(|( k, t, v ): Triple| {
-        let mut y: HashMap<_, _> = Default::default();
-        y.insert(k, ( t.into(), v.into() ).into());
-        y
-    }));
-
-    let final_pipe = builder.connect(tank);
-}
-
-
-
 /// A pipe is something which can have items pushed into it.
 pub trait Pipe {
     type Item;

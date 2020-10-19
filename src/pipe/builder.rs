@@ -1,13 +1,5 @@
 use super::{ Pipe, PipeConstructor, Unconnected };
 
-// pub struct Builder<P> {
-//     _phantom: std::marker::PhantomData<P>,
-// }
-
-// impl <P> Builder<P> {
-//     pub fn finish<Q: Pipe>(self, pipe: Q) {
-//     }
-// }
 
 pub struct ChainedUnconnected<P, Q>
 where
@@ -44,71 +36,102 @@ where
 }
 
 
+use super::{ UnconnectedPipe, MapPipe };
 
-    // type ThisPipe = C;
-    // type NextPipe = <C as PipeConstructor>::Pipe;
-    // type Args = <C as PipeConstructor>::Args;
+pub struct Builder<U> {
+    unconnected: U,
+}
+impl Builder<()> {
+    pub fn new() -> Self {
+        Self {
+            unconnected: (),
+        }
+    }
+    pub fn map<T, F, P>(self, mapper: F) -> Builder<UnconnectedPipe<MapPipe<T, F, P>>>
+    where
+        F: Fn(T) -> <P as Pipe>::Item,
+        P: Pipe,
+    {
+        Builder {
+            unconnected: UnconnectedPipe::<MapPipe<T, F, P>>::new(mapper),
+        }
+    }
+}
 
-// struct ChainedPipeConstructor<P, Q>
-// where
-//     P: PipeConstructor<Pipe = Q>,
-//     Q: PipeConstructor,
-// {
-//     first: P,
-//     first_args: <P as PipeConstructor>::Args,
-//     second: Q,
-// }
-// impl <P, Q> PipeConstructor for ChainedPipeConstructor<P, Q>
-// where
-//     P: PipeConstructor<Pipe = Q>,
-//     Q: PipeConstructor,
-// {
-//     type Pipe = <Q as PipeConstructor>::Pipe;
-//     type Args = <Q as PipeConstructor>::Args;
+impl <U, T, F, P> Builder<U>
+where
+    U: Unconnected<NextPipe = MapPipe<T, F, P>>,
+    F: Fn(T) -> <P as Pipe>::Item,
+    P: Pipe,
+{
+    pub fn map(self, mapper: F) -> Builder<ChainedUnconnected<U, UnconnectedPipe<MapPipe<T, F, P>>>> {
+        Builder {
+            unconnected: ChainedUnconnected::new(self.unconnected, UnconnectedPipe::<MapPipe<T, F, P>>::new(mapper)),
+        }
+    }
+}
 
-//     fn new(pipe: Self::Pipe, args: Self::Args) -> P {
-//         P::new(Q::new(pipe, args), self.first_args)
-//     }
-// }
+impl <U> Builder<U>
+where
+    U: Unconnected
+{
+    pub fn connect(self, tank: <U as Unconnected>::NextPipe) -> <U as Unconnected>::ThisPipe
+    {
+        self.unconnected.connect(tank)
+    }
+}
+
+pub fn test2() {
+    use std::collections::HashSet;
+
+    use crate::Lattice;
+    use crate::merge::{ UnionMerge };
+    use super::{ Tank };
+
+    let tank = Tank::new(Lattice::<HashSet<String>, UnionMerge>::default());
+
+    let builder = Builder::new();
+    let builder = builder
+        .map(|x: usize| x + 10)
+        .map(|x| format!("Hello {} :)", x - 2))
+        .map(|x| {
+            let mut y = HashSet::new();
+            y.insert(x);
+            y
+        })
+        .connect(tank);
+}
 
 
+///
+pub fn test() {
+    use std::collections::HashMap;
 
-// pub struct Builder<P> {
-//     chain: P,
-// }
+    use crate::Lattice;
+    use crate::merge::{ MaxMerge, MinMerge, DominatingPairMerge, MapUnionMerge };
 
-// impl Builder<()> {
-//     pub fn new() -> Self {
-//         Self {
-//             chain: (),
-//         }
-//     }
-//     pub fn join<P: PipeConstructor>(self, args: <P as PipeConstructor>::Args) -> Builder<<P as PipeConstructor>::Args> {
-//         Builder {
-//             chain: args,
-//         }
-//     }
-// }
+    use super::{ Tank, UnconnectedPipe, MapPipe, FlattenPipe, FilterPipe };
 
+    type VersionedString = Lattice<
+        (Lattice<usize, MaxMerge>, Lattice<&'static str, MinMerge>),
+        DominatingPairMerge>;
+    type AnnaMap = Lattice<
+        HashMap<&'static str, VersionedString>,
+        MapUnionMerge>;
 
-// impl <P, Q> Builder<(P, Q)>
-// where
-//     P: PipeConstructor<Pipe = Q>,
-//     Q: PipeConstructor,
-// {
-//     pub fn join(pipe: Q, args: <P as PipeConstructor>::Args) -> Builder<(P, Q)> {
-//         Builder {
-//             _phantom: std::marker::PhantomData,
-//         }
-//     }
-// }
+    let tank = Tank::new(AnnaMap::default());
 
-// impl <P, Q> Builder<(P, Q)>
-// where
-//     P: PipeConstructor<Pipe = Q>,
-//     Q: Pipe,
-// {
-//     pub fn finish(pipe: Q, args: <P as PipeConstructor>::Args) -> P {
-//         P::new(pipe, args)
-//     }
-// }
+    type Triple = ( &'static str, usize, &'static str );
+    let builder = UnconnectedPipe::<FilterPipe<_, _>>::new(|( _, _, v ): &Triple| !v.contains("Christ"));
+    let builder = ChainedUnconnected::new(builder, UnconnectedPipe::<MapPipe<_, _, _>>::new(|( k, t, v )| {
+        vec![ ( k, t, v ), ( k, t - 1, "other str" ) ]
+    }));
+    let builder = ChainedUnconnected::new(builder, UnconnectedPipe::<FlattenPipe<_, _>>::new(()));
+    let builder = ChainedUnconnected::new(builder, UnconnectedPipe::<MapPipe<_, _, _>>::new(|( k, t, v ): Triple| {
+        let mut y: HashMap<_, _> = Default::default();
+        y.insert(k, ( t.into(), v.into() ).into());
+        y
+    }));
+
+    let final_pipe = builder.connect(tank);
+}
