@@ -1,4 +1,4 @@
-use super::{ Pipe, MapPipe };
+use super::{ Pipe, MapPipe, FilterPipe };
 
 pub struct Builder<A> {
     prev_builder: A,
@@ -59,6 +59,39 @@ where
         MapPipe::new(pipe, self.mapper)
     }
 }
+
+
+
+
+struct FilterPipeBuilder<F, A>
+where
+    F: Fn(&A) -> bool,
+{
+    filter: F,
+    _phantom: std::marker::PhantomData<A>,
+}
+
+impl <Q, F> PipeBuilderGat<Q> for FilterPipeBuilder<F, <Q as Pipe>::Item>
+where
+    Q: Pipe,
+    F: Fn(&<Q as Pipe>::Item) -> bool,
+{
+    type Output = FilterPipe<F, Q>;
+}
+
+impl <F, A> PipeBuilder<A> for FilterPipeBuilder<F, A>
+where
+    F: Fn(&A) -> bool,
+{
+    fn connect<Q>(self, pipe: Q) -> <Self as PipeBuilderGat<Q>>::Output
+    where
+        Q: Pipe<Item = A>,
+    {
+        FilterPipe::new(pipe, self.filter)
+    }
+}
+
+
 // impl <F, A, P> PipeBuilder<MapPipe<A, F, P>> for MapPipeBuilder
 // where
 //     F: Fn(A) -> B,
