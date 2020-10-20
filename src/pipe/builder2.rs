@@ -1,10 +1,13 @@
 use super::{ Pipe, MapPipe, FilterPipe, FlattenPipe };
 
-// pub struct Builder<A, PB> {
-//     prev_builder: A,
-//     pipe_builder: PB
+// pub struct Builder<O, Z> {
+//     old_builder: O,
+//     pipe_builder: Z,
 // }
-// impl <A> Builder<A> {
+// impl <O, Z> Builder<O, Z>
+// where
+//     O: Builder
+// {
 //     pub fn new(value: A) -> Self {
 //         Self {
 //             value: value,
@@ -29,6 +32,7 @@ use super::{ Pipe, MapPipe, FilterPipe, FlattenPipe };
 //     }
 // }
 
+
 trait PipeBuilder<B> {
     fn connect<Q>(self, pipe: Q) -> <Self as PipeBuilderGat<Q>>::Output
     where
@@ -39,6 +43,46 @@ trait PipeBuilder<B> {
 trait PipeBuilderGat<Q> {
     type Output;
 }
+
+
+
+
+struct ConnectedPipeBuilder<A, B, X, Y, Z>
+where
+    X: PipeBuilder<A> + PipeBuilderGat<<Y as PipeBuilderGat<Z>>::Output>,
+    Y: PipeBuilder<B> + PipeBuilderGat<Z>,
+{
+    /// First pipe.
+    pipe_builder_x: X,
+    /// Second pipe.
+    pipe_builder_y: Y,
+
+    _phantom: std::marker::PhantomData<(A, B, Z)>,
+}
+
+impl <Q, A, B, X, Y> PipeBuilderGat<Q> for ConnectedPipeBuilder<A, B, X, Y, Q>
+where
+    X: PipeBuilder<A> + PipeBuilderGat<<Y as PipeBuilderGat<Q>>::Output>,
+    Y: PipeBuilder<B> + PipeBuilderGat<Q>,
+{
+    type Output = <X as PipeBuilderGat<<Y as PipeBuilderGat<Q>>::Output>>::Output;
+}
+
+impl <A, B, X, Y, Z> PipeBuilder<B> for ConnectedPipeBuilder<A, B, X, Y, Z>
+where
+    X: PipeBuilder<A> + PipeBuilderGat<<Y as PipeBuilderGat<Z>>::Output>,
+    Y: PipeBuilder<B> + PipeBuilderGat<Z>,
+{
+    fn connect<Q>(self, pipe: Q) -> <Self as PipeBuilderGat<Q>>::Output
+    where
+        Q: Pipe<Item = B>,
+    {
+        let pipe = self.pipe_builder_y.connect(pipe);
+        self.pipe_builder_x.connect(pipe)
+    }
+}
+
+
 
 
 struct NoOpPipeBuilder;
