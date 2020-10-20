@@ -40,8 +40,8 @@ trait PipeBuilder<B> {
         Self: PipeBuilderGat<Q>;
 }
 
-trait PipeBuilderGat<Q> {
-    type Output;
+trait PipeBuilderGat<Q: Pipe> {
+    type Output: Pipe;
 }
 
 
@@ -51,6 +51,7 @@ struct ConnectedPipeBuilder<A, B, X, Y, Z>
 where
     X: PipeBuilder<A> + PipeBuilderGat<<Y as PipeBuilderGat<Z>>::Output>,
     Y: PipeBuilder<B> + PipeBuilderGat<Z>,
+    Z: Pipe<Item = B>,
 {
     /// First pipe.
     pipe_builder_x: X,
@@ -60,18 +61,21 @@ where
     _phantom: std::marker::PhantomData<(A, B, Z)>,
 }
 
-impl <Q, A, B, X, Y> PipeBuilderGat<Q> for ConnectedPipeBuilder<A, B, X, Y, Q>
+impl <Q, A, B, X, Y, Z> PipeBuilderGat<Q> for ConnectedPipeBuilder<A, B, X, Y, Z>
 where
-    X: PipeBuilder<A> + PipeBuilderGat<<Y as PipeBuilderGat<Q>>::Output>,
-    Y: PipeBuilder<B> + PipeBuilderGat<Q>,
+    X: PipeBuilder<A> + PipeBuilderGat<<Y as PipeBuilderGat<Z>>::Output>,
+    Y: PipeBuilder<B> + PipeBuilderGat<Z>,
+    Z: Pipe<Item = B>,
+    Q: Pipe,
 {
-    type Output = <X as PipeBuilderGat<<Y as PipeBuilderGat<Q>>::Output>>::Output;
+    type Output = <X as PipeBuilderGat<<Y as PipeBuilderGat<Z>>::Output>>::Output;
 }
 
 impl <A, B, X, Y, Z> PipeBuilder<B> for ConnectedPipeBuilder<A, B, X, Y, Z>
 where
     X: PipeBuilder<A> + PipeBuilderGat<<Y as PipeBuilderGat<Z>>::Output>,
     Y: PipeBuilder<B> + PipeBuilderGat<Z>,
+    Z: Pipe<Item = B>,
 {
     fn connect<Q>(self, pipe: Q) -> <Self as PipeBuilderGat<Q>>::Output
     where
