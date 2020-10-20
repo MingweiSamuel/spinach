@@ -1,23 +1,33 @@
-use super::{ Pipe, MapPipe, FilterPipe };
+use super::{ Pipe, MapPipe, FilterPipe, FlattenPipe };
 
-pub struct Builder<A> {
-    prev_builder: A,
-}
-impl <A> Builder<A> {
-    // pub fn new() -> Self {
-    //     Builder {
-    //         value: (),
-    //     }
-    // }
+// pub struct Builder<A, PB> {
+//     prev_builder: A,
+//     pipe_builder: PB
+// }
+// impl <A> Builder<A> {
+//     pub fn new(value: A) -> Self {
+//         Self {
+//             value: value,
+//         }
+//     }
 
-    // pub fn map<T, F, P>() -> Builder<MapPipeBuilder>
-    // where
-    //     F: Fn(T) -> <P as Pipe>::Item,
-    //     P: Pipe,
-    // {
+//     // pub fn map<T, F, P>() -> Builder<MapPipeBuilder>
+//     // where
+//     //     F: Fn(T) -> <P as Pipe>::Item,
+//     //     P: Pipe,
+//     // {
 
-    // }
-}
+//     // }
+
+//     pub fn map<F, B>(self, mapper: F) -> Builder<B>
+//     where
+//         F: Fn(A) -> B
+//     {
+//         Builder {
+//             prev_builder
+//         }
+//     }
+// }
 
 trait PipeBuilder<B> {
     fn connect<Q>(self, pipe: Q) -> <Self as PipeBuilderGat<Q>>::Output
@@ -28,6 +38,25 @@ trait PipeBuilder<B> {
 
 trait PipeBuilderGat<Q> {
     type Output;
+}
+
+
+struct NoOpPipeBuilder;
+
+impl <Q> PipeBuilderGat<Q> for NoOpPipeBuilder
+where
+    Q: Pipe,
+{
+    type Output = Q;
+}
+
+impl <B> PipeBuilder<B> for NoOpPipeBuilder {
+    fn connect<Q>(self, pipe: Q) -> <Self as PipeBuilderGat<Q>>::Output
+    where
+        Q: Pipe<Item = B>
+    {
+        pipe
+    }
 }
 
 
@@ -88,6 +117,35 @@ where
         Q: Pipe<Item = A>,
     {
         FilterPipe::new(pipe, self.filter)
+    }
+}
+
+
+
+struct FlattenPipeBuilder<A>
+where
+    A: IntoIterator
+{
+    _phantom: std::marker::PhantomData<A>,
+}
+
+impl <Q, A> PipeBuilderGat<Q> for FlattenPipeBuilder<A>
+where
+    Q: Pipe<Item = <A as IntoIterator>::Item>,
+    A: IntoIterator,
+{
+    type Output = FlattenPipe<A, Q>;
+}
+
+impl <A> PipeBuilder<<A as IntoIterator>::Item> for FlattenPipeBuilder<A>
+where
+    A: IntoIterator
+{
+    fn connect<Q>(self, pipe: Q) -> <Self as PipeBuilderGat<Q>>::Output
+    where
+        Q: Pipe<Item = <A as IntoIterator>::Item>,
+    {
+        FlattenPipe::new(pipe)
     }
 }
 
