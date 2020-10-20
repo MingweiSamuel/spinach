@@ -61,14 +61,13 @@ where
     _phantom: std::marker::PhantomData<(A, B, Z)>,
 }
 
-impl <Q, A, B, X, Y, Z> PipeBuilderGat<Q> for ConnectedPipeBuilder<A, B, X, Y, Z>
+impl <Q, A, B, X, Y> PipeBuilderGat<Q> for ConnectedPipeBuilder<A, B, X, Y, Q>
 where
-    X: PipeBuilder<A> + PipeBuilderGat<<Y as PipeBuilderGat<Z>>::Output>,
-    Y: PipeBuilder<B> + PipeBuilderGat<Z>,
-    Z: Pipe<Item = B>,
-    Q: Pipe,
+    X: PipeBuilder<A> + PipeBuilderGat<<Y as PipeBuilderGat<Q>>::Output>,
+    Y: PipeBuilder<B> + PipeBuilderGat<Q>,
+    Q: Pipe<Item = B>,
 {
-    type Output = <X as PipeBuilderGat<<Y as PipeBuilderGat<Z>>::Output>>::Output;
+    type Output = <X as PipeBuilderGat<<Y as PipeBuilderGat<Q>>::Output>>::Output;
 }
 
 impl <A, B, X, Y, Z> PipeBuilder<B> for ConnectedPipeBuilder<A, B, X, Y, Z>
