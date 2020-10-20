@@ -19,14 +19,25 @@ impl <A> Builder<A> {
     // }
 }
 
-trait PipeBuilder {
-    fn connect<Q: Pipe>(pipe: Q) -> <Self as PipeBuilderGat<Q>>::Output
+trait PipeBuilder<B> {
+    fn connect<Q>(self, pipe: Q) -> <Self as PipeBuilderGat<Q>>::Output
     where
+        Q: Pipe<Item = B>,
         Self: PipeBuilderGat<Q>;
 }
 
 trait PipeBuilderGat<Q> {
     type Output;
+}
+
+
+
+struct MapPipeBuilder<F, A, B>
+where
+    F: Fn(A) -> B,
+{
+    mapper: F,
+    _phantom: std::marker::PhantomData<( A, B )>,
 }
 
 impl <Q, F, A> PipeBuilderGat<Q> for MapPipeBuilder<F, A, <Q as Pipe>::Item>
@@ -37,15 +48,18 @@ where
     type Output = MapPipe<A, F, Q>;
 }
 
-
-struct MapPipeBuilder<F, A, B>
+impl <F, A, B> PipeBuilder<B> for MapPipeBuilder<F, A, B>
 where
     F: Fn(A) -> B,
 {
-    mapper: F,
-    _phantom: std::marker::PhantomData<( A, B )>,
+    fn connect<Q>(self, pipe: Q) -> <Self as PipeBuilderGat<Q>>::Output
+    where
+        Q: Pipe<Item = B>,
+    {
+        MapPipe::new(pipe, self.mapper)
+    }
 }
-// impl <F, A, P> PipeBuilder<MapPipe<A, F, P>> MapPipeBuilder
+// impl <F, A, P> PipeBuilder<MapPipe<A, F, P>> for MapPipeBuilder
 // where
 //     F: Fn(A) -> B,
 //     P: Pipe
