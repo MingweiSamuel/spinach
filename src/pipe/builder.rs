@@ -1,4 +1,4 @@
-use super::{ Pipe, PipeConstructor, Unconnected };
+use super::{ Pipe, Unconnected };
 
 
 pub struct ChainedUnconnected<P, Q>
@@ -100,6 +100,7 @@ pub fn test2() {
             y
         })
         .connect(tank);
+    let _ = builder;
 }
 
 
@@ -110,7 +111,7 @@ pub fn test() {
     use crate::Lattice;
     use crate::merge::{ MaxMerge, MinMerge, DominatingPairMerge, MapUnionMerge };
 
-    use super::{ Tank, UnconnectedPipe, MapPipe, FlattenPipe, FilterPipe };
+    use super::{ Tank, FlattenPipe, FilterPipe };
 
     type VersionedString = Lattice<
         (Lattice<usize, MaxMerge>, Lattice<&'static str, MinMerge>),
@@ -133,5 +134,5 @@ pub fn test() {
         y
     }));
 
-    let final_pipe = builder.connect(tank);
+    let _final_pipe = builder.connect(tank);
 }
