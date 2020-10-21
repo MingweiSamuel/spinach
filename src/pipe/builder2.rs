@@ -34,6 +34,8 @@ use super::{ Pipe, MapPipe, FilterPipe, FlattenPipe };
 
 
 trait PipeBuilder<B> {
+    // Put PipeBuilderGat here?
+
     fn connect<Q>(self, pipe: Q) -> <Self as PipeBuilderGat<Q>>::Output
     where
         Q: Pipe<Item = B>,

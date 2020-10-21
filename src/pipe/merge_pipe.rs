@@ -3,7 +3,6 @@ use std::rc::Rc;
 use super::{ Pipe, PipeConstructor };
 
 /// A pipe which can be cloned to merge multiple pipes together.
-#[derive(Clone)]
 pub struct MergePipe<P: Pipe> {
     pipe: Rc<P>,
 }
@@ -30,5 +29,13 @@ impl <P: Pipe> PipeConstructor for MergePipe<P> {
 
     fn new(pipe: P, _args: ()) -> Self {
         Self::new(pipe)
+    }
+}
+
+impl <P: Pipe> Clone for MergePipe<P> {
+    fn clone(&self) -> Self {
+        Self {
+            pipe: self.pipe.clone(),
+        }
     }
 }

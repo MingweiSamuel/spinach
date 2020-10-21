@@ -1,5 +1,5 @@
 pub mod builder;
-pub mod builder2;
+// pub mod builder2;
 
 mod filter_pipe;
 pub use filter_pipe::FilterPipe;
@@ -26,6 +26,19 @@ pub trait Pipe {
 
     fn merge_in(&self, input: Self::Item);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 pub trait Unconnected {
     type ThisPipe;

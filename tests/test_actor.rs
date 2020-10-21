@@ -27,7 +27,7 @@ async fn actor_test() {
     // out.
     // The message type is (key, version/timestamp, value) or (k, t, v). Could
     // just as easily be (k, (t, v)) which matches the structure a bit better.
-    let (sender, reciever) = mpsc::channel
+    let (sender, receiver) = mpsc::channel
         ::<(&'static str, usize, &'static str)>(/* message buffer size */ 4);
 
     // Create a local task set so all the futures get run on the current
@@ -39,7 +39,7 @@ async fn actor_test() {
     // (Using this strat, we'd probably need a task per sink per actor).
     let kvs_result = local.spawn_local(
         // Read out messages from the mailbox.
-        reciever
+        let receiver = receiver
             // Filter example.
             .filter(|(_, _, v)| !v.contains("Christ")) // No swearing allowed.
             // Change type so the types match for the merge function.
@@ -48,11 +48,16 @@ async fn actor_test() {
                 let mut y: HashMap<_, _> = Default::default();
                 y.insert(k, (t.into(), v.into()).into());
                 y
-            })
+            });
+        // Here: Map<Filter<Receiver, ||>, ||>
+
+        receiver
             // Merge the transformed messages into the KVS.
             // This takes ownership of the KVS, then returns it inside the
             // result future. So kvs_result contains kvs.
             .merge_into(kvs));
+
+        // receiver: 
 
     // Send some stuff.
     // Pretend these are messages from the outside world.

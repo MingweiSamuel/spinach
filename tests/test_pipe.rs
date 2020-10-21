@@ -9,7 +9,7 @@ use spinach::{ Lattice };
 use spinach::merge::{ MaxMerge, MinMerge, MapUnionMerge, DominatingPairMerge };
 
 use spinach::pipe::{ Tank, Pipe };
-use spinach::pipe::{ SplitPipe, MapPipe, FilterPipe, }; //MergePipe, FlattenPipe };
+use spinach::pipe::{ SplitPipe, MapPipe, FilterPipe, MergePipe, FlattenPipe };
 
 // To run:
 // `cargo test pipe_test -- --nocapture`
@@ -31,7 +31,9 @@ async fn pipe_test() {
     let local = task::LocalSet::new();
 
 
-    let (sender, mut receiver) =
+    let (sender_l, mut receiver_l) =
+        mpsc::channel::<(&'static str, usize, &'static str)>(4);
+    let (sender_r, mut receiver_r) =
         mpsc::channel::<(&'static str, usize, &'static str)>(4);
 
     let tank_one_kv = tank_one.kv_pipe();
@@ -47,17 +49,37 @@ async fn pipe_test() {
         });
         let pipe = FilterPipe::new(pipe, |( _, _, v )| !v.contains("Christ"));
 
+        let merge_pipe_l = MergePipe::new(pipe);
+        let merge_pipe_r = merge_pipe_l.clone();
+
+        // let pipe = SplitPipe::new(merge_pipe_l, merge_pipe_r, |_| {
+        //     0 == random() % 2
+        // });
+
+        // Open connections:
+        // 1. merge_pipe_l, 52
+        // 2. merge_pipe_r, 53
+        // nothing else.
+
+
+        let task = tokio::task::spawn_local(async move {
+            while let Some(item) = receiver_r.next().await {
+                merge_pipe_l.merge_in(item);
+            };
+        });
+
         // Push things through the pipe (instead of pulling).
-        while let Some(item) = receiver.next().await {
-            pipe.merge_in(item);
+        while let Some(item) = receiver_l.next().await {
+            merge_pipe_r.merge_in(item);
         };
+        task.await;
     });
 
     {
         // Disclaimer: I picked keys that would evenly distribute.
-        let sender = sender;
+        let sender_l = sender_l;
 
-        let outside_sender = sender.clone();
+        let outside_sender = sender_l.clone();
         local.spawn_local(async move {
             outside_sender.send(("chancellor", 2017, "Carol T. Christ"))
                 .await.unwrap();
@@ -73,8 +95,20 @@ async fn pipe_test() {
             outside_sender.send(("ml_framework", 0, "PyTorch"))
                 .await.unwrap();
         });
+        let outside_sender = sender_l.clone();
+        local.spawn_local(async move {
+            outside_sender.send(("dog", 1200, "Greyhound"))
+                .await.unwrap();
 
-        let outside_sender = sender.clone();
+            outside_sender.send(("ml_framework", 0, "Keras"))
+                .await.unwrap();
+        });
+    }
+
+    {
+        let sender_r = sender_r;
+
+        let outside_sender = sender_r.clone();
         local.spawn_local(async move {
             outside_sender.send(("chancellor", 2013, "Nicholas B. Dirks"))
                 .await.unwrap();
@@ -84,15 +118,6 @@ async fn pipe_test() {
             outside_sender.send(("dog", 1706, "Dachshund"))
                 .await.unwrap();
             outside_sender.send(("dog", 1200, "Greyhound"))
-                .await.unwrap();
-        });
-
-        let outside_sender = sender.clone();
-        local.spawn_local(async move {
-            outside_sender.send(("dog", 1200, "Greyhound"))
-                .await.unwrap();
-
-            outside_sender.send(("ml_framework", 0, "Keras"))
                 .await.unwrap();
         });
     }
