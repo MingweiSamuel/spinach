@@ -33,35 +33,6 @@ impl <T: Hash + Eq> Bag<T> {
     pub fn contains(&self, item: &T) -> usize {
         self.tbl.get(item).cloned().unwrap_or(0)
     }
-
-    /// Remove a single item from a bag. Returns true if an item was removed
-    /// (although more items may remain), or false if the bag did not contain
-    /// the item.
-    pub fn remove(&mut self, item: &T) -> bool {
-        match self.tbl.get_mut(item) {
-            Some(count) => {
-                self.len -= 1;
-                *count -= 1;
-                if 0 == *count {
-                    self.tbl.remove(item);
-                }
-                true
-            },
-            None => false,
-        }
-    }
-
-    /// Removes all copies of the item from the bag if any, and returns the
-    /// value if it existed.
-    pub fn remove_all(&mut self, item: &T) -> Option<T> {
-        match self.tbl.remove_entry(item) {
-            Some(( key, count )) => {
-                self.len -= count;
-                Some(key)
-            },
-            None => None,
-        }
-    }
 }
 
 pub trait Morphism {
