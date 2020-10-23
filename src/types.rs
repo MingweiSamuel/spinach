@@ -2,17 +2,16 @@
 //!    - It should be deterministic (ProcMacro here).
 //! 2. A SemilatticeHomomorphism is a function from a semilattice to a (possibly different) semilattice.
 //!    - It should be a morphism (ProcMacro here).
-//! 3. A MapFunction. It is a SemilatticeHomomorphism from Lattice<HashSet<T>, UnionMerge> to Lattice<HashSet<U>, UnionMerge>.
+//! 3. A MapFunction. It is a SemilatticeHomomorphism from Lattice<BTreeSet<T>, UnionMerge> to Lattice<BTreeSet<U>, UnionMerge>.
 //!    Constructor takes in a UnaryFunction and turns it into a MapFunction which is a SemilatticeHomomorphism.
-//! 4. A MergeFoldFunction. It is a SemilatticeHomomorphism which takes in a Lattice<HashSet<Lattice<T, M>>, UnionMerge> and returns
+//! 4. A MergeFoldFunction. It is a SemilatticeHomomorphism which takes in a Lattice<BTreeSet<Lattice<T, M>>, UnionMerge> and returns
 //!    and returns a single Lattice<T, M> by folding over the merge function M.
 //!    There is no constructor.
 
-use std::collections::HashSet;
-use std::hash::Hash;
+use std::collections::{ BTreeSet, HashMap };
 
 use crate::lattice::Semilattice;
-use crate::merge::{ Merge, UnionMerge };
+use crate::merge::{ Merge, UnionMerge, MapUnionMerge };
 
 /// Must be deterministic!!!
 pub trait UnaryFunction {
@@ -32,19 +31,19 @@ pub trait SemilatticeHomomorphism {
     fn call(input: Semilattice<Self::DomainCarrier, Self::DomainMerge>)
         -> Semilattice<Self::CodomainCarrier, Self::CodomainMerge>;
 }
-// All `SemilatticeHomomorphism`s are `UnaryFunction`s.
-impl <F: SemilatticeHomomorphism> UnaryFunction for F {
-    type Domain = Semilattice<
-        <Self as SemilatticeHomomorphism>::DomainCarrier,
-        <Self as SemilatticeHomomorphism>::DomainMerge>;
-    type Codomain = Semilattice<
-        <Self as SemilatticeHomomorphism>::CodomainCarrier,
-        <Self as SemilatticeHomomorphism>::CodomainMerge>;
+// // All `SemilatticeHomomorphism`s are `UnaryFunction`s.
+// impl <F: SemilatticeHomomorphism> UnaryFunction for F {
+//     type Domain = Semilattice<
+//         <Self as SemilatticeHomomorphism>::DomainCarrier,
+//         <Self as SemilatticeHomomorphism>::DomainMerge>;
+//     type Codomain = Semilattice<
+//         <Self as SemilatticeHomomorphism>::CodomainCarrier,
+//         <Self as SemilatticeHomomorphism>::CodomainMerge>;
 
-    fn call(input: Self::Domain) -> Self::Codomain {
-        F::call(input)
-    }
-}
+//     fn call(input: Self::Domain) -> Self::Codomain {
+//         F::call(input)
+//     }
+// }
 
 /// Takes in a `UnaryFunction` and gives back a MapFunction which is a `SemilatticeHomomorphism`.
 pub struct MapFunction<F: UnaryFunction> {
@@ -59,12 +58,12 @@ impl <F: UnaryFunction> MapFunction<F> {
 }
 impl <F: UnaryFunction> SemilatticeHomomorphism for MapFunction<F>
 where
-    <F as UnaryFunction>::Domain:   Eq + Hash,
-    <F as UnaryFunction>::Codomain: Eq + Hash,
+    <F as UnaryFunction>::Domain:   Eq + Ord,
+    <F as UnaryFunction>::Codomain: Eq + Ord,
 {
-    type DomainCarrier = HashSet<F::Domain>;
+    type DomainCarrier = BTreeSet<F::Domain>;
     type DomainMerge = UnionMerge;
-    type CodomainCarrier = HashSet<F::Codomain>;
+    type CodomainCarrier = BTreeSet<F::Codomain>;
     type CodomainMerge = UnionMerge;
 
     fn call(input: Semilattice<Self::DomainCarrier, Self::DomainMerge>)
@@ -79,13 +78,13 @@ where
 }
 
 /// `MergeFoldFunction` is a general fold function via semilattice merge.
-/// A SemilatticeHomomorphism from `Lattice<HashSet<Lattice<I, M>>>` to
+/// A SemilatticeHomomorphism from `Lattice<BTreeSet<Lattice<I, M>>>` to
 /// `Lattice<I, M>` by folding using the `M` merge function.
 pub struct MergeFoldFunction<DomainCarrier, DomainMerge>
 where
     DomainCarrier: Default, // Needs a bound. (TODO)
     DomainMerge: Merge<DomainCarrier>,
-    Semilattice<DomainCarrier, DomainMerge>: Hash + Eq,
+    Semilattice<DomainCarrier, DomainMerge>: Eq + Ord,
 {
     _phantom: std::marker::PhantomData<( DomainCarrier, DomainMerge )>,
 }
@@ -93,9 +92,9 @@ impl <CD, CDM> SemilatticeHomomorphism for MergeFoldFunction<CD, CDM>
 where
     CD: Default,
     CDM: Merge<CD>,
-    Semilattice<CD, CDM>: Hash + Eq,
+    Semilattice<CD, CDM>: Eq + Ord,
 {
-    type DomainCarrier = HashSet<Semilattice<CD, CDM>>;
+    type DomainCarrier = BTreeSet<Semilattice<CD, CDM>>;
     type DomainMerge = UnionMerge;
     type CodomainCarrier = CD;
     type CodomainMerge = CDM;
@@ -113,95 +112,127 @@ where
     }
 }
 
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    type FirstLastName = (&'static str, &'static str);
+
+    #[test]
+    fn test_select() {
+        struct SelectMNames;
+        impl UnaryFunction for SelectMNames {
+            type Domain = FirstLastName;
+            type Codomain = Semilattice<BTreeSet<FirstLastName>, UnionMerge>;
+
+            fn call(input: Self::Domain) -> Self::Codomain {
+                let mut out = BTreeSet::new();
+                if input.0.starts_with('M') {
+                    out.insert(input);
+                }
+                out.into() // Convert to Semilattice<.,.>.
+            }
+        }
+
+        let x0: Semilattice<BTreeSet<FirstLastName>, UnionMerge> = vec![
+            ( "Joseph", "Hellerstein" ),
+            ( "Matthew", "Milano" ),
+            ( "Mingwei", "Samuel" ),
+            ( "Pranav", "Gaddamadugu" ),
+        ].into_iter().collect::<BTreeSet<_>>().into();
+
+        let x1: Semilattice<
+            BTreeSet<Semilattice<BTreeSet<FirstLastName>, UnionMerge>>,
+            UnionMerge
+        > = MapFunction::<SelectMNames>::call(x0);
+
+        let x2: Semilattice<BTreeSet<FirstLastName>, UnionMerge> =
+            MergeFoldFunction::call(x1);
+
+        assert_eq!(
+            vec![
+                ( "Matthew", "Milano" ),
+                ( "Mingwei", "Samuel" ),
+            ].into_iter().collect::<BTreeSet<_>>(),
+            x2.into_reveal());
+    }
+
+    #[test]
+    fn test_project() {
+        struct ProjectFirst;
+        impl UnaryFunction for ProjectFirst {
+            type Domain = FirstLastName;
+            type Codomain = &'static str;
+
+            fn call(input: Self::Domain) -> Self::Codomain {
+                input.0
+            }
+        }
+
+        let x0: Semilattice<BTreeSet<FirstLastName>, UnionMerge> = vec![
+            ( "Joseph", "Hellerstein" ),
+            ( "Matthew", "Milano" ),
+            ( "Mingwei", "Samuel" ),
+            ( "Pranav", "Gaddamadugu" ),
+        ].into_iter().collect::<BTreeSet<_>>().into();
+
+        let x1: Semilattice<BTreeSet<&'static str>, UnionMerge> =
+            MapFunction::<ProjectFirst>::call(x0);
+
+        assert_eq!(
+            vec![
+                "Joseph",
+                "Matthew",
+                "Mingwei",
+                "Pranav",
+            ].into_iter().collect::<BTreeSet<_>>(),
+            x1.into_reveal());
+    }
+
+    // #[test]
+    // fn test_groupby() {
+    //     struct GroupByNameLength;
+    //     impl UnaryFunction for GroupByNameLength {
+    //         type Domain = FirstLastName;
+    //         type Codomain = Semilattice<
+    //             HashMap<usize, Semilattice<BTreeSet<FirstLastName>, UnionMerge>>,
+    //             MapUnionMerge>;
+
+    //         fn call(input: Self::Domain) -> Self::Codomain {
+    //             let set = BTreeSet::new();
+    //             set.insert(input);
+
+    //             let out = HashMap::new();
+    //             out.insert(input.0.len(), set);
+    //             out
+    //         }
+    //     }
+
+    //     let x0: Semilattice<BTreeSet<FirstLastName>, UnionMerge> = vec![
+    //         ( "Joseph", "Hellerstein" ),
+    //         ( "Matthew", "Milano" ),
+    //         ( "Mingwei", "Samuel" ),
+    //         ( "Pranav", "Gaddamadugu" ),
+    //     ].into_iter().collect::<BTreeSet<_>>().into();
+
+    //     let x1 = MapFunction::<GroupByNameLength>::call(x0);
+
+    //     let x2: Semilattice<
+    //         HashMap<usize, Semilattice<BTreeSet<FirstLastName>, UnionMerge>>,
+    //         MapUnionMerge
+    //     > = MergeFoldFunction::call(x1);
+
+    //     println!("{}", x2.into_reveal());
+    //     // assert_eq!(
+    //     //     vec![
+    //     //         "Joseph",
+    //     //         "Matthew",
+    //     //         "Mingwei",
+    //     //         "Pranav",
+    //     //     ].into_iter().collect::<BTreeSet<_>>(),
+    //     //     x1.into_reveal());
+    // }
+}
+
 
 // TODO: use https://crates.io/crates/derivative
-
-
-// Lattice -
-// Morphism
-//
-
-
-
-// pub trait Set<T> {
-
-// }
-
-
-// pub struct SingletonSet<T>(T);
-
-// impl <T> From<T> for SingletonSet<T> {
-//     fn from(val: T) -> Self {
-//         SingletonSet(val)
-//     }
-// }
-
-
-// #[test]
-// fn test() {
-//     let x: Bag<usize> = ...;
-//     let mapper: Pipe<usize, String> = MapPipe::new(|i| format!("Hello {}", i));
-//     let y: Bag<String> = mapper.transduce(x);
-
-//     // Special type of Bag that is stateless?
-//     // Set trait has functional stream stuff, map, filter.
-
-//     // Transform it with a morphism. Or test read.
-// }
-
-
-// // Morpism is a trait with an input and output.
-// pub trait Morphism {
-//     type Input;
-//     type Output;
-
-//     fn transduce(&self, input: Self::Input) -> Self::Output;
-// }
-
-
-
-// // Pipe is a morphism from Bag to Bag.
-// pub trait Pipe<S: Hash + Eq, T: Hash + Eq>:
-//     Morphism<Input = Bag<S>, Output = Bag<T>>
-// {}
-// impl <S, T, M> Pipe<S, T> for M
-// where
-//     S: Hash + Eq,
-//     T: Hash + Eq,
-//     M: Morphism<Input = Bag<S>, Output = Bag<T>>
-// {}
-
-
-// /// A bag (multiset).
-// /// Keeps a count, does not keep extra copies.
-// pub struct Bag<T: Hash + Eq> {
-//     len: usize,
-//     tbl: HashMap<T, usize>,
-// }
-
-// impl <T: Hash + Eq> Bag<T> {
-//     pub fn new() -> Self {
-//         Self {
-//             len: 0,
-//             tbl: Default::default(),
-//         }
-//     }
-
-//     /// Gets the total size of the bag.
-//     pub fn len(&self) -> usize {
-//         self.len
-//     }
-
-//     /// Inserts a single value into the bag.
-//     pub fn insert(&mut self, item: T) {
-//         self.len += 1;
-//         self.tbl.entry(item)
-//             .and_modify(|count| *count += 1)
-//             .or_insert(1);
-//     }
-
-//     /// Returns how many item the bag contains. Zero means it is not contained.
-//     pub fn contains(&self, item: &T) -> usize {
-//         self.tbl.get(item).cloned().unwrap_or(0)
-//     }
-// }

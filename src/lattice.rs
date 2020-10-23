@@ -1,12 +1,22 @@
 use std::cmp::Ordering;
 
+use derivative::Derivative;
+
 use crate::merge::Merge;
 
 
 // LATTICE STRUCT //
 
+#[derive(Derivative)]
+#[derivative(Default, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct Semilattice<T, F: Merge<T>> {
     val: T,
+
+    // #[derivative(Debug="ignore")]
+    // #[derivative(PartialEq="ignore")]
+    // #[derivative(PartialOrd="ignore")]
+    // #[derivative(Ord="ignore")]
+    // #[derivative(Hash="ignore")]
     _phantom: std::marker::PhantomData<F>,
 }
 
@@ -37,15 +47,15 @@ impl <T, F: Merge<T>> Semilattice<T, F> {
     }
 }
 
-// Not important: lets you do `Default::default()`.
-impl <T: Default, F: Merge<T>> Default for Semilattice<T, F> {
-    fn default() -> Self {
-        Self {
-            val: Default::default(),
-            _phantom: std::marker::PhantomData,
-        }
-    }
-}
+// // Not important: lets you do `Default::default()`.
+// impl <T: Default, F: Merge<T>> Default for Semilattice<T, F> {
+//     fn default() -> Self {
+//         Self {
+//             val: Default::default(),
+//             _phantom: std::marker::PhantomData,
+//         }
+//     }
+// }
 
 // Not important: lets you do `let x: Semilattice<_, ...> = something.into()`.
 impl <T, F: Merge<T>> From<T> for Semilattice<T, F> {
@@ -54,9 +64,9 @@ impl <T, F: Merge<T>> From<T> for Semilattice<T, F> {
     }
 }
 
-// Not important: lets you debug print... (also kinda illegal).
-impl <T: std::fmt::Debug, F: Merge<T>> std::fmt::Debug for Semilattice<T, F> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.val.fmt(f)
-    }
-}
+// // Not important: lets you debug print... (also kinda illegal).
+// impl <T: std::fmt::Debug, F: Merge<T>> std::fmt::Debug for Semilattice<T, F> {
+//     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+//         self.val.fmt(f)
+//     }
+// }
