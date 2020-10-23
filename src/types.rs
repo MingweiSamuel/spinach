@@ -8,7 +8,7 @@
 //!    and returns a single Lattice<T, M> by folding over the merge function M.
 //!    There is no constructor.
 
-use std::collections::{ BTreeSet, HashMap };
+use std::collections::{ BTreeSet, BTreeMap };
 
 use crate::lattice::Semilattice;
 use crate::merge::{ Merge, UnionMerge, MapUnionMerge };
@@ -189,50 +189,67 @@ mod test {
             x1.into_reveal());
     }
 
-    // #[test]
-    // fn test_groupby() {
-    //     struct GroupByNameLength;
-    //     impl UnaryFunction for GroupByNameLength {
-    //         type Domain = FirstLastName;
-    //         type Codomain = Semilattice<
-    //             HashMap<usize, Semilattice<BTreeSet<FirstLastName>, UnionMerge>>,
-    //             MapUnionMerge>;
+    #[test]
+    fn test_groupby() {
+        struct GroupByNameLength;
+        impl UnaryFunction for GroupByNameLength {
+            type Domain = FirstLastName;
+            type Codomain = Semilattice<
+                BTreeMap<usize, Semilattice<BTreeSet<FirstLastName>, UnionMerge>>,
+                MapUnionMerge>;
 
-    //         fn call(input: Self::Domain) -> Self::Codomain {
-    //             let set = BTreeSet::new();
-    //             set.insert(input);
+            fn call(input: Self::Domain) -> Self::Codomain {
+                let mut set = BTreeSet::new();
+                set.insert(input);
 
-    //             let out = HashMap::new();
-    //             out.insert(input.0.len(), set);
-    //             out
-    //         }
-    //     }
+                let mut out = BTreeMap::new();
+                out.insert(input.0.len(), set.into());
+                out.into()
+            }
+        }
 
-    //     let x0: Semilattice<BTreeSet<FirstLastName>, UnionMerge> = vec![
-    //         ( "Joseph", "Hellerstein" ),
-    //         ( "Matthew", "Milano" ),
-    //         ( "Mingwei", "Samuel" ),
-    //         ( "Pranav", "Gaddamadugu" ),
-    //     ].into_iter().collect::<BTreeSet<_>>().into();
+        let x0: Semilattice<BTreeSet<FirstLastName>, UnionMerge> = vec![
+            ( "Joseph", "Hellerstein" ),
+            ( "Matthew", "Milano" ),
+            ( "Mingwei", "Samuel" ),
+            ( "Pranav", "Gaddamadugu" ),
+        ].into_iter().collect::<BTreeSet<_>>().into();
 
-    //     let x1 = MapFunction::<GroupByNameLength>::call(x0);
+        let x1 = MapFunction::<GroupByNameLength>::call(x0);
 
-    //     let x2: Semilattice<
-    //         HashMap<usize, Semilattice<BTreeSet<FirstLastName>, UnionMerge>>,
-    //         MapUnionMerge
-    //     > = MergeFoldFunction::call(x1);
+        let x2: Semilattice<
+        BTreeMap<usize, Semilattice<BTreeSet<FirstLastName>, UnionMerge>>,
+            MapUnionMerge
+        > = MergeFoldFunction::call(x1);
 
-    //     println!("{}", x2.into_reveal());
-    //     // assert_eq!(
-    //     //     vec![
-    //     //         "Joseph",
-    //     //         "Matthew",
-    //     //         "Mingwei",
-    //     //         "Pranav",
-    //     //     ].into_iter().collect::<BTreeSet<_>>(),
-    //     //     x1.into_reveal());
-    // }
+        println!("{:#?}", x2.into_reveal());
+        // {
+        //     6: Semilattice {
+        //         val: {
+        //             (
+        //                 "Joseph",
+        //                 "Hellerstein",
+        //             ),
+        //             (
+        //                 "Pranav",
+        //                 "Gaddamadugu",
+        //             ),
+        //         },
+        //         _phantom: PhantomData,
+        //     },
+        //     7: Semilattice {
+        //         val: {
+        //             (
+        //                 "Matthew",
+        //                 "Milano",
+        //             ),
+        //             (
+        //                 "Mingwei",
+        //                 "Samuel",
+        //             ),
+        //         },
+        //         _phantom: PhantomData,
+        //     },
+        // }
+    }
 }
-
-
-// TODO: use https://crates.io/crates/derivative

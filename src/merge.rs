@@ -1,6 +1,7 @@
 use std::hash::Hash;
-use std::collections::{ BTreeSet, HashMap, HashSet };
-use std::collections::hash_map::Entry;
+use std::collections::{ BTreeMap, BTreeSet, HashMap, HashSet };
+use std::collections::hash_map;
+use std::collections::btree_map;
 use std::iter::Extend;
 
 use std::cmp::Ordering;
@@ -201,10 +202,10 @@ impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, Semilattice<V, F>>> for Map
     fn merge(val: &mut HashMap<K, Semilattice<V, F>>, other: HashMap<K, Semilattice<V, F>>) {
         for (k, v) in other {
             match val.entry(k) {
-                Entry::Occupied(mut kv) => {
+                hash_map::Entry::Occupied(mut kv) => {
                     kv.get_mut().merge_in(v.into_reveal());
                 },
-                Entry::Vacant(kv) => {
+                hash_map::Entry::Vacant(kv) => {
                     kv.insert(v);
                 },
             }
@@ -256,44 +257,66 @@ impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, Semilattice<V, F>>> for Map
         }
     }
 }
-// impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, Semilattice<V, F>>, ( K, Semilattice<V, F> )> for MapUnionMerge {
-//     fn merge(val: &mut HashMap<K, Semilattice<V, F>>, other: ( K, Semilattice<V, F> )) {
-//         let (k, v) = other;
-//         match val.entry(k) {
-//             Entry::Occupied(mut kv) => {
-//                 kv.get_mut().merge_in(v.into_reveal());
-//             },
-//             Entry::Vacant(kv) => {
-//                 kv.insert(v);
-//             },
-//         }
-//     }
 
-//     fn partial_cmp(val: &HashMap<K, Semilattice<V, F>>, other: &( K, Semilattice<V, F> )) -> Option<Ordering> {
-//         let &(ref k, ref other_val) = other;
-//         if val.is_empty() {
-//             // LHS is empty set, empty is less than singleton.
-//             Some(Ordering::Less)
-//         }
-//         else if let Some(lhs_val) = val.get(k) {
-//             // LHS contains RHS, LHS is equal or greater.
-//             let val_cmp = lhs_val.reveal_partial_cmp(other_val);
-//             if 1 == val.len() || Some(Ordering::Greater) == val_cmp || None == val_cmp {
-//                 val_cmp
-//             }
-//             else if Some(Ordering::Equal) == val_cmp {
-//                 Some(Ordering::Greater)
-//             }
-//             else {
-//                 None
-//             }
-//         }
-//         else {
-//             // LHS does not contain the RHS, sets are disjoint.
-//             None
-//         }
-//     }
-// }
+impl <K: Eq + Ord, V, F: Merge<V>> Merge<BTreeMap<K, Semilattice<V, F>>> for MapUnionMerge {
+    fn merge(val: &mut BTreeMap<K, Semilattice<V, F>>, other: BTreeMap<K, Semilattice<V, F>>) {
+        for (k, v) in other {
+            match val.entry(k) {
+                btree_map::Entry::Occupied(mut kv) => {
+                    kv.get_mut().merge_in(v.into_reveal());
+                },
+                btree_map::Entry::Vacant(kv) => {
+                    kv.insert(v);
+                },
+            }
+        }
+    }
+
+    // TODO: these are awful looking, and also need testing. Could use helper method.
+    fn partial_cmp(val: &BTreeMap<K, Semilattice<V, F>>, other: &BTreeMap<K, Semilattice<V, F>>) -> Option<Ordering> {
+        // Ordering::Equal OR Ordering::Greater
+        if val.len() >= other.len() {
+            let mut result = None;
+            for (k, other_val) in other {
+                match val.get(k) {
+                    Some(val_val) => {
+                        let cmp = val_val.reveal_partial_cmp(other_val);
+                        match cmp {
+                            Some(cmp) => {
+                                if result.get_or_insert(cmp) != &cmp {
+                                    return None;
+                                }
+                            },
+                            None => return None,
+                        }
+                    },
+                    None => return None,
+                }
+            }
+            if None == result {
+                return Some(Ordering::Equal);
+            }
+            else {
+                return Some(Ordering::Greater);
+            }
+        }
+        // Ordering::Less
+        else {
+            for (k, val_val) in val {
+                match other.get(k) {
+                    Some(other_val) => {
+                        let cmp = val_val.reveal_partial_cmp(other_val);
+                        if Some(Ordering::Less) != cmp {
+                            return None;
+                        }
+                    },
+                    None => return None,
+                }
+            }
+            return Some(Ordering::Less);
+        }
+    }
+}
 
 pub struct MapIntersectionMerge;
 impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, Semilattice<V, F>>> for MapIntersectionMerge {
