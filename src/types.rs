@@ -24,22 +24,22 @@ pub trait UnaryFunction {
 
 /// Must distribute over merge!!! ("structure preserving")
 pub trait SemilatticeHomomorphism {
-    type CarrierDomain;
-    type CarrierDomainMerge: Merge<Self::CarrierDomain>;
-    type CarrierCodomain;
-    type CarrierCodomainMerge: Merge<Self::CarrierCodomain>;
+    type DomainCarrier;
+    type DomainMerge: Merge<Self::DomainCarrier>;
+    type CodomainCarrier;
+    type CodomainMerge: Merge<Self::CodomainCarrier>;
 
-    fn call(input: Semilattice<Self::CarrierDomain, Self::CarrierDomainMerge>)
-        -> Semilattice<Self::CarrierCodomain, Self::CarrierCodomainMerge>;
+    fn call(input: Semilattice<Self::DomainCarrier, Self::DomainMerge>)
+        -> Semilattice<Self::CodomainCarrier, Self::CodomainMerge>;
 }
 // All `SemilatticeHomomorphism`s are `UnaryFunction`s.
 impl <F: SemilatticeHomomorphism> UnaryFunction for F {
     type Domain = Semilattice<
-        <Self as SemilatticeHomomorphism>::CarrierDomain,
-        <Self as SemilatticeHomomorphism>::CarrierDomainMerge>;
+        <Self as SemilatticeHomomorphism>::DomainCarrier,
+        <Self as SemilatticeHomomorphism>::DomainMerge>;
     type Codomain = Semilattice<
-        <Self as SemilatticeHomomorphism>::CarrierCodomain,
-        <Self as SemilatticeHomomorphism>::CarrierCodomainMerge>;
+        <Self as SemilatticeHomomorphism>::CodomainCarrier,
+        <Self as SemilatticeHomomorphism>::CodomainMerge>;
 
     fn call(input: Self::Domain) -> Self::Codomain {
         F::call(input)
@@ -62,18 +62,18 @@ where
     <F as UnaryFunction>::Domain:   Eq + Hash,
     <F as UnaryFunction>::Codomain: Eq + Hash,
 {
-    type CarrierDomain = HashSet<F::Domain>;
-    type CarrierDomainMerge = UnionMerge;
-    type CarrierCodomain = HashSet<F::Codomain>;
-    type CarrierCodomainMerge = UnionMerge;
+    type DomainCarrier = HashSet<F::Domain>;
+    type DomainMerge = UnionMerge;
+    type CodomainCarrier = HashSet<F::Codomain>;
+    type CodomainMerge = UnionMerge;
 
-    fn call(input: Semilattice<Self::CarrierDomain, Self::CarrierDomainMerge>)
-        -> Semilattice<Self::CarrierCodomain, Self::CarrierCodomainMerge>
+    fn call(input: Semilattice<Self::DomainCarrier, Self::DomainMerge>)
+        -> Semilattice<Self::CodomainCarrier, Self::CodomainMerge>
     {
         input.into_reveal() // REVEAL HERE!
             .into_iter()
             .map(|x| F::call(x))
-            .collect::<Self::CarrierCodomain>()
+            .collect::<Self::CodomainCarrier>()
             .into()
     }
 }
@@ -81,13 +81,13 @@ where
 /// `MergeFoldFunction` is a general fold function via semilattice merge.
 /// A SemilatticeHomomorphism from `Lattice<HashSet<Lattice<I, M>>>` to
 /// `Lattice<I, M>` by folding using the `M` merge function.
-pub struct MergeFoldFunction<CarrierDomain, CarrierDomainMerge>
+pub struct MergeFoldFunction<DomainCarrier, DomainMerge>
 where
-    CarrierDomain: Default, // Needs a bound. (TODO)
-    CarrierDomainMerge: Merge<CarrierDomain>,
-    Semilattice<CarrierDomain, CarrierDomainMerge>: Hash + Eq,
+    DomainCarrier: Default, // Needs a bound. (TODO)
+    DomainMerge: Merge<DomainCarrier>,
+    Semilattice<DomainCarrier, DomainMerge>: Hash + Eq,
 {
-    _phantom: std::marker::PhantomData<( CarrierDomain, CarrierDomainMerge )>,
+    _phantom: std::marker::PhantomData<( DomainCarrier, DomainMerge )>,
 }
 impl <CD, CDM> SemilatticeHomomorphism for MergeFoldFunction<CD, CDM>
 where
@@ -95,13 +95,13 @@ where
     CDM: Merge<CD>,
     Semilattice<CD, CDM>: Hash + Eq,
 {
-    type CarrierDomain = HashSet<Semilattice<CD, CDM>>;
-    type CarrierDomainMerge = UnionMerge;
-    type CarrierCodomain = CD;
-    type CarrierCodomainMerge = CDM;
+    type DomainCarrier = HashSet<Semilattice<CD, CDM>>;
+    type DomainMerge = UnionMerge;
+    type CodomainCarrier = CD;
+    type CodomainMerge = CDM;
 
-    fn call(input: Semilattice<Self::CarrierDomain, Self::CarrierDomainMerge>)
-        -> Semilattice<Self::CarrierCodomain, Self::CarrierCodomainMerge>
+    fn call(input: Semilattice<Self::DomainCarrier, Self::DomainMerge>)
+        -> Semilattice<Self::CodomainCarrier, Self::CodomainMerge>
     {
         input.into_reveal() // REVEAL HERE!
             .into_iter()
