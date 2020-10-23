@@ -5,7 +5,7 @@ use std::iter::Extend;
 
 use std::cmp::Ordering;
 
-use crate::lattice::Lattice;
+use crate::lattice::Semilattice;
 
 /// Merge trait.
 pub trait Merge<T> {
@@ -197,8 +197,8 @@ impl <T: Eq + Ord> Merge<BTreeSet<T>> for IntersectMerge {
 // MAP MERGES //
 
 pub struct MapUnionMerge;
-impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, Lattice<V, F>>> for MapUnionMerge {
-    fn merge(val: &mut HashMap<K, Lattice<V, F>>, other: HashMap<K, Lattice<V, F>>) {
+impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, Semilattice<V, F>>> for MapUnionMerge {
+    fn merge(val: &mut HashMap<K, Semilattice<V, F>>, other: HashMap<K, Semilattice<V, F>>) {
         for (k, v) in other {
             match val.entry(k) {
                 Entry::Occupied(mut kv) => {
@@ -212,7 +212,7 @@ impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, Lattice<V, F>>> for MapUnio
     }
 
     // TODO: these are awful looking, and also need testing. Could use helper method.
-    fn partial_cmp(val: &HashMap<K, Lattice<V, F>>, other: &HashMap<K, Lattice<V, F>>) -> Option<Ordering> {
+    fn partial_cmp(val: &HashMap<K, Semilattice<V, F>>, other: &HashMap<K, Semilattice<V, F>>) -> Option<Ordering> {
         // Ordering::Equal OR Ordering::Greater
         if val.len() >= other.len() {
             let mut result = None;
@@ -256,8 +256,8 @@ impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, Lattice<V, F>>> for MapUnio
         }
     }
 }
-// impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, Lattice<V, F>>, ( K, Lattice<V, F> )> for MapUnionMerge {
-//     fn merge(val: &mut HashMap<K, Lattice<V, F>>, other: ( K, Lattice<V, F> )) {
+// impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, Semilattice<V, F>>, ( K, Semilattice<V, F> )> for MapUnionMerge {
+//     fn merge(val: &mut HashMap<K, Semilattice<V, F>>, other: ( K, Semilattice<V, F> )) {
 //         let (k, v) = other;
 //         match val.entry(k) {
 //             Entry::Occupied(mut kv) => {
@@ -269,7 +269,7 @@ impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, Lattice<V, F>>> for MapUnio
 //         }
 //     }
 
-//     fn partial_cmp(val: &HashMap<K, Lattice<V, F>>, other: &( K, Lattice<V, F> )) -> Option<Ordering> {
+//     fn partial_cmp(val: &HashMap<K, Semilattice<V, F>>, other: &( K, Semilattice<V, F> )) -> Option<Ordering> {
 //         let &(ref k, ref other_val) = other;
 //         if val.is_empty() {
 //             // LHS is empty set, empty is less than singleton.
@@ -296,14 +296,14 @@ impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, Lattice<V, F>>> for MapUnio
 // }
 
 pub struct MapIntersectionMerge;
-impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, Lattice<V, F>>> for MapIntersectionMerge {
-    fn merge(val: &mut HashMap<K, Lattice<V, F>>, other: HashMap<K, Lattice<V, F>>) {
+impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, Semilattice<V, F>>> for MapIntersectionMerge {
+    fn merge(val: &mut HashMap<K, Semilattice<V, F>>, other: HashMap<K, Semilattice<V, F>>) {
         for (k, v) in other {
             val.entry(k).and_modify(|v0| v0.merge_in(v.into_reveal()));
         }
     }
 
-    fn partial_cmp(val: &HashMap<K, Lattice<V, F>>, other: &HashMap<K, Lattice<V, F>>) -> Option<Ordering> {
+    fn partial_cmp(val: &HashMap<K, Semilattice<V, F>>, other: &HashMap<K, Semilattice<V, F>>) -> Option<Ordering> {
         // Ordering::Equal OR Ordering::Greater
         if val.len() >= other.len() {
             let mut result = None;
@@ -349,8 +349,8 @@ impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, Lattice<V, F>>> for MapInte
 }
 
 pub struct DominatingPairMerge;
-impl <A, B, AF: Merge<A>, BF: Merge<B>> Merge<(Lattice<A, AF>, Lattice<B, BF>)> for DominatingPairMerge {
-    fn merge(val: &mut (Lattice<A, AF>, Lattice<B, BF>), other: (Lattice<A, AF>, Lattice<B, BF>)) {
+impl <A, B, AF: Merge<A>, BF: Merge<B>> Merge<(Semilattice<A, AF>, Semilattice<B, BF>)> for DominatingPairMerge {
+    fn merge(val: &mut (Semilattice<A, AF>, Semilattice<B, BF>), other: (Semilattice<A, AF>, Semilattice<B, BF>)) {
         let cmp = val.0.reveal_partial_cmp(&other.0);
         match cmp {
             None => {
@@ -367,7 +367,7 @@ impl <A, B, AF: Merge<A>, BF: Merge<B>> Merge<(Lattice<A, AF>, Lattice<B, BF>)> 
         };
     }
 
-    fn partial_cmp(val: &(Lattice<A, AF>, Lattice<B, BF>), other: &(Lattice<A, AF>, Lattice<B, BF>)) -> Option<Ordering> {
+    fn partial_cmp(val: &(Semilattice<A, AF>, Semilattice<B, BF>), other: &(Semilattice<A, AF>, Semilattice<B, BF>)) -> Option<Ordering> {
         val.0.reveal_partial_cmp(&other.0).or_else(|| val.1.reveal_partial_cmp(&other.1))
     }
 }

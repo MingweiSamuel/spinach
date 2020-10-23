@@ -1,36 +1,134 @@
+//! 1. A UnaryFunction is a function from a domain to a codomain.
+//!    - It should be deterministic (ProcMacro here).
+//! 2. A SemilatticeHomomorphism is a function from a semilattice to a (possibly different) semilattice.
+//!    - It should be a morphism (ProcMacro here).
+//! 3. A MapFunction. Constructor takes in a UnaryFunction and it becomes a SemilatticeHomomorphism.
+//! 4. A MergeFoldFunction. It is a SemilatticeHomomorphism which takes in a HashSet<Lattice<I, M>
+//!    and returns a Lattice<I, M> by folding over the merge function M.
+
 use std::collections::HashSet;
 use std::hash::Hash;
 
-// 1. What are filter and duplicate? From a morphism perspective.
-//     .filter(): Item -> Option<Item> -> THEN FOLD JOIN (flatten).
-//     .duplicate(): Item -> lots of items -> THEN FOLD JOIN.
-//     -> everything is flatten (has a flatten after)
-//     -> Everything is map, or flatten, or map+flatten.
-//
-// The Final Fold: is "flatten"
-//
-// Monotonic, non-mophisms: count on (multi)set.
-//
-// Want an element => (very restricted) filter.
-//         then fold join.
-//         What does the client do with the thing.
-//         -> Depends on what kind of lattice it is :)
-//         -> In general can only safely check membership and
-//
-// Lvars read without Top lets us preserve monotonicity. But not determinism.
+use crate::lattice::Semilattice;
+use crate::merge::{ Merge, UnionMerge };
 
-pub trait Set<T> {
+/// Must be deterministic!!!
+pub trait UnaryFunction {
+    type Domain;
+    type Codomain;
 
+    fn call(input: Self::Domain) -> Self::Codomain;
 }
 
+/// Must distribute over merge!!! ("structure preserving")
+pub trait SemilatticeHomomorphism {
+    type CarrierDomain;
+    type CarrierDomainMerge: Merge<Self::CarrierDomain>;
+    type CarrierCodomain;
+    type CarrierCodomainMerge: Merge<Self::CarrierCodomain>;
 
-pub struct SingletonSet<T>(T);
+    fn call(input: Semilattice<Self::CarrierDomain, Self::CarrierDomainMerge>)
+        -> Semilattice<Self::CarrierCodomain, Self::CarrierCodomainMerge>;
+}
+// All `SemilatticeHomomorphism`s are `UnaryFunction`s.
+impl <F: SemilatticeHomomorphism> UnaryFunction for F {
+    type Domain = Semilattice<
+        <Self as SemilatticeHomomorphism>::CarrierDomain,
+        <Self as SemilatticeHomomorphism>::CarrierDomainMerge>;
+    type Codomain = Semilattice<
+        <Self as SemilatticeHomomorphism>::CarrierCodomain,
+        <Self as SemilatticeHomomorphism>::CarrierCodomainMerge>;
 
-impl <T> From<T> for SingletonSet<T> {
-    fn from(val: T) -> Self {
-        SingletonSet(val)
+    fn call(input: Self::Domain) -> Self::Codomain {
+        F::call(input)
     }
 }
+
+pub struct MapFunction<F: UnaryFunction> {
+    _phantom: std::marker::PhantomData<F>,
+}
+impl <F: UnaryFunction> MapFunction<F> {
+    pub fn new() -> Self {
+        Self {
+            _phantom: std::marker::PhantomData,
+        }
+    }
+}
+impl <F: UnaryFunction> SemilatticeHomomorphism for MapFunction<F>
+where
+    <F as UnaryFunction>::Domain:   Eq + Hash,
+    <F as UnaryFunction>::Codomain: Eq + Hash,
+{
+    type CarrierDomain = HashSet<F::Domain>;
+    type CarrierDomainMerge = UnionMerge;
+    type CarrierCodomain = HashSet<F::Codomain>;
+    type CarrierCodomainMerge = UnionMerge;
+
+    fn call(input: Semilattice<Self::CarrierDomain, Self::CarrierDomainMerge>)
+        -> Semilattice<Self::CarrierCodomain, Self::CarrierCodomainMerge>
+    {
+        input.into_reveal() // REVEAL HERE!
+            .into_iter()
+            .map(|x| F::call(x))
+            .collect::<Self::CarrierCodomain>()
+            .into()
+    }
+}
+
+pub struct MergeFoldFunction<CarrierDomain, CarrierDomainMerge>
+where
+    CarrierDomain: Default, // Needs a bound. (TODO)
+    CarrierDomainMerge: Merge<CarrierDomain>,
+    Semilattice<CarrierDomain, CarrierDomainMerge>: Hash + Eq,
+{
+    _phantom: std::marker::PhantomData<( CarrierDomain, CarrierDomainMerge )>,
+}
+impl <CD, CDM> SemilatticeHomomorphism for MergeFoldFunction<CD, CDM>
+where
+    CD: Default,
+    CDM: Merge<CD>,
+    Semilattice<CD, CDM>: Hash + Eq,
+{
+    type CarrierDomain = HashSet<Semilattice<CD, CDM>>;
+    type CarrierDomainMerge = UnionMerge;
+    type CarrierCodomain = CD;
+    type CarrierCodomainMerge = CDM;
+
+    fn call(input: Semilattice<Self::CarrierDomain, Self::CarrierDomainMerge>)
+        -> Semilattice<Self::CarrierCodomain, Self::CarrierCodomainMerge>
+    {
+        input.into_reveal() // REVEAL HERE!
+            .into_iter()
+            .fold(CD::default(), |mut acc, x| {
+                CDM::merge(&mut acc, x.into_reveal()); // REVEAL HERE!
+                acc
+            })
+            .into()
+    }
+}
+
+
+// TODO: use https://crates.io/crates/derivative
+
+
+// Lattice -
+// Morphism
+//
+
+
+
+// pub trait Set<T> {
+
+// }
+
+
+// pub struct SingletonSet<T>(T);
+
+// impl <T> From<T> for SingletonSet<T> {
+//     fn from(val: T) -> Self {
+//         SingletonSet(val)
+//     }
+// }
 
 
 // #[test]
@@ -46,13 +144,13 @@ impl <T> From<T> for SingletonSet<T> {
 // }
 
 
-// Morpism is a trait with an input and output.
-pub trait Morphism {
-    type Input;
-    type Output;
+// // Morpism is a trait with an input and output.
+// pub trait Morphism {
+//     type Input;
+//     type Output;
 
-    fn transduce(&self, input: Self::Input) -> Self::Output;
-}
+//     fn transduce(&self, input: Self::Input) -> Self::Output;
+// }
 
 
 
