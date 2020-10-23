@@ -2,9 +2,11 @@
 //!    - It should be deterministic (ProcMacro here).
 //! 2. A SemilatticeHomomorphism is a function from a semilattice to a (possibly different) semilattice.
 //!    - It should be a morphism (ProcMacro here).
-//! 3. A MapFunction. Constructor takes in a UnaryFunction and it becomes a SemilatticeHomomorphism.
-//! 4. A MergeFoldFunction. It is a SemilatticeHomomorphism which takes in a HashSet<Lattice<I, M>
-//!    and returns a Lattice<I, M> by folding over the merge function M.
+//! 3. A MapFunction. It is a SemilatticeHomomorphism from Lattice<HashSet<T>, UnionMerge> to Lattice<HashSet<U>, UnionMerge>.
+//!    Constructor takes in a UnaryFunction and turns it into a MapFunction which is a SemilatticeHomomorphism.
+//! 4. A MergeFoldFunction. It is a SemilatticeHomomorphism which takes in a Lattice<HashSet<Lattice<T, M>>, UnionMerge> and returns
+//!    and returns a single Lattice<T, M> by folding over the merge function M.
+//!    There is no constructor.
 
 use std::collections::HashSet;
 use std::hash::Hash;
@@ -44,6 +46,7 @@ impl <F: SemilatticeHomomorphism> UnaryFunction for F {
     }
 }
 
+/// Takes in a `UnaryFunction` and gives back a MapFunction which is a `SemilatticeHomomorphism`.
 pub struct MapFunction<F: UnaryFunction> {
     _phantom: std::marker::PhantomData<F>,
 }
@@ -75,6 +78,9 @@ where
     }
 }
 
+/// `MergeFoldFunction` is a general fold function via semilattice merge.
+/// A SemilatticeHomomorphism from `Lattice<HashSet<Lattice<I, M>>>` to
+/// `Lattice<I, M>` by folding using the `M` merge function.
 pub struct MergeFoldFunction<CarrierDomain, CarrierDomainMerge>
 where
     CarrierDomain: Default, // Needs a bound. (TODO)
