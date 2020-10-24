@@ -8,15 +8,10 @@ use crate::merge::Merge;
 // LATTICE STRUCT //
 
 #[derive(Derivative)]
-#[derivative(Default, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derivative(Default)]
+// #[derivative(Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct Semilattice<T, F: Merge<T>> {
     val: T,
-
-    // #[derivative(Debug="ignore")]
-    // #[derivative(PartialEq="ignore")]
-    // #[derivative(PartialOrd="ignore")]
-    // #[derivative(Ord="ignore")]
-    // #[derivative(Hash="ignore")]
     _phantom: std::marker::PhantomData<F>,
 }
 
@@ -30,15 +25,6 @@ impl <T, F: Merge<T>> Semilattice<T, F> {
 
     pub fn merge_in(&mut self, val: T) {
         F::merge(&mut self.val, val);
-    }
-
-    pub fn reveal_partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        F::partial_cmp(&self.val, &other.val)
-    }
-
-    // DANGER: Reveals a shared reference to this lattice value.
-    pub fn reveal(&self) -> &T {
-        &self.val
     }
 
     // DANGER: Consumes this lattice, revealing it's value.

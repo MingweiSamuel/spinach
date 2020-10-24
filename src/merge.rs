@@ -6,8 +6,6 @@ use std::iter::Extend;
 
 use std::cmp::Ordering;
 
-use crate::lattice::Semilattice;
-
 /// Merge trait.
 pub trait Merge<T> {
     // A "static" method.
@@ -197,13 +195,18 @@ impl <T: Eq + Ord> Merge<BTreeSet<T>> for IntersectMerge {
 
 // MAP MERGES //
 
-pub struct MapUnionMerge;
-impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, Semilattice<V, F>>> for MapUnionMerge {
-    fn merge(val: &mut HashMap<K, Semilattice<V, F>>, other: HashMap<K, Semilattice<V, F>>) {
+pub struct MapUnionMerge<V, F>
+where
+    F: Merge<V>,
+{
+    _phantom: std::marker::PhantomData<(V, F)>,
+}
+impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, V>> for MapUnionMerge<V, F> {
+    fn merge(val: &mut HashMap<K, V>, other: HashMap<K, V>) {
         for (k, v) in other {
             match val.entry(k) {
                 hash_map::Entry::Occupied(mut kv) => {
-                    kv.get_mut().merge_in(v.into_reveal());
+                    F::merge(kv.get_mut(), v);
                 },
                 hash_map::Entry::Vacant(kv) => {
                     kv.insert(v);
@@ -213,14 +216,14 @@ impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, Semilattice<V, F>>> for Map
     }
 
     // TODO: these are awful looking, and also need testing. Could use helper method.
-    fn partial_cmp(val: &HashMap<K, Semilattice<V, F>>, other: &HashMap<K, Semilattice<V, F>>) -> Option<Ordering> {
+    fn partial_cmp(val: &HashMap<K, V>, other: &HashMap<K, V>) -> Option<Ordering> {
         // Ordering::Equal OR Ordering::Greater
         if val.len() >= other.len() {
             let mut result = None;
             for (k, other_val) in other {
                 match val.get(k) {
                     Some(val_val) => {
-                        let cmp = val_val.reveal_partial_cmp(other_val);
+                        let cmp = F::partial_cmp(val_val, other_val);
                         match cmp {
                             Some(cmp) => {
                                 if result.get_or_insert(cmp) != &cmp {
@@ -245,7 +248,7 @@ impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, Semilattice<V, F>>> for Map
             for (k, val_val) in val {
                 match other.get(k) {
                     Some(other_val) => {
-                        let cmp = val_val.reveal_partial_cmp(other_val);
+                        let cmp = F::partial_cmp(val_val, other_val);
                         if Some(Ordering::Less) != cmp {
                             return None;
                         }
@@ -258,12 +261,12 @@ impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, Semilattice<V, F>>> for Map
     }
 }
 
-impl <K: Eq + Ord, V, F: Merge<V>> Merge<BTreeMap<K, Semilattice<V, F>>> for MapUnionMerge {
-    fn merge(val: &mut BTreeMap<K, Semilattice<V, F>>, other: BTreeMap<K, Semilattice<V, F>>) {
+impl <K: Eq + Ord, V, F: Merge<V>> Merge<BTreeMap<K, V>> for MapUnionMerge<V, F> {
+    fn merge(val: &mut BTreeMap<K, V>, other: BTreeMap<K, V>) {
         for (k, v) in other {
             match val.entry(k) {
                 btree_map::Entry::Occupied(mut kv) => {
-                    kv.get_mut().merge_in(v.into_reveal());
+                    F::merge(kv.get_mut(), v);
                 },
                 btree_map::Entry::Vacant(kv) => {
                     kv.insert(v);
@@ -273,14 +276,14 @@ impl <K: Eq + Ord, V, F: Merge<V>> Merge<BTreeMap<K, Semilattice<V, F>>> for Map
     }
 
     // TODO: these are awful looking, and also need testing. Could use helper method.
-    fn partial_cmp(val: &BTreeMap<K, Semilattice<V, F>>, other: &BTreeMap<K, Semilattice<V, F>>) -> Option<Ordering> {
+    fn partial_cmp(val: &BTreeMap<K, V>, other: &BTreeMap<K, V>) -> Option<Ordering> {
         // Ordering::Equal OR Ordering::Greater
         if val.len() >= other.len() {
             let mut result = None;
             for (k, other_val) in other {
                 match val.get(k) {
                     Some(val_val) => {
-                        let cmp = val_val.reveal_partial_cmp(other_val);
+                        let cmp = F::partial_cmp(val_val, other_val);
                         match cmp {
                             Some(cmp) => {
                                 if result.get_or_insert(cmp) != &cmp {
@@ -305,7 +308,7 @@ impl <K: Eq + Ord, V, F: Merge<V>> Merge<BTreeMap<K, Semilattice<V, F>>> for Map
             for (k, val_val) in val {
                 match other.get(k) {
                     Some(other_val) => {
-                        let cmp = val_val.reveal_partial_cmp(other_val);
+                        let cmp = F::partial_cmp(val_val, other_val);
                         if Some(Ordering::Less) != cmp {
                             return None;
                         }
@@ -318,22 +321,27 @@ impl <K: Eq + Ord, V, F: Merge<V>> Merge<BTreeMap<K, Semilattice<V, F>>> for Map
     }
 }
 
-pub struct MapIntersectionMerge;
-impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, Semilattice<V, F>>> for MapIntersectionMerge {
-    fn merge(val: &mut HashMap<K, Semilattice<V, F>>, other: HashMap<K, Semilattice<V, F>>) {
+pub struct MapIntersectionMerge<V, F>
+where
+    F: Merge<V>,
+{
+    _phantom: std::marker::PhantomData<(V, F)>,
+}
+impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, V>> for MapIntersectionMerge<V, F> {
+    fn merge(val: &mut HashMap<K, V>, other: HashMap<K, V>) {
         for (k, v) in other {
-            val.entry(k).and_modify(|v0| v0.merge_in(v.into_reveal()));
+            val.entry(k).and_modify(|v0| F::merge(v0, v));
         }
     }
 
-    fn partial_cmp(val: &HashMap<K, Semilattice<V, F>>, other: &HashMap<K, Semilattice<V, F>>) -> Option<Ordering> {
+    fn partial_cmp(val: &HashMap<K, V>, other: &HashMap<K, V>) -> Option<Ordering> {
         // Ordering::Equal OR Ordering::Greater
         if val.len() >= other.len() {
             let mut result = None;
             for (k, other_val) in other {
                 match val.get(k) {
                     Some(val_val) => {
-                        let cmp = val_val.reveal_partial_cmp(other_val);
+                        let cmp = F::partial_cmp(&val_val, other_val);
                         match cmp {
                             Some(cmp) => {
                                 if result.get_or_insert(cmp) != &cmp {
@@ -358,7 +366,7 @@ impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, Semilattice<V, F>>> for Map
             for (k, val_val) in val {
                 match other.get(k) {
                     Some(other_val) => {
-                        let cmp = val_val.reveal_partial_cmp(other_val);
+                        let cmp = F::partial_cmp(&val_val, other_val);
                         if Some(Ordering::Less) != cmp {
                             return None;
                         }
@@ -371,26 +379,26 @@ impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, Semilattice<V, F>>> for Map
     }
 }
 
-pub struct DominatingPairMerge;
-impl <A, B, AF: Merge<A>, BF: Merge<B>> Merge<(Semilattice<A, AF>, Semilattice<B, BF>)> for DominatingPairMerge {
-    fn merge(val: &mut (Semilattice<A, AF>, Semilattice<B, BF>), other: (Semilattice<A, AF>, Semilattice<B, BF>)) {
-        let cmp = val.0.reveal_partial_cmp(&other.0);
-        match cmp {
-            None => {
-                val.0.merge_in(other.0.into_reveal());
-                val.1.merge_in(other.1.into_reveal());
-            }
-            Some(Ordering::Equal) => {
-                val.1.merge_in(other.1.into_reveal());
-            }
-            Some(Ordering::Greater) => {},
-            Some(Ordering::Less) => {
-                *val = other;
-            },
-        };
-    }
+// pub struct DominatingPairMerge;
+// impl <A, B, AF: Merge<A>, BF: Merge<B>> Merge<(Semilattice<A, AF>, Semilattice<B, BF>)> for DominatingPairMerge {
+//     fn merge(val: &mut (Semilattice<A, AF>, Semilattice<B, BF>), other: (Semilattice<A, AF>, Semilattice<B, BF>)) {
+//         let cmp = val.0.reveal_partial_cmp(&other.0);
+//         match cmp {
+//             None => {
+//                 val.0.merge_in(other.0.into_reveal());
+//                 val.1.merge_in(other.1.into_reveal());
+//             }
+//             Some(Ordering::Equal) => {
+//                 val.1.merge_in(other.1.into_reveal());
+//             }
+//             Some(Ordering::Greater) => {},
+//             Some(Ordering::Less) => {
+//                 *val = other;
+//             },
+//         };
+//     }
 
-    fn partial_cmp(val: &(Semilattice<A, AF>, Semilattice<B, BF>), other: &(Semilattice<A, AF>, Semilattice<B, BF>)) -> Option<Ordering> {
-        val.0.reveal_partial_cmp(&other.0).or_else(|| val.1.reveal_partial_cmp(&other.1))
-    }
-}
+//     fn partial_cmp(val: &(Semilattice<A, AF>, Semilattice<B, BF>), other: &(Semilattice<A, AF>, Semilattice<B, BF>)) -> Option<Ordering> {
+//         val.0.reveal_partial_cmp(&other.0).or_else(|| val.1.reveal_partial_cmp(&other.1))
+//     }
+// }
