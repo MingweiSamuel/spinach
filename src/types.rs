@@ -4,8 +4,8 @@
 //!    - It should be a morphism (ProcMacro here).
 //! 3. A MapFunction. It is a SemilatticeHomomorphism from Lattice<BTreeSet<T>, UnionMerge> to Lattice<BTreeSet<U>, UnionMerge>.
 //!    Constructor takes in a UnaryFunction and turns it into a MapFunction which is a SemilatticeHomomorphism.
-//! 4. A MergeFoldFunction. It is a SemilatticeHomomorphism which takes in a Lattice<BTreeSet<Lattice<T, M>>, UnionMerge> and returns
-//!    and returns a single Lattice<T, M> by folding over the merge function M.
+//! 4. A MergeFoldFunction. It is a SemilatticeHomomorphism which takes in a Lattice<BTreeSet<T>, UnionMerge> and a M: Merge<T>
+//!    and returns a single Lattice<T, M> by folding over M.
 //!    There is no constructor.
 
 use std::collections::{ BTreeSet };
