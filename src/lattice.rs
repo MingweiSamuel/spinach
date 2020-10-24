@@ -1,5 +1,3 @@
-use std::cmp::Ordering;
-
 use derivative::Derivative;
 
 use crate::merge::Merge;

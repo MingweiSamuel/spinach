@@ -379,26 +379,37 @@ impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, V>> for MapIntersectionMerg
     }
 }
 
-// pub struct DominatingPairMerge;
-// impl <A, B, AF: Merge<A>, BF: Merge<B>> Merge<(Semilattice<A, AF>, Semilattice<B, BF>)> for DominatingPairMerge {
-//     fn merge(val: &mut (Semilattice<A, AF>, Semilattice<B, BF>), other: (Semilattice<A, AF>, Semilattice<B, BF>)) {
-//         let cmp = val.0.reveal_partial_cmp(&other.0);
-//         match cmp {
-//             None => {
-//                 val.0.merge_in(other.0.into_reveal());
-//                 val.1.merge_in(other.1.into_reveal());
-//             }
-//             Some(Ordering::Equal) => {
-//                 val.1.merge_in(other.1.into_reveal());
-//             }
-//             Some(Ordering::Greater) => {},
-//             Some(Ordering::Less) => {
-//                 *val = other;
-//             },
-//         };
-//     }
+pub struct DominatingPairMerge<A, AF, B, BF>
+where
+    AF: Merge<A>,
+    BF: Merge<B>,
+{
+    _phantom: std::marker::PhantomData<(A, AF, B, BF)>,
+}
 
-//     fn partial_cmp(val: &(Semilattice<A, AF>, Semilattice<B, BF>), other: &(Semilattice<A, AF>, Semilattice<B, BF>)) -> Option<Ordering> {
-//         val.0.reveal_partial_cmp(&other.0).or_else(|| val.1.reveal_partial_cmp(&other.1))
-//     }
-// }
+impl <A, AF, B, BF> Merge<(A, B)> for DominatingPairMerge<A, AF, B, BF>
+where
+    AF: Merge<A>,
+    BF: Merge<B>,
+{
+    fn merge(val: &mut (A, B), other: (A, B)) {
+        let cmp = AF::partial_cmp(&val.0, &other.0);
+        match cmp {
+            None => {
+                AF::merge(&mut val.0, other.0);
+                BF::merge(&mut val.1, other.1);
+            },
+            Some(Ordering::Equal) => {
+                BF::merge(&mut val.1, other.1);
+            },
+            Some(Ordering::Less) => {
+                *val = other;
+            },
+            Some(Ordering::Greater) => {},
+        }
+    }
+
+    fn partial_cmp(val: &(A, B), other: &(A, B)) -> Option<Ordering> {
+        AF::partial_cmp(&val.0, &other.0).or_else(|| BF::partial_cmp(&val.1, &other.1))
+    }
+}
