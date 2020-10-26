@@ -25,13 +25,10 @@ pub trait UnaryFunction {
 /// Must distribute over merge!!! ("structure preserving")
 /// And see above!
 pub trait SemilatticeHomomorphism {
-    type DomainCarrier;
-    type DomainMerge: Merge<Self::DomainCarrier>;
-    type CodomainCarrier;
-    type CodomainMerge: Merge<Self::CodomainCarrier>;
+    type DomainMerge: Merge;
+    type CodomainMerge: Merge;
 
-    fn call(input: Semilattice<Self::DomainCarrier, Self::DomainMerge>)
-        -> Semilattice<Self::CodomainCarrier, Self::CodomainMerge>;
+    fn call(input: Semilattice<Self::DomainMerge>) -> Semilattice<Self::CodomainMerge>;
 }
 // // All `SemilatticeHomomorphism`s are `UnaryFunction`s.
 // impl <F: SemilatticeHomomorphism> UnaryFunction for F {
@@ -63,52 +60,47 @@ where
     <F as UnaryFunction>::Domain:   Eq + Ord,
     <F as UnaryFunction>::Codomain: Eq + Ord,
 {
-    type DomainCarrier = BTreeSet<F::Domain>;
-    type DomainMerge = UnionMerge;
-    type CodomainCarrier = BTreeSet<F::Codomain>;
-    type CodomainMerge = UnionMerge;
+    type DomainMerge   = UnionMerge<BTreeSet<<F as UnaryFunction>::Domain>>;
+    type CodomainMerge = UnionMerge<BTreeSet<<F as UnaryFunction>::Codomain>>;
 
-    fn call(input: Semilattice<Self::DomainCarrier, Self::DomainMerge>)
-        -> Semilattice<Self::CodomainCarrier, Self::CodomainMerge>
+    fn call(input: Semilattice<Self::DomainMerge>) -> Semilattice<Self::CodomainMerge>
     {
-        input.into_reveal() // REVEAL HERE!
+        let val = input.into_reveal() // REVEAL HERE!
             .into_iter()
             .map(|x| F::call(x))
-            .collect::<Self::CodomainCarrier>()
-            .into()
+            .collect::<BTreeSet<<F as UnaryFunction>::Codomain>>();
+        Semilattice::new(val)
     }
 }
 
 /// `MergeFoldFunction` is a general fold function via semilattice merge.
 /// A SemilatticeHomomorphism from `Lattice<BTreeSet<Lattice<I, M>>>` to
 /// `Lattice<I, M>` by folding using the `M` merge function.
-pub struct MergeFoldFunction<DomainCarrier, DomainMerge>
+pub struct MergeFoldFunction<DomainMerge>
 where
-    DomainCarrier: Default, // Needs a bound. (TODO)
-    DomainMerge: Merge<DomainCarrier>,
+    DomainMerge: Merge,
+    <DomainMerge as Merge>::Domain: Default, // Needs a bound. (TODO)
 {
-    _phantom: std::marker::PhantomData<( DomainCarrier, DomainMerge )>,
+    _phantom: std::marker::PhantomData<DomainMerge>,
 }
-impl <DC, DM> SemilatticeHomomorphism for MergeFoldFunction<DC, DM>
+
+impl <DM> SemilatticeHomomorphism for MergeFoldFunction<DM>
 where
-    DC: Default + Ord + Eq,
-    DM: Merge<DC>,
+    DM: Merge,
+    <DM as Merge>::Domain: Default + Ord + Eq,
 {
-    type DomainCarrier = BTreeSet<DC>;
-    type DomainMerge = UnionMerge;
-    type CodomainCarrier = DC;
+    type DomainMerge = UnionMerge<BTreeSet<<DM as Merge>::Domain>>;
     type CodomainMerge = DM;
 
-    fn call(input: Semilattice<Self::DomainCarrier, Self::DomainMerge>)
-        -> Semilattice<Self::CodomainCarrier, Self::CodomainMerge>
+    fn call(input: Semilattice<Self::DomainMerge>) -> Semilattice<Self::CodomainMerge>
     {
-        input.into_reveal() // REVEAL HERE!
+        let val = input.into_reveal() // REVEAL HERE!
             .into_iter()
-            .fold(DC::default(), |mut acc, x| {
+            .fold(<DM as Merge>::Domain::default(), |mut acc, x| {
                 DM::merge(&mut acc, x);
                 acc
-            })
-            .into()
+            });
+        Semilattice::new(val)
     }
 }
 
@@ -138,19 +130,18 @@ mod test {
             }
         }
 
-        let x0: Semilattice<BTreeSet<FirstLastName>, UnionMerge> = vec![
+        let x0: Semilattice<UnionMerge<BTreeSet<FirstLastName>>> = Semilattice::new(vec![
             ( "Joseph", "Hellerstein" ),
             ( "Matthew", "Milano" ),
             ( "Mingwei", "Samuel" ),
             ( "Pranav", "Gaddamadugu" ),
-        ].into_iter().collect::<BTreeSet<_>>().into();
+        ].into_iter().collect::<BTreeSet<_>>());
 
         let x1: Semilattice<
-            BTreeSet<BTreeSet<FirstLastName>>,
-            UnionMerge
+            UnionMerge<BTreeSet<BTreeSet<FirstLastName>>>,
         > = MapFunction::<SelectMNames>::call(x0);
 
-        let x2: Semilattice<BTreeSet<FirstLastName>, UnionMerge> =
+        let x2: Semilattice<UnionMerge<BTreeSet<FirstLastName>>> =
             MergeFoldFunction::call(x1);
 
         assert_eq!(
@@ -173,14 +164,14 @@ mod test {
             }
         }
 
-        let x0: Semilattice<BTreeSet<FirstLastName>, UnionMerge> = vec![
+        let x0: Semilattice<UnionMerge<BTreeSet<FirstLastName>>> = Semilattice::new(vec![
             ( "Joseph", "Hellerstein" ),
             ( "Matthew", "Milano" ),
             ( "Mingwei", "Samuel" ),
             ( "Pranav", "Gaddamadugu" ),
-        ].into_iter().collect::<BTreeSet<_>>().into();
+        ].into_iter().collect::<BTreeSet<_>>().into());
 
-        let x1: Semilattice<BTreeSet<&'static str>, UnionMerge> =
+        let x1: Semilattice<UnionMerge<BTreeSet<&'static str>>> =
             MapFunction::<ProjectFirst>::call(x0);
 
         assert_eq!(
@@ -210,18 +201,18 @@ mod test {
             }
         }
 
-        let x0: Semilattice<BTreeSet<FirstLastName>, UnionMerge> = vec![
+        let x0: Semilattice<UnionMerge<BTreeSet<FirstLastName>>> = Semilattice::new(vec![
             ( "Joseph", "Hellerstein" ),
             ( "Matthew", "Milano" ),
             ( "Mingwei", "Samuel" ),
             ( "Pranav", "Gaddamadugu" ),
-        ].into_iter().collect::<BTreeSet<_>>().into();
+        ].into_iter().collect::<BTreeSet<_>>());
 
         let x1 = MapFunction::<GroupByNameLength>::call(x0);
 
         let x2: Semilattice<
-            BTreeMap<usize, BTreeSet<FirstLastName>>,
-            MapUnionMerge<_, UnionMerge>> = MergeFoldFunction::call(x1);
+            MapUnionMerge<BTreeMap<usize, UnionMerge<BTreeSet<FirstLastName>>>>
+        > = MergeFoldFunction::call(x1);
 
         println!("{:#?}", x2.into_reveal());
         // {
@@ -247,4 +238,42 @@ mod test {
         //     },
         // }
     }
+
+    // #[test]
+    // fn test_projectdict() {
+    //     struct GroupByNameLength;
+    //     impl UnaryFunction for GroupByNameLength {
+    //         type Domain = FirstLastName;
+    //         type Codomain = BTreeMap<usize, BTreeSet<FirstLastName>>;
+
+    //         fn call(input: Self::Domain) -> Self::Codomain {
+    //             let mut set = BTreeSet::new();
+    //             set.insert(input);
+
+    //             let mut out = BTreeMap::new();
+    //             out.insert(input.0.len(), set);
+    //             out
+    //         }
+    //     }
+
+    //     let x0: Semilattice<BTreeSet<FirstLastName>, UnionMerge> = vec![
+    //         ( "Joseph", "Hellerstein" ),
+    //         ( "Matthew", "Milano" ),
+    //         ( "Mingwei", "Samuel" ),
+    //         ( "Pranav", "Gaddamadugu" ),
+    //     ].into_iter().collect::<BTreeSet<_>>().into();
+
+    //     let x1 = MapFunction::<GroupByNameLength>::call(x0);
+
+    //     let x2: Semilattice<
+    //         BTreeMap<usize, BTreeSet<FirstLastName>>,
+    //         MapUnionMerge<_, UnionMerge>> = MergeFoldFunction::call(x1);
+
+    //     let dict = x2.into_reveal();
+    //     println!("{:#?}", dict);
+
+    //     let x3: Semilattice<
+    //         BTreeMap<usize, BTreeSet<FirstLastName>>,
+    //         MapUnionMerge<_, UnionMerge>> = dict.into();
+    // }
 }
