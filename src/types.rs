@@ -48,13 +48,6 @@ pub trait SemilatticeHomomorphism {
 pub struct MapFunction<F: UnaryFunction> {
     _phantom: std::marker::PhantomData<F>,
 }
-impl <F: UnaryFunction> MapFunction<F> {
-    pub fn new() -> Self {
-        Self {
-            _phantom: std::marker::PhantomData,
-        }
-    }
-}
 impl <F: UnaryFunction> SemilatticeHomomorphism for MapFunction<F>
 where
     <F as UnaryFunction>::Domain:   Eq + Ord,
@@ -113,6 +106,36 @@ mod test {
     use crate::merge::{ MapUnionMerge };
 
     type FirstLastName = (&'static str, &'static str);
+
+    #[test]
+    fn test_identity() {
+        struct IdentityUnaryFunction<T> {
+            _phantom: std::marker::PhantomData<T>,
+        }
+        impl <T> UnaryFunction for IdentityUnaryFunction<T> {
+            type Domain = T;
+            type Codomain = T;
+
+            fn call(input: T) -> T {
+                input
+            }
+        }
+
+        type IdentityMorphism = MapFunction::
+            <IdentityUnaryFunction<(&'static str, &'static str)>>;
+
+
+        let x0: Semilattice<UnionMerge<BTreeSet<FirstLastName>>> = Semilattice::new(vec![
+            ( "Joseph", "Hellerstein" ),
+            ( "Matthew", "Milano" ),
+            ( "Mingwei", "Samuel" ),
+            ( "Pranav", "Gaddamadugu" ),
+        ].into_iter().collect::<BTreeSet<_>>());
+
+        let x1: Semilattice<UnionMerge<BTreeSet<FirstLastName>>> = IdentityMorphism::call(x0);
+
+        println!("{:?}", x1.into_reveal());
+    }
 
     #[test]
     fn test_select() {

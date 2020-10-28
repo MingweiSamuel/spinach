@@ -2,8 +2,9 @@ use crate::merge::Merge;
 
 
 // LATTICE STRUCT //
-
-pub struct Semilattice<F: Merge> {
+#[derive(Default)]
+pub struct Semilattice<F: Merge>
+{
     val: F::Domain,
 }
 
@@ -24,17 +25,17 @@ impl <F: Merge> Semilattice<F> {
     }
 }
 
-// Not important: lets you do `Default::default()`.
-impl <F: Merge> Default for Semilattice<F>
-where
-    F::Domain: Default
-{
-    fn default() -> Self {
-        Self {
-            val: Default::default(),
-        }
-    }
-}
+// // Not important: lets you do `Default::default()`.
+// impl <F: Merge> Default for Semilattice<F>
+// where
+//     F::Domain: Default
+// {
+//     fn default() -> Self {
+//         Self {
+//             val: Default::default(),
+//         }
+//     }
+// }
 
 // // Not important: lets you do `let x: Semilattice<_, ...> = something.into()`.
 // impl <T, F: Merge<Domain = T>> From<T> for Semilattice<F> {
