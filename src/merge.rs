@@ -16,6 +16,39 @@ pub trait Merge {
     fn partial_cmp(val: &Self::Domain, other: &Self::Domain) -> Option<Ordering>;
 }
 
+
+
+// Mingwei's weird semilattice.
+// Merge is defined as, given signed integers A and B, take the value in the
+// range [A, B] (or [B, A]) which is closest to zero.
+// (Note that in general this will be A, B, or zero).
+pub struct RangeToZeroMergeI32;
+impl Merge for RangeToZeroMergeI32 {
+    type Domain = i32;
+
+    fn merge(val: &mut i32, other: i32) {
+        if val.signum() != other.signum() {
+            *val = 0;
+        }
+        else if val.abs() > other.abs() {
+            *val = other
+        }
+    }
+
+    fn partial_cmp(val: &i32, other: &i32) -> Option<Ordering> {
+        if val.signum() != other.signum() {
+            None
+        }
+        else {
+            let less = val.abs().cmp(&other.abs());
+            Some(less.reverse())
+        }
+    }
+}
+
+
+
+
 // ORD MERGES //
 
 pub struct MaxMerge<T: Ord> {
@@ -361,37 +394,39 @@ where
 //     }
 // }
 
-// pub struct DominatingPairMerge<A, AF, B, BF>
-// where
-//     AF: Merge<A>,
-//     BF: Merge<B>,
-// {
-//     _phantom: std::marker::PhantomData<(A, AF, B, BF)>,
-// }
+pub struct DominatingPairMerge<AF, BF>
+where
+    AF: Merge,
+    BF: Merge,
+{
+    _phantom: std::marker::PhantomData<(AF, BF)>,
+}
 
-// impl <A, AF, B, BF> Merge<(A, B)> for DominatingPairMerge<A, AF, B, BF>
-// where
-//     AF: Merge<A>,
-//     BF: Merge<B>,
-// {
-//     fn merge(val: &mut (A, B), other: (A, B)) {
-//         let cmp = AF::partial_cmp(&val.0, &other.0);
-//         match cmp {
-//             None => {
-//                 AF::merge(&mut val.0, other.0);
-//                 BF::merge(&mut val.1, other.1);
-//             },
-//             Some(Ordering::Equal) => {
-//                 BF::merge(&mut val.1, other.1);
-//             },
-//             Some(Ordering::Less) => {
-//                 *val = other;
-//             },
-//             Some(Ordering::Greater) => {},
-//         }
-//     }
+impl <AF, BF> Merge for DominatingPairMerge<AF, BF>
+where
+    AF: Merge,
+    BF: Merge,
+{
+    type Domain = (<AF as Merge>::Domain, <BF as Merge>::Domain);
 
-//     fn partial_cmp(val: &(A, B), other: &(A, B)) -> Option<Ordering> {
-//         AF::partial_cmp(&val.0, &other.0).or_else(|| BF::partial_cmp(&val.1, &other.1))
-//     }
-// }
+    fn merge(val: &mut Self::Domain, other: Self::Domain) {
+        let cmp = AF::partial_cmp(&val.0, &other.0);
+        match cmp {
+            None => {
+                AF::merge(&mut val.0, other.0);
+                BF::merge(&mut val.1, other.1);
+            },
+            Some(Ordering::Equal) => {
+                BF::merge(&mut val.1, other.1);
+            },
+            Some(Ordering::Less) => {
+                *val = other;
+            },
+            Some(Ordering::Greater) => {},
+        }
+    }
+
+    fn partial_cmp(val: &Self::Domain, other: &Self::Domain) -> Option<Ordering> {
+        AF::partial_cmp(&val.0, &other.0).or_else(|| BF::partial_cmp(&val.1, &other.1))
+    }
+}
