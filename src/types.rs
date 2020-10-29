@@ -58,7 +58,7 @@ where
 
     fn call(input: Semilattice<Self::DomainMerge>) -> Semilattice<Self::CodomainMerge>
     {
-        input.map_into::<F>()
+        input.map::<F>()
         // let val = input.into_reveal() // REVEAL HERE!
         //     .into_iter()
         //     .map(|x| F::call(x))

@@ -18,36 +18,6 @@ pub trait Merge {
 
 
 
-// Mingwei's weird semilattice.
-// Merge is defined as, given signed integers A and B, take the value in the
-// range [A, B] (or [B, A]) which is closest to zero.
-// (Note that in general this will be A, B, or zero).
-pub struct RangeToZeroMergeI32;
-impl Merge for RangeToZeroMergeI32 {
-    type Domain = i32;
-
-    fn merge(val: &mut i32, other: i32) {
-        if val.signum() != other.signum() {
-            *val = 0;
-        }
-        else if val.abs() > other.abs() {
-            *val = other
-        }
-    }
-
-    fn partial_cmp(val: &i32, other: &i32) -> Option<Ordering> {
-        if val.signum() != other.signum() {
-            None
-        }
-        else {
-            let less = val.abs().cmp(&other.abs());
-            Some(less.reverse())
-        }
-    }
-}
-
-
-
 
 // ORD MERGES //
 
@@ -336,21 +306,26 @@ where
     }
 }
 
-// pub struct MapIntersectionMerge<V, F>
-// where
-//     F: Merge<V>,
-// {
-//     _phantom: std::marker::PhantomData<(V, F)>,
+// pub struct MapIntersectionMerge<T> {
+//     _phantom: std::marker::PhantomData<T>,
 // }
-// impl <K: Eq + Hash, V, F: Merge<V>> Merge<HashMap<K, V>> for MapIntersectionMerge<V, F> {
-//     fn merge(val: &mut HashMap<K, V>, other: HashMap<K, V>) {
+// impl <K, F> Merge for MapIntersectionMerge<HashMap<K, F>>
+// where
+//     K: Eq + Hash,
+//     F: Merge,
+// {
+//     type Domain = HashMap<K, <F as Merge>::Domain>;
+
+//     fn merge(val: &mut Self::Domain, other: Self::Domain) {
+//         todo!("this is broken.");
 //         for (k, v) in other {
 //             val.entry(k).and_modify(|v0| F::merge(v0, v));
 //         }
 //     }
 
-//     fn partial_cmp(val: &HashMap<K, V>, other: &HashMap<K, V>) -> Option<Ordering> {
-//         // Ordering::Equal OR Ordering::Greater
+//     fn partial_cmp(val: &Self::Domain, other: &Self::Domain) -> Option<Ordering> {
+//         todo!("this is broken.");
+//         // Ordering::Equal OR Ordering::Less
 //         if val.len() >= other.len() {
 //             let mut result = None;
 //             for (k, other_val) in other {
@@ -373,23 +348,23 @@ where
 //                 return Some(Ordering::Equal);
 //             }
 //             else {
-//                 return Some(Ordering::Greater);
+//                 return Some(Ordering::Less);
 //             }
 //         }
-//         // Ordering::Less
+//         // Ordering::Greater
 //         else {
 //             for (k, val_val) in val {
 //                 match other.get(k) {
 //                     Some(other_val) => {
 //                         let cmp = F::partial_cmp(&val_val, other_val);
-//                         if Some(Ordering::Less) != cmp {
+//                         if Some(Ordering::Greater) != cmp {
 //                             return None;
 //                         }
 //                     },
 //                     None => return None,
 //                 }
 //             }
-//             return Some(Ordering::Less);
+//             return Some(Ordering::Greater);
 //         }
 //     }
 // }
@@ -428,5 +403,39 @@ where
 
     fn partial_cmp(val: &Self::Domain, other: &Self::Domain) -> Option<Ordering> {
         AF::partial_cmp(&val.0, &other.0).or_else(|| BF::partial_cmp(&val.1, &other.1))
+    }
+}
+
+
+
+
+
+
+
+// Mingwei's weird semilattice.
+// Merge is defined as, given signed integers A and B, take the value in the
+// range [A, B] (or [B, A]) which is closest to zero.
+// (Note that in general this will be A, B, or zero).
+pub struct RangeToZeroMergeI32;
+impl Merge for RangeToZeroMergeI32 {
+    type Domain = i32;
+
+    fn merge(val: &mut i32, other: i32) {
+        if val.signum() != other.signum() {
+            *val = 0;
+        }
+        else if val.abs() > other.abs() {
+            *val = other
+        }
+    }
+
+    fn partial_cmp(val: &i32, other: &i32) -> Option<Ordering> {
+        if val.signum() != other.signum() {
+            None
+        }
+        else {
+            let less = val.abs().cmp(&other.abs());
+            Some(less.reverse())
+        }
     }
 }
