@@ -58,11 +58,12 @@ where
 
     fn call(input: Semilattice<Self::DomainMerge>) -> Semilattice<Self::CodomainMerge>
     {
-        let val = input.into_reveal() // REVEAL HERE!
-            .into_iter()
-            .map(|x| F::call(x))
-            .collect::<BTreeSet<<F as UnaryFunction>::Codomain>>();
-        Semilattice::new(val)
+        input.map_into::<F>()
+        // let val = input.into_reveal() // REVEAL HERE!
+        //     .into_iter()
+        //     .map(|x| F::call(x))
+        //     .collect::<BTreeSet<<F as UnaryFunction>::Codomain>>();
+        // Semilattice::new(val)
     }
 }
 

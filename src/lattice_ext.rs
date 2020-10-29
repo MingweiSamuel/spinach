@@ -1,18 +1,41 @@
 use std::collections::{ BTreeSet, HashSet };
+use std::hash::Hash;
 
-use crate::merge::Merge;
+use crate::merge::{ UnionMerge };
 use crate::lattice::Semilattice;
 use crate::types::UnaryFunction;
 
-impl <T, F> Semilattice<F>
+impl <T> Semilattice<UnionMerge<BTreeSet<T>>>
 where
-    F: Merge<Domain = HashSet<T>>,
+    T: Eq + Ord,
 {
-    pub fn the_map_function<U>()
+    pub fn map_into<F>(self) -> Semilattice<UnionMerge<BTreeSet<<F as UnaryFunction>::Codomain>>>
     where
-        U: UnaryFunction<Domain = <F as Merge>::Domain, Codomain = <F as Merge>::Domain>,
+        F: UnaryFunction<Domain = T>,
+        <F as UnaryFunction>::Codomain: Eq + Ord,
     {
-        // do something.
-        // Semilattice<
+        let val = self.into_reveal() // Reveal here!
+            .into_iter()
+            .map(|x| F::call(x))
+            .collect();
+
+        Semilattice::new(val)
+    }
+}
+impl <T> Semilattice<UnionMerge<HashSet<T>>>
+where
+    T: Eq + Hash,
+{
+    pub fn map_into<F>(self) -> Semilattice<UnionMerge<HashSet<<F as UnaryFunction>::Codomain>>>
+    where
+        F: UnaryFunction<Domain = T>,
+        <F as UnaryFunction>::Codomain: Eq + Hash,
+    {
+        let val = self.into_reveal() // Reveal here!
+            .into_iter()
+            .map(|x| F::call(x))
+            .collect();
+
+        Semilattice::new(val)
     }
 }
