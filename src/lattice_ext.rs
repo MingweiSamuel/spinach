@@ -1,4 +1,4 @@
-use std::collections::{ BTreeSet, HashSet, BTreeMap, HashMap };
+use std::collections::{ BTreeSet, HashSet, HashMap };
 use std::hash::Hash;
 
 use crate::merge::{ Merge, UnionMerge, MapUnionMerge };
@@ -41,32 +41,21 @@ where
     }
 }
 
-impl <K, F> Semilattice<MapUnionMerge<HashMap<K, F>>>
+impl <K, M> Semilattice<MapUnionMerge<HashMap<K, M>>>
 where
     K: Eq + Hash,
-    F: Merge,
+    M: Merge,
 {
-    pub fn into_kv(self, key: &K) -> Semilattice<F> {
-        let ( _, val ) = self.into_reveal()
+    pub fn map<F>(self) -> Semilattice<UnionMerge<HashSet<<F as UnaryFunction>::Codomain>>>
+    where
+        F: UnaryFunction<Domain = ( K, <M as Merge>::Domain )>,
+        <F as UnaryFunction>::Codomain: Eq + Hash,
+    {
+        let val = self.into_reveal() // Reveal here!
             .into_iter()
-            .find(|( k, v )| key == k)
-            .unwrap(); // BAD!!!!!!
+            .map(|x| F::call(x))
+            .collect();
 
         Semilattice::new(val)
     }
 }
-
-// impl <K, F> Semilattice<MapUnionMerge<HashMap<K, F>>>
-// where
-//     K: Eq + Hash,
-//     F: Merge,
-// {
-//     pub fn into_kv(self, key: &K) -> Semilattice<F> {
-//         let ( _, val ) = self.into_reveal()
-//             .into_iter()
-//             .find(|( k, v )| key == k)
-//             .unwrap(); // BAD!!!!!!
-
-//         Semilattice::new(val)
-//     }
-// }
