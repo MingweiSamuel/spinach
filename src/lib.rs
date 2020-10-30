@@ -6,4 +6,6 @@ pub mod merge;
 
 pub mod tag;
 
+pub mod traits;
+
 pub mod types;

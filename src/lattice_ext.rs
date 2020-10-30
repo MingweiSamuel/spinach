@@ -1,4 +1,4 @@
-use std::collections::{ BTreeSet, HashSet, BTreeMap, HashMap };
+use std::collections::{ BTreeSet, HashSet, HashMap };
 use std::hash::Hash;
 
 use crate::merge::{ Merge, UnionMerge, MapUnionMerge };
@@ -49,7 +49,7 @@ where
     pub fn into_kv(self, key: &K) -> Semilattice<F> {
         let ( _, val ) = self.into_reveal()
             .into_iter()
-            .find(|( k, v )| key == k)
+            .find(|( k, _v )| key == k)
             .unwrap(); // BAD!!!!!!
 
         Semilattice::new(val)
