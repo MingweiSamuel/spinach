@@ -15,10 +15,10 @@
 
 
 
-pub trait SetRead<'a, T> {
-    fn map<U>(&'a self, f: impl Fn(T) -> U) -> <Self as SetReadMap<U>>::Output
+pub trait SetRead<T>
+{
+    fn map<U>(&self, f: impl Fn(&T) -> U) -> <Self as SetReadMap<U>>::Output
     where
-        T: 'a,
         Self: SetReadMap<U>;
 }
 pub trait SetReadMap<U> {
@@ -33,13 +33,12 @@ pub trait SetReadMap<U> {
 
 
 
-impl <'a, T> SetRead<'a, &'a T> for std::collections::HashSet<T>
+impl <T> SetRead<T> for std::collections::HashSet<T>
 where
     T: Eq + std::hash::Hash,
 {
-    fn map<U>(&'a self, f: impl Fn(&'a T) -> U) -> <Self as SetReadMap<U>>::Output
+    fn map<U>(&self, f: impl Fn(&T) -> U) -> <Self as SetReadMap<U>>::Output
     where
-        T: 'a,
         Self: SetReadMap<U>,
     {
         self.into_iter()
@@ -57,25 +56,25 @@ where
 
 
 
-// impl <T> SetRead<&T> for std::collections::BTreeSet<T>
-// where
-//     T: Eq + Ord,
-// {
-//     fn map<U>(&self, f: impl Fn(&T) -> U) -> <Self as SetReadMap<U>>::Output
-//     where
-//         Self: SetReadMap<U>,
-//     {
-//         self.into_iter()
-//             .map(f)
-//             .collect()
-//     }
-// }
-// impl <T, U> SetReadMap<U> for std::collections::BTreeSet<T>
-// where
-//     U: Eq + Ord,
-// {
-//     type Output = std::collections::BTreeSet<U>;
-// }
+impl <T> SetRead<T> for std::collections::BTreeSet<T>
+where
+    T: Eq + Ord,
+{
+    fn map<U>(&self, f: impl Fn(&T) -> U) -> <Self as SetReadMap<U>>::Output
+    where
+        Self: SetReadMap<U>,
+    {
+        self.into_iter()
+            .map(f)
+            .collect()
+    }
+}
+impl <T, U> SetReadMap<U> for std::collections::BTreeSet<T>
+where
+    U: Eq + Ord,
+{
+    type Output = std::collections::BTreeSet<U>;
+}
 
 
 
@@ -84,7 +83,7 @@ where
 // where
 //     K: Eq + Ord,
 // {
-//     fn map<U>(&self, f: impl Fn(( &K, &V )) -> U) -> <Self as SetReadMap<U>>::Output
+//     fn map<U>(&self, f: impl Fn(&( &K, &V )) -> U) -> <Self as SetReadMap<U>>::Output
 //     where
 //         Self: SetReadMap<U>,
 //     {
