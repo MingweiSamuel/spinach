@@ -18,7 +18,6 @@ pub trait Merge {
 
 
 
-
 // ORD MERGES //
 
 pub struct Max<T: Ord> {
