@@ -2,7 +2,6 @@ use crate::merge::Merge;
 
 
 // LATTICE STRUCT //
-#[derive(Default)]
 pub struct Semilattice<F>
 where
     F: Merge,
@@ -27,5 +26,16 @@ where
     // DANGER: Consumes this lattice, revealing it's value.
     pub fn into_reveal(self) -> F::Domain {
         self.val
+    }
+}
+
+impl <F> Default for Semilattice<F>
+where
+    F: Merge,
+    F::Domain: Default,
+{
+    fn default() -> Self
+    {
+        Self::new(F::Domain::default())
     }
 }
