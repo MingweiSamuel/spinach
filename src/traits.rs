@@ -12,10 +12,10 @@ pub trait UnaryFn {
 
 
 
-pub struct SetUnionMerge<X> {
+pub struct SetUnion<X> {
     _phantom: std::marker::PhantomData<X>,
 }
-impl <X> Merge for SetUnionMerge<X>
+impl <X> Merge for SetUnion<X>
 where
     X: Set + Extend<<X as Set>::Domain> + IntoIterator<Item = <X as Set>::Domain>,
 {

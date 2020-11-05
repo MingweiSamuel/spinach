@@ -21,10 +21,10 @@ pub trait Merge {
 
 // ORD MERGES //
 
-pub struct MaxMerge<T: Ord> {
+pub struct Max<T: Ord> {
     _phantom: std::marker::PhantomData<T>,
 }
-impl <T: Ord> Merge for MaxMerge<T> {
+impl <T: Ord> Merge for Max<T> {
     type Domain = T;
 
     fn merge(val: &mut T, other: T) {
@@ -38,10 +38,10 @@ impl <T: Ord> Merge for MaxMerge<T> {
     }
 }
 
-pub struct MinMerge<T: Ord> {
+pub struct Min<T: Ord> {
     _phantom: std::marker::PhantomData<T>,
 }
-impl <T: Ord> Merge for MinMerge<T> {
+impl <T: Ord> Merge for Min<T> {
     type Domain = T;
 
     fn merge(val: &mut T, other: T) {
@@ -57,10 +57,10 @@ impl <T: Ord> Merge for MinMerge<T> {
 
 // SET MERGES //
 
-pub struct UnionMerge<T> {
+pub struct Union<T> {
     _phantom: std::marker::PhantomData<T>,
 }
-impl <T: Eq + Hash> Merge for UnionMerge<HashSet<T>> {
+impl <T: Eq + Hash> Merge for Union<HashSet<T>> {
     type Domain = HashSet<T>;
 
     fn merge(val: &mut HashSet<T>, other: HashSet<T>) {
@@ -85,7 +85,7 @@ impl <T: Eq + Hash> Merge for UnionMerge<HashSet<T>> {
         }
     }
 }
-impl <T: Eq + Ord> Merge for UnionMerge<BTreeSet<T>> {
+impl <T: Eq + Ord> Merge for Union<BTreeSet<T>> {
     type Domain = BTreeSet<T>;
 
     fn merge(val: &mut BTreeSet<T>, other: BTreeSet<T>) {
@@ -111,10 +111,10 @@ impl <T: Eq + Ord> Merge for UnionMerge<BTreeSet<T>> {
     }
 }
 
-pub struct IntersectMerge<T> {
+pub struct Intersect<T> {
     _phantom: std::marker::PhantomData<T>,
 }
-impl <T: Eq + Hash> Merge for IntersectMerge<HashSet<T>> {
+impl <T: Eq + Hash> Merge for Intersect<HashSet<T>> {
     type Domain = HashSet<T>;
 
     fn merge(val: &mut HashSet<T>, other: HashSet<T>) {
@@ -139,7 +139,7 @@ impl <T: Eq + Hash> Merge for IntersectMerge<HashSet<T>> {
         }
     }
 }
-impl <T: Eq + Ord> Merge for IntersectMerge<BTreeSet<T>> {
+impl <T: Eq + Ord> Merge for Intersect<BTreeSet<T>> {
     type Domain = BTreeSet<T>;
 
     fn merge(val: &mut BTreeSet<T>, other: BTreeSet<T>) {
@@ -170,11 +170,11 @@ impl <T: Eq + Ord> Merge for IntersectMerge<BTreeSet<T>> {
 
 // MAP MERGES //
 
-pub struct MapUnionMerge<T> {
+pub struct MapUnion<T> {
     _phantom: std::marker::PhantomData<T>,
 }
 
-impl <K, F> Merge for MapUnionMerge<HashMap<K, F>>
+impl <K, F> Merge for MapUnion<HashMap<K, F>>
 where
     K: Hash + Eq,
     F: Merge,
@@ -240,7 +240,7 @@ where
     }
 }
 
-impl <K, F> Merge for MapUnionMerge<BTreeMap<K, F>>
+impl <K, F> Merge for MapUnion<BTreeMap<K, F>>
 where
     K: Ord + Eq,
     F: Merge,
@@ -306,10 +306,10 @@ where
     }
 }
 
-// pub struct MapIntersectionMerge<T> {
+// pub struct MapIntersection<T> {
 //     _phantom: std::marker::PhantomData<T>,
 // }
-// impl <K, F> Merge for MapIntersectionMerge<HashMap<K, F>>
+// impl <K, F> Merge for MapIntersection<HashMap<K, F>>
 // where
 //     K: Eq + Hash,
 //     F: Merge,
@@ -369,7 +369,7 @@ where
 //     }
 // }
 
-pub struct DominatingPairMerge<AF, BF>
+pub struct DominatingPair<AF, BF>
 where
     AF: Merge,
     BF: Merge,
@@ -377,7 +377,7 @@ where
     _phantom: std::marker::PhantomData<(AF, BF)>,
 }
 
-impl <AF, BF> Merge for DominatingPairMerge<AF, BF>
+impl <AF, BF> Merge for DominatingPair<AF, BF>
 where
     AF: Merge,
     BF: Merge,
@@ -416,8 +416,8 @@ where
 // Merge is defined as, given signed integers A and B, take the value in the
 // range [A, B] (or [B, A]) which is closest to zero.
 // (Note that in general this will be A, B, or zero).
-pub struct RangeToZeroMergeI32;
-impl Merge for RangeToZeroMergeI32 {
+pub struct RangeToZeroI32;
+impl Merge for RangeToZeroI32 {
     type Domain = i32;
 
     fn merge(val: &mut i32, other: i32) {
