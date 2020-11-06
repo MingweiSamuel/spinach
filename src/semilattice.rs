@@ -39,3 +39,12 @@ where
         Self::new(F::Domain::default())
     }
 }
+
+impl <F: Merge> Clone for Semilattice<F>
+where
+    F::Domain: Clone,
+{
+    fn clone(&self) -> Self {
+        Semilattice::new(self.val.clone())
+    }
+}

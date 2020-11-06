@@ -97,6 +97,27 @@ where
 }
 
 
+pub struct DoubleMorphismFn<A, B>
+where
+    A: SemilatticeMorphismFn,
+    B: SemilatticeMorphismFn<DomainMerge = <A as SemilatticeMorphismFn>::CodomainMerge>,
+{
+    _phantom: std::marker::PhantomData<(A, B)>,
+}
+impl <A, B> SemilatticeMorphismFn for DoubleMorphismFn<A, B>
+where
+    A: SemilatticeMorphismFn,
+    B: SemilatticeMorphismFn<DomainMerge = <A as SemilatticeMorphismFn>::CodomainMerge>,
+{
+    type DomainMerge   = <A as SemilatticeMorphismFn>::DomainMerge;
+    type CodomainMerge = <B as SemilatticeMorphismFn>::CodomainMerge;
+
+    fn call(input: Semilattice<Self::DomainMerge>) -> Semilattice<Self::CodomainMerge> {
+        B::call(A::call(input))
+    }
+}
+
+
 #[cfg(test)]
 mod test {
     use super::*;
