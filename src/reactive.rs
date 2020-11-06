@@ -1,43 +1,42 @@
 use std::collections::{ BTreeSet };
 use std::sync::mpsc;
-use std::thread;
 
 use crate::semilattice::Semilattice;
-use crate::traits::{ SetUnion, SemilatticeMorphismFn, UnaryFn };
+use crate::traits::{ SetUnion, SemilatticeMorphismFn };
 
 
-pub trait Pipe {
-    type Input;
+// pub trait Pipe {
+//     type Input;
 
-    fn push(&mut self, item: Self::Input);
-}
+//     fn push(&mut self, item: Self::Input);
+// }
 
 
-pub struct Reactive<T, P>
+pub struct Reactive<T, F>
 where
-    P: Pipe<Input = BTreeSet<T>>,
+    F: SemilatticeMorphismFn<DomainMerge = SetUnion<BTreeSet<T>>>
 {
     sender: mpsc::Sender<T>,
     receiver: mpsc::Receiver<T>,
     all_els: BTreeSet<T>,
-    pipe: P,
+    _phantom: std::marker::PhantomData<F>,
 }
-impl <T: Ord + Clone, P> Reactive<T, P>
+impl <T: Ord + Clone, F> Reactive<T, F>
 where
-    P: Pipe<Input = BTreeSet<T>>,
+    F: SemilatticeMorphismFn<DomainMerge = SetUnion<BTreeSet<T>>>
 {
-    pub fn new(pipe: P) -> Self {
+    pub fn new() -> Self {
         let (sender, receiver) = mpsc::channel();
         Self {
             sender: sender,
             receiver: receiver,
             all_els: BTreeSet::new(),
-            pipe: pipe,
+            _phantom: std::marker::PhantomData,
         }
     }
 
-    pub fn send(&self, el: T) {
-        self.sender.send(el);
+    pub fn send(&self, el: T) -> Result<(), mpsc::SendError<T>> {
+        self.sender.send(el)
     }
 
     pub fn tick(&mut self) {
@@ -45,7 +44,8 @@ where
         self.all_els.insert(el);
 
         // PUSH INTO PIPE
-        self.pipe.push(self.all_els.clone())
+        // self.pipe.push(self.all_els.clone())
+        F::call(Semilattice::new(self.all_els.clone()));
     }
 
     // API: need to have user-exposed pipeline openings at the end.
