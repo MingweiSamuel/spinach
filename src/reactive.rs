@@ -5,13 +5,6 @@ use crate::semilattice::Semilattice;
 use crate::traits::{ SetUnion, SemilatticeMorphismFn };
 
 
-// pub trait Pipe {
-//     type Input;
-
-//     fn push(&mut self, item: Self::Input);
-// }
-
-
 pub struct Reactive<T, F>
 where
     F: SemilatticeMorphismFn<DomainMerge = SetUnion<BTreeSet<T>>>
@@ -45,7 +38,8 @@ where
 
         // PUSH INTO PIPE
         // self.pipe.push(self.all_els.clone())
-        F::call(Semilattice::new(self.all_els.clone()));
+        let result = F::call(Semilattice::new(self.all_els.clone()));
+        let _ = result;
     }
 
     // API: need to have user-exposed pipeline openings at the end.

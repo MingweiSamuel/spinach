@@ -27,6 +27,10 @@ where
     pub fn into_reveal(self) -> F::Domain {
         self.val
     }
+    // DANGER
+    pub fn reveal(&self) -> &F::Domain {
+        &self.val
+    }
 }
 
 impl <F> Default for Semilattice<F>
