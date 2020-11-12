@@ -20,7 +20,7 @@ where
     }
 
     pub fn merge_in(&mut self, val: F::Domain) {
-        F::merge(&mut self.val, val);
+        F::merge_in(&mut self.val, val);
     }
 
     // DANGER: Consumes this lattice, revealing it's value.

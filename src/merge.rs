@@ -11,7 +11,7 @@ pub trait Merge {
     type Domain;
 
     // A "static" method.
-    fn merge(val: &mut Self::Domain, other: Self::Domain);
+    fn merge_in(val: &mut Self::Domain, other: Self::Domain);
 
     fn partial_cmp(val: &Self::Domain, other: &Self::Domain) -> Option<Ordering>;
 }
@@ -26,7 +26,7 @@ pub struct Max<T: Ord> {
 impl <T: Ord> Merge for Max<T> {
     type Domain = T;
 
-    fn merge(val: &mut T, other: T) {
+    fn merge_in(val: &mut T, other: T) {
         if *val < other {
             *val = other;
         }
@@ -43,7 +43,7 @@ pub struct Min<T: Ord> {
 impl <T: Ord> Merge for Min<T> {
     type Domain = T;
 
-    fn merge(val: &mut T, other: T) {
+    fn merge_in(val: &mut T, other: T) {
         if *val > other {
             *val = other;
         }
@@ -62,7 +62,7 @@ pub struct Union<T> {
 impl <T: Eq + Hash> Merge for Union<HashSet<T>> {
     type Domain = HashSet<T>;
 
-    fn merge(val: &mut HashSet<T>, other: HashSet<T>) {
+    fn merge_in(val: &mut HashSet<T>, other: HashSet<T>) {
         val.extend(other);
     }
 
@@ -87,7 +87,7 @@ impl <T: Eq + Hash> Merge for Union<HashSet<T>> {
 impl <T: Eq + Ord> Merge for Union<BTreeSet<T>> {
     type Domain = BTreeSet<T>;
 
-    fn merge(val: &mut BTreeSet<T>, other: BTreeSet<T>) {
+    fn merge_in(val: &mut BTreeSet<T>, other: BTreeSet<T>) {
         val.extend(other);
     }
 
@@ -116,7 +116,7 @@ pub struct Intersect<T> {
 impl <T: Eq + Hash> Merge for Intersect<HashSet<T>> {
     type Domain = HashSet<T>;
 
-    fn merge(val: &mut HashSet<T>, other: HashSet<T>) {
+    fn merge_in(val: &mut HashSet<T>, other: HashSet<T>) {
         val.retain(|x| other.contains(x));
     }
 
@@ -141,7 +141,7 @@ impl <T: Eq + Hash> Merge for Intersect<HashSet<T>> {
 impl <T: Eq + Ord> Merge for Intersect<BTreeSet<T>> {
     type Domain = BTreeSet<T>;
 
-    fn merge(val: &mut BTreeSet<T>, other: BTreeSet<T>) {
+    fn merge_in(val: &mut BTreeSet<T>, other: BTreeSet<T>) {
         // Not so ergonomic nor efficient.
         *val = other.into_iter()
             .filter(|x| val.contains(x))
@@ -180,11 +180,11 @@ where
 {
     type Domain = HashMap<K, <F as Merge>::Domain>;
 
-    fn merge(val: &mut Self::Domain, other: Self::Domain) {
+    fn merge_in(val: &mut Self::Domain, other: Self::Domain) {
         for (k, v) in other {
             match val.entry(k) {
                 hash_map::Entry::Occupied(mut kv) => {
-                    F::merge(kv.get_mut(), v);
+                    F::merge_in(kv.get_mut(), v);
                 },
                 hash_map::Entry::Vacant(kv) => {
                     kv.insert(v);
@@ -246,11 +246,11 @@ where
 {
     type Domain = BTreeMap<K, <F as Merge>::Domain>;
 
-    fn merge(val: &mut Self::Domain, other: Self::Domain) {
+    fn merge_in(val: &mut Self::Domain, other: Self::Domain) {
         for (k, v) in other {
             match val.entry(k) {
                 btree_map::Entry::Occupied(mut kv) => {
-                    F::merge(kv.get_mut(), v);
+                    F::merge_in(kv.get_mut(), v);
                 },
                 btree_map::Entry::Vacant(kv) => {
                     kv.insert(v);
@@ -315,10 +315,10 @@ where
 // {
 //     type Domain = HashMap<K, <F as Merge>::Domain>;
 
-//     fn merge(val: &mut Self::Domain, other: Self::Domain) {
+//     fn merge_in(val: &mut Self::Domain, other: Self::Domain) {
 //         todo!("this is broken.");
 //         for (k, v) in other {
-//             val.entry(k).and_modify(|v0| F::merge(v0, v));
+//             val.entry(k).and_modify(|v0| F::merge_in(v0, v));
 //         }
 //     }
 
@@ -383,15 +383,15 @@ where
 {
     type Domain = (<AF as Merge>::Domain, <BF as Merge>::Domain);
 
-    fn merge(val: &mut Self::Domain, other: Self::Domain) {
+    fn merge_in(val: &mut Self::Domain, other: Self::Domain) {
         let cmp = AF::partial_cmp(&val.0, &other.0);
         match cmp {
             None => {
-                AF::merge(&mut val.0, other.0);
-                BF::merge(&mut val.1, other.1);
+                AF::merge_in(&mut val.0, other.0);
+                BF::merge_in(&mut val.1, other.1);
             },
             Some(Ordering::Equal) => {
-                BF::merge(&mut val.1, other.1);
+                BF::merge_in(&mut val.1, other.1);
             },
             Some(Ordering::Less) => {
                 *val = other;
@@ -419,7 +419,7 @@ pub struct RangeToZeroI32;
 impl Merge for RangeToZeroI32 {
     type Domain = i32;
 
-    fn merge(val: &mut i32, other: i32) {
+    fn merge_in(val: &mut i32, other: i32) {
         if val.signum() != other.signum() {
             *val = 0;
         }
