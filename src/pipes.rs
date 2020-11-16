@@ -11,47 +11,79 @@ pub trait Pipe<'a> {
     type Input;
     type Output;
 
-    fn push(&'a mut self, item: Self::Input) -> Result<Self::Output, &'static str>;
+    fn push(&'a mut self, item: Self::Input) -> Self::Output;
 }
 
-pub struct Tank<F: Merge> {
-    value: F::Domain,
+pub struct ClonePipe<T> {
+    _phantom: std::marker::PhantomData<T>,
 }
-
-impl <'a, F: Merge> Pipe<'a> for Tank<F>
+impl <'a, T: 'a> Pipe<'a> for ClonePipe<T>
 where
-    F::Domain: 'a,
+    T: Clone,
 {
-    type Input = F::Domain;
-    type Output = &'a F::Domain;
+    type Input = &'a T;
+    type Output = T;
 
-    fn push(&'a mut self, item: Self::Input) -> Result<Self::Output, &'static str> {
-        F::merge_in(&mut self.value, item);
-        Ok(&self.value)
+    fn push(&'a mut self, item: Self::Input) -> Self::Output {
+        item.clone()
     }
 }
 
-pub struct PipeActor<'a, P: Pipe<'a>> {
-    pipe: P,
-    receiver: mpsc::Receiver<P::Input>,
+pub struct MpscPipe<T> {
+    sender: mpsc::Sender<T>,
 }
-impl <'a, P: Pipe<'a>> PipeActor<'a, P> {
-    pub fn create(pipe: P) -> ( mpsc::Sender<P::Input>, Self ) {
-        let ( sender, receiver ) = mpsc::channel(16);
-        let inst = Self {
-            pipe: pipe,
-            receiver: receiver,
-        };
-        ( sender, inst )
-    }
+impl <'a, T> Pipe<'a> for MpscPipe<T> {
+    type Input = T;
+    type Output = impl std::future::Future<Output = Result<(), mpsc::error::SendError<T>>>;
 
-    pub async fn run<'b: 'a>(&'b mut self) {
-        while let Some(item) = self.receiver.recv().await {
-            'a: {
-                let pipe = &'a mut self.pipe;
-                let value = pipe.push(item).expect("Failed to get value in PipeActor pipe.");
-            }
+    fn push(&'a mut self, item: Self::Input) -> Self::Output {
+        self.sender.send(item)
+    }
+}
+impl <T> Clone for MpscPipe<T> {
+    fn clone(&self) -> Self {
+        Self {
+            sender: self.sender.clone(),
         }
     }
 }
 
+pub struct SequentialPipe<'a, A, B>
+where
+    A: Pipe<'a>,
+    B: Pipe<'a, Input = A::Output>,
+{
+    pipe_a: A,
+    pipe_b: B,
+    _phantom: std::marker::PhantomData<&'a ()>,
+}
+impl <'a, A, B> SequentialPipe<'a, A, B>
+where
+    A: Pipe<'a>,
+    B: Pipe<'a, Input = A::Output>,
+{
+    pub fn new(pipe_a: A, pipe_b: B) -> Self {
+        Self {
+            pipe_a: pipe_a,
+            pipe_b: pipe_b,
+            _phantom: std::marker::PhantomData,
+        }
+    }
+}
+impl <'a, A, B> Pipe<'a> for SequentialPipe<'a, A, B>
+where
+    A: Pipe<'a>,
+    B: Pipe<'a, Input = A::Output>,
+{
+    type Input = A::Input;
+    type Output = B::Output;
+
+    fn push(&'a mut self, item: Self::Input) -> Self::Output {
+        self.pipe_b.push(self.pipe_a.push(item))
+    }
+}
+
+
+pub struct AnnaWorker<F: Merge> {
+    value: F::Domain,
+}
