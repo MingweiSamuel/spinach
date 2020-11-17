@@ -8,4 +8,4 @@ include = [ "src/**", "/README.md" ]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-tokio = { version = "0.3", features = [ "rt", "sync", "stream" ] }
+tokio = { version = "0.3", features = [ "rt", "sync", "stream", "macros" ] }
