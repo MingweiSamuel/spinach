@@ -1,3 +1,4 @@
+use std::cell::RefCell;
 use std::fmt::Debug;
 
 use tokio::sync::mpsc;
@@ -9,12 +10,13 @@ use crate::merge::Merge;
 // use crate::semilattice::Semilattice;
 
 
-pub trait Pipe<'a> {
+pub trait Pipe {
     type Input;
-    type Output;
 
-    fn push(&'a mut self, item: Self::Input) -> Self::Output;
+    #[must_use]
+    fn push(&mut self, item: Self::Input) -> Result<(), &'static str>;
 }
+
 
 pub struct DebugPipe<T: Debug> {
     _phantom: std::marker::PhantomData<T>,
@@ -26,202 +28,125 @@ impl <T: Debug> DebugPipe<T> {
         }
     }
 }
-impl <'a, T: Debug> Pipe<'a> for DebugPipe<T> {
+impl <T: Debug> Pipe for DebugPipe<T> {
     type Input = T;
-    type Output = T;
 
-    fn push(&'a mut self, item: T) -> T {
+    fn push(&mut self, item: Self::Input) -> Result<(), &'static str> {
         println!("{:#?}", item);
-        item
+        Ok(())
     }
 }
 
 
-pub struct ClonePipe<'b, T> {
-    _phantom: std::marker::PhantomData<&'b T>,
+pub struct ClonePipe<'a, T: Clone, P: Pipe<Input = T>> {
+    next_pipe: P,
+    _phantom: std::marker::PhantomData<&'a T>,
 }
-impl <'a, 'b, T> Pipe<'a> for ClonePipe<'b, T>
-where
-    T: Clone,
-{
-    type Input = &'b T;
-    type Output = T;
-
-    fn push(&'a mut self, item: Self::Input) -> Self::Output {
-        item.clone()
-    }
-}
-
-pub struct MpscPipe<T> {
-    sender: mpsc::Sender<T>,
-}
-impl <T> MpscPipe<T> {
-    pub fn new(sender: mpsc::Sender<T>) -> Self {
+impl <'a, T: Clone, P: Pipe<Input = T>> ClonePipe<'a, T, P> {
+    pub fn new(next_pipe: P) -> Self {
         Self {
-            sender: sender,
-        }
-    }
-}
-impl <'a, T> Pipe<'a> for MpscPipe<T> {
-    type Input = T;
-    type Output = impl std::future::Future<Output = Result<(), mpsc::error::SendError<T>>>;
-
-    fn push(&'a mut self, item: Self::Input) -> Self::Output {
-        self.sender.send(item)
-    }
-}
-impl <T> Clone for MpscPipe<T> {
-    fn clone(&self) -> Self {
-        Self {
-            sender: self.sender.clone(),
-        }
-    }
-}
-
-pub struct BroadcastPipe<T: Clone> {
-    sender: broadcast::Sender<T>,
-}
-impl <T: Clone> BroadcastPipe<T> {
-    pub fn new(sender: broadcast::Sender<T>) -> Self {
-        Self {
-            sender: sender,
-        }
-    }
-}
-impl <'a, T: Clone> Pipe<'a> for BroadcastPipe<T> {
-    type Input = T;
-    type Output = Result<usize, broadcast::error::SendError<T>>;
-
-    fn push(&'a mut self, item: Self::Input) -> Self::Output {
-        self.sender.send(item)
-    }
-}
-
-pub struct SequentialPipe<'a, A, B>
-where
-    A: Pipe<'a>,
-    B: Pipe<'a, Input = A::Output>,
-{
-    pipe_a: A,
-    pipe_b: B,
-    _phantom: std::marker::PhantomData<&'a ()>,
-}
-impl <'a, A, B> SequentialPipe<'a, A, B>
-where
-    A: Pipe<'a>,
-    B: Pipe<'a, Input = A::Output>,
-{
-    pub fn new(pipe_a: A, pipe_b: B) -> Self {
-        Self {
-            pipe_a: pipe_a,
-            pipe_b: pipe_b,
+            next_pipe: next_pipe,
             _phantom: std::marker::PhantomData,
         }
     }
 }
-impl <'a, A, B> Pipe<'a> for SequentialPipe<'a, A, B>
-where
-    A: Pipe<'a>,
-    B: Pipe<'a, Input = A::Output>,
-{
-    type Input = A::Input;
-    type Output = B::Output;
+impl <'a, T: Clone, P: Pipe<Input = T>> Pipe for ClonePipe<'a, T, P> {
+    type Input = &'a T;
 
-    fn push(&'a mut self, item: Self::Input) -> Self::Output {
-        let item = self.pipe_a.push(item);
-        self.pipe_b.push(item)
+    fn push(&mut self, item: Self::Input) -> Result<(), &'static str> {
+        self.next_pipe.push(item.clone())
     }
 }
 
 
-pub struct AnnaWorker<'a, 'b, F, P>
+pub struct LatticePipe<'a, F: Merge> {
+    value: &'a RefCell<F::Domain>,
+}
+impl <'a, F: Merge> LatticePipe<'a, F> {
+    pub fn new(value: &'a RefCell<F::Domain>) -> Self {
+        Self {
+            value: value,
+        }
+    }
+}
+impl <'a, F: Merge> Pipe for LatticePipe<'a, F> {
+    type Input = F::Domain;
+
+    fn push(&mut self, item: Self::Input) -> Result<(), &'static str> {
+        F::merge_in(&mut self.value.borrow_mut(), item);
+        Ok(())
+    }
+}
+
+pub struct LatticePipe2<F: Merge, P>
 where
-    F: Merge,
-    P: Pipe<'a, Input = &'b F::Domain>,
-    F::Domain: 'b,
+    for <'a> P: Pipe<Input = &'a F::Domain>,
 {
     value: F::Domain,
-    delta_receiver: mpsc::Receiver<F::Domain>,
-    pipe_receiver: mpsc::Receiver<P>,
-    pipes: Vec<P>,
-
-    _phantom: std::marker::PhantomData<&'a ()>,
+    next_pipe: P,
 }
-impl <'a, 'b: 'a, F, P> AnnaWorker<'a, 'b, F, P>
+impl <F: Merge, P> LatticePipe2<F, P>
 where
-    F: Merge,
-    P: Pipe<'a, Input = &'b F::Domain>,
-    F::Domain: 'b,
+    for <'a> P: Pipe<Input = &'a F::Domain>,
 {
-    pub fn create(bottom: F::Domain) -> ( MpscPipe<F::Domain>, MpscPipe<P>, Self ) {
-        let ( delta_sender, delta_receiver ) = mpsc::channel(16);
-        let ( pipe_sender, pipe_receiver ) = mpsc::channel(16);
-
-        let delta_sender = MpscPipe::new(delta_sender);
-        let pipe_sender = MpscPipe::new(pipe_sender);
-
-        let worker = Self {
-            value: bottom,
-            delta_receiver: delta_receiver,
-            pipe_receiver: pipe_receiver,
-            pipes: Vec::new(),
-
-            _phantom: std::marker::PhantomData,
-        };
-        ( delta_sender, pipe_sender, worker )
-    }
-
-    // pub async fn run<'b: 'a>(&'b mut self) {
-    //     loop {
-    //         tokio::select! {
-    //             Some(delta) = self.delta_receiver.recv() => {
-    //                 F::merge_in(&mut self.value, delta);
-    //                 for pipe in &mut self.pipes {
-    //                     pipe.push(&self.value);
-    //                 }
-    //             },
-    //             Some(pipe) = self.pipe_receiver.recv() => {
-    //                 self.pipes.push(pipe);
-    //                 self.pipes.last_mut().unwrap().push(&self.value);
-    //             },
-    //         }
-    //     }
-    // }
-
-    pub fn tick(&'b mut self) {
-        while let Ok(delta) = self.delta_receiver.try_recv() {
-            F::merge_in(&mut self.value, delta);
-        }
-        while let Ok(pipe) = self.pipe_receiver.try_recv() {
-            self.pipes.push(pipe);
-        }
-        for pipe in &mut self.pipes {
-            let _result = pipe.push(&self.value);
+    pub fn new(value: F::Domain, next_pipe: P) -> Self {
+        Self {
+            value: value,
+            next_pipe: next_pipe,
         }
     }
 }
+impl <F: Merge, P> Pipe for LatticePipe2<F, P>
+where
+    for <'a> P: Pipe<Input = &'a F::Domain>,
+{
+    type Input = F::Domain;
 
-#[tokio::test]
-async fn test_asdf() {
-    use std::collections::HashSet;
-
-    use crate::merge;
-
-    let ( mut delta_sender, mut pipe_sender, mut worker ) =
-        AnnaWorker::<'_, '_, merge::Union<HashSet<usize>>, _>::create(HashSet::new());
-
-    {
-        delta_sender.push(vec![ 1_usize, 2, 3 ].into_iter().collect()).await;
-        worker.tick();
-    }
-
-    {
-        pipe_sender.push(DebugPipe::new()).await;
-        worker.tick();
-    }
-
-    {
-        delta_sender.push(vec![ 3, 4, 6 ].into_iter().collect()).await;
-        worker.tick();
+    fn push(&mut self, item: Self::Input) -> Result<(), &'static str> {
+        F::merge_in(&mut self.value, item);
+        self.next_pipe.push(&self.value)
     }
 }
+
+
+// pub struct AnnaWorker<F: Merge, P: Pipe<Input = F::Domain>> {
+//     value: RefCell<F::Domain>,
+//     pipes: Vec<P>,
+// }
+// impl <F: Merge, P: Pipe<Input = F::Domain>> AnnaWorker<F, P> {
+//     pub fn new(bottom: F::Domain) -> Self {
+//         Self {
+//             value: RefCell::new(bottom),
+//             pipes: Vec::new(),
+//         }
+//     }
+// }
+
+
+#[test]
+pub fn test_stuff() {
+    let pipe = DebugPipe::new();
+    let mut pipe = ClonePipe::new(pipe);
+    let items: Vec<usize> = vec![ 1, 2, 3, 4, 5 ];
+    for item in &items {
+        pipe.push(item);
+    }
+}
+
+// pub struct MpscPipe<T> {
+//     sender: mpsc::Sender<T>,
+// }
+// impl <T> MpscPipe<T> {
+//     pub fn new(sender: mpsc::Sender<T>) -> Self {
+//         Self {
+//             sender: sender,
+//         }
+//     }
+// }
+// impl <T> Pipe for MpscPipe<T> {
+//     type Input = T;
+
+//     fn push(&mut self, item: T) -> Result<(), &'static str> {
+
+//     }
+// }
