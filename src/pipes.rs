@@ -1,8 +1,8 @@
-use std::cell::RefCell;
+// use std::cell::RefCell;
 use std::fmt::Debug;
 
-use tokio::sync::mpsc;
-use tokio::sync::broadcast;
+// use tokio::sync::mpsc;
+// use tokio::sync::broadcast;
 
 // use tokio::stream::Stream;
 
@@ -14,6 +14,7 @@ pub trait Pipe<T> {
     #[must_use]
     fn push(&mut self, item: T) -> Result<(), &'static str>;
 }
+
 
 pub struct DebugPipe<T: Debug, P: Pipe<T>> {
     next_pipe: P,
@@ -29,10 +30,11 @@ impl <T: Debug, P: Pipe<T>> DebugPipe<T, P> {
 }
 impl <T: Debug, P: Pipe<T>> Pipe<T> for DebugPipe<T, P> {
     fn push(&mut self, item: T) -> Result<(), &'static str> {
-        println!("{:#?}", item);
+        println!("{:?}", item);
         self.next_pipe.push(item)
     }
 }
+
 
 pub struct NullPipe;
 impl <T> Pipe<T> for NullPipe {
@@ -42,17 +44,23 @@ impl <T> Pipe<T> for NullPipe {
 }
 
 
-// impl DebugPipe {
-//     pub fn new() -> Self {
-//         Self
-//     }
-// }
-// impl <T: Debug> Pipe<T> for DebugPipe {
-//     fn push(&mut self, item: T) -> Result<(), &'static str> {
-//         println!("{:#?}", item);
-//         Ok(())
-//     }
-// }
+pub struct ClonePipe<T, P: Pipe<T>> {
+    next_pipe: P,
+    _phantom: std::marker::PhantomData<T>,
+}
+impl <T, P: Pipe<T>> ClonePipe<T, P> {
+    pub fn new(next_pipe: P) -> Self {
+        Self {
+            next_pipe: next_pipe,
+            _phantom: std::marker::PhantomData,
+        }
+    }
+}
+impl <'a, T: Clone, P: Pipe<T>> Pipe<&'a T> for ClonePipe<T, P> {
+    fn push(&mut self, item: &'a T) -> Result<(), &'static str> {
+        self.next_pipe.push(item.clone())
+    }
+}
 
 
 pub struct LatticePipe<F: Merge, P: for<'a> Pipe<&'a F::Domain>> {
@@ -75,117 +83,68 @@ impl <F: Merge, P: for<'a> Pipe<&'a F::Domain>> Pipe<F::Domain> for LatticePipe<
 }
 
 
-// pub struct ClonePipe<'a, T: Clone, P: Pipe<Input = T>> {
-//     next_pipe: P,
-//     _phantom: std::marker::PhantomData<&'a T>,
-// }
-// impl <'a, T: Clone, P: Pipe<Input = T>> ClonePipe<'a, T, P> {
-//     pub fn new(next_pipe: P) -> Self {
-//         Self {
-//             next_pipe: next_pipe,
-//             _phantom: std::marker::PhantomData,
-//         }
-//     }
-// }
-// impl <'a, T: Clone, P: Pipe<Input = T>> Pipe for ClonePipe<'a, T, P> {
-//     type Input = &'a T;
+pub struct IntoPipe<T, U: From<T>, P: Pipe<U>> {
+    next_pipe: P,
+    _phantom: std::marker::PhantomData<( T, U )>,
+}
+impl <T, U: From<T>, P: Pipe<U>> IntoPipe<T, U, P> {
+    pub fn new(next_pipe: P) -> Self {
+        Self {
+            next_pipe: next_pipe,
+            _phantom: std::marker::PhantomData,
+        }
+    }
+}
+impl <T, U: From<T>, P: Pipe<U>> Pipe<T> for IntoPipe<T, U, P> {
+    fn push(&mut self, item: T) -> Result<(), &'static str> {
+        self.next_pipe.push(item.into())
+    }
+}
 
-//     fn push(&mut self, item: Self::Input) -> Result<(), &'static str> {
-//         self.next_pipe.push(item.clone())
-//     }
-// }
+use std::iter::{ IntoIterator, FromIterator };
 
-
-// pub struct LatticePipe<'a, F: Merge> {
-//     value: &'a RefCell<F::Domain>,
-// }
-// impl <'a, F: Merge> LatticePipe<'a, F> {
-//     pub fn new(value: &'a RefCell<F::Domain>) -> Self {
-//         Self {
-//             value: value,
-//         }
-//     }
-// }
-// impl <'a, F: Merge> Pipe for LatticePipe<'a, F> {
-//     type Input = F::Domain;
-
-//     fn push(&mut self, item: Self::Input) -> Result<(), &'static str> {
-//         F::merge_in(&mut self.value.borrow_mut(), item);
-//         Ok(())
-//     }
-// }
-
-// pub struct LatticePipe2<F: Merge, P>
-// where
-//     for <'a> P: PipeLifetime<'a, F::Domain>,
-// {
-//     value: F::Domain,
-//     next_pipe: P,
-//     // _phantom: std::marker::PhantomData<&'a ()>,
-// }
-// impl <F: Merge, P> LatticePipe2<F, P>
-// where
-//     for <'a> P: PipeLifetime<'a, F::Domain>,
-// {
-//     pub fn new(value: F::Domain, next_pipe: P) -> Self {
-//         Self {
-//             value: value,
-//             next_pipe: next_pipe,
-//             // _phantom: std::marker::PhantomData,
-//         }
-//     }
-// }
-// impl <F: Merge, P> Pipe for LatticePipe2<F, P>
-// where
-//     for <'a> P: PipeLifetime<'a, F::Domain>,
-// {
-//     type Input = F::Domain;
-
-//     fn push(&mut self, item: Self::Input) -> Result<(), &'static str> {
-//         F::merge_in(&mut self.value, item);
-//         self.next_pipe.push(&self.value)
-//     }
-// }
+pub struct CollectPipe<A, T: IntoIterator<Item = A>, U: FromIterator<A>, P: Pipe<U>> {
+    next_pipe: P,
+    _phantom: std::marker::PhantomData<( A, T, U )>,
+}
+impl <A, T: IntoIterator<Item = A>, U: FromIterator<A>, P: Pipe<U>> CollectPipe<A, T, U, P> {
+    pub fn new(next_pipe: P) -> Self {
+        Self {
+            next_pipe: next_pipe,
+            _phantom: std::marker::PhantomData,
+        }
+    }
+}
+impl <A, T: IntoIterator<Item = A>, U: FromIterator<A>, P: Pipe<U>> Pipe<T> for CollectPipe<A, T, U, P> {
+    fn push(&mut self, item: T) -> Result<(), &'static str> {
+        self.next_pipe.push(item.into_iter().collect())
+    }
+}
 
 
-// pub struct AnnaWorker<F: Merge, P: Pipe<Input = F::Domain>> {
-//     value: RefCell<F::Domain>,
-//     pipes: Vec<P>,
+// pub struct MapPipe<T, U, F: Fn(T) -> U> {
+//     f: F,
+//     _phantom: std::marker::PhantomData<( T, U )>,
 // }
-// impl <F: Merge, P: Pipe<Input = F::Domain>> AnnaWorker<F, P> {
-//     pub fn new(bottom: F::Domain) -> Self {
-//         Self {
-//             value: RefCell::new(bottom),
-//             pipes: Vec::new(),
-//         }
-//     }
-// }
+
 
 
 #[test]
 pub fn test_stuff() {
-    let pipe = DebugPipe::new();
-    let mut pipe = ClonePipe::new(pipe);
-    let items: Vec<usize> = vec![ 1, 2, 3, 4, 5 ];
+    use std::collections::HashSet;
+
+    let pipe = NullPipe;
+    let pipe = DebugPipe::new(pipe);
+    let pipe = ClonePipe::new(pipe);
+    let pipe = LatticePipe::<crate::merge::Union<HashSet<usize>>, _>::new(Default::default(), pipe);
+    let pipe = CollectPipe::new(pipe);
+    let pipe = ClonePipe::new(pipe);
+    let mut pipe = pipe;
+
+
+    let items: Vec<Vec<usize>> = vec![ vec![ 1 ], vec![ 2 ], vec![ 3 ], vec![ 4 ], vec![ 5 ] ];
+
     for item in &items {
-        pipe.push(item);
+        pipe.push(item).unwrap();
     }
 }
-
-// pub struct MpscPipe<T> {
-//     sender: mpsc::Sender<T>,
-// }
-// impl <T> MpscPipe<T> {
-//     pub fn new(sender: mpsc::Sender<T>) -> Self {
-//         Self {
-//             sender: sender,
-//         }
-//     }
-// }
-// impl <T> Pipe for MpscPipe<T> {
-//     type Input = T;
-
-//     fn push(&mut self, item: T) -> Result<(), &'static str> {
-
-//     }
-// }
