@@ -1,5 +1,5 @@
 #![feature(type_alias_impl_trait)]
-#![feature(impl_trait_in_bindings)]
+// #![feature(impl_trait_in_bindings)]
 
 pub mod merge;
 
