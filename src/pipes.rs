@@ -122,29 +122,115 @@ impl <A, T: IntoIterator<Item = A>, U: FromIterator<A>, P: Pipe<U>> Pipe<T> for 
 }
 
 
-// pub struct MapPipe<T, U, F: Fn(T) -> U> {
-//     f: F,
-//     _phantom: std::marker::PhantomData<( T, U )>,
-// }
+pub trait UnaryFn<I, O> {
+    // type Input;
+    // type Output;
+
+    fn call(input: I) -> O;
+}
+
+
+
+pub struct FilterPipe<T, F, P: Pipe<T>>
+where
+    F: for<'a> UnaryFn<&'a T, bool>,
+{
+    next_pipe: P,
+    _phantom: std::marker::PhantomData<( T, F )>,
+}
+impl <T, F, P: Pipe<T>> FilterPipe<T, F, P>
+where
+    F: for<'a> UnaryFn<&'a T, bool>,
+{
+    pub fn new(next_pipe: P) -> Self {
+        Self {
+            next_pipe: next_pipe,
+            _phantom: std::marker::PhantomData,
+        }
+    }
+}
+impl <T, F, P: Pipe<T>> Pipe<T> for FilterPipe<T, F, P>
+where
+    F: for<'a> UnaryFn<&'a T, bool>,
+{
+    fn push(&mut self, item: T) -> Result<(), &'static str> {
+        if F::call(&item) {
+            self.next_pipe.push(item)
+        }
+        else {
+            Ok(())
+        }
+    }
+}
+
+
+
+pub struct MapPipe<I, O, F: UnaryFn<I, O>, P: Pipe<O>> {
+    next_pipe: P,
+    _phantom: std::marker::PhantomData<( I, O, F )>,
+}
+impl <I, O, F: UnaryFn<I, O>, P: Pipe<O>> MapPipe<I, O, F, P> {
+    pub fn new(next_pipe: P) -> Self {
+        Self {
+            next_pipe: next_pipe,
+            _phantom: std::marker::PhantomData,
+        }
+    }
+}
+impl <I, O, F: UnaryFn<I, O>, P: Pipe<O>> Pipe<I> for MapPipe<I, O, F, P> {
+    fn push(&mut self, item: I) -> Result<(), &'static str> {
+        self.next_pipe.push(F::call(item))
+    }
+}
+
+
 
 
 
 #[test]
 pub fn test_stuff() {
-    use std::collections::HashSet;
+    use crate::merge::{ MapUnion, Max };
+    use std::collections::HashMap;
 
-    let pipe = NullPipe;
-    let pipe = DebugPipe::new(pipe);
-    let pipe = ClonePipe::new(pipe);
-    let pipe = LatticePipe::<crate::merge::Union<HashSet<usize>>, _>::new(Default::default(), pipe);
-    let pipe = CollectPipe::new(pipe);
-    let pipe = ClonePipe::new(pipe);
-    let mut pipe = pipe;
-
-
-    let items: Vec<Vec<usize>> = vec![ vec![ 1 ], vec![ 2 ], vec![ 3 ], vec![ 4 ], vec![ 5 ] ];
-
-    for item in &items {
-        pipe.push(item).unwrap();
+    struct GetHello;
+    impl <'a> UnaryFn<&'a HashMap<&'static str, &'static str>, Option<String>> for GetHello {
+        fn call(input: &'a HashMap<&'static str, &'static str>) -> Option<String> {
+            input.get("hello").map(|x| (*x).to_owned())
+        }
     }
+
+    struct GetHello2;
+    impl UnaryFn<HashMap<&'static str, &'static str>, Option<String>> for GetHello2 {
+        fn call(input: HashMap<&'static str, &'static str>) -> Option<String> {
+            input.get("hello").map(|x| (*x).to_owned())
+        }
+    }
+
+    let pipe: NullPipe = NullPipe;
+    // let pipe = DebugPipe::new(pipe);
+    // let pipe: ClonePipe<_, _> = ClonePipe::new(pipe);
+    let pipe = MapPipe::<_, Option<String>, GetHello, _>::new(pipe);
+
+
+    // let pipe = MapPipe::<HashMap<&'static str, &'static str>, Option<String>, GetHello2, _>::new(pipe);
+    // let pipe: ClonePipe<_, _> = ClonePipe::new(pipe);
+
+
+    let pipe: LatticePipe::<MapUnion<HashMap<&'static str, Max<&'static str>>>, _> = LatticePipe::new(Default::default(), pipe);
+    // let pipe = CollectPipe::new(pipe);
+    // let pipe = ClonePipe::new(pipe);
+    // let mut pipe = pipe;
+
+
+    // let items: Vec<Vec<_>> = vec![
+    //     vec![ ( "hello", "world" ) ],
+    //     vec![ ( "foo", "bar" ) ],
+    //     vec![ ( "bang", "baz" ) ],
+    //     vec![ ( "hello", "peeps" ) ],
+    //     vec![ ( "ding", "dong" ) ]
+    // ];
+
+    // for item in &items {
+    //     pipe.push(item).unwrap();
+    // }
 }
