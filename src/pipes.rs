@@ -18,48 +18,48 @@ pub trait Pipe<'item> {
 }
 
 
-pub struct DebugPipe<'item, P: Pipe<'item>>
-where
-    P::Item: Debug,
-{
-    next_pipe: P,
-    _phantom: std::marker::PhantomData<dyn Fn(&'item ())>,
-}
-impl <'item, P: Pipe<'item>> DebugPipe<'item, P>
-where
-    P::Item: Debug,
-{
-    pub fn new(next_pipe: P) -> Self {
-        Self {
-            next_pipe: next_pipe,
-            _phantom: std::marker::PhantomData,
-        }
-    }
-}
-impl <'item, P: Pipe<'item>> Pipe<'item> for DebugPipe<'item, P>
-where
-    P::Item: Debug,
-{
-    type Item = P::Item;
+// pub struct DebugPipe<'item, P: Pipe<'item>>
+// where
+//     P::Item: Debug,
+// {
+//     next_pipe: P,
+//     _phantom: std::marker::PhantomData<dyn Fn(&'item ())>,
+// }
+// impl <'item, P: Pipe<'item>> DebugPipe<'item, P>
+// where
+//     P::Item: Debug,
+// {
+//     pub fn new(next_pipe: P) -> Self {
+//         Self {
+//             next_pipe: next_pipe,
+//             _phantom: std::marker::PhantomData,
+//         }
+//     }
+// }
+// impl <'item, P: Pipe<'item>> Pipe<'item> for DebugPipe<'item, P>
+// where
+//     P::Item: Debug,
+// {
+//     type Item = P::Item;
 
-    fn push(&mut self, item: P::Item) -> Result<(), &'static str> {
-        println!("{:?}", item);
-        self.next_pipe.push(item)
-    }
-}
+//     fn push(&mut self, item: P::Item) -> Result<(), &'static str> {
+//         println!("{:?}", item);
+//         self.next_pipe.push(item)
+//     }
+// }
 
 
 pub struct NullPipe<T> {
     _phantom: std::marker::PhantomData<T>,
 }
-impl <T> NullPipe<T> {
+impl<T> NullPipe<T> {
     pub fn new() -> Self {
         Self {
             _phantom: std::marker::PhantomData,
         }
     }
 }
-impl <'item, T: 'item> Pipe<'item> for NullPipe<T> {
+impl<'item, T: 'item> Pipe<'item> for NullPipe<T> {
     type Item = T;
 
     fn push(&mut self, _item: T) -> Result<(), &'static str> {
@@ -67,12 +67,11 @@ impl <'item, T: 'item> Pipe<'item> for NullPipe<T> {
     }
 }
 
-
-pub struct ClonePipe<'item, P: Pipe<'item>> {
+pub struct RefPipe<T, P: for<'item> Pipe<'item, Item = &'item T>> {
     next_pipe: P,
-    _phantom: std::marker::PhantomData<&'item ()>,
+    _phantom: std::marker::PhantomData<T>,
 }
-impl <'item, P: Pipe<'item>> ClonePipe<'item, P> {
+impl<T, P: for<'item> Pipe<'item, Item = &'item T>> RefPipe<T, P> {
     pub fn new(next_pipe: P) -> Self {
         Self {
             next_pipe: next_pipe,
@@ -80,59 +79,80 @@ impl <'item, P: Pipe<'item>> ClonePipe<'item, P> {
         }
     }
 }
-impl <'item, P: Pipe<'item>> Pipe<'item> for ClonePipe<'item, P>
-where
-    P::Item: Clone,
-{
-    type Item = &'item P::Item;
+impl<'item, T: 'item, P: for<'a> Pipe<'a, Item = &'a T>> Pipe<'item> for RefPipe<T, P> {
+    type Item = T;
 
-    fn push(&mut self, item: Self::Item) -> Result<(), &'static str> {
-        self.next_pipe.push(item.clone())
+    fn push(&mut self, item: T) -> Result<(), &'static str> {
+        self.next_pipe.push(&item)
     }
 }
 
-// struct DebugPipe2<'a, P: Pipe<'a>> {
-//     next_pipe: P,
-//     _phantom: std::marker::PhantomData<&'a ()>,
-// }
-// impl<'a, P: Pipe<'a>> Pipe<'a> for DebugPipe2<'a, P>
-// where
-//     P::Item: 'a + Debug,
-// {
-//     type Item = &'a P::Item;
 
-//     fn push(&mut self, value: &'a P::Item) -> Result<(), &'static str> {
-//         println!("{:?}", *value);
-//         Ok(())
+// pub struct ClonePipe<'item, P: Pipe<'item>> {
+//     next_pipe: P,
+//     _phantom: std::marker::PhantomData<&'item ()>,
+// }
+// impl <'item, P: Pipe<'item>> ClonePipe<'item, P> {
+//     pub fn new(next_pipe: P) -> Self {
+//         Self {
+//             next_pipe: next_pipe,
+//             _phantom: std::marker::PhantomData,
+//         }
+//     }
+// }
+// impl <'item, P: Pipe<'item>> Pipe<'item> for ClonePipe<'item, P>
+// where
+//     P::Item: Clone,
+// {
+//     type Item = &'item P::Item;
+
+//     fn push(&mut self, item: Self::Item) -> Result<(), &'static str> {
+//         self.next_pipe.push(item.clone())
 //     }
 // }
 
+// // struct DebugPipe2<'a, P: Pipe<'a>> {
+// //     next_pipe: P,
+// //     _phantom: std::marker::PhantomData<&'a ()>,
+// // }
+// // impl<'a, P: Pipe<'a>> Pipe<'a> for DebugPipe2<'a, P>
+// // where
+// //     P::Item: 'a + Debug,
+// // {
+// //     type Item = &'a P::Item;
 
-pub struct LatticePipe<'item, F: Merge, P: for<'a> Pipe<'a, Item = &'a F::Domain>> {
-    value: F::Domain,
-    next_pipe: P,
-    _phantom: std::marker::PhantomData<&'item ()>,
-}
-impl<'item, F: Merge, P: for<'a> Pipe<'a, Item = &'a F::Domain>> LatticePipe<'item, F, P> {
-    pub fn new(bottom: F::Domain, next_pipe: P) -> Self {
-        Self {
-            value: bottom,
-            next_pipe: next_pipe,
-            _phantom: std::marker::PhantomData,
-        }
-    }
-}
-impl<'item, F: Merge, P: for<'a> Pipe<'a, Item = &'a F::Domain>> Pipe<'item> for LatticePipe<'item, F, P>
-where
-    F::Domain: 'item,
-{
-    type Item = F::Domain;
+// //     fn push(&mut self, value: &'a P::Item) -> Result<(), &'static str> {
+// //         println!("{:?}", *value);
+// //         Ok(())
+// //     }
+// // }
 
-    fn push(&mut self, item: F::Domain) -> Result<(), &'static str> {
-        F::merge_in(&mut self.value, item);
-        self.next_pipe.push(&self.value)
-    }
-}
+
+// pub struct LatticePipe<'item, F: Merge, P: for<'a> Pipe<'a, Item = &'a F::Domain>> {
+//     value: F::Domain,
+//     next_pipe: P,
+//     _phantom: std::marker::PhantomData<&'item ()>,
+// }
+// impl<'item, F: Merge, P: for<'a> Pipe<'a, Item = &'a F::Domain>> LatticePipe<'item, F, P> {
+//     pub fn new(bottom: F::Domain, next_pipe: P) -> Self {
+//         Self {
+//             value: bottom,
+//             next_pipe: next_pipe,
+//             _phantom: std::marker::PhantomData,
+//         }
+//     }
+// }
+// impl<'item, F: Merge, P: for<'a> Pipe<'a, Item = &'a F::Domain>> Pipe<'item> for LatticePipe<'item, F, P>
+// where
+//     F::Domain: 'item,
+// {
+//     type Item = F::Domain;
+
+//     fn push(&mut self, item: F::Domain) -> Result<(), &'static str> {
+//         F::merge_in(&mut self.value, item);
+//         self.next_pipe.push(&self.value)
+//     }
+// }
 
 
 // pub struct IntoPipe<T, U: From<T>, P: Pipe<U>> {
@@ -242,9 +262,12 @@ pub fn test_stuff() {
     use std::collections::HashMap;
     use crate::merge::{ MapUnion, Max };
 
-    let pipe = NullPipe::new();
-    let pipe = DebugPipe::new(pipe);
-    let pipe = LatticePipe::<'_, MapUnion<HashMap<usize, Max<usize>>>, _>::new(HashMap::new(), pipe);
+    type Asdf = impl for<'item> Pipe<'item, Item = &'item usize>;
+    let pipe: Asdf = NullPipe::new();
+    // let pipe = RefPipe::<usize, NullPipe<&'_ usize>>::new(pipe);
+    // let pipe = LatticePipe::<'_, MapUnion<HashMap<usize, Max<usize>>>, _>::new(HashMap::new(), pipe);
+    // pipe.push(5_usize);
+    // pipe.push(10_usize);
 }
 
 
