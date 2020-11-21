@@ -207,10 +207,13 @@ where
             self.pipes.push(new_pipe);
         }
         let mut result = Ok(());
-        for pipe in &mut self.pipes {
+
+        self.pipes.drain_filter(|pipe| {
             let next_result = pipe.push(item);
-            result = result.and(next_result);
-        }
+            let remove = next_result.is_err(); // DANGER!!!! Errored pipes get removed!!
+            result = std::mem::replace(&mut result, Ok(())).and(next_result); // Ugly to fight ownership.
+            remove
+        });
         result
     }
 }
@@ -250,6 +253,7 @@ pub fn test() -> Result<(), String> {
     use crate::merge::{ MapUnion, Max };
 
 
+    // Key-getter for reading.
     struct ReadKey {
         key: &'static str,
         // _phantom: std::marker::PhantomData<&'a ()>,
@@ -271,6 +275,7 @@ pub fn test() -> Result<(), String> {
     }
 
 
+    // Mapper for writing.
     struct KvToHashmap;
     impl<'a> UnaryFn<&'a ( &'static str, &'static str )> for KvToHashmap {
         type Output = Option<HashMap<&'static str, &'static str>>;
@@ -282,7 +287,7 @@ pub fn test() -> Result<(), String> {
         }
     }
 
-
+    // Set up pipes.
     let ( write_pipe, mut read_pipe ) = SplitPipe::create();
     let write_pipe = LatticePipe::<MapUnion<HashMap<&'static str, Max<&'static str>>>, _>::new(HashMap::new(), write_pipe);
     let write_pipe = MapFilterPipe::new(KvToHashmap, write_pipe);
@@ -313,6 +318,13 @@ pub fn test() -> Result<(), String> {
     // Do second set of writes.
     MovePipe::push(&mut write_pipe, ( "foo", "baz" ))?;
     MovePipe::push(&mut write_pipe, ( "xyz", "zzy" ))?;
+
+    // Add fourth reader.
+    let read_pipe_foo = NullPipe::new();
+    let read_pipe_foo = DebugPipe::new("foo_2", read_pipe_foo);
+    let read_pipe_foo = MapFilterPipe::new(ReadKey::new("foo"), read_pipe_foo);
+    read_pipe.push(read_pipe_foo)?;
+
     Ok(())
 }
 
