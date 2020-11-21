@@ -1,4 +1,4 @@
-use std::borrow::Cow;
+// use std::borrow::Cow;
 // use std::cell::RefCell;
 use std::fmt::Debug;
 use std::sync::mpsc;
@@ -12,16 +12,11 @@ use crate::merge::Merge;
 // use crate::semilattice::Semilattice;
 
 
-// pub struct Opaque<T> {
-//     value: T,
-// }
-// impl<T> Opaque<T> {
-//     pub fn new(value: T) -> Self {
-//         Self {
-//             value: value,
-//         }
-//     }
-// }
+pub trait UnaryFn<I> {
+    type Output;
+
+    fn call(&self, input: I) -> Self::Output;
+}
 
 
 pub trait Pipe {
@@ -72,14 +67,16 @@ pub struct DebugPipe<P: Pipe>
 where
     P::Item: Debug,
 {
+    tag: &'static str,
     next_pipe: P,
 }
 impl<P: Pipe> DebugPipe<P>
 where
     P::Item: Debug,
 {
-    pub fn new(next_pipe: P) -> Self {
+    pub fn new(tag: &'static str, next_pipe: P) -> Self {
         Self {
+            tag: tag,
             next_pipe: next_pipe,
         }
     }
@@ -91,7 +88,7 @@ where
     type Item = P::Item;
 
     fn push(&mut self, item: &Self::Item) -> Result<(), String> {
-        println!("{:?}", &item);
+        println!("{}: {:?}", self.tag, &item);
         self.next_pipe.push(item)
     }
 }
@@ -219,12 +216,12 @@ where
 }
 
 
-pub struct MapFilterPipe<T, F: Fn(&T) -> Option<P::Item>, P: MovePipe> {
+pub struct MapFilterPipe<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: MovePipe> {
     mapfilter: F,
     next_pipe: P,
     _phantom: std::marker::PhantomData<T>,
 }
-impl<T, F: Fn(&T) -> Option<P::Item>, P: MovePipe> MapFilterPipe<T, F, P> {
+impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: MovePipe> MapFilterPipe<T, F, P> {
     pub fn new(mapfilter: F, next_pipe: P) -> Self {
         Self {
             mapfilter: mapfilter,
@@ -233,11 +230,11 @@ impl<T, F: Fn(&T) -> Option<P::Item>, P: MovePipe> MapFilterPipe<T, F, P> {
         }
     }
 }
-impl<T, F: Fn(&T) -> Option<P::Item>, P: MovePipe> Pipe for MapFilterPipe<T, F, P> {
+impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: MovePipe> Pipe for MapFilterPipe<T, F, P> {
     type Item = T;
 
     fn push(&mut self, item: &T) -> Result<(), String> {
-        if let Some(item) = (self.mapfilter)(&item) {
+        if let Some(item) = self.mapfilter.call(item) {
             self.next_pipe.push(item)
         }
         else {
@@ -247,32 +244,73 @@ impl<T, F: Fn(&T) -> Option<P::Item>, P: MovePipe> Pipe for MapFilterPipe<T, F, 
 }
 
 
+
 pub fn test() -> Result<(), String> {
     use std::collections::HashMap;
     use crate::merge::{ MapUnion, Max };
 
+
+    struct ReadKey {
+        key: &'static str,
+        // _phantom: std::marker::PhantomData<&'a ()>,
+    }
+    impl ReadKey {
+        pub fn new(key: &'static str) -> Self {
+            Self {
+                key: key,
+                // _phantom: std::marker::PhantomData,
+            }
+        }
+    }
+    impl<'a> UnaryFn<&'a HashMap<&'static str, &'static str>> for ReadKey {
+        type Output = Option<&'static str>;
+
+        fn call(&self, input: &'a HashMap<&'static str, &'static str>) -> Self::Output {
+            input.get(self.key).cloned()
+        }
+    }
+
+
+    struct KvToHashmap;
+    impl<'a> UnaryFn<&'a ( &'static str, &'static str )> for KvToHashmap {
+        type Output = Option<HashMap<&'static str, &'static str>>;
+
+        fn call(&self, &( k, v ): &'a ( &'static str, &'static str )) -> Self::Output {
+            let mut hashmap = HashMap::new();
+            hashmap.insert(k, v);
+            Some(hashmap)
+        }
+    }
+
+
     let ( write_pipe, mut read_pipe ) = SplitPipe::create();
-    // let pipe = MapFilterPipe::new(|hashmap| hashmap., pipe);
     let write_pipe = LatticePipe::<MapUnion<HashMap<&'static str, Max<&'static str>>>, _>::new(HashMap::new(), write_pipe);
-    let write_pipe = MapFilterPipe::new(|&( k, v ): &( &'static str, &'static str )| {
-        let mut hashmap = HashMap::new();
-        hashmap.insert(k, v);
-        Some(hashmap)
-    }, write_pipe);
+    let write_pipe = MapFilterPipe::new(KvToHashmap, write_pipe);
     let mut write_pipe = write_pipe;
 
+    // Add first reader.
     let read_pipe_foo = NullPipe::new();
-    let read_pipe_foo = DebugPipe::new(read_pipe_foo);
-    let read_pipe_foo = MapFilterPipe::new(|hashmap: &HashMap<&'static str, &'static str>| hashmap.get("foo").cloned(), read_pipe_foo);
-    read_pipe.push(read_pipe_foo);
+    let read_pipe_foo = DebugPipe::new("foo_0", read_pipe_foo);
+    let read_pipe_foo = MapFilterPipe::new(ReadKey::new("foo"), read_pipe_foo);
+    read_pipe.push(read_pipe_foo)?;
 
-    // let read_pipe_foo = NullPipe::new();
-    // let read_pipe_foo = DebugPipe::new(read_pipe_foo);
-    // let read_pipe_foo = MapFilterPipe::new(|hashmap: &HashMap<&'static str, &'static str>| hashmap.get("xyz").cloned(), read_pipe_foo);
-    // read_pipe.push(read_pipe_foo);
+    // Add second reader.
+    let read_pipe_foo = NullPipe::new();
+    let read_pipe_foo = DebugPipe::new("xyz_0", read_pipe_foo);
+    let read_pipe_foo = MapFilterPipe::new(ReadKey::new("xyz"), read_pipe_foo);
+    read_pipe.push(read_pipe_foo)?;
 
+    // Do first set of writes.
     MovePipe::push(&mut write_pipe, ( "foo", "bar" ))?;
     MovePipe::push(&mut write_pipe, ( "bin", "bag" ))?;
+
+    // Add third reader.
+    let read_pipe_foo = NullPipe::new();
+    let read_pipe_foo = DebugPipe::new("foo_1", read_pipe_foo);
+    let read_pipe_foo = MapFilterPipe::new(ReadKey::new("foo"), read_pipe_foo);
+    read_pipe.push(read_pipe_foo)?;
+
+    // Do second set of writes.
     MovePipe::push(&mut write_pipe, ( "foo", "baz" ))?;
     MovePipe::push(&mut write_pipe, ( "xyz", "zzy" ))?;
     Ok(())
