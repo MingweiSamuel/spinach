@@ -18,46 +18,46 @@ pub trait UnaryFn<I> {
 }
 
 
-pub trait Pipe<'s> {
+pub trait Pipe {
     type Item;
     type Feedback: Future;
 
     #[must_use]
-    fn push(&'s mut self, item: &Self::Item) -> Self::Feedback;
+    fn push(self, item: &Self::Item) -> Self::Feedback;
 }
 
-pub trait MovePipe<'s> {
+pub trait MovePipe {
     type Item;
     type Feedback: Future;
 
     #[must_use]
-    fn push(&'s mut self, item: Self::Item) -> Self::Feedback;
+    fn push(self, item: Self::Item) -> Self::Feedback;
 }
 
-impl<'s, P: Pipe<'s>> MovePipe<'s> for P {
+impl<P: Pipe> MovePipe for P {
     type Item = P::Item;
     type Feedback = P::Feedback;
 
-    fn push(&'s mut self, item: Self::Item) -> Self::Feedback {
+    fn push(self, item: Self::Item) -> Self::Feedback {
         Pipe::push(self, &item)
     }
 }
 
-pub trait Pipe2 {
-    type Item;
-    type Feedback: Future;
+// pub trait Pipe2 {
+//     type Item;
+//     type Feedback: Future;
 
-    #[must_use]
-    fn push(&mut self, item: &Self::Item) -> Self::Feedback;
-}
-impl<'s, P: Pipe2> Pipe<'s> for P {
-    type Item = P::Item;
-    type Feedback = P::Feedback;
+//     #[must_use]
+//     fn push(&mut self, item: &Self::Item) -> Self::Feedback;
+// }
+// impl<'s, P: Pipe2> Pipe<'s> for P {
+//     type Item = P::Item;
+//     type Feedback = P::Feedback;
 
-    fn push(&'s mut self, item: &Self::Item) -> Self::Feedback {
-        Pipe2::push(self, item)
-    }
-}
+//     fn push(&'s mut self, item: &Self::Item) -> Self::Feedback {
+//         Pipe2::push(self, item)
+//     }
+// }
 
 
 
@@ -72,26 +72,28 @@ impl<T> NullPipe<T> {
         }
     }
 }
-impl<'s, T> Pipe<'s> for NullPipe<T> {
+impl<T> Pipe for &NullPipe<T> {
     type Item = T;
     type Feedback = future::Ready<()>;
 
-    fn push(&'s mut self, _item: &Self::Item) -> Self::Feedback {
+    fn push(self, _item: &Self::Item) -> Self::Feedback {
         future::ready(())
     }
 }
 
 
-pub struct DebugPipe<'s, P: Pipe<'s>>
+pub struct DebugPipe<'s, P: 's>
 where
-    P::Item: Debug,
+    &'s mut P: Pipe,
+    <&'s mut P as Pipe>::Item: Debug,
 {
     tag: &'s str,
     next_pipe: P,
 }
-impl<'s, P: Pipe<'s>> DebugPipe<'s, P>
+impl<'s, P: 's> DebugPipe<'s, P>
 where
-    P::Item: Debug,
+    &'s mut P: Pipe,
+    <&'s mut P as Pipe>::Item: Debug,
 {
     pub fn new(tag: &'s str, next_pipe: P) -> Self {
         Self {
@@ -100,51 +102,52 @@ where
         }
     }
 }
-impl<'s, P: Pipe<'s>> Pipe<'s> for DebugPipe<'s, P>
+impl<'s, P: 's> Pipe for &'s mut DebugPipe<'s, P>
 where
-    P::Item: Debug,
+    &'s mut P: Pipe,
+    <&'s mut P as Pipe>::Item: Debug,
 {
-    type Item = P::Item;
-    type Feedback = P::Feedback;
+    type Item = <&'s mut P as Pipe>::Item;
+    type Feedback = <&'s mut P as Pipe>::Feedback;
 
-    fn push(&'s mut self, item: &Self::Item) -> Self::Feedback {
-        println!("{}: {:?}", self.tag, &item);
-        self.next_pipe.push(item)
+    fn push(self, item: &Self::Item) -> Self::Feedback {
+        println!("{}: {:?}", self.tag, item);
+        Pipe::push(&mut self.next_pipe, item)
     }
 }
 
 
 
 
-pub struct ClonePipe<'s, P: MovePipe<'s>>
-where
-    P::Item: Clone,
-{
-    next_pipe: P,
-    _phantom: std::marker::PhantomData<&'s ()>,
-}
-impl<'s, P: MovePipe<'s>> ClonePipe<'s, P>
-where
-    P::Item: Clone,
-{
-    pub fn new(next_pipe: P) -> Self {
-        Self {
-            next_pipe: next_pipe,
-            _phantom: std::marker::PhantomData,
-        }
-    }
-}
-impl<'s, P: MovePipe<'s>> Pipe<'s> for ClonePipe<'s, P>
-where
-    P::Item: Clone,
-{
-    type Item = P::Item;
-    type Feedback = P::Feedback;
+// pub struct ClonePipe<'s, P: MovePipe<'s>>
+// where
+//     P::Item: Clone,
+// {
+//     next_pipe: P,
+//     _phantom: std::marker::PhantomData<&'s ()>,
+// }
+// impl<'s, P: MovePipe<'s>> ClonePipe<'s, P>
+// where
+//     P::Item: Clone,
+// {
+//     pub fn new(next_pipe: P) -> Self {
+//         Self {
+//             next_pipe: next_pipe,
+//             _phantom: std::marker::PhantomData,
+//         }
+//     }
+// }
+// impl<'s, P: MovePipe<'s>> Pipe<'s> for ClonePipe<'s, P>
+// where
+//     P::Item: Clone,
+// {
+//     type Item = P::Item;
+//     type Feedback = P::Feedback;
 
-    fn push(&'s mut self, item: &Self::Item) -> Self::Feedback {
-        self.next_pipe.push(item.clone())
-    }
-}
+//     fn push(&'s mut self, item: &Self::Item) -> Self::Feedback {
+//         self.next_pipe.push(item.clone())
+//     }
+// }
 
 
 
