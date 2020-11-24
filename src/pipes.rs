@@ -1,4 +1,5 @@
 use std::future::{ self, Future };
+use futures::future::{ FutureExt, Either, join_all };
 use std::fmt::Debug;
 // use std::sync::mpsc;
 
@@ -31,15 +32,15 @@ pub trait MovePipe<'s> {
     type Feedback: Future;
 
     #[must_use]
-    fn push(&'s mut self, item: Self::Item) -> Self::Feedback;
+    fn push_move(&'s mut self, item: Self::Item) -> Self::Feedback;
 }
 
 impl<'s, P: Pipe<'s>> MovePipe<'s> for P {
     type Item = P::Item;
     type Feedback = P::Feedback;
 
-    fn push(&'s mut self, item: Self::Item) -> Self::Feedback {
-        Pipe::push(self, &item)
+    fn push_move(&'s mut self, item: Self::Item) -> Self::Feedback {
+        self.push(&item)
     }
 }
 
@@ -126,7 +127,7 @@ where
     type Feedback = P::Feedback;
 
     fn push(&'s mut self, item: &Self::Item) -> Self::Feedback {
-        self.next_pipe.push(item.clone())
+        self.next_pipe.push_move(item.clone())
     }
 }
 
@@ -151,7 +152,7 @@ impl<'s, F: Merge, P: Pipe<'s, Item = F::Domain>> MovePipe<'s> for LatticePipe<'
     type Item = F::Domain;
     type Feedback = P::Feedback;
 
-    fn push(&'s mut self, item: Self::Item) -> Self::Feedback {
+    fn push_move(&'s mut self, item: Self::Item) -> Self::Feedback {
         F::merge_in(&mut self.value, item);
         self.next_pipe.push(&self.value)
     }
@@ -172,7 +173,7 @@ impl<'s, T> MovePipe<'s> for MpscPipe<T> {
     type Item = T;
     type Feedback = impl Future;
 
-    fn push(&'s mut self, item: T) -> Self::Feedback {
+    fn push_move(&'s mut self, item: T) -> Self::Feedback {
         self.sender.send(item)
     }
 }
@@ -185,73 +186,72 @@ impl<T> Clone for MpscPipe<T> {
 }
 
 
-// pub struct SplitPipe<P: MovePipe>
-// where
-//     P::Item: Clone,
-// {
-//     pipe_receiver: mpsc::Receiver<P>,
-//     pipes: Vec<P>,
-// }
-// impl<P: Pipe> SplitPipe<P>
-// where
-//     P::Item: Clone,
-// {
-//     pub fn create() -> ( Self, MpscPipe<P> ) {
-//         let ( sender, receiver ) = mpsc::sync_channel(8);
-//         let inst = Self {
-//             pipe_receiver: receiver,
-//             pipes: Vec::new(),
-//         };
-//         let mpsc_pipe = MpscPipe::create(sender);
-//         ( inst, mpsc_pipe )
-//     }
-// }
-// impl<P: Pipe> Pipe for SplitPipe<P>
-// where
-//     P::Item: Clone,
-// {
-//     type Item = P::Item;
+pub struct SplitPipe<'s, P: MovePipe<'s>>
+where
+    P::Item: Clone,
+{
+    pipe_receiver: mpsc::Receiver<P>,
+    pipes: Vec<P>,
+    _phantom: std::marker::PhantomData<&'s ()>,
+}
+impl<'s, P: Pipe<'s>> SplitPipe<'s, P>
+where
+    P::Item: Clone,
+{
+    pub fn create() -> ( Self, MpscPipe<P> ) {
+        let ( sender, receiver ) = mpsc::channel(8);
+        let inst = Self {
+            pipe_receiver: receiver,
+            pipes: Vec::new(),
+            _phantom: std::marker::PhantomData,
+        };
+        let mpsc_pipe = MpscPipe::create(sender);
+        ( inst, mpsc_pipe )
+    }
+}
+impl<'s, P: Pipe<'s>> Pipe<'s> for SplitPipe<'s, P>
+where
+    P::Item: Clone,
+{
+    type Item = P::Item;
+    type Feedback = futures::future::JoinAll<P::Feedback>;
 
-//     fn push(&mut self, item: &Self::Item) -> Result<(), String> {
-//         while let Ok(new_pipe) = self.pipe_receiver.try_recv() {
-//             self.pipes.push(new_pipe);
-//         }
-//         let mut result = Ok(());
-
-//         self.pipes.drain_filter(|pipe| {
-//             let next_result = pipe.push(item);
-//             let remove = next_result.is_err(); // DANGER!!!! Errored pipes get removed!!
-//             result = std::mem::replace(&mut result, Ok(())).and(next_result); // Ugly to fight ownership.
-//             remove
-//         });
-//         result
-//     }
-// }
+    fn push(&'s mut self, item: &Self::Item) -> Self::Feedback {
+        while let Ok(new_pipe) = self.pipe_receiver.try_recv() {
+            self.pipes.push(new_pipe);
+        }
+        let pushes = self.pipes
+            .iter_mut()
+            .map(|pipe| pipe.push(item));
+        join_all(pushes)
+    }
+}
 
 
-// pub struct MapFilterPipe<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: MovePipe> {
-//     mapfilter: F,
-//     next_pipe: P,
-//     _phantom: std::marker::PhantomData<T>,
-// }
-// impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: MovePipe> MapFilterPipe<T, F, P> {
-//     pub fn new(mapfilter: F, next_pipe: P) -> Self {
-//         Self {
-//             mapfilter: mapfilter,
-//             next_pipe: next_pipe,
-//             _phantom: std::marker::PhantomData,
-//         }
-//     }
-// }
-// impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: MovePipe> Pipe for MapFilterPipe<T, F, P> {
-//     type Item = T;
+pub struct MapFilterPipe<'s, T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: MovePipe<'s>> {
+    mapfilter: F,
+    next_pipe: P,
+    _phantom: std::marker::PhantomData<&'s T>,
+}
+impl<'s, T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: MovePipe<'s>> MapFilterPipe<'s, T, F, P> {
+    pub fn new(mapfilter: F, next_pipe: P) -> Self {
+        Self {
+            mapfilter: mapfilter,
+            next_pipe: next_pipe,
+            _phantom: std::marker::PhantomData,
+        }
+    }
+}
+impl<'s, T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: MovePipe<'s>> Pipe<'s> for MapFilterPipe<'s, T, F, P> {
+    type Item = T;
+    type Feedback = impl Future;
 
-//     fn push(&mut self, item: &T) -> Result<(), String> {
-//         if let Some(item) = self.mapfilter.call(item) {
-//             self.next_pipe.push(item)
-//         }
-//         else {
-//             Ok(())
-//         }
-//     }
-// }
+    fn push(&'s mut self, item: &T) -> Self::Feedback {
+        if let Some(item) = self.mapfilter.call(item) {
+            Either::Left(self.next_pipe.push_move(item).map(|x| Some(x)))
+        }
+        else {
+            Either::Right(future::ready(None))
+        }
+    }
+}

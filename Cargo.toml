@@ -9,3 +9,4 @@ include = [ "src/**", "/README.md" ]
 
 [dependencies]
 tokio = { version = "0.3", features = [ "rt", "sync", "stream", "macros" ] }
+futures = "0.3"
