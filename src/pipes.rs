@@ -166,17 +166,16 @@ impl<T: 'static> MpscPipe<T> {
             sender: sender,
         }
     }
-
-    async fn send(sender: mpsc::Sender<T>, item: T) -> Result<(), tokio::sync::mpsc::error::SendError<T>> {
-        sender.send(item).await
-    }
 }
 impl<T: 'static> MovePipe for MpscPipe<T> {
     type Item = T;
     type Feedback = impl Future;
 
     fn push(&mut self, item: T) -> Self::Feedback {
-        Self::send(self.sender.clone(), item)
+        let sender = self.sender.clone();
+        async move {
+            sender.send(item).await
+        }
     }
 }
 impl<T: 'static> Clone for MpscPipe<T> {
