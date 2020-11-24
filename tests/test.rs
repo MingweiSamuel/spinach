@@ -1,11 +1,11 @@
 use std::collections::HashMap;
 
-use spinach::pipes::{ UnaryFn, Pipe, MovePipe, SplitPipe, LatticePipe, NullPipe, DebugPipe, MapFilterPipe, MpscPipe };
+use spinach::pipes::{ UnaryFn, MovePipe, SplitPipe, LatticePipe, NullPipe, DebugPipe, MapFilterPipe }; //MpscPipe };
 use spinach::merge::{ MapUnion, Max };
 
 
-#[test]
-pub fn test_basic() -> Result<(), String> {
+#[tokio::test]
+pub async fn test_basic() -> Result<(), String> {
 
 
     // Key-getter for reading.
@@ -52,33 +52,33 @@ pub fn test_basic() -> Result<(), String> {
     let read_pipe_foo = NullPipe::new();
     let read_pipe_foo = DebugPipe::new("foo_0", read_pipe_foo);
     let read_pipe_foo = MapFilterPipe::new(ReadKey::new("foo"), read_pipe_foo);
-    read_pipe.push(read_pipe_foo)?;
+    read_pipe.push(read_pipe_foo).await;
 
     // Add second reader.
     let read_pipe_foo = NullPipe::new();
     let read_pipe_foo = DebugPipe::new("xyz_0", read_pipe_foo);
     let read_pipe_foo = MapFilterPipe::new(ReadKey::new("xyz"), read_pipe_foo);
-    read_pipe.push(read_pipe_foo)?;
+    read_pipe.push(read_pipe_foo).await;
 
     // Do first set of writes.
-    MovePipe::push(&mut write_pipe, ( "foo", "bar" ))?;
-    MovePipe::push(&mut write_pipe, ( "bin", "bag" ))?;
+    MovePipe::push(&mut write_pipe, ( "foo", "bar" )).await;
+    MovePipe::push(&mut write_pipe, ( "bin", "bag" )).await;
 
     // Add third reader.
     let read_pipe_foo = NullPipe::new();
     let read_pipe_foo = DebugPipe::new("foo_1", read_pipe_foo);
     let read_pipe_foo = MapFilterPipe::new(ReadKey::new("foo"), read_pipe_foo);
-    read_pipe.push(read_pipe_foo)?;
+    read_pipe.push(read_pipe_foo).await;
 
     // Do second set of writes.
-    MovePipe::push(&mut write_pipe, ( "foo", "baz" ))?;
-    MovePipe::push(&mut write_pipe, ( "xyz", "zzy" ))?;
+    MovePipe::push(&mut write_pipe, ( "foo", "baz" )).await;
+    MovePipe::push(&mut write_pipe, ( "xyz", "zzy" )).await;
 
     // Add fourth reader.
     let read_pipe_foo = NullPipe::new();
     let read_pipe_foo = DebugPipe::new("foo_2", read_pipe_foo);
     let read_pipe_foo = MapFilterPipe::new(ReadKey::new("foo"), read_pipe_foo);
-    read_pipe.push(read_pipe_foo)?;
+    read_pipe.push(read_pipe_foo).await;
 
     Ok(())
 }
