@@ -275,6 +275,7 @@ impl<P: ExclRefPipe> ExclRefPipe for SplitPipe<P> {
 }
 
 
+
 pub struct MapFilterPipe<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: Pipe> {
     mapfilter: F,
     next_pipe: P,

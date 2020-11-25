@@ -43,26 +43,26 @@ pub trait SharedRefPipe: Pipe {
     type Feedback: Future;
 
     #[must_use]
-    fn push(&self, item: &<Self as Pipe>::Item) -> Self::Feedback;
+    fn push(&self, item: &Self::Item) -> Self::Feedback;
 }
 
 pub trait ExclRefPipe: Pipe {
     type Feedback: Future;
 
     #[must_use]
-    fn push(&mut self, item: &<Self as Pipe>::Item) -> Self::Feedback;
+    fn push(&mut self, item: &Self::Item) -> Self::Feedback;
 }
 
 pub trait SharedMovePipe: Pipe {
     type Feedback: Future;
 
     #[must_use]
-    fn push(&self, item: <Self as Pipe>::Item) -> Self::Feedback;
+    fn push(&self, item: Self::Item) -> Self::Feedback;
 }
 
 pub trait ExclMovePipe: Pipe {
     type Feedback: Future;
 
     #[must_use]
-    fn push(&mut self, item: <Self as Pipe>::Item) -> Self::Feedback;
+    fn push(&mut self, item: Self::Item) -> Self::Feedback;
 }

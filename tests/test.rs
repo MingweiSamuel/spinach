@@ -44,22 +44,23 @@ pub async fn test_basic() -> Result<(), String> {
     }
 
     // Set up pipes.
-    let ( write_pipe, read_pipe ) = SplitPipe::create();
+    let ( write_pipe, readers_pipe ) = SplitPipe::create();
     let write_pipe = LatticePipe::<MapUnion<HashMap<&'static str, Max<&'static str>>>, _>::new(HashMap::new(), write_pipe);
     let write_pipe = MapFilterPipe::new(KvToHashmap, write_pipe);
     let mut write_pipe = write_pipe;
 
-    // Add first reader.
+    // Read pipes are weird.
+    // Add first reader (subscriber).
     let read_pipe_foo = NullPipe::new();
     let read_pipe_foo = DebugPipe::new("foo_0", read_pipe_foo);
     let read_pipe_foo = MapFilterPipe::new(ReadKey::new("foo"), read_pipe_foo);
-    read_pipe.push(read_pipe_foo).await;
+    readers_pipe.push(read_pipe_foo).await;
 
     // Add second reader.
     let read_pipe_foo = NullPipe::new();
     let read_pipe_foo = DebugPipe::new("xyz_0", read_pipe_foo);
     let read_pipe_foo = MapFilterPipe::new(ReadKey::new("xyz"), read_pipe_foo);
-    read_pipe.push(read_pipe_foo).await;
+    readers_pipe.push(read_pipe_foo).await;
 
     // Do first set of writes.
     ExclRefPipe::push(&mut write_pipe, &( "foo", "bar" )).await;
@@ -69,7 +70,7 @@ pub async fn test_basic() -> Result<(), String> {
     let read_pipe_foo = NullPipe::new();
     let read_pipe_foo = DebugPipe::new("foo_1", read_pipe_foo);
     let read_pipe_foo = MapFilterPipe::new(ReadKey::new("foo"), read_pipe_foo);
-    read_pipe.push(read_pipe_foo).await;
+    readers_pipe.push(read_pipe_foo).await;
 
     // Do second set of writes.
     ExclRefPipe::push(&mut write_pipe, &( "foo", "baz" )).await;
@@ -79,7 +80,7 @@ pub async fn test_basic() -> Result<(), String> {
     let read_pipe_foo = NullPipe::new();
     let read_pipe_foo = DebugPipe::new("foo_2", read_pipe_foo);
     let read_pipe_foo = MapFilterPipe::new(ReadKey::new("foo"), read_pipe_foo);
-    read_pipe.push(read_pipe_foo).await;
+    readers_pipe.push(read_pipe_foo).await;
 
     Ok(())
 }
