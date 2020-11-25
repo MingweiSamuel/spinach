@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
-use spinach::pipes::{ UnaryFn, MovePipe, SplitPipe, LatticePipe, NullPipe, DebugPipe, MapFilterPipe }; //MpscPipe };
+use spinach::pipes::{ SharedMovePipe, /*ExclMovePipe, SharedRefPipe,*/ ExclRefPipe };
+use spinach::pipes::{ UnaryFn, SplitPipe, LatticePipe, NullPipe, DebugPipe, MapFilterPipe }; //MpscPipe };
 use spinach::merge::{ MapUnion, Max };
 
 
@@ -43,7 +44,7 @@ pub async fn test_basic() -> Result<(), String> {
     }
 
     // Set up pipes.
-    let ( write_pipe, mut read_pipe ) = SplitPipe::create();
+    let ( write_pipe, read_pipe ) = SplitPipe::create();
     let write_pipe = LatticePipe::<MapUnion<HashMap<&'static str, Max<&'static str>>>, _>::new(HashMap::new(), write_pipe);
     let write_pipe = MapFilterPipe::new(KvToHashmap, write_pipe);
     let mut write_pipe = write_pipe;
@@ -61,8 +62,8 @@ pub async fn test_basic() -> Result<(), String> {
     read_pipe.push(read_pipe_foo).await;
 
     // Do first set of writes.
-    MovePipe::push(&mut write_pipe, ( "foo", "bar" )).await;
-    MovePipe::push(&mut write_pipe, ( "bin", "bag" )).await;
+    ExclRefPipe::push(&mut write_pipe, &( "foo", "bar" )).await;
+    ExclRefPipe::push(&mut write_pipe, &( "bin", "bag" )).await;
 
     // Add third reader.
     let read_pipe_foo = NullPipe::new();
@@ -71,8 +72,8 @@ pub async fn test_basic() -> Result<(), String> {
     read_pipe.push(read_pipe_foo).await;
 
     // Do second set of writes.
-    MovePipe::push(&mut write_pipe, ( "foo", "baz" )).await;
-    MovePipe::push(&mut write_pipe, ( "xyz", "zzy" )).await;
+    ExclRefPipe::push(&mut write_pipe, &( "foo", "baz" )).await;
+    ExclRefPipe::push(&mut write_pipe, &( "xyz", "zzy" )).await;
 
     // Add fourth reader.
     let read_pipe_foo = NullPipe::new();

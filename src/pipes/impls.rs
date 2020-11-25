@@ -1,4 +1,4 @@
-use std::future::{ self, Future };
+use std::future; //::{ self, Future };
 use std::fmt::Debug;
 // use std::sync::mpsc;
 
@@ -8,43 +8,12 @@ use futures::future::{ Either, FutureExt };
 use tokio::sync::mpsc;
 // use tokio::sync::broadcast;
 
-// use tokio::stream::Stream;
+// // use tokio::stream::Stream;
 
 use crate::merge::Merge;
 // use crate::semilattice::Semilattice;
 
-
-pub trait UnaryFn<I> {
-    type Output;
-
-    fn call(&self, input: I) -> Self::Output;
-}
-
-
-pub trait Pipe {
-    type Item;
-    type Feedback: Future;
-
-    #[must_use]
-    fn push(&mut self, item: &Self::Item) -> Self::Feedback;
-}
-
-pub trait MovePipe {
-    type Item;
-    type Feedback: Future;
-
-    #[must_use]
-    fn push(&mut self, item: Self::Item) -> Self::Feedback;
-}
-
-impl<P: Pipe> MovePipe for P {
-    type Item = P::Item;
-    type Feedback = P::Feedback;
-
-    fn push(&mut self, item: Self::Item) -> Self::Feedback {
-        Pipe::push(self, &item)
-    }
-}
+use super::*;
 
 
 
@@ -61,9 +30,32 @@ impl<T> NullPipe<T> {
 }
 impl<T> Pipe for NullPipe<T> {
     type Item = T;
+}
+impl<T> SharedRefPipe for NullPipe<T> {
+    type Feedback = future::Ready<()>;
+
+    fn push(&self, _item: &Self::Item) -> Self::Feedback {
+        future::ready(())
+    }
+}
+impl<T> ExclRefPipe for NullPipe<T> {
     type Feedback = future::Ready<()>;
 
     fn push(&mut self, _item: &Self::Item) -> Self::Feedback {
+        future::ready(())
+    }
+}
+impl<T> SharedMovePipe for NullPipe<T> {
+    type Feedback = future::Ready<()>;
+
+    fn push(&self, _item: Self::Item) -> Self::Feedback {
+        future::ready(())
+    }
+}
+impl<T> ExclMovePipe for NullPipe<T> {
+    type Feedback = future::Ready<()>;
+
+    fn push(&mut self, _item: Self::Item) -> Self::Feedback {
         future::ready(())
     }
 }
@@ -92,9 +84,47 @@ where
     P::Item: Debug,
 {
     type Item = P::Item;
+}
+impl<P: SharedRefPipe> SharedRefPipe for DebugPipe<P>
+where
+    P::Item: Debug,
+{
+    type Feedback = P::Feedback;
+
+    fn push(&self, item: &Self::Item) -> Self::Feedback {
+        println!("{}: {:?}", self.tag, item);
+        self.next_pipe.push(item)
+    }
+}
+impl<P: ExclRefPipe> ExclRefPipe for DebugPipe<P>
+where
+    P::Item: Debug,
+{
     type Feedback = P::Feedback;
 
     fn push(&mut self, item: &Self::Item) -> Self::Feedback {
+        println!("{}: {:?}", self.tag, item);
+        self.next_pipe.push(item)
+    }
+}
+impl<P: SharedMovePipe> SharedMovePipe for DebugPipe<P>
+where
+    P::Item: Debug,
+{
+    type Feedback = P::Feedback;
+
+    fn push(&self, item: Self::Item) -> Self::Feedback {
+        println!("{}: {:?}", self.tag, &item);
+        self.next_pipe.push(item)
+    }
+}
+impl<P: ExclMovePipe> ExclMovePipe for DebugPipe<P>
+where
+    P::Item: Debug,
+{
+    type Feedback = P::Feedback;
+
+    fn push(&mut self, item: Self::Item) -> Self::Feedback {
         println!("{}: {:?}", self.tag, &item);
         self.next_pipe.push(item)
     }
@@ -103,13 +133,13 @@ where
 
 
 
-pub struct ClonePipe<P: MovePipe>
+pub struct ClonePipe<P: Pipe>
 where
     P::Item: Clone,
 {
     next_pipe: P,
 }
-impl<P: MovePipe> ClonePipe<P>
+impl<P: Pipe> ClonePipe<P>
 where
     P::Item: Clone,
 {
@@ -119,11 +149,26 @@ where
         }
     }
 }
-impl<P: MovePipe> Pipe for ClonePipe<P>
+impl<P: Pipe> Pipe for ClonePipe<P>
 where
     P::Item: Clone,
 {
     type Item = P::Item;
+}
+impl<P: SharedMovePipe> SharedRefPipe for ClonePipe<P>
+where
+    P::Item: Clone,
+{
+    type Feedback = P::Feedback;
+
+    fn push(&self, item: &Self::Item) -> Self::Feedback {
+        self.next_pipe.push(item.clone())
+    }
+}
+impl<P: ExclMovePipe> ExclRefPipe for ClonePipe<P>
+where
+    P::Item: Clone,
+{
     type Feedback = P::Feedback;
 
     fn push(&mut self, item: &Self::Item) -> Self::Feedback {
@@ -134,11 +179,11 @@ where
 
 
 
-pub struct LatticePipe<F: Merge, P: Pipe<Item = F::Domain>> {
+pub struct LatticePipe<F: Merge, P: ExclRefPipe<Item = F::Domain>> {
     value: F::Domain,
     next_pipe: P,
 }
-impl<F: Merge, P: Pipe<Item = F::Domain>> LatticePipe<F, P> {
+impl<F: Merge, P: ExclRefPipe<Item = F::Domain>> LatticePipe<F, P> {
     pub fn new(bottom: F::Domain, next_pipe: P) -> Self {
         Self {
             value: bottom,
@@ -146,8 +191,10 @@ impl<F: Merge, P: Pipe<Item = F::Domain>> LatticePipe<F, P> {
         }
     }
 }
-impl<F: Merge, P: Pipe<Item = F::Domain>> MovePipe for LatticePipe<F, P> {
+impl<F: Merge, P: ExclRefPipe<Item = F::Domain>> Pipe for LatticePipe<F, P> {
     type Item = F::Domain;
+}
+impl<F: Merge, P: ExclRefPipe<Item = F::Domain>> ExclMovePipe for LatticePipe<F, P> {
     type Feedback = P::Feedback;
 
     fn push(&mut self, item: Self::Item) -> Self::Feedback {
@@ -155,6 +202,7 @@ impl<F: Merge, P: Pipe<Item = F::Domain>> MovePipe for LatticePipe<F, P> {
         self.next_pipe.push(&self.value)
     }
 }
+
 
 
 pub struct MpscPipe<T: 'static> {
@@ -167,11 +215,17 @@ impl<T: 'static> MpscPipe<T> {
         }
     }
 }
-impl<T: 'static> MovePipe for MpscPipe<T> {
+impl<T: 'static> Pipe for MpscPipe<T> {
     type Item = T;
+}
+impl<T: 'static> SharedMovePipe for MpscPipe<T> {
     type Feedback = impl Future;
 
-    fn push(&mut self, item: T) -> Self::Feedback {
+    fn push(&self, item: T) -> Self::Feedback {
+        // self.sender.send(item)
+        // async {
+        //     self.sender.send(item).await
+        // }
         let sender = self.sender.clone();
         async move {
             sender.send(item).await
@@ -187,17 +241,11 @@ impl<T: 'static> Clone for MpscPipe<T> {
 }
 
 
-pub struct SplitPipe<P: MovePipe>
-where
-    P::Item: Clone,
-{
+pub struct SplitPipe<P: Pipe> {
     pipe_receiver: mpsc::Receiver<P>,
     pipes: Vec<P>,
 }
-impl<P: Pipe> SplitPipe<P>
-where
-    P::Item: Clone,
-{
+impl<P: Pipe> SplitPipe<P> {
     pub fn create() -> ( Self, MpscPipe<P> ) {
         let ( sender, receiver ) = mpsc::channel(8);
         let inst = Self {
@@ -208,11 +256,10 @@ where
         ( inst, mpsc_pipe )
     }
 }
-impl<P: Pipe> Pipe for SplitPipe<P>
-where
-    P::Item: Clone,
-{
+impl<P: Pipe> Pipe for SplitPipe<P> {
     type Item = P::Item;
+}
+impl<P: ExclRefPipe> ExclRefPipe for SplitPipe<P> {
     type Feedback = impl Future;
 
     fn push(&mut self, item: &Self::Item) -> Self::Feedback {
@@ -228,12 +275,12 @@ where
 }
 
 
-pub struct MapFilterPipe<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: MovePipe> {
+pub struct MapFilterPipe<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: Pipe> {
     mapfilter: F,
     next_pipe: P,
     _phantom: std::marker::PhantomData<T>,
 }
-impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: MovePipe> MapFilterPipe<T, F, P> {
+impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: Pipe> MapFilterPipe<T, F, P> {
     pub fn new(mapfilter: F, next_pipe: P) -> Self {
         Self {
             mapfilter: mapfilter,
@@ -242,8 +289,23 @@ impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: MovePipe> MapFil
         }
     }
 }
-impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: MovePipe> Pipe for MapFilterPipe<T, F, P> {
+impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: Pipe> Pipe for MapFilterPipe<T, F, P> {
     type Item = T;
+}
+impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: SharedMovePipe> SharedRefPipe for MapFilterPipe<T, F, P> {
+    type Feedback = impl Future;
+
+    fn push(&self, item: &T) -> Self::Feedback {
+        if let Some(item) = self.mapfilter.call(item) {
+            Either::Left(self.next_pipe.push(item)
+                .map(|x| Some(x)))
+        }
+        else {
+            Either::Right(future::ready(None))
+        }
+    }
+}
+impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: ExclMovePipe> ExclRefPipe for MapFilterPipe<T, F, P> {
     type Feedback = impl Future;
 
     fn push(&mut self, item: &T) -> Self::Feedback {
