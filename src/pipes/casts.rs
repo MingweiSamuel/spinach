@@ -8,11 +8,11 @@ use super::*;
 //
 
 // SharedRefPipe <--- SharedMovePipe
-pub struct SharedMoveFromSharedRefPipe<P: SharedRefPipe>(P);
-impl<P: SharedRefPipe> Pipe for SharedMoveFromSharedRefPipe<P> {
+pub struct SharedMoveFromSharedRefPipe<P: SharedRefOp>(P);
+impl<P: SharedRefOp> Op for SharedMoveFromSharedRefPipe<P> {
     type Item = P::Item;
 }
-impl<P: SharedRefPipe> SharedMovePipe for SharedMoveFromSharedRefPipe<P> {
+impl<P: SharedRefOp> SharedMoveOp for SharedMoveFromSharedRefPipe<P> {
     type Feedback = P::Feedback;
 
     fn push(&self, item: Self::Item) -> Self::Feedback {
@@ -21,11 +21,11 @@ impl<P: SharedRefPipe> SharedMovePipe for SharedMoveFromSharedRefPipe<P> {
 }
 
 // SharedRefPipe <--- ExclRefPipe
-pub struct ExclRefFromSharedRefPipe<P: SharedRefPipe>(P);
-impl<P: SharedRefPipe> Pipe for ExclRefFromSharedRefPipe<P> {
+pub struct ExclRefFromSharedRefPipe<P: SharedRefOp>(P);
+impl<P: SharedRefOp> Op for ExclRefFromSharedRefPipe<P> {
     type Item = P::Item;
 }
-impl<P: SharedRefPipe> ExclRefPipe for ExclRefFromSharedRefPipe<P> {
+impl<P: SharedRefOp> ExclRefOp for ExclRefFromSharedRefPipe<P> {
     type Feedback = P::Feedback;
 
     fn push(&mut self, item: &Self::Item) -> Self::Feedback {
@@ -34,11 +34,11 @@ impl<P: SharedRefPipe> ExclRefPipe for ExclRefFromSharedRefPipe<P> {
 }
 
 // ExclRefPipe <--- ExclMovePipe
-pub struct ExclMovePipeFromExclRefPipe<P: ExclRefPipe>(P);
-impl<P: ExclRefPipe> Pipe for ExclMovePipeFromExclRefPipe<P> {
+pub struct ExclMovePipeFromExclRefPipe<P: ExclRefOp>(P);
+impl<P: ExclRefOp> Op for ExclMovePipeFromExclRefPipe<P> {
     type Item = P::Item;
 }
-impl<P: ExclRefPipe> ExclMovePipe for ExclMovePipeFromExclRefPipe<P> {
+impl<P: ExclRefOp> ExclMoveOp for ExclMovePipeFromExclRefPipe<P> {
     type Feedback = P::Feedback;
 
     fn push(&mut self, item: Self::Item) -> Self::Feedback {
@@ -47,11 +47,11 @@ impl<P: ExclRefPipe> ExclMovePipe for ExclMovePipeFromExclRefPipe<P> {
 }
 
 // SharedMovePipe <--- ExclMovePipe
-pub struct ExclMovePipeFromSharedMovePipe<P: SharedMovePipe>(P);
-impl<P: SharedMovePipe> Pipe for ExclMovePipeFromSharedMovePipe<P> {
+pub struct ExclMovePipeFromSharedMovePipe<P: SharedMoveOp>(P);
+impl<P: SharedMoveOp> Op for ExclMovePipeFromSharedMovePipe<P> {
     type Item = P::Item;
 }
-impl<P: SharedMovePipe> ExclMovePipe for ExclMovePipeFromSharedMovePipe<P> {
+impl<P: SharedMoveOp> ExclMoveOp for ExclMovePipeFromSharedMovePipe<P> {
     type Feedback = P::Feedback;
 
     fn push(&mut self, item: Self::Item) -> Self::Feedback {

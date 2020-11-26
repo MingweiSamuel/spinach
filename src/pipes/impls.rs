@@ -18,41 +18,41 @@ use super::*;
 
 
 
-pub struct NullPipe<T> {
+pub struct NullOp<T> {
     _phantom: std::marker::PhantomData<T>,
 }
-impl<T> NullPipe<T> {
+impl<T> NullOp<T> {
     pub fn new() -> Self {
-        Self {
+        NullOp {
             _phantom: std::marker::PhantomData,
         }
     }
 }
-impl<T> Pipe for NullPipe<T> {
+impl<T> Op for NullOp<T> {
     type Item = T;
 }
-impl<T> SharedRefPipe for NullPipe<T> {
+impl<T> SharedRefOp for NullOp<T> {
     type Feedback = future::Ready<()>;
 
     fn push(&self, _item: &Self::Item) -> Self::Feedback {
         future::ready(())
     }
 }
-impl<T> ExclRefPipe for NullPipe<T> {
+impl<T> ExclRefOp for NullOp<T> {
     type Feedback = future::Ready<()>;
 
     fn push(&mut self, _item: &Self::Item) -> Self::Feedback {
         future::ready(())
     }
 }
-impl<T> SharedMovePipe for NullPipe<T> {
+impl<T> SharedMoveOp for NullOp<T> {
     type Feedback = future::Ready<()>;
 
     fn push(&self, _item: Self::Item) -> Self::Feedback {
         future::ready(())
     }
 }
-impl<T> ExclMovePipe for NullPipe<T> {
+impl<T> ExclMoveOp for NullOp<T> {
     type Feedback = future::Ready<()>;
 
     fn push(&mut self, _item: Self::Item) -> Self::Feedback {
@@ -61,31 +61,31 @@ impl<T> ExclMovePipe for NullPipe<T> {
 }
 
 
-pub struct DebugPipe<P: Pipe>
+pub struct DebugOp<P: Op>
 where
     P::Item: Debug,
 {
     tag: &'static str,
     next_pipe: P,
 }
-impl<P: Pipe> DebugPipe<P>
+impl<P: Op> DebugOp<P>
 where
     P::Item: Debug,
 {
     pub fn new(tag: &'static str, next_pipe: P) -> Self {
-        Self {
+        DebugOp {
             tag: tag,
             next_pipe: next_pipe,
         }
     }
 }
-impl<P: Pipe> Pipe for DebugPipe<P>
+impl<P: Op> Op for DebugOp<P>
 where
     P::Item: Debug,
 {
     type Item = P::Item;
 }
-impl<P: SharedRefPipe> SharedRefPipe for DebugPipe<P>
+impl<P: SharedRefOp> SharedRefOp for DebugOp<P>
 where
     P::Item: Debug,
 {
@@ -96,7 +96,7 @@ where
         self.next_pipe.push(item)
     }
 }
-impl<P: ExclRefPipe> ExclRefPipe for DebugPipe<P>
+impl<P: ExclRefOp> ExclRefOp for DebugOp<P>
 where
     P::Item: Debug,
 {
@@ -107,7 +107,7 @@ where
         self.next_pipe.push(item)
     }
 }
-impl<P: SharedMovePipe> SharedMovePipe for DebugPipe<P>
+impl<P: SharedMoveOp> SharedMoveOp for DebugOp<P>
 where
     P::Item: Debug,
 {
@@ -118,7 +118,7 @@ where
         self.next_pipe.push(item)
     }
 }
-impl<P: ExclMovePipe> ExclMovePipe for DebugPipe<P>
+impl<P: ExclMoveOp> ExclMoveOp for DebugOp<P>
 where
     P::Item: Debug,
 {
@@ -133,29 +133,29 @@ where
 
 
 
-pub struct ClonePipe<P: Pipe>
+pub struct CloneOp<P: Op>
 where
     P::Item: Clone,
 {
     next_pipe: P,
 }
-impl<P: Pipe> ClonePipe<P>
+impl<P: Op> CloneOp<P>
 where
     P::Item: Clone,
 {
     pub fn new(next_pipe: P) -> Self {
-        Self {
+        CloneOp {
             next_pipe: next_pipe,
         }
     }
 }
-impl<P: Pipe> Pipe for ClonePipe<P>
+impl<P: Op> Op for CloneOp<P>
 where
     P::Item: Clone,
 {
     type Item = P::Item;
 }
-impl<P: SharedMovePipe> SharedRefPipe for ClonePipe<P>
+impl<P: SharedMoveOp> SharedRefOp for CloneOp<P>
 where
     P::Item: Clone,
 {
@@ -165,7 +165,7 @@ where
         self.next_pipe.push(item.clone())
     }
 }
-impl<P: ExclMovePipe> ExclRefPipe for ClonePipe<P>
+impl<P: ExclMoveOp> ExclRefOp for CloneOp<P>
 where
     P::Item: Clone,
 {
@@ -179,22 +179,22 @@ where
 
 
 
-pub struct LatticePipe<F: Merge, P: ExclRefPipe<Item = F::Domain>> {
+pub struct LatticeOp<F: Merge, P: ExclRefOp<Item = F::Domain>> {
     value: F::Domain,
     next_pipe: P,
 }
-impl<F: Merge, P: ExclRefPipe<Item = F::Domain>> LatticePipe<F, P> {
+impl<F: Merge, P: ExclRefOp<Item = F::Domain>> LatticeOp<F, P> {
     pub fn new(bottom: F::Domain, next_pipe: P) -> Self {
-        Self {
+        LatticeOp {
             value: bottom,
             next_pipe: next_pipe,
         }
     }
 }
-impl<F: Merge, P: ExclRefPipe<Item = F::Domain>> Pipe for LatticePipe<F, P> {
+impl<F: Merge, P: ExclRefOp<Item = F::Domain>> Op for LatticeOp<F, P> {
     type Item = F::Domain;
 }
-impl<F: Merge, P: ExclRefPipe<Item = F::Domain>> ExclMovePipe for LatticePipe<F, P> {
+impl<F: Merge, P: ExclRefOp<Item = F::Domain>> ExclMoveOp for LatticeOp<F, P> {
     type Feedback = P::Feedback;
 
     fn push(&mut self, item: Self::Item) -> Self::Feedback {
@@ -205,20 +205,20 @@ impl<F: Merge, P: ExclRefPipe<Item = F::Domain>> ExclMovePipe for LatticePipe<F,
 
 
 
-pub struct MpscPipe<T: 'static> {
+pub struct MpscOp<T: 'static> {
     sender: mpsc::Sender<T>,
 }
-impl<T: 'static> MpscPipe<T> {
+impl<T: 'static> MpscOp<T> {
     pub fn create(sender: mpsc::Sender<T>) -> Self {
-        Self {
+        MpscOp {
             sender: sender,
         }
     }
 }
-impl<T: 'static> Pipe for MpscPipe<T> {
+impl<T: 'static> Op for MpscOp<T> {
     type Item = T;
 }
-impl<T: 'static> SharedMovePipe for MpscPipe<T> {
+impl<T: 'static> SharedMoveOp for MpscOp<T> {
     type Feedback = impl Future;
 
     fn push(&self, item: T) -> Self::Feedback {
@@ -232,34 +232,79 @@ impl<T: 'static> SharedMovePipe for MpscPipe<T> {
         }
     }
 }
-impl<T: 'static> Clone for MpscPipe<T> {
+impl<T: 'static> Clone for MpscOp<T> {
     fn clone(&self) -> Self {
-        Self {
+        MpscOp {
             sender: self.sender.clone(),
         }
     }
 }
 
 
-pub struct SplitPipe<P: Pipe> {
+
+
+
+
+pub struct TeeOp<P0: Op, P1: Op<Item = P0::Item>> {
+    pipe0: P0,
+    pipe1: P1,
+}
+impl<P0: Op, P1: Op<Item = P0::Item>> TeeOp<P0, P1> {
+    pub fn new(pipe0: P0, pipe1: P1) -> Self {
+        Self {
+            pipe0: pipe0,
+            pipe1: pipe1,
+        }
+    }
+}
+impl<P0: Op, P1: Op<Item = P0::Item>> Op for TeeOp<P0, P1> {
+    type Item = P0::Item;
+}
+impl<P0: SharedRefOp, P1: Op<Item = P0::Item> + SharedRefOp> SharedRefOp for TeeOp<P0, P1> {
+    type Feedback = impl Future;
+
+    fn push(&self, item: &Self::Item) -> Self::Feedback {
+        futures::future::join(
+            self.pipe0.push(item),
+            self.pipe1.push(item),
+        )
+    }
+}
+impl<P0: ExclRefOp, P1: Op<Item = P0::Item> + ExclRefOp> ExclRefOp for TeeOp<P0, P1> {
+    type Feedback = impl Future;
+
+    fn push(&mut self, item: &Self::Item) -> Self::Feedback {
+        futures::future::join(
+            self.pipe0.push(item),
+            self.pipe1.push(item),
+        )
+    }
+}
+
+
+
+
+
+
+pub struct SplitOp<P: Op> {
     pipe_receiver: mpsc::Receiver<P>,
     pipes: Vec<P>,
 }
-impl<P: Pipe> SplitPipe<P> {
-    pub fn create() -> ( Self, MpscPipe<P> ) {
+impl<P: Op> SplitOp<P> {
+    pub fn create() -> ( Self, MpscOp<P> ) {
         let ( sender, receiver ) = mpsc::channel(8);
-        let inst = Self {
+        let inst = SplitOp {
             pipe_receiver: receiver,
             pipes: Vec::new(),
         };
-        let mpsc_pipe = MpscPipe::create(sender);
+        let mpsc_pipe = MpscOp::create(sender);
         ( inst, mpsc_pipe )
     }
 }
-impl<P: Pipe> Pipe for SplitPipe<P> {
+impl<P: Op> Op for SplitOp<P> {
     type Item = P::Item;
 }
-impl<P: ExclRefPipe> ExclRefPipe for SplitPipe<P> {
+impl<P: ExclRefOp> ExclRefOp for SplitOp<P> {
     type Feedback = impl Future;
 
     fn push(&mut self, item: &Self::Item) -> Self::Feedback {
@@ -276,24 +321,24 @@ impl<P: ExclRefPipe> ExclRefPipe for SplitPipe<P> {
 
 
 
-pub struct MapFilterPipe<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: Pipe> {
+pub struct MapFilterOp<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: Op> {
     mapfilter: F,
     next_pipe: P,
     _phantom: std::marker::PhantomData<T>,
 }
-impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: Pipe> MapFilterPipe<T, F, P> {
+impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: Op> MapFilterOp<T, F, P> {
     pub fn new(mapfilter: F, next_pipe: P) -> Self {
-        Self {
+        MapFilterOp {
             mapfilter: mapfilter,
             next_pipe: next_pipe,
             _phantom: std::marker::PhantomData,
         }
     }
 }
-impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: Pipe> Pipe for MapFilterPipe<T, F, P> {
+impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: Op> Op for MapFilterOp<T, F, P> {
     type Item = T;
 }
-impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: SharedMovePipe> SharedRefPipe for MapFilterPipe<T, F, P> {
+impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: SharedMoveOp> SharedRefOp for MapFilterOp<T, F, P> {
     type Feedback = impl Future;
 
     fn push(&self, item: &T) -> Self::Feedback {
@@ -306,7 +351,7 @@ impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: SharedMovePipe> 
         }
     }
 }
-impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: ExclMovePipe> ExclRefPipe for MapFilterPipe<T, F, P> {
+impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: ExclMoveOp> ExclRefOp for MapFilterOp<T, F, P> {
     type Feedback = impl Future;
 
     fn push(&mut self, item: &T) -> Self::Feedback {

@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
-use spinach::pipes::{ SharedMovePipe, /*ExclMovePipe, SharedRefPipe,*/ ExclRefPipe };
-use spinach::pipes::{ UnaryFn, SplitPipe, LatticePipe, NullPipe, DebugPipe, MapFilterPipe }; //MpscPipe };
+use spinach::pipes::{ SharedMoveOp, /*ExclMovePipe, SharedRefPipe,*/ ExclRefOp };
+use spinach::pipes::{ UnaryFn, SplitOp, LatticeOp, NullOp, DebugOp, MapFilterOp }; //MpscPipe };
 use spinach::merge::{ MapUnion, Max };
 
 
@@ -44,42 +44,42 @@ pub async fn test_basic() -> Result<(), String> {
     }
 
     // Set up pipes.
-    let ( write_pipe, readers_pipe ) = SplitPipe::create();
-    let write_pipe = LatticePipe::<MapUnion<HashMap<&'static str, Max<&'static str>>>, _>::new(HashMap::new(), write_pipe);
-    let write_pipe = MapFilterPipe::new(KvToHashmap, write_pipe);
+    let ( write_pipe, readers_pipe ) = SplitOp::create();
+    let write_pipe = LatticeOp::<MapUnion<HashMap<&'static str, Max<&'static str>>>, _>::new(HashMap::new(), write_pipe);
+    let write_pipe = MapFilterOp::new(KvToHashmap, write_pipe);
     let mut write_pipe = write_pipe;
 
     // Read pipes are weird.
     // Add first reader (subscriber).
-    let read_pipe_foo = NullPipe::new();
-    let read_pipe_foo = DebugPipe::new("foo_0", read_pipe_foo);
-    let read_pipe_foo = MapFilterPipe::new(ReadKey::new("foo"), read_pipe_foo);
+    let read_pipe_foo = NullOp::new();
+    let read_pipe_foo = DebugOp::new("foo_0", read_pipe_foo);
+    let read_pipe_foo = MapFilterOp::new(ReadKey::new("foo"), read_pipe_foo);
     readers_pipe.push(read_pipe_foo).await;
 
     // Add second reader.
-    let read_pipe_foo = NullPipe::new();
-    let read_pipe_foo = DebugPipe::new("xyz_0", read_pipe_foo);
-    let read_pipe_foo = MapFilterPipe::new(ReadKey::new("xyz"), read_pipe_foo);
+    let read_pipe_foo = NullOp::new();
+    let read_pipe_foo = DebugOp::new("xyz_0", read_pipe_foo);
+    let read_pipe_foo = MapFilterOp::new(ReadKey::new("xyz"), read_pipe_foo);
     readers_pipe.push(read_pipe_foo).await;
 
     // Do first set of writes.
-    ExclRefPipe::push(&mut write_pipe, &( "foo", "bar" )).await;
-    ExclRefPipe::push(&mut write_pipe, &( "bin", "bag" )).await;
+    ExclRefOp::push(&mut write_pipe, &( "foo", "bar" )).await;
+    ExclRefOp::push(&mut write_pipe, &( "bin", "bag" )).await;
 
     // Add third reader.
-    let read_pipe_foo = NullPipe::new();
-    let read_pipe_foo = DebugPipe::new("foo_1", read_pipe_foo);
-    let read_pipe_foo = MapFilterPipe::new(ReadKey::new("foo"), read_pipe_foo);
+    let read_pipe_foo = NullOp::new();
+    let read_pipe_foo = DebugOp::new("foo_1", read_pipe_foo);
+    let read_pipe_foo = MapFilterOp::new(ReadKey::new("foo"), read_pipe_foo);
     readers_pipe.push(read_pipe_foo).await;
 
     // Do second set of writes.
-    ExclRefPipe::push(&mut write_pipe, &( "foo", "baz" )).await;
-    ExclRefPipe::push(&mut write_pipe, &( "xyz", "zzy" )).await;
+    ExclRefOp::push(&mut write_pipe, &( "foo", "baz" )).await;
+    ExclRefOp::push(&mut write_pipe, &( "xyz", "zzy" )).await;
 
     // Add fourth reader.
-    let read_pipe_foo = NullPipe::new();
-    let read_pipe_foo = DebugPipe::new("foo_2", read_pipe_foo);
-    let read_pipe_foo = MapFilterPipe::new(ReadKey::new("foo"), read_pipe_foo);
+    let read_pipe_foo = NullOp::new();
+    let read_pipe_foo = DebugOp::new("foo_2", read_pipe_foo);
+    let read_pipe_foo = MapFilterOp::new(ReadKey::new("foo"), read_pipe_foo);
     readers_pipe.push(read_pipe_foo).await;
 
     Ok(())

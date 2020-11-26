@@ -29,38 +29,38 @@ pub trait UnaryFn<I> {
 
 
 //
-// SharedRefPipe <--- SharedMovePipe
-//      ^                    ^
-//      |                    |
-//  ExclRefPipe  <---  ExclMovePipe
+// SharedRefOp <--- SharedMoveOp
+//      ^                 ^
+//      |                 |
+//  ExclRefOp  <---  ExclMoveOp
 //
 
-pub trait Pipe {
+pub trait Op {
     type Item;
 }
 
-pub trait SharedRefPipe: Pipe {
+pub trait SharedRefOp: Op {
     type Feedback: Future;
 
     #[must_use]
     fn push(&self, item: &Self::Item) -> Self::Feedback;
 }
 
-pub trait ExclRefPipe: Pipe {
+pub trait ExclRefOp: Op {
     type Feedback: Future;
 
     #[must_use]
     fn push(&mut self, item: &Self::Item) -> Self::Feedback;
 }
 
-pub trait SharedMovePipe: Pipe {
+pub trait SharedMoveOp: Op {
     type Feedback: Future;
 
     #[must_use]
     fn push(&self, item: Self::Item) -> Self::Feedback;
 }
 
-pub trait ExclMovePipe: Pipe {
+pub trait ExclMoveOp: Op {
     type Feedback: Future;
 
     #[must_use]
