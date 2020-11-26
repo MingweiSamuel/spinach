@@ -29,33 +29,33 @@ impl<T> NullOp<T> {
     }
 }
 impl<T> Op for NullOp<T> {
-    type Item = T;
+    type Domain = T;
 }
 impl<T> SharedRefOp for NullOp<T> {
     type Feedback = future::Ready<()>;
 
-    fn push(&self, _item: &Self::Item) -> Self::Feedback {
+    fn push(&self, _item: &Self::Domain) -> Self::Feedback {
         future::ready(())
     }
 }
 impl<T> ExclRefOp for NullOp<T> {
     type Feedback = future::Ready<()>;
 
-    fn push(&mut self, _item: &Self::Item) -> Self::Feedback {
+    fn push(&mut self, _item: &Self::Domain) -> Self::Feedback {
         future::ready(())
     }
 }
 impl<T> SharedMoveOp for NullOp<T> {
     type Feedback = future::Ready<()>;
 
-    fn push(&self, _item: Self::Item) -> Self::Feedback {
+    fn push(&self, _item: Self::Domain) -> Self::Feedback {
         future::ready(())
     }
 }
 impl<T> ExclMoveOp for NullOp<T> {
     type Feedback = future::Ready<()>;
 
-    fn push(&mut self, _item: Self::Item) -> Self::Feedback {
+    fn push(&mut self, _item: Self::Domain) -> Self::Feedback {
         future::ready(())
     }
 }
@@ -63,14 +63,14 @@ impl<T> ExclMoveOp for NullOp<T> {
 
 pub struct DebugOp<P: Op>
 where
-    P::Item: Debug,
+    P::Domain: Debug,
 {
     tag: &'static str,
     next_pipe: P,
 }
 impl<P: Op> DebugOp<P>
 where
-    P::Item: Debug,
+    P::Domain: Debug,
 {
     pub fn new(tag: &'static str, next_pipe: P) -> Self {
         DebugOp {
@@ -81,50 +81,50 @@ where
 }
 impl<P: Op> Op for DebugOp<P>
 where
-    P::Item: Debug,
+    P::Domain: Debug,
 {
-    type Item = P::Item;
+    type Domain = P::Domain;
 }
 impl<P: SharedRefOp> SharedRefOp for DebugOp<P>
 where
-    P::Item: Debug,
+    P::Domain: Debug,
 {
     type Feedback = P::Feedback;
 
-    fn push(&self, item: &Self::Item) -> Self::Feedback {
+    fn push(&self, item: &Self::Domain) -> Self::Feedback {
         println!("{}: {:?}", self.tag, item);
         self.next_pipe.push(item)
     }
 }
 impl<P: ExclRefOp> ExclRefOp for DebugOp<P>
 where
-    P::Item: Debug,
+    P::Domain: Debug,
 {
     type Feedback = P::Feedback;
 
-    fn push(&mut self, item: &Self::Item) -> Self::Feedback {
+    fn push(&mut self, item: &Self::Domain) -> Self::Feedback {
         println!("{}: {:?}", self.tag, item);
         self.next_pipe.push(item)
     }
 }
 impl<P: SharedMoveOp> SharedMoveOp for DebugOp<P>
 where
-    P::Item: Debug,
+    P::Domain: Debug,
 {
     type Feedback = P::Feedback;
 
-    fn push(&self, item: Self::Item) -> Self::Feedback {
+    fn push(&self, item: Self::Domain) -> Self::Feedback {
         println!("{}: {:?}", self.tag, &item);
         self.next_pipe.push(item)
     }
 }
 impl<P: ExclMoveOp> ExclMoveOp for DebugOp<P>
 where
-    P::Item: Debug,
+    P::Domain: Debug,
 {
     type Feedback = P::Feedback;
 
-    fn push(&mut self, item: Self::Item) -> Self::Feedback {
+    fn push(&mut self, item: Self::Domain) -> Self::Feedback {
         println!("{}: {:?}", self.tag, &item);
         self.next_pipe.push(item)
     }
@@ -135,13 +135,13 @@ where
 
 pub struct CloneOp<P: Op>
 where
-    P::Item: Clone,
+    P::Domain: Clone,
 {
     next_pipe: P,
 }
 impl<P: Op> CloneOp<P>
 where
-    P::Item: Clone,
+    P::Domain: Clone,
 {
     pub fn new(next_pipe: P) -> Self {
         CloneOp {
@@ -151,27 +151,27 @@ where
 }
 impl<P: Op> Op for CloneOp<P>
 where
-    P::Item: Clone,
+    P::Domain: Clone,
 {
-    type Item = P::Item;
+    type Domain = P::Domain;
 }
 impl<P: SharedMoveOp> SharedRefOp for CloneOp<P>
 where
-    P::Item: Clone,
+    P::Domain: Clone,
 {
     type Feedback = P::Feedback;
 
-    fn push(&self, item: &Self::Item) -> Self::Feedback {
+    fn push(&self, item: &Self::Domain) -> Self::Feedback {
         self.next_pipe.push(item.clone())
     }
 }
 impl<P: ExclMoveOp> ExclRefOp for CloneOp<P>
 where
-    P::Item: Clone,
+    P::Domain: Clone,
 {
     type Feedback = P::Feedback;
 
-    fn push(&mut self, item: &Self::Item) -> Self::Feedback {
+    fn push(&mut self, item: &Self::Domain) -> Self::Feedback {
         self.next_pipe.push(item.clone())
     }
 }
@@ -179,11 +179,11 @@ where
 
 
 
-pub struct LatticeOp<F: Merge, P: ExclRefOp<Item = F::Domain>> {
+pub struct LatticeOp<F: Merge, P: ExclRefOp<Domain = F::Domain>> {
     value: F::Domain,
     next_pipe: P,
 }
-impl<F: Merge, P: ExclRefOp<Item = F::Domain>> LatticeOp<F, P> {
+impl<F: Merge, P: ExclRefOp<Domain = F::Domain>> LatticeOp<F, P> {
     pub fn new(bottom: F::Domain, next_pipe: P) -> Self {
         LatticeOp {
             value: bottom,
@@ -191,13 +191,13 @@ impl<F: Merge, P: ExclRefOp<Item = F::Domain>> LatticeOp<F, P> {
         }
     }
 }
-impl<F: Merge, P: ExclRefOp<Item = F::Domain>> Op for LatticeOp<F, P> {
-    type Item = F::Domain;
+impl<F: Merge, P: ExclRefOp<Domain = F::Domain>> Op for LatticeOp<F, P> {
+    type Domain = F::Domain;
 }
-impl<F: Merge, P: ExclRefOp<Item = F::Domain>> ExclMoveOp for LatticeOp<F, P> {
+impl<F: Merge, P: ExclRefOp<Domain = F::Domain>> ExclMoveOp for LatticeOp<F, P> {
     type Feedback = P::Feedback;
 
-    fn push(&mut self, item: Self::Item) -> Self::Feedback {
+    fn push(&mut self, item: Self::Domain) -> Self::Feedback {
         F::merge_in(&mut self.value, item);
         self.next_pipe.push(&self.value)
     }
@@ -216,7 +216,7 @@ impl<T: 'static> MpscOp<T> {
     }
 }
 impl<T: 'static> Op for MpscOp<T> {
-    type Item = T;
+    type Domain = T;
 }
 impl<T: 'static> SharedMoveOp for MpscOp<T> {
     type Feedback = impl Future;
@@ -245,11 +245,11 @@ impl<T: 'static> Clone for MpscOp<T> {
 
 
 
-pub struct TeeOp<P0: Op, P1: Op<Item = P0::Item>> {
+pub struct TeeOp<P0: Op, P1: Op<Domain = P0::Domain>> {
     pipe0: P0,
     pipe1: P1,
 }
-impl<P0: Op, P1: Op<Item = P0::Item>> TeeOp<P0, P1> {
+impl<P0: Op, P1: Op<Domain = P0::Domain>> TeeOp<P0, P1> {
     pub fn new(pipe0: P0, pipe1: P1) -> Self {
         Self {
             pipe0: pipe0,
@@ -257,23 +257,23 @@ impl<P0: Op, P1: Op<Item = P0::Item>> TeeOp<P0, P1> {
         }
     }
 }
-impl<P0: Op, P1: Op<Item = P0::Item>> Op for TeeOp<P0, P1> {
-    type Item = P0::Item;
+impl<P0: Op, P1: Op<Domain = P0::Domain>> Op for TeeOp<P0, P1> {
+    type Domain = P0::Domain;
 }
-impl<P0: SharedRefOp, P1: Op<Item = P0::Item> + SharedRefOp> SharedRefOp for TeeOp<P0, P1> {
+impl<P0: SharedRefOp, P1: Op<Domain = P0::Domain> + SharedRefOp> SharedRefOp for TeeOp<P0, P1> {
     type Feedback = impl Future;
 
-    fn push(&self, item: &Self::Item) -> Self::Feedback {
+    fn push(&self, item: &Self::Domain) -> Self::Feedback {
         futures::future::join(
             self.pipe0.push(item),
             self.pipe1.push(item),
         )
     }
 }
-impl<P0: ExclRefOp, P1: Op<Item = P0::Item> + ExclRefOp> ExclRefOp for TeeOp<P0, P1> {
+impl<P0: ExclRefOp, P1: Op<Domain = P0::Domain> + ExclRefOp> ExclRefOp for TeeOp<P0, P1> {
     type Feedback = impl Future;
 
-    fn push(&mut self, item: &Self::Item) -> Self::Feedback {
+    fn push(&mut self, item: &Self::Domain) -> Self::Feedback {
         futures::future::join(
             self.pipe0.push(item),
             self.pipe1.push(item),
@@ -302,12 +302,12 @@ impl<P: Op> SplitOp<P> {
     }
 }
 impl<P: Op> Op for SplitOp<P> {
-    type Item = P::Item;
+    type Domain = P::Domain;
 }
 impl<P: ExclRefOp> ExclRefOp for SplitOp<P> {
     type Feedback = impl Future;
 
-    fn push(&mut self, item: &Self::Item) -> Self::Feedback {
+    fn push(&mut self, item: &Self::Domain) -> Self::Feedback {
         while let Ok(new_pipe) = self.pipe_receiver.try_recv() {
             self.pipes.push(new_pipe);
         }
@@ -321,12 +321,12 @@ impl<P: ExclRefOp> ExclRefOp for SplitOp<P> {
 
 
 
-pub struct MapFilterOp<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: Op> {
+pub struct MapFilterOp<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Domain>>, P: Op> {
     mapfilter: F,
     next_pipe: P,
     _phantom: std::marker::PhantomData<T>,
 }
-impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: Op> MapFilterOp<T, F, P> {
+impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Domain>>, P: Op> MapFilterOp<T, F, P> {
     pub fn new(mapfilter: F, next_pipe: P) -> Self {
         MapFilterOp {
             mapfilter: mapfilter,
@@ -335,10 +335,10 @@ impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: Op> MapFilterOp<
         }
     }
 }
-impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: Op> Op for MapFilterOp<T, F, P> {
-    type Item = T;
+impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Domain>>, P: Op> Op for MapFilterOp<T, F, P> {
+    type Domain = T;
 }
-impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: SharedMoveOp> SharedRefOp for MapFilterOp<T, F, P> {
+impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Domain>>, P: SharedMoveOp> SharedRefOp for MapFilterOp<T, F, P> {
     type Feedback = impl Future;
 
     fn push(&self, item: &T) -> Self::Feedback {
@@ -351,7 +351,7 @@ impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: SharedMoveOp> Sh
         }
     }
 }
-impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Item>>, P: ExclMoveOp> ExclRefOp for MapFilterOp<T, F, P> {
+impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Domain>>, P: ExclMoveOp> ExclRefOp for MapFilterOp<T, F, P> {
     type Feedback = impl Future;
 
     fn push(&mut self, item: &T) -> Self::Feedback {
