@@ -4,6 +4,6 @@
 
 pub mod merge;
 
-pub mod pipes;
+pub mod ops;
 
 pub mod semilattice;

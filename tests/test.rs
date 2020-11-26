@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
-use spinach::pipes::{ SharedMoveOp, /*ExclMovePipe, SharedRefPipe,*/ ExclRefOp };
-use spinach::pipes::{ UnaryFn, SplitOp, LatticeOp, NullOp, DebugOp, MapFilterOp }; //MpscPipe };
+use spinach::ops::{ SharedMoveOp, /*ExclMovePipe, SharedRefPipe,*/ ExclRefOp };
+use spinach::ops::{ UnaryFn, SplitOp, LatticeOp, NullOp, DebugOp, MapFilterOp }; //MpscPipe };
 use spinach::merge::{ MapUnion, Max };
 
 

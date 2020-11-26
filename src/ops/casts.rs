@@ -1,10 +1,11 @@
 use super::*;
 
+
 //
-// SharedRefPipe <--- SharedMovePipe
-//      ^                    ^
-//      |                    |
-//  ExclRefPipe  <---  ExclMovePipe
+// SharedRefOp <--- SharedMoveOp
+//      ^                 ^
+//      |                 |
+//  ExclRefOp  <---  ExclMoveOp
 //
 
 // SharedRefPipe <--- SharedMovePipe

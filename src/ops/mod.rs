@@ -5,20 +5,8 @@ mod impls;
 pub use impls::*;
 
 
+
 use std::future::Future;
-// use std::fmt::Debug;
-// // use std::sync::mpsc;
-
-// use futures;
-// use futures::future::{ Either, FutureExt };
-
-// use tokio::sync::mpsc;
-// // use tokio::sync::broadcast;
-
-// // use tokio::stream::Stream;
-
-// use crate::merge::Merge;
-// // use crate::semilattice::Semilattice;
 
 
 pub trait UnaryFn<I> {
