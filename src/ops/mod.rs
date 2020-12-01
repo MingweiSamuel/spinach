@@ -4,9 +4,8 @@ pub use casts::*;
 mod impls;
 pub use impls::*;
 
-
-
 use std::future::Future;
+
 
 
 pub trait UnaryFn<I> {
@@ -14,6 +13,7 @@ pub trait UnaryFn<I> {
 
     fn call(&self, input: I) -> Self::Output;
 }
+
 
 
 //
