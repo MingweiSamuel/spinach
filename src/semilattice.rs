@@ -2,17 +2,12 @@ use crate::merge::Merge;
 
 
 // LATTICE STRUCT //
-pub struct Semilattice<F>
-where
-    F: Merge,
-{
+
+pub struct Semilattice<F: Merge> {
     val: F::Domain,
 }
 
-impl <F> Semilattice<F>
-where
-    F: Merge,
-{
+impl <F: Merge> Semilattice<F> {
     pub fn new(val: F::Domain) -> Self {
         Self {
             val: val,
@@ -33,9 +28,8 @@ where
     }
 }
 
-impl <F> Default for Semilattice<F>
+impl <F: Merge> Default for Semilattice<F>
 where
-    F: Merge,
     F::Domain: Default,
 {
     fn default() -> Self

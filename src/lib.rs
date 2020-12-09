@@ -7,3 +7,5 @@ pub mod merge;
 pub mod ops;
 
 pub mod semilattice;
+
+pub mod stream;

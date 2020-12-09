@@ -334,6 +334,10 @@ impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Domain>>, P: Op> MapFilterO
             _phantom: std::marker::PhantomData,
         }
     }
+
+    pub async fn test_async(&mut self) {
+        future::ready(()).await;
+    }
 }
 impl<T, F: for<'a> UnaryFn<&'a T, Output = Option<P::Domain>>, P: Op> Op for MapFilterOp<T, F, P> {
     type Domain = T;

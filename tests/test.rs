@@ -49,6 +49,22 @@ pub async fn test_basic() -> Result<(), String> {
     let write_pipe = MapFilterOp::new(KvToHashmap, write_pipe);
     let mut write_pipe = write_pipe;
 
+    let ( send, mut receive ) = tokio::sync::mpsc::channel(16);
+    let worker = tokio::task::LocalSet::new();
+    worker.spawn_local(async move {
+        loop {
+            tokio::select! {
+                _ = write_pipe.test_async() => {
+                    println!("YAY");
+                },
+                Some(msg) = receive.recv() => {
+                    write_pipe.push(msg).await;
+                }
+
+            }
+        }
+    });
+
     // Read pipes are weird.
     // Add first reader (subscriber).
     let read_pipe_foo = NullOp::new();
@@ -62,9 +78,11 @@ pub async fn test_basic() -> Result<(), String> {
     let read_pipe_foo = MapFilterOp::new(ReadKey::new("xyz"), read_pipe_foo);
     readers_pipe.push(read_pipe_foo).await;
 
-    // Do first set of writes.
-    ExclRefOp::push(&mut write_pipe, &( "foo", "bar" )).await;
-    ExclRefOp::push(&mut write_pipe, &( "bin", "bag" )).await;
+    // // Do first set of writes.
+    // ExclRefOp::push(&mut write_pipe, &( "foo", "bar" )).await;
+    send.send(&( "foo", "bar" )).await.unwrap();
+    // ExclRefOp::push(&mut write_pipe, &( "bin", "bag" )).await;
+    send.send(&( "bin", "bag" )).await.unwrap();
 
     // Add third reader.
     let read_pipe_foo = NullOp::new();
@@ -72,15 +90,19 @@ pub async fn test_basic() -> Result<(), String> {
     let read_pipe_foo = MapFilterOp::new(ReadKey::new("foo"), read_pipe_foo);
     readers_pipe.push(read_pipe_foo).await;
 
-    // Do second set of writes.
-    ExclRefOp::push(&mut write_pipe, &( "foo", "baz" )).await;
-    ExclRefOp::push(&mut write_pipe, &( "xyz", "zzy" )).await;
+    // // Do second set of writes.
+    // ExclRefOp::push(&mut write_pipe, &( "foo", "baz" )).await;
+    send.send(&( "foo", "baz" )).await.unwrap();
+    // ExclRefOp::push(&mut write_pipe, &( "xyz", "zzy" )).await;
+    send.send(&( "xyz", "zzy" )).await.unwrap();
 
     // Add fourth reader.
     let read_pipe_foo = NullOp::new();
     let read_pipe_foo = DebugOp::new("foo_2", read_pipe_foo);
     let read_pipe_foo = MapFilterOp::new(ReadKey::new("foo"), read_pipe_foo);
     readers_pipe.push(read_pipe_foo).await;
+
+    worker.await;
 
     Ok(())
 }
