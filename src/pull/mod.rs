@@ -1,38 +1,29 @@
-use std::pin::Pin;
 use std::task::{ Context, Poll };
 
 use crate::merge::Merge;
 
 
-pub trait Op {
-    type Item;
-
-    fn poll_next(
-        &mut self,
-        ctx: &mut Context<'_>,
-    ) -> Poll<Option<Self::Item>>;
+pub trait PullOp {
+    type Domain;
 }
-
-pub trait RefOp {
-    type Item;
-
-    fn poll_next(
-        &mut self,
-        ctx: &mut Context<'_>,
-    ) -> Poll<Option<&Self::Item>>;
+pub trait MovePullOp: PullOp {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Domain>>;
+}
+pub trait RefPullOp: PullOp {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<&Self::Domain>>;
 }
 
 
 
-pub struct CloneOp<St: RefOp>
+pub struct CloneOp<St: RefPullOp>
 where
-    St::Item: Clone,
+    St::Domain: Clone,
 {
     stream: St,
 }
-impl<St: RefOp> CloneOp<St>
+impl<St: RefPullOp> CloneOp<St>
 where
-    St::Item: Clone,
+    St::Domain: Clone,
 {
     pub fn new(stream: St) -> Self {
         Self {
@@ -40,13 +31,17 @@ where
         }
     }
 }
-impl<St: RefOp> Op for CloneOp<St>
+impl<St: RefPullOp> PullOp for CloneOp<St>
 where
-    St::Item: Clone,
+    St::Domain: Clone,
 {
-    type Item = St::Item;
-
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
+    type Domain = St::Domain;
+}
+impl<St: RefPullOp> MovePullOp for CloneOp<St>
+where
+    St::Domain: Clone,
+{
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Domain>> {
         self.stream.poll_next(ctx)
             .map(|opt| opt.map(|x| x.clone()))
     }
@@ -54,11 +49,11 @@ where
 
 
 
-pub struct LatticeOp<St: Op, F: Merge<Domain = St::Item>> {
+pub struct LatticeOp<St: MovePullOp, F: Merge<Domain = St::Domain>> {
     stream: St,
     state: F::Domain,
 }
-impl<St: Op, F: Merge<Domain = St::Item>> LatticeOp<St, F> {
+impl<St: MovePullOp, F: Merge<Domain = St::Domain>> LatticeOp<St, F> {
     pub fn new(stream: St, bottom: F::Domain) -> Self {
         Self {
             stream: stream,
@@ -66,10 +61,11 @@ impl<St: Op, F: Merge<Domain = St::Item>> LatticeOp<St, F> {
         }
     }
 }
-impl<St: Op, F: Merge<Domain = St::Item>> RefOp for LatticeOp<St, F> {
-    type Item = St::Item;
-
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<&Self::Item>> {
+impl<St: MovePullOp, F: Merge<Domain = St::Domain>> PullOp for LatticeOp<St, F> {
+    type Domain = St::Domain;
+}
+impl<St: MovePullOp, F: Merge<Domain = St::Domain>> RefPullOp for LatticeOp<St, F> {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<&Self::Domain>> {
         if let Poll::Ready(Some(delta)) = self.stream.poll_next(ctx) {
             F::merge_in(&mut self.state, delta);
         }
