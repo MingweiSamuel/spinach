@@ -15,58 +15,58 @@ pub trait RefPullOp: PullOp {
 
 
 
-pub struct CloneOp<St: RefPullOp>
+pub struct CloneOp<O: RefPullOp>
 where
-    St::Domain: Clone,
+    O::Domain: Clone,
 {
-    stream: St,
+    op: O,
 }
-impl<St: RefPullOp> CloneOp<St>
+impl<O: RefPullOp> CloneOp<O>
 where
-    St::Domain: Clone,
+    O::Domain: Clone,
 {
-    pub fn new(stream: St) -> Self {
+    pub fn new(op: O) -> Self {
         Self {
-            stream: stream,
+            op: op,
         }
     }
 }
-impl<St: RefPullOp> PullOp for CloneOp<St>
+impl<O: RefPullOp> PullOp for CloneOp<O>
 where
-    St::Domain: Clone,
+    O::Domain: Clone,
 {
-    type Domain = St::Domain;
+    type Domain = O::Domain;
 }
 impl<St: RefPullOp> MovePullOp for CloneOp<St>
 where
     St::Domain: Clone,
 {
     fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Domain>> {
-        self.stream.poll_next(ctx)
+        self.op.poll_next(ctx)
             .map(|opt| opt.map(|x| x.clone()))
     }
 }
 
 
 
-pub struct LatticeOp<St: MovePullOp, F: Merge<Domain = St::Domain>> {
-    stream: St,
+pub struct LatticeOp<O: MovePullOp, F: Merge<Domain = O::Domain>> {
+    op: O,
     state: F::Domain,
 }
-impl<St: MovePullOp, F: Merge<Domain = St::Domain>> LatticeOp<St, F> {
-    pub fn new(stream: St, bottom: F::Domain) -> Self {
+impl<O: MovePullOp, F: Merge<Domain = O::Domain>> LatticeOp<O, F> {
+    pub fn new(op: O, bottom: F::Domain) -> Self {
         Self {
-            stream: stream,
+            op: op,
             state: bottom,
         }
     }
 }
-impl<St: MovePullOp, F: Merge<Domain = St::Domain>> PullOp for LatticeOp<St, F> {
-    type Domain = St::Domain;
+impl<O: MovePullOp, F: Merge<Domain = O::Domain>> PullOp for LatticeOp<O, F> {
+    type Domain = O::Domain;
 }
 impl<St: MovePullOp, F: Merge<Domain = St::Domain>> RefPullOp for LatticeOp<St, F> {
     fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<&Self::Domain>> {
-        if let Poll::Ready(Some(delta)) = self.stream.poll_next(ctx) {
+        if let Poll::Ready(Some(delta)) = self.op.poll_next(ctx) {
             F::merge_in(&mut self.state, delta);
         }
         Poll::Ready(Some(&self.state))
