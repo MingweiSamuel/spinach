@@ -6,6 +6,6 @@ pub mod merge;
 
 pub mod ops;
 
-pub mod semilattice;
+pub mod pull;
 
-pub mod stream;
+pub mod semilattice;
