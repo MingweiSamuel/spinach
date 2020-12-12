@@ -186,6 +186,7 @@ name = "spinach"
 version = "0.1.0"
 dependencies = [
  "futures",
+ "futures-core",
  "tokio",
 ]
 
