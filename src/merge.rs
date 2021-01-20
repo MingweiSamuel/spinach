@@ -10,7 +10,6 @@ use std::cmp::Ordering;
 pub trait Merge {
     type Domain;
 
-    // A "static" method.
     fn merge_in(val: &mut Self::Domain, other: Self::Domain);
 
     fn partial_cmp(val: &Self::Domain, other: &Self::Domain) -> Option<Ordering>;

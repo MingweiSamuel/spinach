@@ -52,17 +52,20 @@ pub async fn test_basic() -> Result<(), String> {
     let ( send, mut receive ) = tokio::sync::mpsc::channel(16);
     let worker = tokio::task::LocalSet::new();
     worker.spawn_local(async move {
-        loop {
-            tokio::select! {
-                _ = write_pipe.test_async() => {
-                    println!("YAY");
-                },
-                Some(msg) = receive.recv() => {
-                    write_pipe.push(msg).await;
-                }
-
-            }
+        while let Some(msg) = receive.recv().await {
+            write_pipe.push(msg).await;
         }
+        // loop {
+        //     tokio::select! {
+        //         _ = write_pipe.test_async() => {
+        //             println!("YAY");
+        //         },
+        //         Some(msg) = receive.recv() => {
+        //             write_pipe.push(msg).await;
+        //         }
+
+        //     }
+        // }
     });
 
     // Read pipes are weird.
@@ -102,6 +105,7 @@ pub async fn test_basic() -> Result<(), String> {
     let read_pipe_foo = MapFilterOp::new(ReadKey::new("foo"), read_pipe_foo);
     readers_pipe.push(read_pipe_foo).await;
 
+    std::mem::drop(send);
     worker.await;
 
     Ok(())

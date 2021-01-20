@@ -1,6 +1,7 @@
-#![feature(type_alias_impl_trait)]
-// #![feature(impl_trait_in_bindings)]
+#![feature(cell_update)]
 #![feature(drain_filter)]
+// #![feature(impl_trait_in_bindings)]
+#![feature(type_alias_impl_trait)]
 
 pub mod merge;
 
