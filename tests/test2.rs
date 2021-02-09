@@ -41,7 +41,10 @@ pub async fn sleep_yield_now() {
 #[tokio::test]
 pub async fn test_pull() -> Result<(), String> {
 
-    type MyLattice = MapUnion<HashMap<&'static str, DominatingPair<Max<usize>, Max<&'static str>>>>;
+    type MyLattice = MapUnion<HashMap<
+        &'static str,
+        DominatingPair<Max<usize>, Max<&'static str>>
+    >>;
 
     let ( sender, receiver ) = mpsc::channel::<( &'static str, usize, &'static str )>(1);
 

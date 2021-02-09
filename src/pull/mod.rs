@@ -191,6 +191,42 @@ impl<O: MovePullOp, F: Merge<Domain = O::Domain>> RefPullOp for LatticeOp<O, F> 
 
 
 
+// pub struct DynSplitOp<O: RefPullOp> {
+//     op: O,
+//     id_counter: Rc<Cell<usize>>,
+//     id: usize,
+//     wakers: Rc<RefCell<HashMap<usize, Waker>>>,
+// }
+// impl<O: RefPullOp> DynSplitOp<O> {
+//     pub fn new(op: O) -> Self {
+//         Self {
+//             op: op,
+//             id_counter: Rc::new(Cell::new(0)),
+//             id: 0,
+//             wakers: Rc::new(RefCell::new(HashMap::new())),
+//         }
+//     }
+// }
+// impl<O: RefPullOp> PullOp for DynSplitOp<O> {
+//     type Domain = O::Domain;
+// }
+// impl<O: RefPullOp> RefPullOp for DynSplitOp<O> {
+//     fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<&Self::Domain>> {
+
+//         self.wakers.borrow_mut().insert(self.id, ctx.waker().clone());
+
+//         let wakers_borrow = self.wakers.borrow();
+//         for ( id, waker ) in &*wakers_borrow {
+//             if self.id != *id {
+//                 waker.wake_by_ref();
+//             }
+//         }
+
+//         self.op.poll_next(ctx)
+//     }
+// }
+
+
 
 pub struct LatticeOp2<O: MovePullOp, F: Merge<Domain = O::Domain>> {
     op: Rc<RefCell<O>>,
@@ -198,7 +234,7 @@ pub struct LatticeOp2<O: MovePullOp, F: Merge<Domain = O::Domain>> {
     id_counter: Rc<Cell<usize>>,
     id: usize,
     wakers: Rc<RefCell<HashMap<usize, Waker>>>,
-}
+} 
 impl<O: MovePullOp, F: Merge<Domain = O::Domain>> LatticeOp2<O, F> {
     pub fn new(op: O, bottom: F::Domain) -> Self {
         Self {

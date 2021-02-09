@@ -5,6 +5,8 @@
 
 pub mod merge;
 
+pub mod op2;
+
 pub mod ops;
 
 pub mod pull;
