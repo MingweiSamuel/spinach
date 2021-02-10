@@ -14,9 +14,12 @@ impl<T> NullOp<T> {
         }
     }
 }
-impl<T> Op for NullOp<T> {
-    type Domain = T;
+impl<T> Op for NullOp<T> {}
+impl<T> PullOp for NullOp<T> {
     type Codomain = T;
+}
+impl <T> PushOp for NullOp<T> {
+    type Domain = T;
 }
 impl<T> MovePullOp for NullOp<T> {
     fn poll_next(&mut self, _ctx: &mut Context<'_>) -> Poll<Option<Self::Codomain>> {

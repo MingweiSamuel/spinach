@@ -5,7 +5,6 @@ use std::pin::Pin;
 use std::rc::Rc;
 use std::task::{ Context, Poll, Waker };
 
-use tokio::stream::Stream;
 use tokio::sync::mpsc;
 
 use crate::merge::Merge;
@@ -300,7 +299,7 @@ impl<T> PullOp for ChannelOp<T> {
 }
 impl<T> MovePullOp for ChannelOp<T> {
     fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Domain>> {
-        Pin::new(&mut self.receiver).poll_next(ctx)
+        self.receiver.poll_recv(ctx)
     }
 }
 

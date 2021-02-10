@@ -1,5 +1,6 @@
 use std::future; //::{ self, Future };
 use std::fmt::Debug;
+// use std::task::Poll;
 // use std::sync::mpsc;
 
 use futures;
@@ -286,38 +287,38 @@ impl<P0: ExclRefOp, P1: Op<Domain = P0::Domain> + ExclRefOp> ExclRefOp for TeeOp
 
 
 
-pub struct SplitOp<P: Op> {
-    pipe_receiver: mpsc::Receiver<P>,
-    pipes: Vec<P>,
-}
-impl<P: Op> SplitOp<P> {
-    pub fn create() -> ( Self, MpscOp<P> ) {
-        let ( sender, receiver ) = mpsc::channel(8);
-        let inst = SplitOp {
-            pipe_receiver: receiver,
-            pipes: Vec::new(),
-        };
-        let mpsc_pipe = MpscOp::create(sender);
-        ( inst, mpsc_pipe )
-    }
-}
-impl<P: Op> Op for SplitOp<P> {
-    type Domain = P::Domain;
-}
-impl<P: ExclRefOp> ExclRefOp for SplitOp<P> {
-    type Feedback = impl Future;
+// pub struct SplitOp<P: Op> {
+//     pipe_receiver: mpsc::Receiver<P>,
+//     pipes: Vec<P>,
+// }
+// impl<P: Op> SplitOp<P> {
+//     pub fn create() -> ( Self, MpscOp<P> ) {
+//         let ( sender, receiver ) = mpsc::channel(8);
+//         let inst = SplitOp {
+//             pipe_receiver: receiver,
+//             pipes: Vec::new(),
+//         };
+//         let mpsc_pipe = MpscOp::create(sender);
+//         ( inst, mpsc_pipe )
+//     }
+// }
+// impl<P: Op> Op for SplitOp<P> {
+//     type Domain = P::Domain;
+// }
+// impl<P: ExclRefOp> ExclRefOp for SplitOp<P> {
+//     type Feedback = impl Future;
 
-    fn push(&mut self, item: &Self::Domain) -> Self::Feedback {
-        while let Ok(new_pipe) = self.pipe_receiver.try_recv() {
-            self.pipes.push(new_pipe);
-        }
+//     fn push(&mut self, item: &Self::Domain) -> Self::Feedback {
+//         while let Poll::Ready(Some(new_pipe)) = self.pipe_receiver.poll_recv() {
+//             self.pipes.push(new_pipe);
+//         }
 
-        let pushes = self.pipes
-            .iter_mut()
-            .map(|pipe| pipe.push(item));
-        futures::future::join_all(pushes)
-    }
-}
+//         let pushes = self.pipes
+//             .iter_mut()
+//             .map(|pipe| pipe.push(item));
+//         futures::future::join_all(pushes)
+//     }
+// }
 
 
 

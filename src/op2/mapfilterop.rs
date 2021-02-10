@@ -7,18 +7,12 @@ use super::op::*;
 
 
 
-pub struct MapFilterMoveOp<O: Op, F, U, V>
-where
-    F: Fn(U) -> Option<V>,
-{
+pub struct MapFilterMoveOp<O: Op, F, T> {
     op: O,
     func: F,
-    _phantom: std::marker::PhantomData<( U, V )>,
+    _phantom: std::marker::PhantomData<T>,
 }
-impl<O: Op, F, U, V> MapFilterMoveOp<O, F, U, V>
-where
-    F: Fn(U) -> Option<V>,
-{
+impl<O: Op, F, T> MapFilterMoveOp<O, F, T> {
     pub fn new(op: O, func: F) -> Self {
         Self {
             op: op,
@@ -27,25 +21,31 @@ where
         }
     }
 }
-impl<O: Op, F, U, V> Op for MapFilterMoveOp<O, F, U, V>
+impl<O: Op, F, T> Op for MapFilterMoveOp<O, F, T> {}
+impl<O: PullOp, F, T> PullOp for MapFilterMoveOp<O, F, T>
 where
-    F: Fn(U) -> Option<V>,
+    F: Fn(O::Codomain) -> Option<T>,
 {
-    type Domain = U;
-    type Codomain = V;
+    type Codomain = T;
 }
-impl<O: MovePullOp, F, V> MovePullOp for MapFilterMoveOp<O, F, O::Codomain, V>
+impl<O: PushOp, F, T> PushOp for MapFilterMoveOp<O, F, T>
 where
-    F: Fn(O::Codomain) -> Option<V>,
+    F: Fn(T) -> Option<O::Domain>,
+{
+    type Domain = T;
+}
+impl<O: MovePullOp, F, T> MovePullOp for MapFilterMoveOp<O, F, T>
+where
+    F: Fn(O::Codomain) -> Option<T>,
 {
     fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Codomain>> {
         let val = self.op.poll_next(ctx);
         val.map(|opt| opt.and_then(|x| (self.func)(x)))
     }
 }
-impl<O: MovePushOp, F, U> MovePushOp for MapFilterMoveOp<O, F, U, O::Domain>
+impl<O: MovePushOp, F, T> MovePushOp for MapFilterMoveOp<O, F, T>
 where
-    F: Fn(U) -> Option<O::Domain>,
+    F: Fn(T) -> Option<O::Domain>,
 {
     type Feedback = impl Future;
 

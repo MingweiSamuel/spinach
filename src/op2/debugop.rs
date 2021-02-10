@@ -4,28 +4,31 @@ use std::task::{ Context, Poll };
 use super::op::*;
 
 
-pub struct DebugOp<P: Op> {
+pub struct DebugOp<O: Op> {
     tag: &'static str,
-    next_pipe: P,
+    op: O,
 }
-impl<P: Op> DebugOp<P> {
-    pub fn new(tag: &'static str, next_pipe: P) -> Self {
+impl<O: Op> DebugOp<O> {
+    pub fn new(tag: &'static str, op: O) -> Self {
         DebugOp {
             tag: tag,
-            next_pipe: next_pipe,
+            op: op,
         }
     }
 }
-impl<P: Op> Op for DebugOp<P> {
-    type Domain = P::Domain;
-    type Codomain = P::Codomain;
+impl<O: Op> Op for DebugOp<O> {}
+impl<O: PullOp> PullOp for DebugOp<O> {
+    type Codomain = O::Codomain;
 }
-impl<P: MovePullOp> MovePullOp for DebugOp<P>
+impl<O: PushOp> PushOp for DebugOp<O> {
+    type Domain = O::Domain;
+}
+impl<O: MovePullOp> MovePullOp for DebugOp<O>
 where
-    P::Codomain: Debug,
+    O::Codomain: Debug,
 {
     fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Codomain>> {
-        let polled = self.next_pipe.poll_next(ctx);
+        let polled = self.op.poll_next(ctx);
         match &polled {
             Poll::Ready(Some(item)) => println!("{}: {:?}", self.tag, item),
             _ => (),
@@ -33,12 +36,12 @@ where
         polled
     }
 }
-impl<P: RefPullOp> RefPullOp for DebugOp<P>
+impl<O: RefPullOp> RefPullOp for DebugOp<O>
 where
-    P::Codomain: Debug,
+    O::Codomain: Debug,
 {
     fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<&Self::Codomain>> {
-        let polled = self.next_pipe.poll_next(ctx);
+        let polled = self.op.poll_next(ctx);
         match &polled {
             Poll::Ready(Some(item)) => println!("{}: {:?}", self.tag, item),
             _ => (),
@@ -46,25 +49,25 @@ where
         polled
     }
 }
-impl<P: MovePushOp> MovePushOp for DebugOp<P>
+impl<O: MovePushOp> MovePushOp for DebugOp<O>
 where
-    P::Domain: Debug,
+    O::Domain: Debug,
 {
-    type Feedback = P::Feedback;
+    type Feedback = O::Feedback;
 
     fn push(&mut self, item: Self::Domain) -> Self::Feedback {
         println!("{}: {:?}", self.tag, item);
-        self.next_pipe.push(item)
+        self.op.push(item)
     }
 }
-impl<P: RefPushOp> RefPushOp for DebugOp<P>
+impl<O: RefPushOp> RefPushOp for DebugOp<O>
 where
-    P::Domain: Debug,
+    O::Domain: Debug,
 {
-    type Feedback = P::Feedback;
+    type Feedback = O::Feedback;
 
     fn push(&mut self, item: &Self::Domain) -> Self::Feedback {
         println!("{}: {:?}", self.tag, item);
-        self.next_pipe.push(item)
+        self.op.push(item)
     }
 }

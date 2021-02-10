@@ -10,4 +10,5 @@ include = [ "src/**", "/README.md" ]
 [dependencies]
 futures-core = "0.3"
 futures = "0.3"
-tokio = { version = "0.3", features = [ "rt", "sync", "stream", "macros", "time" ] }
+tokio = { version = "1.2", features = [ "rt", "sync", "macros", "time" ] }
+tokio-stream = "0.1"
