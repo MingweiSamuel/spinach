@@ -4,6 +4,15 @@ pub use op::*;
 mod util;
 pub use util::*;
 
+pub mod types;
+pub use types::*;
+
+mod staticcomp;
+pub use staticcomp::*;
+
+mod dyncomp;
+pub use dyncomp::*;
+
 mod nullop;
 pub use nullop::*;
 
@@ -15,6 +24,9 @@ pub use mapfilterop::*;
 
 mod cloneop;
 pub use cloneop::*;
+
+mod referenceop;
+pub use referenceop::*;
 
 mod channelop;
 pub use channelop::*;

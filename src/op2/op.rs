@@ -1,14 +1,17 @@
 use std::future::Future;
 use std::task::{ Context, Poll };
 
+use super::Flow;
 
 
 pub trait Op {}
 
 pub trait PullOp: Op {
+    type Outflow: Flow;
     type Codomain;
 }
 pub trait PushOp: Op {
+    type Inflow: Flow;
     type Domain;
 }
 

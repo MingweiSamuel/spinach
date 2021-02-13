@@ -1,4 +1,4 @@
-use spinach::op2::{ MoveNext, MovePushOp, DebugOp, MapFilterMoveOp, channel_op, handoff_op };
+use spinach::op2::{ MoveNext, MovePushOp, DebugOp, MapFilterMoveOp, channel_op, handoff_op, DF };
 
 #[tokio::test]
 pub async fn test_cycle_channel() -> Result<(), String> {
@@ -22,7 +22,7 @@ pub async fn test_cycle_channel() -> Result<(), String> {
 #[tokio::test]
 pub async fn test_cycle_handoff() -> Result<(), String> {
 
-    let ( push_pipe, pull_pipe ) = handoff_op::<usize>();
+    let ( push_pipe, pull_pipe ) = handoff_op::<DF, usize>();
     let mut push_pipe = push_pipe;
 
     let pull_pipe = MapFilterMoveOp::<_, _, usize>::new(pull_pipe, |x: usize| Some(x + 1));

@@ -1,44 +1,47 @@
 use std::future;
 use std::task::{ Context, Poll };
+
 use super::op::*;
+use super::types::*;
 
 
-
-pub struct NullOp<T> {
-    _phantom: std::marker::PhantomData<T>,
+pub struct NullOp<F: Flow, T> {
+    _phantom: std::marker::PhantomData<( F, T )>,
 }
-impl<T> NullOp<T> {
+impl<F: Flow, T> NullOp<F, T> {
     pub fn new() -> Self {
         Self {
             _phantom: std::marker::PhantomData,
         }
     }
 }
-impl<T> Op for NullOp<T> {}
-impl<T> PullOp for NullOp<T> {
+impl<F: Flow, T> Op for NullOp<F, T> {}
+impl<F: Flow, T> PullOp for NullOp<F, T> {
+    type Outflow = F;
     type Codomain = T;
 }
-impl <T> PushOp for NullOp<T> {
+impl <F: Flow, T> PushOp for NullOp<F, T> {
+    type Inflow = F;
     type Domain = T;
 }
-impl<T> MovePullOp for NullOp<T> {
+impl<F: Flow, T> MovePullOp for NullOp<F, T> {
     fn poll_next(&mut self, _ctx: &mut Context<'_>) -> Poll<Option<Self::Codomain>> {
         Poll::Pending
     }
 }
-impl<T> RefPullOp for NullOp<T> {
+impl<F: Flow, T> RefPullOp for NullOp<F, T> {
     fn poll_next(&mut self, _ctx: &mut Context<'_>) -> Poll<Option<&Self::Codomain>> {
         Poll::Pending
     }
 }
-impl<T> MovePushOp for NullOp<T> {
+impl<F: Flow, T> MovePushOp for NullOp<F, T> {
     type Feedback = future::Ready<()>;
 
     fn push(&mut self, _item: Self::Domain) -> Self::Feedback {
         future::ready(())
     }
 }
-impl<T> RefPushOp for NullOp<T> {
+impl<F: Flow, T> RefPushOp for NullOp<F, T> {
     type Feedback = future::Ready<()>;
 
     fn push(&mut self, _item: &Self::Domain) -> Self::Feedback {

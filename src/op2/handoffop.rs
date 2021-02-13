@@ -5,37 +5,40 @@ use std::rc::Rc;
 use std::task::{ Context, Poll, Waker };
 
 use super::op::*;
+use super::types::*;
 
 
 
-pub fn handoff_op<T>() -> ( HandoffPushOp<T>, HandoffPullOp<T> ) {
+pub fn handoff_op<F: Flow, T>() -> ( HandoffPushOp<F, T>, HandoffPullOp<F, T> ) {
     let handoff = Default::default();
     let handoff = Rc::new(RefCell::new(handoff));
     ( HandoffPushOp::create(handoff.clone()), HandoffPullOp::create(handoff) )
 }
 
-struct Handoff<T> {
+struct Handoff<F: Flow, T> {
     item: Option<T>,
     recv_waker: Option<Waker>,
     send_waker: Option<Waker>,
+    _phantom: std::marker::PhantomData<F>,
 }
-impl<T> Default for Handoff<T> {
+impl<F: Flow, T> Default for Handoff<F, T> {
     fn default() -> Self {
         Self {
             item: None,
             recv_waker: None,
             send_waker: None,
+            _phantom: std::marker::PhantomData,
         }
     }
 } 
 
 
-struct HandoffSend<T> {
+struct HandoffSend<F: Flow, T> {
     item: Option<T>,
-    handoff: Rc<RefCell<Handoff<T>>>,
+    handoff: Rc<RefCell<Handoff<F, T>>>,
 }
-impl<T> Unpin for HandoffSend<T> {}
-impl<T> Future for HandoffSend<T> {
+impl<F: Flow, T> Unpin for HandoffSend<F, T> {}
+impl<F: Flow, T> Future for HandoffSend<F, T> {
     type Output = ();
 
     fn poll(self: Pin<&mut Self>, ctx: &mut Context<'_>) -> Poll<Self::Output> {
@@ -68,21 +71,22 @@ impl<T> Future for HandoffSend<T> {
 
 
 
-pub struct HandoffPushOp<T> {
-    handoff: Rc<RefCell<Handoff<T>>>,
+pub struct HandoffPushOp<F: Flow, T> {
+    handoff: Rc<RefCell<Handoff<F, T>>>,
 }
-impl<T> HandoffPushOp<T> {
-    fn create(handoff: Rc<RefCell<Handoff<T>>>) -> Self {
+impl<F: Flow, T> HandoffPushOp<F, T> {
+    fn create(handoff: Rc<RefCell<Handoff<F, T>>>) -> Self {
         Self {
             handoff: handoff,
         }
     }
 }
-impl<T> Op for HandoffPushOp<T> {}
-impl<T> PushOp for HandoffPushOp<T> {
+impl<F: Flow, T> Op for HandoffPushOp<F, T> {}
+impl<F: Flow, T> PushOp for HandoffPushOp<F, T> {
+    type Inflow = F;
     type Domain = T;
 }
-impl<T> MovePushOp for HandoffPushOp<T> {
+impl<F: Flow, T> MovePushOp for HandoffPushOp<F, T> {
     type Feedback = impl Future;
 
     #[must_use]
@@ -96,21 +100,22 @@ impl<T> MovePushOp for HandoffPushOp<T> {
 
 
 
-pub struct HandoffPullOp<T> {
-    handoff: Rc<RefCell<Handoff<T>>>,
+pub struct HandoffPullOp<F: Flow, T> {
+    handoff: Rc<RefCell<Handoff<F, T>>>,
 }
-impl<T> HandoffPullOp<T> {
-    fn create(handoff: Rc<RefCell<Handoff<T>>>) -> Self {
+impl<F: Flow, T> HandoffPullOp<F, T> {
+    fn create(handoff: Rc<RefCell<Handoff<F, T>>>) -> Self {
         Self {
             handoff: handoff,
         }
     }
 }
-impl<T> Op for HandoffPullOp<T> {}
-impl<T> PullOp for HandoffPullOp<T> {
+impl<F: Flow, T> Op for HandoffPullOp<F, T> {}
+impl<F: Flow, T> PullOp for HandoffPullOp<F, T> {
+    type Outflow = F;
     type Codomain = T;
 }
-impl<T> MovePullOp for HandoffPullOp<T> {
+impl<F: Flow, T> MovePullOp for HandoffPullOp<F, T> {
     fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Codomain>> {
         let mut handoff_mut = self.handoff.borrow_mut();
         match handoff_mut.item.take() {

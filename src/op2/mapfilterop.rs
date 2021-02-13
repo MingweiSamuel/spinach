@@ -26,12 +26,14 @@ impl<O: PullOp, F, T> PullOp for MapFilterMoveOp<O, F, T>
 where
     F: Fn(O::Codomain) -> Option<T>,
 {
+    type Outflow = O::Outflow;
     type Codomain = T;
 }
 impl<O: PushOp, F, T> PushOp for MapFilterMoveOp<O, F, T>
 where
     F: Fn(T) -> Option<O::Domain>,
 {
+    type Inflow = O::Inflow;
     type Domain = T;
 }
 impl<O: MovePullOp, F, T> MovePullOp for MapFilterMoveOp<O, F, T>

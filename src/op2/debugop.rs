@@ -18,9 +18,11 @@ impl<O: Op> DebugOp<O> {
 }
 impl<O: Op> Op for DebugOp<O> {}
 impl<O: PullOp> PullOp for DebugOp<O> {
+    type Outflow = O::Outflow;
     type Codomain = O::Codomain;
 }
 impl<O: PushOp> PushOp for DebugOp<O> {
+    type Inflow = O::Inflow;
     type Domain = O::Domain;
 }
 impl<O: MovePullOp> MovePullOp for DebugOp<O>

@@ -14,9 +14,11 @@ impl<O: Op> CloneOp<O> {
 }
 impl<O: Op> Op for CloneOp<O> {}
 impl<O: PullOp> PullOp for CloneOp<O> {
+    type Outflow = O::Outflow;
     type Codomain = O::Codomain;
 }
 impl<O: PushOp> PushOp for CloneOp<O> {
+    type Inflow = O::Inflow;
     type Domain = O::Domain;
 }
 impl<O: RefPullOp> MovePullOp for CloneOp<O>

@@ -4,6 +4,7 @@ use std::task::{ Context, Poll };
 use tokio::sync::mpsc;
 
 use super::op::*;
+use super::types::*;
 
 
 
@@ -26,6 +27,7 @@ impl<T> ChannelPushOp<T> {
 }
 impl<T> Op for ChannelPushOp<T> {}
 impl<T> PushOp for ChannelPushOp<T> {
+    type Inflow = DF;
     type Domain = T;
 }
 impl<T> MovePushOp for ChannelPushOp<T> {
@@ -54,6 +56,7 @@ impl<T> ChannelPullOp<T> {
 }
 impl<T> Op for ChannelPullOp<T> {}
 impl<T> PullOp for ChannelPullOp<T> {
+    type Outflow = DF;
     type Codomain = T;
 }
 impl<T> MovePullOp for ChannelPullOp<T> {
