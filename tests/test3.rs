@@ -1,21 +1,22 @@
-use spinach::op2::{ MoveNext, MovePushOp, DebugOp, MapFilterMoveOp, channel_op, handoff_op, DF };
+use spinach::op2::{ MovePushOp, DebugOp, MapFilterMoveOp, channel_op, handoff_op, DF, StaticComp };
 
 #[tokio::test]
 pub async fn test_cycle_channel() -> Result<(), String> {
 
-    let ( push_pipe, pull_pipe ) = channel_op::<usize>(1);
+    let ( push_pipe, pull_pipe ) = channel_op::<usize>(10);
     let mut push_pipe = push_pipe;
 
     let pull_pipe = MapFilterMoveOp::<_, _, usize>::new(pull_pipe, |x: usize| Some(x + 1));
     let pull_pipe = DebugOp::new("channel", pull_pipe);
-    let mut pull_pipe = pull_pipe;
 
     push_pipe.push(350).await;
+    push_pipe.push(650).await;
+
+    let mut comp = StaticComp::new(pull_pipe, push_pipe);
     for _ in 0_usize..10 {
-        if let Some(item) = MoveNext::new(&mut pull_pipe).await {
-            push_pipe.push(item).await;
-        }
+        comp.tick_moveop().await;
     }
+
     Ok(())
 }
 
@@ -27,13 +28,13 @@ pub async fn test_cycle_handoff() -> Result<(), String> {
 
     let pull_pipe = MapFilterMoveOp::<_, _, usize>::new(pull_pipe, |x: usize| Some(x + 1));
     let pull_pipe = DebugOp::new("handoff", pull_pipe);
-    let mut pull_pipe = pull_pipe;
 
     push_pipe.push(150).await;
+
+    let mut comp = StaticComp::new(pull_pipe, push_pipe);
     for _ in 0_usize..10 {
-        if let Some(item) = MoveNext::new(&mut pull_pipe).await {
-            push_pipe.push(item).await;
-        }
+        comp.tick_moveop().await;
     }
+
     Ok(())
 }

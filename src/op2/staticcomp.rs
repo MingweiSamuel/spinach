@@ -19,18 +19,29 @@ impl<I: PullOp, O: PushOp<Domain = I::Codomain>> StaticComp<I, O> {
     }
 }
 impl<I: MovePullOp, O: MovePushOp<Domain = I::Codomain>> StaticComp<I, O> {
-    pub async fn run_move(&mut self) {
+    pub async fn run_moveop(mut self) {
         while let Some(item) = MoveNext::new(&mut self.pull).await {
             self.push.push(item).await;
             // TODO handle the feedback.
         }
     }
+    pub async fn tick_moveop(&mut self) -> Option<<O::Feedback as Future>::Output> {
+        if let Some(item) = MoveNext::new(&mut self.pull).await {
+            Some(self.push.push(item).await)
+        }
+        else {
+            None
+        }
+    }
 }
 impl<I: RefPullOp, O: RefPushOp<Domain = I::Codomain>> StaticComp<I, O> {
-    pub async fn run_ref(&mut self) {
-        while let Some(_feedback) = RefStaticCompFuture::new(self).await {
+    pub async fn run_refop(mut self) {
+        while let Some(_feedback) = RefStaticCompFuture::new(&mut self).await {
             // TODO: handle the feedback.
         }
+    }
+    pub async fn tick_refop(&mut self) -> Option<<O::Feedback as Future>::Output> {
+        RefStaticCompFuture::new(self).await
     }
 }
 
