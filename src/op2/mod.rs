@@ -7,11 +7,11 @@ pub use util::*;
 pub mod types;
 pub use types::*;
 
-mod staticcomp;
-pub use staticcomp::*;
+mod comp;
+pub use comp::*;
 
-mod dyncomp;
-pub use dyncomp::*;
+// mod dyncomp;
+// pub use dyncomp::*;
 
 mod nullop;
 pub use nullop::*;

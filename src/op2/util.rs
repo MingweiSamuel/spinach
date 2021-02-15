@@ -60,12 +60,13 @@ pub async fn sleep_yield_now() {
 
         fn poll(mut self: std::pin::Pin<&mut Self>, _ctx: &mut Context<'_>) -> Poll<()> {
             if self.yielded {
-                return Poll::Ready(());
+                Poll::Ready(())
             }
-
-            self.yielded = true;
-            // cx.waker().wake_by_ref();
-            Poll::Pending
+            else {
+                self.yielded = true;
+                // cx.waker().wake_by_ref();
+                Poll::Pending
+            }
         }
     }
 

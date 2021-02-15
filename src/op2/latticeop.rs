@@ -11,12 +11,24 @@ pub struct LatticeOp<O: Op, F: Merge> {
 }
 impl<O: Op, F: Merge> LatticeOp<O, F> {
     pub fn new(op: O, bottom: F::Domain) -> Self {
-        LatticeOp {
+        Self {
             op: op,
             state: bottom,
         }
     }
 }
+impl<O: Op, F: Merge> LatticeOp<O, F>
+where
+    F::Domain: Default,
+{
+    pub fn new_default(op: O) -> Self {
+        Self {
+            op: op,
+            state: Default::default(),
+        }
+    }
+}
+
 impl<O: Op, F: Merge> Op for LatticeOp<O, F> {}
 impl<O: PullOp<Outflow = DF>, F: Merge<Domain = O::Codomain>> PullOp for LatticeOp<O, F> {
     type Outflow = RX;

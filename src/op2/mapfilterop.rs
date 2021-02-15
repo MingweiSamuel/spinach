@@ -60,3 +60,60 @@ where
         }
     }
 }
+
+
+
+
+pub struct MapFilterRefOp<O: Op, F, T> {
+    op: O,
+    func: F,
+    _phantom: std::marker::PhantomData<T>,
+}
+impl<O: Op, F, T> MapFilterRefOp<O, F, T> {
+    pub fn new(op: O, func: F) -> Self {
+        Self {
+            op: op,
+            func: func,
+            _phantom: std::marker::PhantomData,
+        }
+    }
+}
+impl<O: Op, F, T> Op for MapFilterRefOp<O, F, T> {}
+impl<O: PullOp, F, T> PullOp for MapFilterRefOp<O, F, T>
+where
+    F: Fn(O::Codomain) -> Option<T>,
+{
+    type Outflow = O::Outflow;
+    type Codomain = T;
+}
+impl<O: PushOp, F, T> PushOp for MapFilterRefOp<O, F, T>
+where
+    F: Fn(&T) -> Option<O::Domain>,
+{
+    type Inflow = O::Inflow;
+    type Domain = T;
+}
+// impl<O: RefPullOp, F, T> MovePullOp for MapFilterRefOp<O, F, T>
+// where
+//     F: Fn(&O::Codomain) -> Option<T>,
+// {
+//     fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Codomain>> {
+//         let val = self.op.poll_next(ctx);
+//         val.map(|opt| opt.and_then(|x| (self.func)(x)))
+//     }
+// }
+impl<O: MovePushOp, F, T> RefPushOp for MapFilterRefOp<O, F, T>
+where
+    F: Fn(&T) -> Option<O::Domain>,
+{
+    type Feedback = impl Future;
+
+    fn push(&mut self, item: &Self::Domain) -> Self::Feedback {
+        if let Some(item) = (self.func)(item) {
+            Either::Left(self.op.push(item).map(|x| Some(x)))
+        }
+        else {
+            Either::Right(future::ready(None))
+        }
+    }
+}
