@@ -1,9 +1,21 @@
 use std::future::Future;
 use std::task::{ Context, Poll };
 
-
-
 use super::op::MovePullOp;
+
+
+pub trait PureFn {
+    type Domain;
+    type Codomain;
+    fn call(&self, item: Self::Domain) -> Self::Codomain;
+}
+
+pub trait PureRefFn {
+    type Domain;
+    type Codomain;
+    fn call(&self, item: &Self::Domain) -> Self::Codomain;
+}
+
 
 pub struct MoveNext<'a, O: MovePullOp> {
     op: &'a mut O,
