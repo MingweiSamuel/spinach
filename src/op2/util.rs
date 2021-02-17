@@ -5,15 +5,15 @@ use super::op::MovePullOp;
 
 
 pub trait PureFn {
-    type Domain;
-    type Codomain;
-    fn call(&self, item: Self::Domain) -> Self::Codomain;
+    type Indomain;
+    type Outdomain;
+    fn call(&self, item: Self::Indomain) -> Self::Outdomain;
 }
 
 pub trait PureRefFn {
-    type Domain;
-    type Codomain;
-    fn call(&self, item: &Self::Domain) -> Self::Codomain;
+    type Indomain;
+    type Outdomain;
+    fn call(&self, item: &Self::Indomain) -> Self::Outdomain;
 }
 
 
@@ -31,7 +31,7 @@ impl<O: MovePullOp> Future for MoveNext<'_, O>
 where
     Self: Unpin,
 {
-    type Output = Option<O::Codomain>;
+    type Output = Option<O::Outdomain>;
 
     fn poll(self: std::pin::Pin<&mut Self>, ctx: &mut Context<'_>) -> Poll<Self::Output> {
         self.get_mut().op.poll_next(ctx)
@@ -52,7 +52,7 @@ where
 // where
 //     Self: Unpin,
 // {
-//     type Output = Option<&'b O::Codomain>;
+//     type Output = Option<&'b O::Outdomain>;
 
 //     fn poll(self: std::pin::Pin<&'b mut RefNext<'a, O>>, ctx: &mut Context<'_>) -> Poll<Self::Output> {
 //         (*self).op.poll_next(ctx)

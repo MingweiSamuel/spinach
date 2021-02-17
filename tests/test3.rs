@@ -7,9 +7,9 @@ use spinach::merge::{ Merge, MapUnion, DominatingPair, Max };
 
 pub struct IncrementFn;
 impl PureFn for IncrementFn {
-    type Domain = usize;
-    type Codomain = Option<usize>;
-    fn call(&self, item: Self::Domain) -> Self::Codomain {
+    type Indomain = usize;
+    type Outdomain = Option<usize>;
+    fn call(&self, item: Self::Indomain) -> Self::Outdomain {
         Some(item + 1)
     }
 }
@@ -68,9 +68,9 @@ pub async fn test_kvs() -> Result<(), String> {
 
     struct TupleToHashMapFn;
     impl PureFn for TupleToHashMapFn {
-        type Domain = ( &'static str, usize, &'static str );
-        type Codomain = Option<<MyLattice as Merge>::Domain>;
-        fn call(&self, ( k, t, v ): Self::Domain) -> Self::Codomain {
+        type Indomain = ( &'static str, usize, &'static str );
+        type Outdomain = Option<<MyLattice as Merge>::Domain>;
+        fn call(&self, ( k, t, v ): Self::Indomain) -> Self::Outdomain {
             let mut map = HashMap::new();
             map.insert(k, ( t, v ));
             Some(map)
@@ -85,9 +85,9 @@ pub async fn test_kvs() -> Result<(), String> {
         key: &'static str,
     }
     impl PureRefFn for ReadKeyFn {
-        type Domain = <MyLattice as Merge>::Domain;
-        type Codomain = Option<&'static str>;
-        fn call(&self, map: &Self::Domain) -> Self::Codomain {
+        type Indomain = <MyLattice as Merge>::Domain;
+        type Outdomain = Option<&'static str>;
+        fn call(&self, map: &Self::Indomain) -> Self::Outdomain {
             map.get(self.key).map(|opt| opt.1)
         }
     }

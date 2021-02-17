@@ -8,12 +8,12 @@ use super::op::*;
 use super::types::*;
 // use super::MoveNext;
 
-pub struct DynSplitComp<I: PullOp<Outflow = RX>, O: PushOp<Inflow = RX, Domain = I::Codomain>> {
+pub struct DynSplitComp<I: PullOp<Outflow = RX>, O: PushOp<Inflow = RX, Domain = I::Outdomain>> {
     pull: I,
     pushes: Vec<O>,
 }
 
-impl<I: PullOp<Outflow = RX>, O: PushOp<Inflow = RX, Domain = I::Codomain>> DynSplitComp<I, O> {
+impl<I: PullOp<Outflow = RX>, O: PushOp<Inflow = RX, Domain = I::Outdomain>> DynSplitComp<I, O> {
     pub fn new(pull: I) -> Self {
         DynSplitComp {
             pull: pull,
@@ -21,7 +21,7 @@ impl<I: PullOp<Outflow = RX>, O: PushOp<Inflow = RX, Domain = I::Codomain>> DynS
         }
     }
 }
-// impl<I: MovePullOp<Outflow = RX>, O: MovePushOp<Inflow = RX, Domain = I::Codomain>> DynSplitComp<I, O> {
+// impl<I: MovePullOp<Outflow = RX>, O: MovePushOp<Inflow = RX, Domain = I::Outdomain>> DynSplitComp<I, O> {
 //     pub async fn run_move(&mut self) {
 //         while let Some(item) = MoveNext::new(&mut self.pull).await {
 //             self.push.push(item).await;
@@ -29,7 +29,7 @@ impl<I: PullOp<Outflow = RX>, O: PushOp<Inflow = RX, Domain = I::Codomain>> DynS
 //         }
 //     }
 // }
-impl<I: RefPullOp<Outflow = RX>, O: RefPushOp<Inflow = RX, Domain = I::Codomain>> DynSplitComp<I, O> {
+impl<I: RefPullOp<Outflow = RX>, O: RefPushOp<Inflow = RX, Domain = I::Outdomain>> DynSplitComp<I, O> {
     pub async fn run_ref(&mut self) {
         while let Some(_feedback) = RefStaticCompFuture::new(self).await {
             // TODO: handle the feedback.
@@ -41,7 +41,7 @@ impl<I: RefPullOp<Outflow = RX>, O: RefPushOp<Inflow = RX, Domain = I::Codomain>
 struct RefStaticCompFuture<'a, I, O>
 where
     I: RefPullOp<Outflow = RX>,
-    O: RefPushOp<Inflow = RX, Domain = I::Codomain>,
+    O: RefPushOp<Inflow = RX, Domain = I::Outdomain>,
 {
     comp_op: &'a mut DynSplitComp<I, O>,
     push_fut: Option<Pin<Box<JoinAll<O::Feedback>>>>,
@@ -49,7 +49,7 @@ where
 impl<'a, I, O> RefStaticCompFuture<'a, I, O>
 where
     I: RefPullOp<Outflow = RX>,
-    O: RefPushOp<Inflow = RX, Domain = I::Codomain>,
+    O: RefPushOp<Inflow = RX, Domain = I::Outdomain>,
 {
     pub fn new(comp_op: &'a mut DynSplitComp<I, O>) -> Self {
         RefStaticCompFuture {
@@ -61,7 +61,7 @@ where
 impl<'a, I, O> Future for RefStaticCompFuture<'a, I, O>
 where
     I: RefPullOp<Outflow = RX>,
-    O: RefPushOp<Inflow = RX, Domain = I::Codomain>,
+    O: RefPushOp<Inflow = RX, Domain = I::Outdomain>,
     Self: Unpin,
 {
     type Output = Option<Vec<<O::Feedback as Future>::Output>>;

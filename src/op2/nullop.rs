@@ -18,33 +18,33 @@ impl<F: Flow, T> NullOp<F, T> {
 impl<F: Flow, T> Op for NullOp<F, T> {}
 impl<F: Flow, T> PullOp for NullOp<F, T> {
     type Outflow = F;
-    type Codomain = T;
+    type Outdomain = T;
 }
 impl <F: Flow, T> PushOp for NullOp<F, T> {
     type Inflow = F;
-    type Domain = T;
+    type Indomain = T;
 }
 impl<F: Flow, T> MovePullOp for NullOp<F, T> {
-    fn poll_next(&mut self, _ctx: &mut Context<'_>) -> Poll<Option<Self::Codomain>> {
+    fn poll_next(&mut self, _ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
         Poll::Pending
     }
 }
 impl<F: Flow, T> RefPullOp for NullOp<F, T> {
-    fn poll_next(&mut self, _ctx: &mut Context<'_>) -> Poll<Option<&Self::Codomain>> {
+    fn poll_next(&mut self, _ctx: &mut Context<'_>) -> Poll<Option<&Self::Outdomain>> {
         Poll::Pending
     }
 }
 impl<F: Flow, T> MovePushOp for NullOp<F, T> {
     type Feedback = future::Ready<()>;
 
-    fn push(&mut self, _item: Self::Domain) -> Self::Feedback {
+    fn push(&mut self, _item: Self::Indomain) -> Self::Feedback {
         future::ready(())
     }
 }
 impl<F: Flow, T> RefPushOp for NullOp<F, T> {
     type Feedback = future::Ready<()>;
 
-    fn push(&mut self, _item: &Self::Domain) -> Self::Feedback {
+    fn push(&mut self, _item: &Self::Indomain) -> Self::Feedback {
         future::ready(())
     }
 }

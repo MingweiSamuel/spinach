@@ -11,13 +11,13 @@ use crate::merge::Merge;
 
 
 pub trait PullOp {
-    type Domain;
+    type Indomain;
 }
 pub trait MovePullOp: PullOp {
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Domain>>;
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Indomain>>;
 }
 pub trait RefPullOp: PullOp {
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<&Self::Domain>>;
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<&Self::Indomain>>;
 }
 
 
@@ -36,7 +36,7 @@ impl<O: MovePullOp> Future for MoveNext<'_, O>
 where
     Self: Unpin,
 {
-    type Output = Option<O::Domain>;
+    type Output = Option<O::Indomain>;
 
     fn poll(self: Pin<&mut Self>, ctx: &mut Context<'_>) -> Poll<Self::Output> {
         self.get_mut().op.poll_next(ctx)
@@ -56,15 +56,15 @@ impl<T> NoOp<T> {
     }
 }
 impl<T> PullOp for NoOp<T> {
-    type Domain = T;
+    type Indomain = T;
 }
 impl<T> MovePullOp for NoOp<T> {
-    fn poll_next(&mut self, _ctx: &mut Context<'_>) -> Poll<Option<Self::Domain>> {
+    fn poll_next(&mut self, _ctx: &mut Context<'_>) -> Poll<Option<Self::Indomain>> {
         Poll::Pending
     }
 }
 impl<T> RefPullOp for NoOp<T> {
-    fn poll_next(&mut self, _ctx: &mut Context<'_>) -> Poll<Option<&Self::Domain>> {
+    fn poll_next(&mut self, _ctx: &mut Context<'_>) -> Poll<Option<&Self::Indomain>> {
         Poll::Pending
     }
 }
@@ -73,13 +73,13 @@ impl<T> RefPullOp for NoOp<T> {
 
 pub struct CloneOp<O: RefPullOp>
 where
-    O::Domain: Clone,
+    O::Indomain: Clone,
 {
     op: O,
 }
 impl<O: RefPullOp> CloneOp<O>
 where
-    O::Domain: Clone,
+    O::Indomain: Clone,
 {
     pub fn new(op: O) -> Self {
         Self {
@@ -89,15 +89,15 @@ where
 }
 impl<O: RefPullOp> PullOp for CloneOp<O>
 where
-    O::Domain: Clone,
+    O::Indomain: Clone,
 {
-    type Domain = O::Domain;
+    type Indomain = O::Indomain;
 }
 impl<St: RefPullOp> MovePullOp for CloneOp<St>
 where
-    St::Domain: Clone,
+    St::Indomain: Clone,
 {
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Domain>> {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Indomain>> {
         self.op.poll_next(ctx)
             .map(|opt| opt.map(|x| x.clone()))
     }
@@ -120,10 +120,10 @@ impl<O: PullOp, F, T> MapFilterOp<O, F, T> {
     }
 }
 impl<O: PullOp, F, T> PullOp for MapFilterOp<O, F, T> {
-    type Domain = T;
+    type Indomain = T;
 }
-impl<O: MovePullOp, F: Fn(O::Domain) -> Option<T>, T> MovePullOp for MapFilterOp<O, F, T> {
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Domain>> {
+impl<O: MovePullOp, F: Fn(O::Indomain) -> Option<T>, T> MovePullOp for MapFilterOp<O, F, T> {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Indomain>> {
         let val = self.op.poll_next(ctx);
         val.map(|opt| opt.and_then(|x| (self.func)(x)))
     }
@@ -146,10 +146,10 @@ impl<O: MovePullOp, F: Fn(O::Domain) -> Option<T>, T> MovePullOp for MapFilterOp
 //     }
 // }
 // impl<O: PullOp, F, T> PullOp for RefMapFilterOp<O, F, T> {
-//     type Domain = T;
+//     type Indomain = T;
 // }
-// impl<O: RefPullOp, F: Fn(&O::Domain) -> Option<T>, T> MovePullOp for RefMapFilterOp<O, F, T> {
-//     fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Domain>> {
+// impl<O: RefPullOp, F: Fn(&O::Indomain) -> Option<T>, T> MovePullOp for RefMapFilterOp<O, F, T> {
+//     fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Indomain>> {
 //         // Hack for partial ownership/downgrading ref.
 //         let func = self.func.take().unwrap();
 //         let val = self.op.poll_next(ctx)
@@ -161,11 +161,11 @@ impl<O: MovePullOp, F: Fn(O::Domain) -> Option<T>, T> MovePullOp for MapFilterOp
 
 
 
-pub struct LatticeOp<O: MovePullOp, F: Merge<Domain = O::Domain>> {
+pub struct LatticeOp<O: MovePullOp, F: Merge<Domain = O::Indomain>> {
     op: O,
     state: F::Domain,
 }
-impl<O: MovePullOp, F: Merge<Domain = O::Domain>> LatticeOp<O, F> {
+impl<O: MovePullOp, F: Merge<Domain = O::Indomain>> LatticeOp<O, F> {
     pub fn new(op: O, bottom: F::Domain) -> Self {
         Self {
             op: op,
@@ -173,11 +173,11 @@ impl<O: MovePullOp, F: Merge<Domain = O::Domain>> LatticeOp<O, F> {
         }
     }
 }
-impl<O: MovePullOp, F: Merge<Domain = O::Domain>> PullOp for LatticeOp<O, F> {
-    type Domain = O::Domain;
+impl<O: MovePullOp, F: Merge<Domain = O::Indomain>> PullOp for LatticeOp<O, F> {
+    type Indomain = O::Indomain;
 }
-impl<O: MovePullOp, F: Merge<Domain = O::Domain>> RefPullOp for LatticeOp<O, F> {
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<&Self::Domain>> {
+impl<O: MovePullOp, F: Merge<Domain = O::Indomain>> RefPullOp for LatticeOp<O, F> {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<&Self::Indomain>> {
         if let Poll::Ready(opt) = self.op.poll_next(ctx) {
             match opt {
                 Some(delta) => F::merge_in(&mut self.state, delta),
@@ -207,10 +207,10 @@ impl<O: MovePullOp, F: Merge<Domain = O::Domain>> RefPullOp for LatticeOp<O, F> 
 //     }
 // }
 // impl<O: RefPullOp> PullOp for DynSplitOp<O> {
-//     type Domain = O::Domain;
+//     type Indomain = O::Indomain;
 // }
 // impl<O: RefPullOp> RefPullOp for DynSplitOp<O> {
-//     fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<&Self::Domain>> {
+//     fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<&Self::Indomain>> {
 
 //         self.wakers.borrow_mut().insert(self.id, ctx.waker().clone());
 
@@ -227,14 +227,14 @@ impl<O: MovePullOp, F: Merge<Domain = O::Domain>> RefPullOp for LatticeOp<O, F> 
 
 
 
-pub struct LatticeOp2<O: MovePullOp, F: Merge<Domain = O::Domain>> {
+pub struct LatticeOp2<O: MovePullOp, F: Merge<Domain = O::Indomain>> {
     op: Rc<RefCell<O>>,
     state: Rc<RefCell<F::Domain>>,
     id_counter: Rc<Cell<usize>>,
     id: usize,
     wakers: Rc<RefCell<HashMap<usize, Waker>>>,
 } 
-impl<O: MovePullOp, F: Merge<Domain = O::Domain>> LatticeOp2<O, F> {
+impl<O: MovePullOp, F: Merge<Domain = O::Indomain>> LatticeOp2<O, F> {
     pub fn new(op: O, bottom: F::Domain) -> Self {
         Self {
             op: Rc::new(RefCell::new(op)),
@@ -245,11 +245,11 @@ impl<O: MovePullOp, F: Merge<Domain = O::Domain>> LatticeOp2<O, F> {
         }
     }
 }
-impl<O: MovePullOp, F: Merge<Domain = O::Domain>> PullOp for LatticeOp2<O, F> {
-    type Domain = Rc<RefCell<O::Domain>>;
+impl<O: MovePullOp, F: Merge<Domain = O::Indomain>> PullOp for LatticeOp2<O, F> {
+    type Indomain = Rc<RefCell<O::Indomain>>;
 }
-impl<O: MovePullOp, F: Merge<Domain = O::Domain>> MovePullOp for LatticeOp2<O, F> {
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Domain>> {
+impl<O: MovePullOp, F: Merge<Domain = O::Indomain>> MovePullOp for LatticeOp2<O, F> {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Indomain>> {
 
         if let Poll::Ready(Some(delta)) = self.op.borrow_mut().poll_next(ctx) {
             F::merge_in(&mut *self.state.borrow_mut(), delta);
@@ -269,7 +269,7 @@ impl<O: MovePullOp, F: Merge<Domain = O::Domain>> MovePullOp for LatticeOp2<O, F
         Poll::Ready(Some(self.state.clone()))
     }
 }
-impl<O: MovePullOp, F: Merge<Domain = O::Domain>> Clone for LatticeOp2<O, F> {
+impl<O: MovePullOp, F: Merge<Domain = O::Indomain>> Clone for LatticeOp2<O, F> {
     fn clone(&self) -> Self {
         let id = self.id_counter.update(|x| x + 1);
         Self {
@@ -295,10 +295,10 @@ impl<T> ChannelOp<T> {
     }
 }
 impl<T> PullOp for ChannelOp<T> {
-    type Domain = T;
+    type Indomain = T;
 }
 impl<T> MovePullOp for ChannelOp<T> {
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Domain>> {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Indomain>> {
         self.receiver.poll_recv(ctx)
     }
 }
@@ -316,10 +316,10 @@ impl<T> MovePullOp for ChannelOp<T> {
 //     }
 // }
 // impl<O: RefPullOp> PullOp for SplitOp<O> {
-//     type Domain = O::Domain;
+//     type Indomain = O::Indomain;
 // }
 // impl<O: RefPullOp> RefPullOp for SplitOp<O> {
-//     fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<&Self::Domain>> {
+//     fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<&Self::Indomain>> {
 //         let mut borrow = self.op.borrow_mut();
 //         let mut borrow = RefMut::map(borrow, |op| {
 //             op.poll_next(ctx)
@@ -334,15 +334,15 @@ impl<T> MovePullOp for ChannelOp<T> {
 
 // pub struct Splitter<O: RefPullOp, P: MovePullOp>
 // where
-//     P::Domain: RefPullOp<Domain = O::Domain>,
+//     P::Indomain: RefPullOp<Domain = O::Indomain>,
 // {
 //     op: O,
 //     pipes_op: P,
-//     pipes: Vec<P::Domain>,
+//     pipes: Vec<P::Indomain>,
 // }
 // impl<O: RefPullOp, P: MovePullOp> Splitter<O, P>
 // where
-//     P::Domain: RefPullOp<Domain = O::Domain>,
+//     P::Indomain: RefPullOp<Domain = O::Indomain>,
 // {
 //     pub fn new(op: O, pipes_op: P) -> Self {
 //         Self {
@@ -354,7 +354,7 @@ impl<T> MovePullOp for ChannelOp<T> {
 // }
 // impl<O: RefPullOp, P: MovePullOp> Future for Splitter<O, P>
 // where
-//     P::Domain: RefPullOp<Domain = O::Domain>,
+//     P::Indomain: RefPullOp<Domain = O::Indomain>,
 //     Self: Unpin,
 // {
 //     type Output = ();

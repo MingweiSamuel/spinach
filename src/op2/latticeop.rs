@@ -30,17 +30,17 @@ where
 }
 
 impl<O: Op, F: Merge> Op for LatticeOp<O, F> {}
-impl<O: PullOp<Outflow = DF>, F: Merge<Domain = O::Codomain>> PullOp for LatticeOp<O, F> {
+impl<O: PullOp<Outflow = DF>, F: Merge<Domain = O::Outdomain>> PullOp for LatticeOp<O, F> {
     type Outflow = RX;
-    type Codomain = F::Domain;
+    type Outdomain = F::Domain;
 }
-impl<O: PushOp<Inflow = RX>, F: Merge<Domain = O::Domain>> PushOp for LatticeOp<O, F> {
+impl<O: PushOp<Inflow = RX>, F: Merge<Domain = O::Indomain>> PushOp for LatticeOp<O, F> {
     type Inflow = DF;
-    type Domain = F::Domain;
+    type Indomain = F::Domain;
 }
 
-impl<O: MovePullOp<Outflow = DF>, F: Merge<Domain = O::Codomain>> RefPullOp for LatticeOp<O, F> {
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<&Self::Codomain>> {
+impl<O: MovePullOp<Outflow = DF>, F: Merge<Domain = O::Outdomain>> RefPullOp for LatticeOp<O, F> {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<&Self::Outdomain>> {
         if let Poll::Ready(Some(item)) = self.op.poll_next(ctx) {
             F::merge_in(&mut self.state, item);
         }
@@ -49,10 +49,10 @@ impl<O: MovePullOp<Outflow = DF>, F: Merge<Domain = O::Codomain>> RefPullOp for 
         Poll::Ready(Some(&self.state))
     }
 }
-impl<O: RefPushOp<Inflow = RX>, F: Merge<Domain = O::Domain>> MovePushOp for LatticeOp<O, F> {
+impl<O: RefPushOp<Inflow = RX>, F: Merge<Domain = O::Indomain>> MovePushOp for LatticeOp<O, F> {
     type Feedback = O::Feedback;
 
-    fn push(&mut self, item: Self::Domain) -> Self::Feedback {
+    fn push(&mut self, item: Self::Indomain) -> Self::Feedback {
         F::merge_in(&mut self.state, item);
         self.op.push(&self.state)
     }

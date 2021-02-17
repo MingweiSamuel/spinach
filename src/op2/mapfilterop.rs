@@ -25,34 +25,34 @@ impl<O: Op, F: PureFn, T> MapFilterMoveOp<O, F, T> {
 impl<O: Op, F: PureFn, T> Op for MapFilterMoveOp<O, F, T> {}
 impl<O: PullOp, F, T> PullOp for MapFilterMoveOp<O, F, T>
 where
-    F: PureFn<Domain = O::Codomain, Codomain = Option<T>>,
+    F: PureFn<Indomain = O::Outdomain, Outdomain = Option<T>>,
 {
     type Outflow = O::Outflow;
-    type Codomain = T;
+    type Outdomain = T;
 }
 impl<O: PushOp, F, T> PushOp for MapFilterMoveOp<O, F, T>
 where
-    F: PureFn<Domain = T, Codomain = Option<O::Domain>>,
+    F: PureFn<Indomain = T, Outdomain = Option<O::Indomain>>,
 {
     type Inflow = O::Inflow;
-    type Domain = T;
+    type Indomain = T;
 }
 impl<O: MovePullOp, F, T> MovePullOp for MapFilterMoveOp<O, F, T>
 where
-    F: PureFn<Domain = O::Codomain, Codomain = Option<T>>,
+    F: PureFn<Indomain = O::Outdomain, Outdomain = Option<T>>,
 {
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Codomain>> {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
         let val = self.op.poll_next(ctx);
         val.map(|opt| opt.and_then(|x| self.func.call(x)))
     }
 }
 impl<O: MovePushOp, F, T> MovePushOp for MapFilterMoveOp<O, F, T>
 where
-    F: PureFn<Domain = T, Codomain = Option<O::Domain>>,
+    F: PureFn<Indomain = T, Outdomain = Option<O::Indomain>>,
 {
     type Feedback = impl Future;
 
-    fn push(&mut self, item: Self::Domain) -> Self::Feedback {
+    fn push(&mut self, item: Self::Indomain) -> Self::Feedback {
         if let Some(item) = self.func.call(item) {
             Either::Left(self.op.push(item).map(|x| Some(x)))
         }
@@ -82,34 +82,34 @@ impl<O: Op, F: PureRefFn, T> MapFilterRefOp<O, F, T> {
 impl<O: Op, F: PureRefFn, T> Op for MapFilterRefOp<O, F, T> {}
 impl<O: PullOp, F, T> PullOp for MapFilterRefOp<O, F, T>
 where
-    F: PureRefFn<Domain = O::Codomain, Codomain = Option<T>>,
+    F: PureRefFn<Indomain = O::Outdomain, Outdomain = Option<T>>,
 {
     type Outflow = O::Outflow;
-    type Codomain = T;
+    type Outdomain = T;
 }
 impl<O: PushOp, F, T> PushOp for MapFilterRefOp<O, F, T>
 where
-    F: PureRefFn<Domain = T, Codomain = Option<O::Domain>>,
+    F: PureRefFn<Indomain = T, Outdomain = Option<O::Indomain>>,
 {
     type Inflow = O::Inflow;
-    type Domain = T;
+    type Indomain = T;
 }
 // impl<O: RefPullOp, F, T> MovePullOp for MapFilterRefOp<O, F, T>
 // where
-//     F: Fn(&O::Codomain) -> Option<T>,
+//     F: Fn(&O::Outdomain) -> Option<T>,
 // {
-//     fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Codomain>> {
+//     fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
 //         let val = self.op.poll_next(ctx);
 //         val.map(|opt| opt.and_then(|x| (self.func)(x)))
 //     }
 // }
 impl<O: MovePushOp, F, T> RefPushOp for MapFilterRefOp<O, F, T>
 where
-    F: PureRefFn<Domain = T, Codomain = Option<O::Domain>>,
+    F: PureRefFn<Indomain = T, Outdomain = Option<O::Indomain>>,
 {
     type Feedback = impl Future;
 
-    fn push(&mut self, item: &Self::Domain) -> Self::Feedback {
+    fn push(&mut self, item: &Self::Indomain) -> Self::Feedback {
         if let Some(item) = self.func.call(item) {
             Either::Left(self.op.push(item).map(|x| Some(x)))
         }

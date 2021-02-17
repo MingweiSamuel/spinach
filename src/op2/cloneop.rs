@@ -15,28 +15,28 @@ impl<O: Op> CloneOp<O> {
 impl<O: Op> Op for CloneOp<O> {}
 impl<O: PullOp> PullOp for CloneOp<O> {
     type Outflow = O::Outflow;
-    type Codomain = O::Codomain;
+    type Outdomain = O::Outdomain;
 }
 impl<O: PushOp> PushOp for CloneOp<O> {
     type Inflow = O::Inflow;
-    type Domain = O::Domain;
+    type Indomain = O::Indomain;
 }
 impl<O: RefPullOp> MovePullOp for CloneOp<O>
 where
-    O::Codomain: Clone,
+    O::Outdomain: Clone,
 {
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Codomain>> {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
         let polled = self.op.poll_next(ctx);
         polled.map(|opt| opt.map(|item| item.clone()))
     }
 }
 impl<O: MovePushOp> RefPushOp for CloneOp<O>
 where
-    O::Domain: Clone,
+    O::Indomain: Clone,
 {
     type Feedback = O::Feedback;
 
-    fn push(&mut self, item: &Self::Domain) -> Self::Feedback {
+    fn push(&mut self, item: &Self::Indomain) -> Self::Feedback {
         self.op.push(item.clone())
     }
 }
