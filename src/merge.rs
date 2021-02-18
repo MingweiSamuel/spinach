@@ -34,12 +34,56 @@ pub trait Merge {
 
 
 
+
+
+pub struct Sealed<F: Merge> {
+    val: F::Domain,
+}
+impl<F: Merge> Sealed<F> {
+    pub fn new(val: F::Domain) -> Self {
+        Self {
+            val: val
+        }
+    }
+
+    pub fn reveal(&self) -> &F::Domain {
+        &self.val
+    }
+    pub fn reveal_mut(&mut self) -> &mut F::Domain {
+        &mut self.val
+    }
+    pub fn into_reveal(self) -> F::Domain {
+        self.val
+    }
+
+    pub fn merge_in(&mut self, delta: Sealed<F>) {
+        F::merge_in(&mut self.val, delta.into_reveal()); // !! Implicit reveal.
+    }
+    pub fn reveal_partial_cmp(&self, other: &Sealed<F>) -> Option<Ordering> {
+        F::partial_cmp(&self.val, other.reveal())
+    }
+}
+
+// impl<K, F> Sealed<MapUnion<HashMap<K, F>>>
+// where
+//     K: Hash + Eq,
+//     F: Merge,
+// {
+//     pub fn project(&self, key: K) -> Option<Sealed<F>> {
+//         self.val.get(key).map(|x| Sealed::new(x))
+//     }
+// }
+
+
+
+
+
 // ORD MERGES //
 
 pub struct Max<T: Ord> {
     _phantom: std::marker::PhantomData<T>,
 }
-impl <T: Ord> Merge for Max<T> {
+impl<T: Ord> Merge for Max<T> {
     type Domain = T;
 
     fn merge_in(val: &mut T, delta: T) {
@@ -56,7 +100,7 @@ impl <T: Ord> Merge for Max<T> {
 pub struct Min<T: Ord> {
     _phantom: std::marker::PhantomData<T>,
 }
-impl <T: Ord> Merge for Min<T> {
+impl<T: Ord> Merge for Min<T> {
     type Domain = T;
 
     fn merge_in(val: &mut T, delta: T) {
@@ -75,7 +119,7 @@ impl <T: Ord> Merge for Min<T> {
 pub struct Union<T> {
     _phantom: std::marker::PhantomData<T>,
 }
-impl <T: Eq + Hash> Merge for Union<HashSet<T>> {
+impl<T: Eq + Hash> Merge for Union<HashSet<T>> {
     type Domain = HashSet<T>;
 
     fn merge_in(val: &mut HashSet<T>, delta: HashSet<T>) {
@@ -106,7 +150,7 @@ impl <T: Eq + Hash> Merge for Union<HashSet<T>> {
         val.is_empty()
     }
 }
-impl <T: Eq + Ord> Merge for Union<BTreeSet<T>> {
+impl<T: Eq + Ord> Merge for Union<BTreeSet<T>> {
     type Domain = BTreeSet<T>;
 
     fn merge_in(val: &mut BTreeSet<T>, delta: BTreeSet<T>) {
@@ -141,7 +185,7 @@ impl <T: Eq + Ord> Merge for Union<BTreeSet<T>> {
 pub struct Intersect<T> {
     _phantom: std::marker::PhantomData<T>,
 }
-impl <T: Eq + Hash> Merge for Intersect<HashSet<T>> {
+impl<T: Eq + Hash> Merge for Intersect<HashSet<T>> {
     type Domain = HashSet<T>;
 
     fn merge_in(val: &mut HashSet<T>, delta: HashSet<T>) {
@@ -166,7 +210,7 @@ impl <T: Eq + Hash> Merge for Intersect<HashSet<T>> {
         }
     }
 }
-impl <T: Eq + Ord> Merge for Intersect<BTreeSet<T>> {
+impl<T: Eq + Ord> Merge for Intersect<BTreeSet<T>> {
     type Domain = BTreeSet<T>;
 
     fn merge_in(val: &mut BTreeSet<T>, delta: BTreeSet<T>) {
@@ -201,18 +245,18 @@ pub struct MapUnion<T> {
     _phantom: std::marker::PhantomData<T>,
 }
 
-impl <K, F> Merge for MapUnion<HashMap<K, F>>
+impl<K, F> Merge for MapUnion<HashMap<K, F>>
 where
     K: Hash + Eq,
     F: Merge,
 {
-    type Domain = HashMap<K, <F as Merge>::Domain>;
+    type Domain = HashMap<K, Sealed<F>>;
 
     fn merge_in(val: &mut Self::Domain, delta: Self::Domain) {
         for ( k, v ) in delta {
             match val.entry(k) {
                 hash_map::Entry::Occupied(mut kv) => {
-                    F::merge_in(kv.get_mut(), v);
+                    kv.get_mut().merge_in(v);
                 },
                 hash_map::Entry::Vacant(kv) => {
                     kv.insert(v);
@@ -229,7 +273,7 @@ where
             for ( k, delta_val ) in delta {
                 match val.get(k) {
                     Some(val_val) => {
-                        let cmp = F::partial_cmp(val_val, delta_val);
+                        let cmp = val_val.reveal_partial_cmp(delta_val);
                         match cmp {
                             Some(cmp) => {
                                 if result.get_or_insert(cmp) != &cmp {
@@ -254,7 +298,7 @@ where
             for ( k, val_val ) in val {
                 match delta.get(k) {
                     Some(delta_val) => {
-                        let cmp = F::partial_cmp(val_val, delta_val);
+                        let cmp = val_val.reveal_partial_cmp(delta_val);
                         if Some(Ordering::Less) != cmp {
                             return None;
                         }
@@ -283,7 +327,7 @@ where
     }
 }
 
-impl <K, F> Merge for MapUnion<BTreeMap<K, F>>
+impl<K, F> Merge for MapUnion<BTreeMap<K, F>>
 where
     K: Ord + Eq,
     F: Merge,
@@ -368,7 +412,7 @@ where
 // pub struct MapIntersection<T> {
 //     _phantom: std::marker::PhantomData<T>,
 // }
-// impl <K, F> Merge for MapIntersection<HashMap<K, F>>
+// impl<K, F> Merge for MapIntersection<HashMap<K, F>>
 // where
 //     K: Eq + Hash,
 //     F: Merge,
@@ -436,7 +480,7 @@ where
     _phantom: std::marker::PhantomData<(AF, BF)>,
 }
 
-impl <AF, BF> Merge for DominatingPair<AF, BF>
+impl<AF, BF> Merge for DominatingPair<AF, BF>
 where
     AF: Merge,
     BF: Merge,
