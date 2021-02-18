@@ -10,9 +10,26 @@ use std::cmp::Ordering;
 pub trait Merge {
     type Domain;
 
-    fn merge_in(val: &mut Self::Domain, other: Self::Domain);
+    fn merge_in(val: &mut Self::Domain, delta: Self::Domain);
 
-    fn partial_cmp(val: &Self::Domain, other: &Self::Domain) -> Option<Ordering>;
+    fn partial_cmp(val: &Self::Domain, delta: &Self::Domain) -> Option<Ordering>;
+
+    /// Given VAL and DELTA, sets VAL to a (preferably minimal) value X such
+    /// that merging X and DELTA gives (the original) VAL.
+    fn remainder(val: &mut Self::Domain, delta: Self::Domain) -> bool {
+        match Self::partial_cmp(val, &delta) {
+            Some(Ordering::Less) | Some(Ordering::Equal) => {
+                // If DELTA dominates VAL then doing nothing satisfies the condition.
+                // Technically we should set the value to bottom.
+                true
+            }
+            _ => {
+                // Trivially, X = the merge of VAL and DELTA satisfies the condition.
+                Self::merge_in(val, delta);
+                false
+            }
+        }
+    }
 }
 
 
@@ -25,14 +42,14 @@ pub struct Max<T: Ord> {
 impl <T: Ord> Merge for Max<T> {
     type Domain = T;
 
-    fn merge_in(val: &mut T, other: T) {
-        if *val < other {
-            *val = other;
+    fn merge_in(val: &mut T, delta: T) {
+        if *val < delta {
+            *val = delta;
         }
     }
 
-    fn partial_cmp(val: &T, other: &T) -> Option<Ordering> {
-        val.partial_cmp(other)
+    fn partial_cmp(val: &T, delta: &T) -> Option<Ordering> {
+        val.partial_cmp(delta)
     }
 }
 
@@ -42,14 +59,14 @@ pub struct Min<T: Ord> {
 impl <T: Ord> Merge for Min<T> {
     type Domain = T;
 
-    fn merge_in(val: &mut T, other: T) {
-        if *val > other {
-            *val = other;
+    fn merge_in(val: &mut T, delta: T) {
+        if *val > delta {
+            *val = delta;
         }
     }
 
-    fn partial_cmp(val: &T, other: &T) -> Option<Ordering> {
-        val.partial_cmp(other).map(|ord| ord.reverse())
+    fn partial_cmp(val: &T, delta: &T) -> Option<Ordering> {
+        val.partial_cmp(delta).map(|ord| ord.reverse())
     }
 }
 
@@ -61,17 +78,17 @@ pub struct Union<T> {
 impl <T: Eq + Hash> Merge for Union<HashSet<T>> {
     type Domain = HashSet<T>;
 
-    fn merge_in(val: &mut HashSet<T>, other: HashSet<T>) {
-        val.extend(other);
+    fn merge_in(val: &mut HashSet<T>, delta: HashSet<T>) {
+        val.extend(delta);
     }
 
-    fn partial_cmp(val: &HashSet<T>, other: &HashSet<T>) -> Option<Ordering> {
-        let s = val.union(other).count();
-        if s != val.len() && s != other.len() {
+    fn partial_cmp(val: &HashSet<T>, delta: &HashSet<T>) -> Option<Ordering> {
+        let s = val.union(delta).count();
+        if s != val.len() && s != delta.len() {
             None
         }
         else if s == val.len() {
-            if s == other.len() {
+            if s == delta.len() {
                 Some(Ordering::Equal)
             }
             else {
@@ -81,22 +98,28 @@ impl <T: Eq + Hash> Merge for Union<HashSet<T>> {
         else {
             Some(Ordering::Less)
         }
+    }
+
+    fn remainder(val: &mut Self::Domain, mut delta: Self::Domain) -> bool {
+        delta.retain(|item| !val.contains(item));
+        *val = delta;
+        val.is_empty()
     }
 }
 impl <T: Eq + Ord> Merge for Union<BTreeSet<T>> {
     type Domain = BTreeSet<T>;
 
-    fn merge_in(val: &mut BTreeSet<T>, other: BTreeSet<T>) {
-        val.extend(other);
+    fn merge_in(val: &mut BTreeSet<T>, delta: BTreeSet<T>) {
+        val.extend(delta);
     }
 
-    fn partial_cmp(val: &BTreeSet<T>, other: &BTreeSet<T>) -> Option<Ordering> {
-        let s = val.union(other).count();
-        if s != val.len() && s != other.len() {
+    fn partial_cmp(val: &BTreeSet<T>, delta: &BTreeSet<T>) -> Option<Ordering> {
+        let s = val.union(delta).count();
+        if s != val.len() && s != delta.len() {
             None
         }
         else if s == val.len() {
-            if s == other.len() {
+            if s == delta.len() {
                 Some(Ordering::Equal)
             }
             else {
@@ -106,6 +129,12 @@ impl <T: Eq + Ord> Merge for Union<BTreeSet<T>> {
         else {
             Some(Ordering::Less)
         }
+    }
+
+    fn remainder(val: &mut Self::Domain, mut delta: Self::Domain) -> bool {
+        delta.retain(|item| !val.contains(item));
+        *val = delta;
+        val.is_empty()
     }
 }
 
@@ -115,17 +144,17 @@ pub struct Intersect<T> {
 impl <T: Eq + Hash> Merge for Intersect<HashSet<T>> {
     type Domain = HashSet<T>;
 
-    fn merge_in(val: &mut HashSet<T>, other: HashSet<T>) {
-        val.retain(|x| other.contains(x));
+    fn merge_in(val: &mut HashSet<T>, delta: HashSet<T>) {
+        val.retain(|x| delta.contains(x));
     }
 
-    fn partial_cmp(val: &HashSet<T>, other: &HashSet<T>) -> Option<Ordering> {
-        let s = val.intersection(other).count();
-        if s != val.len() && s != other.len() {
+    fn partial_cmp(val: &HashSet<T>, delta: &HashSet<T>) -> Option<Ordering> {
+        let s = val.intersection(delta).count();
+        if s != val.len() && s != delta.len() {
             None
         }
         else if s == val.len() {
-            if s == other.len() {
+            if s == delta.len() {
                 Some(Ordering::Equal)
             }
             else {
@@ -140,20 +169,20 @@ impl <T: Eq + Hash> Merge for Intersect<HashSet<T>> {
 impl <T: Eq + Ord> Merge for Intersect<BTreeSet<T>> {
     type Domain = BTreeSet<T>;
 
-    fn merge_in(val: &mut BTreeSet<T>, other: BTreeSet<T>) {
+    fn merge_in(val: &mut BTreeSet<T>, delta: BTreeSet<T>) {
         // Not so ergonomic nor efficient.
-        *val = other.into_iter()
+        *val = delta.into_iter()
             .filter(|x| val.contains(x))
             .collect();
     }
 
-    fn partial_cmp(val: &BTreeSet<T>, other: &BTreeSet<T>) -> Option<Ordering> {
-        let s = val.intersection(other).count();
-        if s != val.len() && s != other.len() {
+    fn partial_cmp(val: &BTreeSet<T>, delta: &BTreeSet<T>) -> Option<Ordering> {
+        let s = val.intersection(delta).count();
+        if s != val.len() && s != delta.len() {
             None
         }
         else if s == val.len() {
-            if s == other.len() {
+            if s == delta.len() {
                 Some(Ordering::Equal)
             }
             else {
@@ -179,8 +208,8 @@ where
 {
     type Domain = HashMap<K, <F as Merge>::Domain>;
 
-    fn merge_in(val: &mut Self::Domain, other: Self::Domain) {
-        for (k, v) in other {
+    fn merge_in(val: &mut Self::Domain, delta: Self::Domain) {
+        for ( k, v ) in delta {
             match val.entry(k) {
                 hash_map::Entry::Occupied(mut kv) => {
                     F::merge_in(kv.get_mut(), v);
@@ -193,14 +222,14 @@ where
     }
 
     // TODO: these are awful looking, and also need testing. Could use helper method.
-    fn partial_cmp(val: &Self::Domain, other: &Self::Domain) -> Option<Ordering> {
+    fn partial_cmp(val: &Self::Domain, delta: &Self::Domain) -> Option<Ordering> {
         // Ordering::Equal OR Ordering::Greater
-        if val.len() >= other.len() {
+        if val.len() >= delta.len() {
             let mut result = None;
-            for (k, other_val) in other {
+            for ( k, delta_val ) in delta {
                 match val.get(k) {
                     Some(val_val) => {
-                        let cmp = F::partial_cmp(val_val, other_val);
+                        let cmp = F::partial_cmp(val_val, delta_val);
                         match cmp {
                             Some(cmp) => {
                                 if result.get_or_insert(cmp) != &cmp {
@@ -222,10 +251,10 @@ where
         }
         // Ordering::Less
         else {
-            for (k, val_val) in val {
-                match other.get(k) {
-                    Some(other_val) => {
-                        let cmp = F::partial_cmp(val_val, other_val);
+            for ( k, val_val ) in val {
+                match delta.get(k) {
+                    Some(delta_val) => {
+                        let cmp = F::partial_cmp(val_val, delta_val);
                         if Some(Ordering::Less) != cmp {
                             return None;
                         }
@@ -236,6 +265,22 @@ where
             return Some(Ordering::Less);
         }
     }
+
+    fn remainder(val: &mut Self::Domain, delta: Self::Domain) -> bool {
+        for ( k, v ) in delta {
+            match val.entry(k) {
+                hash_map::Entry::Occupied(mut kv) => {
+                    if F::remainder(kv.get_mut(), v) { // If value is dominated, remove it.
+                        kv.remove_entry();
+                    }
+                }
+                hash_map::Entry::Vacant(kv) => {
+                    kv.insert(v);
+                }
+            }
+        }
+        val.is_empty()
+    }
 }
 
 impl <K, F> Merge for MapUnion<BTreeMap<K, F>>
@@ -245,8 +290,8 @@ where
 {
     type Domain = BTreeMap<K, <F as Merge>::Domain>;
 
-    fn merge_in(val: &mut Self::Domain, other: Self::Domain) {
-        for (k, v) in other {
+    fn merge_in(val: &mut Self::Domain, delta: Self::Domain) {
+        for (k, v) in delta {
             match val.entry(k) {
                 btree_map::Entry::Occupied(mut kv) => {
                     F::merge_in(kv.get_mut(), v);
@@ -259,14 +304,14 @@ where
     }
 
     // TODO: these are awful looking, and also need testing. Could use helper method.
-    fn partial_cmp(val: &Self::Domain, other: &Self::Domain) -> Option<Ordering> {
+    fn partial_cmp(val: &Self::Domain, delta: &Self::Domain) -> Option<Ordering> {
         // Ordering::Equal OR Ordering::Greater
-        if val.len() >= other.len() {
+        if val.len() >= delta.len() {
             let mut result = None;
-            for (k, other_val) in other {
+            for (k, delta_val) in delta {
                 match val.get(k) {
                     Some(val_val) => {
-                        let cmp = F::partial_cmp(val_val, other_val);
+                        let cmp = F::partial_cmp(val_val, delta_val);
                         match cmp {
                             Some(cmp) => {
                                 if result.get_or_insert(cmp) != &cmp {
@@ -289,9 +334,9 @@ where
         // Ordering::Less
         else {
             for (k, val_val) in val {
-                match other.get(k) {
-                    Some(other_val) => {
-                        let cmp = F::partial_cmp(val_val, other_val);
+                match delta.get(k) {
+                    Some(delta_val) => {
+                        let cmp = F::partial_cmp(val_val, delta_val);
                         if Some(Ordering::Less) != cmp {
                             return None;
                         }
@@ -301,6 +346,22 @@ where
             }
             return Some(Ordering::Less);
         }
+    }
+
+    fn remainder(val: &mut Self::Domain, delta: Self::Domain) -> bool {
+        for ( k, v ) in delta {
+            match val.entry(k) {
+                btree_map::Entry::Occupied(mut kv) => {
+                    if F::remainder(kv.get_mut(), v) { // If value is dominated, remove it.
+                        kv.remove_entry();
+                    }
+                }
+                btree_map::Entry::Vacant(kv) => {
+                    kv.insert(v);
+                }
+            }
+        }
+        val.is_empty()
     }
 }
 
@@ -314,22 +375,22 @@ where
 // {
 //     type Domain = HashMap<K, <F as Merge>::Domain>;
 
-//     fn merge_in(val: &mut Self::Domain, other: Self::Domain) {
+//     fn merge_in(val: &mut Self::Domain, delta: Self::Domain) {
 //         todo!("this is broken.");
-//         for (k, v) in other {
+//         for (k, v) in delta {
 //             val.entry(k).and_modify(|v0| F::merge_in(v0, v));
 //         }
 //     }
 
-//     fn partial_cmp(val: &Self::Domain, other: &Self::Domain) -> Option<Ordering> {
+//     fn partial_cmp(val: &Self::Domain, delta: &Self::Domain) -> Option<Ordering> {
 //         todo!("this is broken.");
 //         // Ordering::Equal OR Ordering::Less
-//         if val.len() >= other.len() {
+//         if val.len() >= delta.len() {
 //             let mut result = None;
-//             for (k, other_val) in other {
+//             for (k, delta_val) in delta {
 //                 match val.get(k) {
 //                     Some(val_val) => {
-//                         let cmp = F::partial_cmp(&val_val, other_val);
+//                         let cmp = F::partial_cmp(&val_val, delta_val);
 //                         match cmp {
 //                             Some(cmp) => {
 //                                 if result.get_or_insert(cmp) != &cmp {
@@ -352,9 +413,9 @@ where
 //         // Ordering::Greater
 //         else {
 //             for (k, val_val) in val {
-//                 match other.get(k) {
-//                     Some(other_val) => {
-//                         let cmp = F::partial_cmp(&val_val, other_val);
+//                 match delta.get(k) {
+//                     Some(delta_val) => {
+//                         let cmp = F::partial_cmp(&val_val, delta_val);
 //                         if Some(Ordering::Greater) != cmp {
 //                             return None;
 //                         }
@@ -382,25 +443,45 @@ where
 {
     type Domain = (<AF as Merge>::Domain, <BF as Merge>::Domain);
 
-    fn merge_in(val: &mut Self::Domain, other: Self::Domain) {
-        let cmp = AF::partial_cmp(&val.0, &other.0);
-        match cmp {
+    fn merge_in(val: &mut Self::Domain, delta: Self::Domain) {
+        match AF::partial_cmp(&val.0, &delta.0) {
             None => {
-                AF::merge_in(&mut val.0, other.0);
-                BF::merge_in(&mut val.1, other.1);
+                AF::merge_in(&mut val.0, delta.0);
+                BF::merge_in(&mut val.1, delta.1);
             },
             Some(Ordering::Equal) => {
-                BF::merge_in(&mut val.1, other.1);
+                BF::merge_in(&mut val.1, delta.1);
             },
             Some(Ordering::Less) => {
-                *val = other;
+                *val = delta;
             },
             Some(Ordering::Greater) => {},
         }
     }
 
-    fn partial_cmp(val: &Self::Domain, other: &Self::Domain) -> Option<Ordering> {
-        AF::partial_cmp(&val.0, &other.0).or_else(|| BF::partial_cmp(&val.1, &other.1))
+    fn partial_cmp(val: &Self::Domain, delta: &Self::Domain) -> Option<Ordering> {
+        AF::partial_cmp(&val.0, &delta.0).or_else(|| BF::partial_cmp(&val.1, &delta.1))
+    }
+
+    fn remainder(val: &mut Self::Domain, delta: Self::Domain) -> bool {
+        match AF::partial_cmp(&val.0, &delta.0) {
+            None => {
+                AF::merge_in(&mut val.0, delta.0);
+                BF::remainder(&mut val.1, delta.1);
+                false
+            }
+            Some(Ordering::Equal) => {
+                BF::remainder(&mut val.1, delta.1);
+                false
+            }
+            Some(Ordering::Less) => {
+                *val = delta;
+                false
+            }
+            Some(Ordering::Greater) => {
+                true
+            }
+        }
     }
 }
 
@@ -418,21 +499,21 @@ pub struct RangeToZeroI32;
 impl Merge for RangeToZeroI32 {
     type Domain = i32;
 
-    fn merge_in(val: &mut i32, other: i32) {
-        if val.signum() != other.signum() {
+    fn merge_in(val: &mut i32, delta: i32) {
+        if val.signum() != delta.signum() {
             *val = 0;
         }
-        else if val.abs() > other.abs() {
-            *val = other
+        else if val.abs() > delta.abs() {
+            *val = delta
         }
     }
 
-    fn partial_cmp(val: &i32, other: &i32) -> Option<Ordering> {
-        if val.signum() != other.signum() {
+    fn partial_cmp(val: &i32, delta: &i32) -> Option<Ordering> {
+        if val.signum() != delta.signum() {
             None
         }
         else {
-            let less = val.abs().cmp(&other.abs());
+            let less = val.abs().cmp(&delta.abs());
             Some(less.reverse())
         }
     }
