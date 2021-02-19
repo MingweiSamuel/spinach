@@ -2,7 +2,7 @@ use std::future;
 use std::task::{ Context, Poll };
 
 use super::op::*;
-use super::types::*;
+use super::flows::*;
 
 
 pub struct NullOp<F: Flow, T> {

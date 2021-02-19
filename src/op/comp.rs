@@ -5,7 +5,7 @@ use std::task::{ Context, Poll };
 use futures::future::{ JoinAll, join_all };
 
 use super::op::*;
-use super::types::RX;
+use super::flows::RX;
 use super::MoveNext;
 
 pub struct StaticComp<I: PullOp, O: PushOp<Indomain = I::Outdomain>> {

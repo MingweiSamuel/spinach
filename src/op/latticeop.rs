@@ -3,7 +3,7 @@ use std::task::{ Context, Poll };
 use crate::merge::Merge;
 
 use super::op::*;
-use super::types::*;
+use super::flows::*;
 
 pub struct LatticeOp<O: Op, F: Merge> {
     op: O,
