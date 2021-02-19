@@ -4,7 +4,7 @@ use std::task::{ Context, Poll };
 use tokio::sync::mpsc;
 
 use super::op::*;
-use super::types::*;
+use super::flow::*;
 
 
 
@@ -27,14 +27,13 @@ impl<T> ChannelPushOp<T> {
 }
 impl<T> Op for ChannelPushOp<T> {}
 impl<T> PushOp for ChannelPushOp<T> {
-    type Inflow = DF;
-    type Indomain = T;
+    type Inflow = DF<T>;
 }
 impl<T> MovePushOp for ChannelPushOp<T> {
     type Feedback = impl Future;
 
     #[must_use]
-    fn push(&mut self, item: Self::Indomain) -> Self::Feedback {
+    fn push(&mut self, item: <Self::Inflow as Flow>::Domain) -> Self::Feedback {
         let send = self.send.clone();
         async move {
             send.clone().send(item).await
@@ -56,11 +55,10 @@ impl<T> ChannelPullOp<T> {
 }
 impl<T> Op for ChannelPullOp<T> {}
 impl<T> PullOp for ChannelPullOp<T> {
-    type Outflow = DF;
-    type Outdomain = T;
+    type Outflow = DF<T>;
 }
 impl<T> MovePullOp for ChannelPullOp<T> {
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<<Self::Outflow as Flow>::Domain>> {
         self.recv.poll_recv(ctx)
     }
 }

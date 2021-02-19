@@ -4,8 +4,8 @@ pub use op::*;
 mod util;
 pub use util::*;
 
-pub mod flows;
-pub use flows::*;
+pub mod flow;
+pub use flow::*;
 
 mod comp;
 pub use comp::*;

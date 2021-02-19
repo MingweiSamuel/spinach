@@ -3,61 +3,51 @@ use std::task::{ Context, Poll };
 use futures::future::{ join_all, JoinAll };
 
 use super::op::*;
+use super::flow::{ Flow, DF };
 use super::util::{ PureFn, PureRefFn };
 
 
 
-pub struct MapFlattenMoveOp<O: Op, F: PureFn, T>
+pub struct MapFlattenMoveOp<O: Op, F: PureFn>
 where
-    <F as PureFn>::Outdomain: IntoIterator,
+    F::Outdomain: IntoIterator,
 {
     op: O,
     func: F,
     /// A value produced by func, to be iterated in pull-based pipes.
-    out: Option<<F::Outdomain as IntoIterator>::IntoIter>,
-    _phantom: std::marker::PhantomData<T>,
+    out: Option<<<F as PureFn>::Outdomain as IntoIterator>::IntoIter>,
 }
-impl<O: Op, F: PureFn, T> MapFlattenMoveOp<O, F, T>
+impl<O: Op, F: PureFn> MapFlattenMoveOp<O, F>
 where
-    <F as PureFn>::Outdomain: IntoIterator,
+    F::Outdomain: IntoIterator,
 {
     pub fn new(op: O, func: F) -> Self {
         Self {
             op: op,
             func: func,
             out: None,
-            _phantom: std::marker::PhantomData,
         }
     }
 }
-impl<O: Op, F: PureFn, T> Op for MapFlattenMoveOp<O, F, T>
+impl<O: Op, F: PureFn> Op for MapFlattenMoveOp<O, F>
 where
-    <F as PureFn>::Outdomain: IntoIterator,
+    F::Outdomain: IntoIterator,
 {}
-impl<O: PullOp, F, T> PullOp for MapFlattenMoveOp<O, F, T>
+
+
+impl<O: PullOp<Outflow = DF<F::Indomain>>, F: PureFn> PullOp for MapFlattenMoveOp<O, F>
 where
-    F: PureFn<Indomain = O::Outdomain>,
-    <F as PureFn>::Outdomain: IntoIterator<Item = T>,
+    F::Outdomain: IntoIterator,
 {
-    type Outflow = O::Outflow;
-    type Outdomain = T;
+    type Outflow = DF<<F::Outdomain as IntoIterator>::Item>;
 }
-impl<O: PushOp, F, T> PushOp for MapFlattenMoveOp<O, F, T>
+impl<O: MovePullOp<Outflow = DF<F::Indomain>>, F: PureFn> MovePullOp for MapFlattenMoveOp<O, F>
 where
-    F: PureFn<Indomain = T>,
-    <F as PureFn>::Outdomain: IntoIterator<Item = O::Indomain>,
+    F::Outdomain: IntoIterator,
 {
-    type Inflow = O::Inflow;
-    type Indomain = T;
-}
-impl<O: MovePullOp, F, T> MovePullOp for MapFlattenMoveOp<O, F, T>
-where
-    F: PureFn<Indomain = O::Outdomain>,
-    <F as PureFn>::Outdomain: IntoIterator<Item = T>,
-{
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<<Self::Outflow as Flow>::Domain>> {
         match self.out.as_mut().and_then(|out| out.next()) {
-            Some(val) => Poll::Ready(Some(val)),
+            Some(item) => Poll::Ready(Some(item)),
             None => {
                 match self.op.poll_next(ctx) {
                     Poll::Pending => Poll::Pending,
@@ -78,14 +68,23 @@ where
         // val.map(|opt| opt.and_then(|x| self.func.call(x)))
     }
 }
-impl<O: MovePushOp, F, T> MovePushOp for MapFlattenMoveOp<O, F, T>
+
+
+impl<O, F: PureFn> PushOp for MapFlattenMoveOp<O, F>
 where
-    F: PureFn<Indomain = T>,
-    <F as PureFn>::Outdomain: IntoIterator<Item = O::Indomain>,
+    F::Outdomain: IntoIterator,
+    O: PushOp<Inflow = DF<<<F as PureFn>::Outdomain as IntoIterator>::Item>>,
+{
+    type Inflow = DF<F::Indomain>;
+}
+impl<O, F: PureFn> MovePushOp for MapFlattenMoveOp<O, F>
+where
+    F::Outdomain: IntoIterator,
+    O: MovePushOp<Inflow = DF<<<F as PureFn>::Outdomain as IntoIterator>::Item>>,
 {
     type Feedback = JoinAll<O::Feedback>;
 
-    fn push(&mut self, item: Self::Indomain) -> Self::Feedback {
+    fn push(&mut self, item: <Self::Inflow as Flow>::Domain) -> Self::Feedback {
         join_all(self.func.call(item).into_iter().map(|item| self.op.push(item)))
     }
 }
@@ -93,40 +92,43 @@ where
 
 
 
-pub struct MapFilterMoveOp<O: Op, F: PureFn, T> {
+pub struct MapFilterMoveOp<O: Op, F: PureFn> {
     op: O,
     func: F,
-    _phantom: std::marker::PhantomData<T>,
 }
-impl<O: Op, F: PureFn, T> MapFilterMoveOp<O, F, T> {
+impl<O: Op, F: PureFn> MapFilterMoveOp<O, F> {
     pub fn new(op: O, func: F) -> Self {
         Self {
             op: op,
             func: func,
-            _phantom: std::marker::PhantomData,
         }
     }
 }
-impl<O: Op, F: PureFn, T> Op for MapFilterMoveOp<O, F, T> {}
-impl<O: PullOp, F, T> PullOp for MapFilterMoveOp<O, F, T>
+impl<O: Op, F: PureFn> Op for MapFilterMoveOp<O, F> {}
+
+
+
+
+// impl<O: PullOp<Outflow = DF<F::Indomain>>, F: PureFn> PullOp for MapFlattenMoveOp<O, F>
+// where
+//     <F as PureFn>::Outdomain: IntoIterator,
+// {
+//     type Outflow = DF<<F::Outdomain as IntoIterator>::Item>;
+// }
+
+impl<T, O, F> PullOp for MapFilterMoveOp<O, F>
 where
-    F: PureFn<Indomain = O::Outdomain, Outdomain = Option<T>>,
+    O: PullOp<Outflow = DF<F::Indomain>>,
+    F: PureFn<Outdomain = Option<T>>,
 {
-    type Outflow = O::Outflow;
-    type Outdomain = T;
+    type Outflow = DF<T>;
 }
-impl<O: PushOp, F, T> PushOp for MapFilterMoveOp<O, F, T>
+impl<T, O, F> MovePullOp for MapFilterMoveOp<O, F>
 where
-    F: PureFn<Indomain = T, Outdomain = Option<O::Indomain>>,
+    O: MovePullOp<Outflow = DF<F::Indomain>>,
+    F: PureFn<Outdomain = Option<T>>,
 {
-    type Inflow = O::Inflow;
-    type Indomain = T;
-}
-impl<O: MovePullOp, F, T> MovePullOp for MapFilterMoveOp<O, F, T>
-where
-    F: PureFn<Indomain = O::Outdomain, Outdomain = Option<T>>,
-{
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<<Self::Outflow as Flow>::Domain>> {
         match self.op.poll_next(ctx) {
             Poll::Pending => Poll::Pending,
             Poll::Ready(None) => Poll::Ready(None), // EOS
@@ -139,13 +141,23 @@ where
         }
     }
 }
-impl<O: MovePushOp, F, T> MovePushOp for MapFilterMoveOp<O, F, T>
+
+
+impl<T, O, F> PushOp for MapFilterMoveOp<O, F>
 where
-    F: PureFn<Indomain = T, Outdomain = Option<O::Indomain>>,
+    O: PushOp<Inflow = DF<T>>,
+    F: PureFn<Outdomain = Option<T>>,
+{
+    type Inflow = DF<F::Indomain>;
+}
+impl<T, O, F> MovePushOp for MapFilterMoveOp<O, F>
+where
+    O: MovePushOp<Inflow = DF<T>>,
+    F: PureFn<Outdomain = Option<T>>,
 {
     type Feedback = JoinAll<O::Feedback>;
 
-    fn push(&mut self, item: Self::Indomain) -> Self::Feedback {
+    fn push(&mut self, item: <Self::Inflow as Flow>::Domain) -> Self::Feedback {
         join_all(self.func.call(item).into_iter().map(|item| self.op.push(item)))
     }
 }
@@ -153,37 +165,36 @@ where
 
 
 
-pub struct MapFoldRefOp<O: Op, F: PureRefFn, T> {
+pub struct MapFoldRefOp<O: Op, F: PureRefFn> {
     op: O,
     func: F,
-    _phantom: std::marker::PhantomData<T>,
 }
-impl<O: Op, F: PureRefFn, T> MapFoldRefOp<O, F, T> {
+impl<O: Op, F: PureRefFn> MapFoldRefOp<O, F> {
     pub fn new(op: O, func: F) -> Self {
         Self {
             op: op,
             func: func,
-            _phantom: std::marker::PhantomData,
         }
     }
 }
-impl<O: Op, F: PureRefFn, T> Op for MapFoldRefOp<O, F, T> {}
-impl<O: PushOp, F, T> PushOp for MapFoldRefOp<O, F, T>
+impl<O: Op, F: PureRefFn> Op for MapFoldRefOp<O, F> {}
+
+
+impl<O, F: PureRefFn> PushOp for MapFoldRefOp<O, F>
 where
-    F: PureRefFn<Indomain = T>,
-    <F as PureRefFn>::Outdomain: IntoIterator<Item = O::Indomain>,
+    F::Outdomain: IntoIterator,
+    O: PushOp<Inflow = DF<<<F as PureRefFn>::Outdomain as IntoIterator>::Item>>,
 {
-    type Inflow = O::Inflow;
-    type Indomain = T;
+    type Inflow = DF<F::Indomain>;
 }
-impl<O: MovePushOp, F, T> RefPushOp for MapFoldRefOp<O, F, T>
+impl<O, F: PureRefFn> RefPushOp for MapFoldRefOp<O, F>
 where
-    F: PureRefFn<Indomain = T>,
-    <F as PureRefFn>::Outdomain: IntoIterator<Item = O::Indomain>,
+    F::Outdomain: IntoIterator,
+    O: MovePushOp<Inflow = DF<<<F as PureRefFn>::Outdomain as IntoIterator>::Item>>,
 {
     type Feedback = JoinAll<O::Feedback>;
 
-    fn push(&mut self, item: &Self::Indomain) -> Self::Feedback {
+    fn push(&mut self, item: &<Self::Inflow as Flow>::Domain) -> Self::Feedback {
         join_all(self.func.call(item).into_iter().map(|item| self.op.push(item)))
     }
 }

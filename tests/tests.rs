@@ -22,7 +22,7 @@ pub async fn test_cycle_channel() -> Result<(), String> {
     let ( push_pipe, pull_pipe ) = channel_op::<usize>(10);
     let mut push_pipe = push_pipe;
 
-    let pull_pipe = MapFilterMoveOp::<_, _, usize>::new(pull_pipe, IncrementFn);
+    let pull_pipe = MapFilterMoveOp::new(pull_pipe, IncrementFn);
     let pull_pipe = DebugOp::new("channel", pull_pipe);
 
     push_pipe.push(350).await;
@@ -39,10 +39,10 @@ pub async fn test_cycle_channel() -> Result<(), String> {
 #[tokio::test]
 pub async fn test_cycle_handoff() -> Result<(), String> {
 
-    let ( push_pipe, pull_pipe ) = handoff_op::<DF, usize>();
+    let ( push_pipe, pull_pipe ) = handoff_op::<DF<usize>>();
     let mut push_pipe = push_pipe;
 
-    let pull_pipe = MapFilterMoveOp::<_, _, usize>::new(pull_pipe, IncrementFn);
+    let pull_pipe = MapFilterMoveOp::new(pull_pipe, IncrementFn);
     let pull_pipe = DebugOp::new("handoff", pull_pipe);
 
     push_pipe.push(150).await;
@@ -77,7 +77,7 @@ pub async fn test_kvs() -> Result<(), String> {
         }
     }
 
-    let pull_pipe = MapFilterMoveOp::<_, _, <MyLattice as Merge>::Domain>::new(pull_pipe, TupleToHashMapFn);
+    let pull_pipe = MapFilterMoveOp::new(pull_pipe, TupleToHashMapFn);
     let pull_pipe = LatticeOp::<_, MyLattice>::new_default(pull_pipe);
 
 
@@ -93,36 +93,39 @@ pub async fn test_kvs() -> Result<(), String> {
     }
 
 
-    let read_foo_0 = NullOp::<RX, &'static str>::new();
+    let read_foo_0 = NullOp::<RX<Max<&'static str>>>::new();
     let read_foo_0 = DebugOp::new("foo 0", read_foo_0);
-    let read_foo_0 = MapFoldRefOp::<_, _, <MyLattice as Merge>::Domain>::new(read_foo_0, ReadKeyFn { key: "foo" });
+    let read_foo_0 = MapFoldRefOp::new(read_foo_0, ReadKeyFn { key: "foo" });
 
-    let read_foo_1 = NullOp::<RX, &'static str>::new();
+    let read_foo_1 = NullOp::<RX<Max<&'static str>>>::new();
     let read_foo_1 = DebugOp::new("foo 1", read_foo_1);
-    let read_foo_1 = MapFoldRefOp::<_, _, <MyLattice as Merge>::Domain>::new(read_foo_1, ReadKeyFn { key: "foo" });
+    let read_foo_1 = MapFoldRefOp::new(read_foo_1, ReadKeyFn { key: "foo" });
 
 
-    let comp = DynComp::<_, _>::new(pull_pipe);
-    // let comp = StaticComp::new(pull_pipe, read_foo_pipe);
+    unimplemented!("FIX ME FOR MONOTONIC SAFETY!");
 
 
-    write_pipe.push(("foo", 200, "bar")).await;
-    write_pipe.push(("foo", 100, "baz")).await;
+    // let comp = DynComp::<MyLattice, _, _>::new(pull_pipe);
+    // // let comp = StaticComp::new(pull_pipe, read_foo_pipe);
 
 
-    let mut comp = comp;
-    let read_foo_0 = read_foo_0;
-    for _ in 0_usize..10 {
-        comp.tick_refop().await;
-    }
-    comp.add_split(read_foo_0).await;
-    for _ in 0_usize..10 {
-        comp.tick_refop().await;
-    }
+    // write_pipe.push(("foo", 200, "bar")).await;
+    // write_pipe.push(("foo", 100, "baz")).await;
 
-    write_pipe.push(("foo", 300, "ding")).await;
 
-    comp.add_split(read_foo_1).await;
+    // let mut comp = comp;
+    // let read_foo_0 = read_foo_0;
+    // for _ in 0_usize..10 {
+    //     comp.tick_refop().await;
+    // }
+    // comp.add_split(read_foo_0).await;
+    // for _ in 0_usize..10 {
+    //     comp.tick_refop().await;
+    // }
+
+    // write_pipe.push(("foo", 300, "ding")).await;
+
+    // comp.add_split(read_foo_1).await;
 
 
 

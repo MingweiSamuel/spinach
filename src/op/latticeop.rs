@@ -3,7 +3,7 @@ use std::task::{ Context, Poll };
 use crate::merge::Merge;
 
 use super::op::*;
-use super::flows::*;
+use super::flow::*;
 
 pub struct LatticeOp<O: Op, F: Merge> {
     op: O,
@@ -30,17 +30,15 @@ where
 }
 
 impl<O: Op, F: Merge> Op for LatticeOp<O, F> {}
-impl<O: PullOp<Outflow = DF>, F: Merge<Domain = O::Outdomain>> PullOp for LatticeOp<O, F> {
-    type Outflow = RX;
-    type Outdomain = F::Domain;
+impl<O: PullOp<Outflow = DF<F::Domain>>, F: Merge> PullOp for LatticeOp<O, F> {
+    type Outflow = RX<F>;
 }
-impl<O: PushOp<Inflow = RX>, F: Merge<Domain = O::Indomain>> PushOp for LatticeOp<O, F> {
-    type Inflow = DF;
-    type Indomain = F::Domain;
+impl<O: PushOp<Inflow = RX<F>>, F: Merge> PushOp for LatticeOp<O, F> {
+    type Inflow = DF<F::Domain>;
 }
 
-impl<O: MovePullOp<Outflow = DF>, F: Merge<Domain = O::Outdomain>> RefPullOp for LatticeOp<O, F> {
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<&Self::Outdomain>> {
+impl<O: MovePullOp<Outflow = DF<F::Domain>>, F: Merge> RefPullOp for LatticeOp<O, F> {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<&<Self::Outflow as Flow>::Domain>> {
         if let Poll::Ready(Some(item)) = self.op.poll_next(ctx) {
             F::merge_in(&mut self.state, item);
         }
@@ -49,10 +47,10 @@ impl<O: MovePullOp<Outflow = DF>, F: Merge<Domain = O::Outdomain>> RefPullOp for
         Poll::Ready(Some(&self.state))
     }
 }
-impl<O: RefPushOp<Inflow = RX>, F: Merge<Domain = O::Indomain>> MovePushOp for LatticeOp<O, F> {
+impl<O: RefPushOp<Inflow = RX<F>>, F: Merge> MovePushOp for LatticeOp<O, F> {
     type Feedback = O::Feedback;
 
-    fn push(&mut self, item: Self::Indomain) -> Self::Feedback {
+    fn push(&mut self, item: <Self::Inflow as Flow>::Domain) -> Self::Feedback {
         F::merge_in(&mut self.state, item);
         self.op.push(&self.state)
     }

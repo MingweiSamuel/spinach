@@ -2,6 +2,7 @@ use std::future::Future;
 use std::task::{ Context, Poll };
 
 use super::op::MovePullOp;
+use super::flow::Flow;
 
 
 pub trait PureFn {
@@ -31,7 +32,7 @@ impl<O: MovePullOp> Future for MoveNext<'_, O>
 where
     Self: Unpin,
 {
-    type Output = Option<O::Outdomain>;
+    type Output = Option<<O::Outflow as Flow>::Domain>;
 
     fn poll(self: std::pin::Pin<&mut Self>, ctx: &mut Context<'_>) -> Poll<Self::Output> {
         self.get_mut().op.poll_next(ctx)
@@ -52,7 +53,7 @@ where
 // where
 //     Self: Unpin,
 // {
-//     type Output = Option<&'b O::Outdomain>;
+//     type Output = Option<&'b <O::Outflow as Flow>::Domain>;
 
 //     fn poll(self: std::pin::Pin<&'b mut RefNext<'a, O>>, ctx: &mut Context<'_>) -> Poll<Self::Output> {
 //         (*self).op.poll_next(ctx)
