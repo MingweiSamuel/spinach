@@ -4,6 +4,9 @@
 #![feature(type_alias_impl_trait)]
 #![feature(btree_retain)]
 
+pub mod func;
+
 pub mod merge;
 
 pub mod op;
+

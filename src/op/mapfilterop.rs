@@ -4,7 +4,8 @@ use futures::future::{ join_all, JoinAll };
 
 use super::op::*;
 use super::flow::{ Flow, DF };
-use super::util::{ PureFn, PureRefFn };
+
+use crate::func::{ PureFn, PureRefFn };
 
 
 
