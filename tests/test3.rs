@@ -95,11 +95,11 @@ pub async fn test_kvs() -> Result<(), String> {
 
     let read_foo_0 = NullOp::<RX, &'static str>::new();
     let read_foo_0 = DebugOp::new("foo 0", read_foo_0);
-    let read_foo_0 = MapFilterRefOp::<_, _, <MyLattice as Merge>::Domain>::new(read_foo_0, ReadKeyFn { key: "foo" });
+    let read_foo_0 = MapFoldRefOp::<_, _, <MyLattice as Merge>::Domain>::new(read_foo_0, ReadKeyFn { key: "foo" });
 
     let read_foo_1 = NullOp::<RX, &'static str>::new();
     let read_foo_1 = DebugOp::new("foo 1", read_foo_1);
-    let read_foo_1 = MapFilterRefOp::<_, _, <MyLattice as Merge>::Domain>::new(read_foo_1, ReadKeyFn { key: "foo" });
+    let read_foo_1 = MapFoldRefOp::<_, _, <MyLattice as Merge>::Domain>::new(read_foo_1, ReadKeyFn { key: "foo" });
 
 
     let comp = DynComp::<_, _>::new(pull_pipe);
