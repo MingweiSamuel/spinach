@@ -6,6 +6,6 @@
 
 pub mod merge;
 
-pub mod op2;
+pub mod op;
 
 pub mod semilattice;

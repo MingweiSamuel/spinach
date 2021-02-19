@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use spinach::op2::*;
+use spinach::op::*;
 use spinach::merge::{ Merge, MapUnion, DominatingPair, Max };
 
 
