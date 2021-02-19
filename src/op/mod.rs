@@ -36,3 +36,6 @@ pub use handoffop::*;
 
 mod latticeop;
 pub use latticeop::*;
+
+mod monotonicop;
+pub use monotonicop::*;

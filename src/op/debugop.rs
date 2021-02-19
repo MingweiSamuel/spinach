@@ -6,14 +6,14 @@ use super::flow::Flow;
 
 
 pub struct DebugOp<O: Op> {
-    tag: &'static str,
     op: O,
+    tag: &'static str,
 }
 impl<O: Op> DebugOp<O> {
-    pub fn new(tag: &'static str, op: O) -> Self {
-        DebugOp {
-            tag: tag,
+    pub fn new(op: O, tag: &'static str) -> Self {
+        Self {
             op: op,
+            tag: tag,
         }
     }
 }

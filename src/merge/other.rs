@@ -2,6 +2,39 @@ use std::cmp::Ordering;
 
 use super::Merge;
 
+
+// /// Wrap an existing lattice in `Option`, where None is smaller than all other elements.
+// pub struct Optional<F: Merge> {
+//     _phantom: std::marker::PhantomData<F>,
+// }
+// impl<F: Merge> Merge for Optional<F> {
+//     type Domain = Option<F::Domain>;
+
+//     fn merge_in(val: &mut Self::Domain, delta: Self::Domain) {
+//         *val = val.or(delta);
+//         not_implemented!()
+//     }
+
+//     fn partial_cmp(a: &Self::Domain, b: &Self::Domain) -> Option<Ordering> {
+//         match a {
+//             None => {
+//                 match b {
+//                     None => Some(Ordering::Equal),
+//                     Some(_) => Some(Ordering::Less),
+//                 }
+//             }
+//             Some(a) => {
+//                 match b {
+//                     None => Some(Ordering::Greater),
+//                     Some(b) => F::partial_cmp(a, b),
+//                 }
+//             }
+//         }
+//     }
+// }
+
+
+
 /// Mingwei's weird semilattice.
 /// Merge is defined as, given signed integers A and B, take the value in the
 /// range [A, B] (or [B, A]) which is closest to zero.
@@ -19,12 +52,12 @@ impl Merge for RangeToZeroI32 {
         }
     }
 
-    fn partial_cmp(val: &i32, delta: &i32) -> Option<Ordering> {
-        if val.signum() != delta.signum() {
+    fn partial_cmp(a: &i32, b: &i32) -> Option<Ordering> {
+        if a.signum() != b.signum() {
             None
         }
         else {
-            let less = val.abs().cmp(&delta.abs());
+            let less = a.abs().cmp(&b.abs());
             Some(less.reverse())
         }
     }
