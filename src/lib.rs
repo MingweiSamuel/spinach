@@ -7,5 +7,3 @@
 pub mod merge;
 
 pub mod op;
-
-pub mod semilattice;
