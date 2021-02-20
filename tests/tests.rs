@@ -100,7 +100,7 @@ pub async fn test_kvs() -> Result<(), String> {
     // unimplemented!("FIX ME FOR MONOTONIC SAFETY!");
 
 
-    let comp = DynComp::<MyLattice, _, _>::new(pull_pipe);
+    let comp = DynComp::new(pull_pipe);
     // let comp = StaticComp::new(pull_pipe, read_foo_pipe);
 
 
