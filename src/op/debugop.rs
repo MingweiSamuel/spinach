@@ -9,6 +9,7 @@ pub struct DebugOp<O: Op> {
     op: O,
     tag: &'static str,
 }
+
 impl<O: Op> DebugOp<O> {
     pub fn new(op: O, tag: &'static str) -> Self {
         Self {
@@ -17,57 +18,34 @@ impl<O: Op> DebugOp<O> {
         }
     }
 }
+
 impl<O: Op> Op for DebugOp<O> {}
-impl<O: PullOp> PullOp for DebugOp<O> {
-    type Outflow = O::Outflow;
-}
-impl<O: PushOp> PushOp for DebugOp<O> {
-    type Inflow = O::Inflow;
-}
-impl<O: MovePullOp> MovePullOp for DebugOp<O>
+
+impl<'slf, O: PullOp<'slf>> PullOp<'slf> for DebugOp<O>
 where
-    <O::Outflow as Flow>::Domain: Debug,
+    for<'a> <<O as PullOp<'slf>>::Outflow<'a> as Flow>::Domain: Debug,
 {
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<<Self::Outflow as Flow>::Domain>> {
+    type Outflow<'a> = O::Outflow<'a>;
+
+    fn poll_next<'a>(&'slf mut self, ctx: &mut Context<'_>) -> Poll<Option<<Self::Outflow<'a> as Flow>::Domain>> {
         let polled = self.op.poll_next(ctx);
         match &polled {
             Poll::Ready(Some(item)) => println!("{}: {:?}", self.tag, item),
-            _ => (),
+            _ => {},
         }
         polled
     }
 }
-impl<O: RefPullOp> RefPullOp for DebugOp<O>
-where
-    <O::Outflow as Flow>::Domain: Debug,
-{
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<&<Self::Outflow as Flow>::Domain>> {
-        let polled = self.op.poll_next(ctx);
-        match &polled {
-            Poll::Ready(Some(item)) => println!("{}: {:?}", self.tag, item),
-            _ => (),
-        }
-        polled
-    }
-}
-impl<O: MovePushOp> MovePushOp for DebugOp<O>
-where
-    <O::Inflow as Flow>::Domain: Debug,
-{
-    type Feedback = O::Feedback;
 
-    fn push(&mut self, item: <Self::Inflow as Flow>::Domain) -> Self::Feedback {
-        println!("{}: {:?}", self.tag, item);
-        self.op.push(item)
-    }
-}
-impl<O: RefPushOp> RefPushOp for DebugOp<O>
+impl<'slf, O: PushOp<'slf>> PushOp<'slf> for DebugOp<O>
 where
-    <O::Inflow as Flow>::Domain: Debug,
+    for<'a> <<O as PushOp<'slf>>::Inflow<'a> as Flow>::Domain: Debug,
 {
-    type Feedback = O::Feedback;
+    type Inflow<'a> = O::Inflow<'a>;
+    type Feedback<'a, 's> = O::Feedback<'a, 's>;
 
-    fn push(&mut self, item: &<Self::Inflow as Flow>::Domain) -> Self::Feedback {
+    #[must_use]
+    fn push<'a>(&'slf mut self, item: <Self::Inflow<'a> as Flow>::Domain) -> Self::Feedback<'a, 'slf> {
         println!("{}: {:?}", self.tag, item);
         self.op.push(item)
     }
