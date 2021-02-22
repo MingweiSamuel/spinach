@@ -39,3 +39,9 @@ pub use latticeop::*;
 
 mod monotonicop;
 pub use monotonicop::*;
+
+mod explodeop;
+pub use explodeop::*;
+
+mod timingop;
+pub use timingop::*;
