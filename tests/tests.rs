@@ -27,7 +27,7 @@ pub async fn test_cycle_channel() -> Result<(), String> {
 
     let pull_pipe = MapFilterMoveOp::new(pull_pipe, IncrementFn);
     let pull_pipe = DebugOp::new(pull_pipe, "channel");
-    let pull_pipe = RateLimitOp::new(pull_pipe, Duration::from_millis(100));
+    let pull_pipe = BlockingIntervalOp::new(pull_pipe, Duration::from_millis(100));
 
     push_pipe.push(350).await;
     push_pipe.push(650).await;
@@ -48,7 +48,7 @@ pub async fn test_cycle_handoff() -> Result<(), String> {
 
     let pull_pipe = MapFilterMoveOp::new(pull_pipe, IncrementFn);
     let pull_pipe = DebugOp::new(pull_pipe, "handoff");
-    let pull_pipe = RateLimitOp::new(pull_pipe, Duration::from_millis(100));
+    let pull_pipe = BlockingIntervalOp::new(pull_pipe, Duration::from_millis(100));
 
     push_pipe.push(150).await;
 
