@@ -1,9 +1,7 @@
 use std::fmt::Debug;
-use std::task::{ Context, Poll };
+use std::task::{Context, Poll};
 
-use super::op::*;
-use super::flow::Flow;
-
+use super::*;
 
 pub struct DebugOp<O: Op> {
     op: O,
@@ -11,10 +9,7 @@ pub struct DebugOp<O: Op> {
 }
 impl<O: Op> DebugOp<O> {
     pub fn new(op: O, tag: &'static str) -> Self {
-        Self {
-            op: op,
-            tag: tag,
-        }
+        Self { op, tag }
     }
 }
 impl<O: Op> Op for DebugOp<O> {}
@@ -28,11 +23,13 @@ impl<O: MovePullOp> MovePullOp for DebugOp<O>
 where
     <O::Outflow as Flow>::Domain: Debug,
 {
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<<Self::Outflow as Flow>::Domain>> {
+    fn poll_next(
+        &mut self,
+        ctx: &mut Context<'_>,
+    ) -> Poll<Option<<Self::Outflow as Flow>::Domain>> {
         let polled = self.op.poll_next(ctx);
-        match &polled {
-            Poll::Ready(Some(item)) => println!("{}: {:?}", self.tag, item),
-            _ => (),
+        if let Poll::Ready(Some(item)) = &polled {
+            println!("{}: {:?}", self.tag, item);
         }
         polled
     }
@@ -41,11 +38,13 @@ impl<O: RefPullOp> RefPullOp for DebugOp<O>
 where
     <O::Outflow as Flow>::Domain: Debug,
 {
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<&<Self::Outflow as Flow>::Domain>> {
+    fn poll_next(
+        &mut self,
+        ctx: &mut Context<'_>,
+    ) -> Poll<Option<&<Self::Outflow as Flow>::Domain>> {
         let polled = self.op.poll_next(ctx);
-        match &polled {
-            Poll::Ready(Some(item)) => println!("{}: {:?}", self.tag, item),
-            _ => (),
+        if let Poll::Ready(Some(item)) = &polled {
+            println!("{}: {:?}", self.tag, item);
         }
         polled
     }

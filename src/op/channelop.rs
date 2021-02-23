@@ -1,33 +1,26 @@
 use std::future::Future;
-use std::task::{ Context, Poll };
+use std::task::{Context, Poll};
 
 use tokio::sync::mpsc;
 
-use super::op::*;
-use super::flow::*;
+use super::*;
 
-
-
-pub fn channel_op<T>(buffer: usize) -> ( ChannelPushOp<T>, ChannelPullOp<T> ) {
-    let ( send, recv ) = mpsc::channel(buffer);
-    ( ChannelPushOp::new(send), ChannelPullOp::new(recv) )
+pub fn channel_op<T>(buffer: usize) -> (ChannelPushOp<T>, ChannelPullOp<T>) {
+    let (send, recv) = mpsc::channel(buffer);
+    (ChannelPushOp::new(send), ChannelPullOp::new(recv))
 }
-
-
 
 pub struct ChannelPushOp<T> {
     send: mpsc::Sender<T>,
 }
 impl<T> ChannelPushOp<T> {
     pub fn new(send: mpsc::Sender<T>) -> Self {
-        Self {
-            send: send,
-        }
+        Self { send }
     }
 }
 impl<T> Op for ChannelPushOp<T> {}
 impl<T> PushOp for ChannelPushOp<T> {
-    type Inflow = DF<T>;
+    type Inflow = Df<T>;
 }
 impl<T> MovePushOp for ChannelPushOp<T> {
     type Feedback = impl Future;
@@ -35,32 +28,27 @@ impl<T> MovePushOp for ChannelPushOp<T> {
     #[must_use]
     fn push(&mut self, item: <Self::Inflow as Flow>::Domain) -> Self::Feedback {
         let send = self.send.clone();
-        async move {
-            send.clone().send(item).await
-        }
+        async move { send.clone().send(item).await }
     }
 }
-
-
 
 pub struct ChannelPullOp<T> {
     recv: mpsc::Receiver<T>,
 }
 impl<T> ChannelPullOp<T> {
     pub fn new(recv: mpsc::Receiver<T>) -> Self {
-        Self {
-            recv: recv,
-        }
+        Self { recv }
     }
 }
 impl<T> Op for ChannelPullOp<T> {}
 impl<T> PullOp for ChannelPullOp<T> {
-    type Outflow = DF<T>;
+    type Outflow = Df<T>;
 }
 impl<T> MovePullOp for ChannelPullOp<T> {
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<<Self::Outflow as Flow>::Domain>> {
+    fn poll_next(
+        &mut self,
+        ctx: &mut Context<'_>,
+    ) -> Poll<Option<<Self::Outflow as Flow>::Domain>> {
         self.recv.poll_recv(ctx)
     }
 }
-
-

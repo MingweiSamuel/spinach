@@ -1,16 +1,13 @@
 // use std::task::{ Context, Poll };
 
-use super::op::*;
-use super::flow::Flow;
+use super::*;
 
 pub struct ReferenceOp<O: Op> {
     op: O,
 }
 impl<O: Op> ReferenceOp<O> {
     pub fn new(op: O) -> Self {
-        ReferenceOp {
-            op: op,
-        }
+        ReferenceOp { op }
     }
 }
 impl<O: Op> Op for ReferenceOp<O> {}

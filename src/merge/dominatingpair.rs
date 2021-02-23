@@ -10,7 +10,7 @@ where
     _phantom: std::marker::PhantomData<(AF, BF)>,
 }
 
-impl <AF, BF> Merge for DominatingPair<AF, BF>
+impl<AF, BF> Merge for DominatingPair<AF, BF>
 where
     AF: Merge,
     BF: Merge,
@@ -22,14 +22,14 @@ where
             None => {
                 AF::merge_in(&mut val.0, delta.0);
                 BF::merge_in(&mut val.1, delta.1);
-            },
+            }
             Some(Ordering::Equal) => {
                 BF::merge_in(&mut val.1, delta.1);
-            },
+            }
             Some(Ordering::Less) => {
                 *val = delta;
-            },
-            Some(Ordering::Greater) => {},
+            }
+            Some(Ordering::Greater) => {}
         }
     }
 
@@ -52,9 +52,7 @@ where
                 *val = delta;
                 false
             }
-            Some(Ordering::Greater) => {
-                true
-            }
+            Some(Ordering::Greater) => true,
         }
     }
 }

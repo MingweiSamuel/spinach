@@ -1,9 +1,9 @@
 use crate::merge::Merge;
 
-pub struct DF<T> {
+pub struct Df<T> {
     _private: T,
 }
-pub struct RX<F: Merge> {
+pub struct Rx<F: Merge> {
     _private: F::Domain,
 }
 
@@ -12,10 +12,10 @@ pub trait Flow: private::Sealed {
     type Domain;
 }
 
-impl<T> Flow for DF<T> {
+impl<T> Flow for Df<T> {
     type Domain = T;
 }
-impl<F: Merge> Flow for RX<F> {
+impl<F: Merge> Flow for Rx<F> {
     type Domain = F::Domain;
 }
 
@@ -25,6 +25,6 @@ mod private {
     pub trait Sealed {}
 
     // Implement for those same types, but no others.
-    impl<T> Sealed for DF<T> {}
-    impl<F: Merge> Sealed for RX<F> {}
+    impl<T> Sealed for Df<T> {}
+    impl<F: Merge> Sealed for Rx<F> {}
 }

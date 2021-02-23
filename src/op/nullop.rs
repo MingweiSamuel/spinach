@@ -1,9 +1,7 @@
 use std::future;
-use std::task::{ Context, Poll };
+use std::task::{Context, Poll};
 
-use super::op::*;
-use super::flow::*;
-
+use super::*;
 
 pub struct NullOp<F: Flow> {
     _phantom: std::marker::PhantomData<F>,
@@ -15,20 +13,31 @@ impl<F: Flow> NullOp<F> {
         }
     }
 }
+impl<F: Flow> Default for NullOp<F> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
 impl<F: Flow> Op for NullOp<F> {}
 impl<F: Flow> PullOp for NullOp<F> {
     type Outflow = F;
 }
-impl <F: Flow> PushOp for NullOp<F> {
+impl<F: Flow> PushOp for NullOp<F> {
     type Inflow = F;
 }
 impl<F: Flow> MovePullOp for NullOp<F> {
-    fn poll_next(&mut self, _ctx: &mut Context<'_>) -> Poll<Option<<Self::Outflow as Flow>::Domain>> {
+    fn poll_next(
+        &mut self,
+        _ctx: &mut Context<'_>,
+    ) -> Poll<Option<<Self::Outflow as Flow>::Domain>> {
         Poll::Pending
     }
 }
 impl<F: Flow> RefPullOp for NullOp<F> {
-    fn poll_next(&mut self, _ctx: &mut Context<'_>) -> Poll<Option<&<Self::Outflow as Flow>::Domain>> {
+    fn poll_next(
+        &mut self,
+        _ctx: &mut Context<'_>,
+    ) -> Poll<Option<&<Self::Outflow as Flow>::Domain>> {
         Poll::Pending
     }
 }

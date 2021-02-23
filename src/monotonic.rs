@@ -1,13 +1,16 @@
-use std::collections::{ HashMap, BTreeMap };
+use std::collections::{BTreeMap, HashMap};
 use std::hash::Hash;
 
-use crate::merge::{ Merge, MapUnion };
+use crate::merge::{MapUnion, Merge};
 
 pub trait MonotonicFilterRefFn {
     type Inmerge: Merge;
     type Outmerge: Merge;
 
-    fn call<'a>(&self, item: &'a <Self::Inmerge as Merge>::Domain) -> Option<&'a <Self::Outmerge as Merge>::Domain>;
+    fn call<'a>(
+        &self,
+        item: &'a <Self::Inmerge as Merge>::Domain,
+    ) -> Option<&'a <Self::Outmerge as Merge>::Domain>;
 }
 
 pub struct MapProject<K, T> {
@@ -17,7 +20,7 @@ pub struct MapProject<K, T> {
 impl<K, T> MapProject<K, T> {
     pub fn new(key: K) -> Self {
         Self {
-            key: key,
+            key,
             _phantom: std::marker::PhantomData,
         }
     }

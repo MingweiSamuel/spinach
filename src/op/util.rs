@@ -1,18 +1,14 @@
 use std::future::Future;
-use std::task::{ Context, Poll };
+use std::task::{Context, Poll};
 
-use super::op::MovePullOp;
-use super::flow::Flow;
-
+use super::{Flow, MovePullOp};
 
 pub struct MoveNext<'a, O: MovePullOp> {
     op: &'a mut O,
 }
 impl<'a, O: MovePullOp> MoveNext<'a, O> {
     pub fn new(op: &'a mut O) -> Self {
-        Self {
-            op: op,
-        }
+        Self { op }
     }
 }
 impl<O: MovePullOp> Future for MoveNext<'_, O>
@@ -61,8 +57,7 @@ pub async fn sleep_yield_now() {
         fn poll(mut self: std::pin::Pin<&mut Self>, _ctx: &mut Context<'_>) -> Poll<()> {
             if self.yielded {
                 Poll::Ready(())
-            }
-            else {
+            } else {
                 self.yielded = true;
                 // cx.waker().wake_by_ref();
                 Poll::Pending

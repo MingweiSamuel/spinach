@@ -1,10 +1,10 @@
-mod op;
-pub use op::*;
+mod optrait;
+pub use optrait::*;
 
 mod util;
 pub use util::*;
 
-mod flow;
+pub mod flow;
 pub use flow::*;
 
 mod comp;

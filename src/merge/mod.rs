@@ -1,6 +1,5 @@
 use std::cmp::Ordering;
 
-
 /// Merge trait.
 pub trait Merge {
     type Domain;
@@ -26,7 +25,6 @@ pub trait Merge {
         }
     }
 }
-
 
 mod ord;
 pub use ord::*;

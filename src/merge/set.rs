@@ -1,5 +1,5 @@
 use std::cmp::Ordering;
-use std::collections::{ BTreeSet, HashSet };
+use std::collections::{BTreeSet, HashSet};
 use std::hash::Hash;
 use std::iter::Extend;
 
@@ -10,7 +10,7 @@ use super::Merge;
 pub struct Union<T> {
     _phantom: std::marker::PhantomData<T>,
 }
-impl <T: Eq + Hash> Merge for Union<HashSet<T>> {
+impl<T: Eq + Hash> Merge for Union<HashSet<T>> {
     type Domain = HashSet<T>;
 
     fn merge_in(val: &mut HashSet<T>, delta: HashSet<T>) {
@@ -21,16 +21,13 @@ impl <T: Eq + Hash> Merge for Union<HashSet<T>> {
         let s = val.union(delta).count();
         if s != val.len() && s != delta.len() {
             None
-        }
-        else if s == val.len() {
+        } else if s == val.len() {
             if s == delta.len() {
                 Some(Ordering::Equal)
-            }
-            else {
+            } else {
                 Some(Ordering::Greater)
             }
-        }
-        else {
+        } else {
             Some(Ordering::Less)
         }
     }
@@ -41,7 +38,7 @@ impl <T: Eq + Hash> Merge for Union<HashSet<T>> {
         val.is_empty()
     }
 }
-impl <T: Eq + Ord> Merge for Union<BTreeSet<T>> {
+impl<T: Eq + Ord> Merge for Union<BTreeSet<T>> {
     type Domain = BTreeSet<T>;
 
     fn merge_in(val: &mut BTreeSet<T>, delta: BTreeSet<T>) {
@@ -52,16 +49,13 @@ impl <T: Eq + Ord> Merge for Union<BTreeSet<T>> {
         let s = val.union(delta).count();
         if s != val.len() && s != delta.len() {
             None
-        }
-        else if s == val.len() {
+        } else if s == val.len() {
             if s == delta.len() {
                 Some(Ordering::Equal)
-            }
-            else {
+            } else {
                 Some(Ordering::Greater)
             }
-        }
-        else {
+        } else {
             Some(Ordering::Less)
         }
     }
@@ -76,7 +70,7 @@ impl <T: Eq + Ord> Merge for Union<BTreeSet<T>> {
 pub struct Intersect<T> {
     _phantom: std::marker::PhantomData<T>,
 }
-impl <T: Eq + Hash> Merge for Intersect<HashSet<T>> {
+impl<T: Eq + Hash> Merge for Intersect<HashSet<T>> {
     type Domain = HashSet<T>;
 
     fn merge_in(val: &mut HashSet<T>, delta: HashSet<T>) {
@@ -87,44 +81,36 @@ impl <T: Eq + Hash> Merge for Intersect<HashSet<T>> {
         let s = val.intersection(delta).count();
         if s != val.len() && s != delta.len() {
             None
-        }
-        else if s == val.len() {
+        } else if s == val.len() {
             if s == delta.len() {
                 Some(Ordering::Equal)
-            }
-            else {
+            } else {
                 Some(Ordering::Greater)
             }
-        }
-        else {
+        } else {
             Some(Ordering::Less)
         }
     }
 }
-impl <T: Eq + Ord> Merge for Intersect<BTreeSet<T>> {
+impl<T: Eq + Ord> Merge for Intersect<BTreeSet<T>> {
     type Domain = BTreeSet<T>;
 
     fn merge_in(val: &mut BTreeSet<T>, delta: BTreeSet<T>) {
         // Not so ergonomic nor efficient.
-        *val = delta.into_iter()
-            .filter(|x| val.contains(x))
-            .collect();
+        *val = delta.into_iter().filter(|x| val.contains(x)).collect();
     }
 
     fn partial_cmp(val: &BTreeSet<T>, delta: &BTreeSet<T>) -> Option<Ordering> {
         let s = val.intersection(delta).count();
         if s != val.len() && s != delta.len() {
             None
-        }
-        else if s == val.len() {
+        } else if s == val.len() {
             if s == delta.len() {
                 Some(Ordering::Equal)
-            }
-            else {
+            } else {
                 Some(Ordering::Greater)
             }
-        }
-        else {
+        } else {
             Some(Ordering::Less)
         }
     }

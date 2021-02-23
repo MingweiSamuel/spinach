@@ -2,7 +2,6 @@ use std::cmp::Ordering;
 
 use super::Merge;
 
-
 // /// Wrap an existing lattice in `Option`, where None is smaller than all other elements.
 // pub struct Optional<F: Merge> {
 //     _phantom: std::marker::PhantomData<F>,
@@ -33,8 +32,6 @@ use super::Merge;
 //     }
 // }
 
-
-
 /// Mingwei's weird semilattice.
 /// Merge is defined as, given signed integers A and B, take the value in the
 /// range [A, B] (or [B, A]) which is closest to zero.
@@ -46,8 +43,7 @@ impl Merge for RangeToZeroI32 {
     fn merge_in(val: &mut i32, delta: i32) {
         if val.signum() != delta.signum() {
             *val = 0;
-        }
-        else if val.abs() > delta.abs() {
+        } else if val.abs() > delta.abs() {
             *val = delta
         }
     }
@@ -55,8 +51,7 @@ impl Merge for RangeToZeroI32 {
     fn partial_cmp(a: &i32, b: &i32) -> Option<Ordering> {
         if a.signum() != b.signum() {
             None
-        }
-        else {
+        } else {
             let less = a.abs().cmp(&b.abs());
             Some(less.reverse())
         }

@@ -1,16 +1,13 @@
-use std::task::{ Context, Poll };
+use std::task::{Context, Poll};
 
-use super::op::*;
-use super::flow::Flow;
+use super::*;
 
 pub struct CloneOp<O: Op> {
     op: O,
 }
 impl<O: Op> CloneOp<O> {
     pub fn new(op: O) -> Self {
-        CloneOp {
-            op: op,
-        }
+        CloneOp { op }
     }
 }
 impl<O: Op> Op for CloneOp<O> {}
@@ -24,9 +21,12 @@ impl<O: RefPullOp> MovePullOp for CloneOp<O>
 where
     <O::Outflow as Flow>::Domain: Clone,
 {
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<<Self::Outflow as Flow>::Domain>> {
+    fn poll_next(
+        &mut self,
+        ctx: &mut Context<'_>,
+    ) -> Poll<Option<<Self::Outflow as Flow>::Domain>> {
         let polled = self.op.poll_next(ctx);
-        polled.map(|opt| opt.map(|item| item.clone()))
+        polled.map(|opt| opt.cloned())
     }
 }
 impl<O: MovePushOp> RefPushOp for CloneOp<O>

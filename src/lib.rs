@@ -3,6 +3,7 @@
 // #![feature(impl_trait_in_bindings)]
 #![feature(type_alias_impl_trait)]
 #![feature(btree_retain)]
+#![allow(clippy::redundant_closure)]
 
 pub mod func;
 
@@ -11,4 +12,3 @@ pub mod merge;
 pub mod op;
 
 pub mod monotonic;
-

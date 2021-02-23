@@ -2,17 +2,17 @@ use std::cell::RefCell;
 use std::future::Future;
 use std::pin::Pin;
 use std::rc::Rc;
-use std::task::{ Context, Poll, Waker };
+use std::task::{Context, Poll, Waker};
 
-use super::op::*;
-use super::flow::*;
+use super::*;
 
-
-
-pub fn handoff_op<F: Flow>() -> ( HandoffPushOp<F>, HandoffPullOp<F> ) {
+pub fn handoff_op<F: Flow>() -> (HandoffPushOp<F>, HandoffPullOp<F>) {
     let handoff = Default::default();
     let handoff = Rc::new(RefCell::new(handoff));
-    ( HandoffPushOp::create(handoff.clone()), HandoffPullOp::create(handoff) )
+    (
+        HandoffPushOp::create(handoff.clone()),
+        HandoffPullOp::create(handoff),
+    )
 }
 
 struct Handoff<F: Flow> {
@@ -30,8 +30,7 @@ impl<F: Flow> Default for Handoff<F> {
             _phantom: std::marker::PhantomData,
         }
     }
-} 
-
+}
 
 struct HandoffSend<F: Flow> {
     item: Option<F::Domain>,
@@ -44,7 +43,7 @@ impl<F: Flow> Future for HandoffSend<F> {
     fn poll(self: Pin<&mut Self>, ctx: &mut Context<'_>) -> Poll<Self::Output> {
         let this = self.get_mut();
         match this.item.take() {
-            Some(item) => {        
+            Some(item) => {
                 let mut handoff_mut = this.handoff.borrow_mut();
                 if handoff_mut.item.is_none() {
                     // Buffer has space, add.
@@ -55,30 +54,25 @@ impl<F: Flow> Future for HandoffSend<F> {
                     }
                     // Done.
                     Poll::Ready(())
-                }
-                else {
+                } else {
                     // Buffer full, wait.
                     let old_waker = handoff_mut.send_waker.replace(ctx.waker().clone());
                     assert!(old_waker.is_none()); // Does not allow multiple producer.
                     Poll::Pending
                 }
-            },
+            }
             // Already pushed.
             None => Poll::Ready(()),
         }
     }
 }
 
-
-
 pub struct HandoffPushOp<F: Flow> {
     handoff: Rc<RefCell<Handoff<F>>>,
 }
 impl<F: Flow> HandoffPushOp<F> {
     fn create(handoff: Rc<RefCell<Handoff<F>>>) -> Self {
-        Self {
-            handoff: handoff,
-        }
+        Self { handoff }
     }
 }
 impl<F: Flow> Op for HandoffPushOp<F> {}
@@ -97,16 +91,12 @@ impl<F: Flow> MovePushOp for HandoffPushOp<F> {
     }
 }
 
-
-
 pub struct HandoffPullOp<F: Flow> {
     handoff: Rc<RefCell<Handoff<F>>>,
 }
 impl<F: Flow> HandoffPullOp<F> {
     fn create(handoff: Rc<RefCell<Handoff<F>>>) -> Self {
-        Self {
-            handoff: handoff,
-        }
+        Self { handoff }
     }
 }
 impl<F: Flow> Op for HandoffPullOp<F> {}
@@ -114,7 +104,10 @@ impl<F: Flow> PullOp for HandoffPullOp<F> {
     type Outflow = F;
 }
 impl<F: Flow> MovePullOp for HandoffPullOp<F> {
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<<Self::Outflow as Flow>::Domain>> {
+    fn poll_next(
+        &mut self,
+        ctx: &mut Context<'_>,
+    ) -> Poll<Option<<Self::Outflow as Flow>::Domain>> {
         let mut handoff_mut = self.handoff.borrow_mut();
         match handoff_mut.item.take() {
             Some(item) => {

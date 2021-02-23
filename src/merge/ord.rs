@@ -7,7 +7,7 @@ use super::Merge;
 pub struct Max<T: Ord> {
     _phantom: std::marker::PhantomData<T>,
 }
-impl <T: Ord> Merge for Max<T> {
+impl<T: Ord> Merge for Max<T> {
     type Domain = T;
 
     fn merge_in(val: &mut T, delta: T) {
@@ -24,7 +24,7 @@ impl <T: Ord> Merge for Max<T> {
 pub struct Min<T: Ord> {
     _phantom: std::marker::PhantomData<T>,
 }
-impl <T: Ord> Merge for Min<T> {
+impl<T: Ord> Merge for Min<T> {
     type Domain = T;
 
     fn merge_in(val: &mut T, delta: T) {
