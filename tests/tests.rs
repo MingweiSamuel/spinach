@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::time::Duration;
 
 use spinach::func::*;
 use spinach::op::*;
@@ -26,6 +27,7 @@ pub async fn test_cycle_channel() -> Result<(), String> {
 
     let pull_pipe = MapFilterMoveOp::new(pull_pipe, IncrementFn);
     let pull_pipe = DebugOp::new(pull_pipe, "channel");
+    let pull_pipe = RateLimitOp::new(pull_pipe, Duration::from_millis(100));
 
     push_pipe.push(350).await;
     push_pipe.push(650).await;
@@ -46,6 +48,7 @@ pub async fn test_cycle_handoff() -> Result<(), String> {
 
     let pull_pipe = MapFilterMoveOp::new(pull_pipe, IncrementFn);
     let pull_pipe = DebugOp::new(pull_pipe, "handoff");
+    let pull_pipe = RateLimitOp::new(pull_pipe, Duration::from_millis(100));
 
     push_pipe.push(150).await;
 
@@ -60,11 +63,11 @@ pub async fn test_cycle_handoff() -> Result<(), String> {
 #[tokio::test]
 pub async fn test_kvs() -> Result<(), String> {
 
-    type MyKey = DominatingPair<Max<usize>, Max<&'static str>>;
+    type MyKeyLattice = DominatingPair<Max<usize>, Max<&'static str>>;
 
     type MyHashMap = HashMap<
         &'static str,
-        MyKey
+        MyKeyLattice
     >;
 
     type MyLattice = MapUnion<MyHashMap>;
@@ -87,12 +90,12 @@ pub async fn test_kvs() -> Result<(), String> {
     let pull_pipe = LatticeOp::<_, MyLattice>::new_default(pull_pipe);
 
 
-    let read_foo_0 = NullOp::<RX<MyKey>>::new();
+    let read_foo_0 = NullOp::<RX<MyKeyLattice>>::new();
     let read_foo_0 = DebugOp::new(read_foo_0, "foo 0");
     let read_foo_0 = MonotonicFilterRefOp::new(read_foo_0, MapProject::<&'static str, MyHashMap>::new("foo"));
     // let read_foo_0 = MapFoldRefOp::new(read_foo_0, ReadKeyFn { key: "foo" });
 
-    let read_foo_1 = NullOp::<RX<MyKey>>::new();
+    let read_foo_1 = NullOp::<RX<MyKeyLattice>>::new();
     let read_foo_1 = DebugOp::new(read_foo_1, "foo 1");
     let read_foo_1 = MonotonicFilterRefOp::new(read_foo_1, MapProject::<&'static str, MyHashMap>::new("foo"));
 

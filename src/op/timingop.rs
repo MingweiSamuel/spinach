@@ -1,3 +1,4 @@
+use std::collections::VecDeque;
 use std::future::Future;
 use std::pin::Pin;
 use std::task::{ Context, Poll };
@@ -9,26 +10,23 @@ use super::op::*;
 use super::flow::Flow;
 
 
-pub struct RateLimitOp<O: Op> {
+pub struct RateLimitOp<O: PullOp> {
     op: O,
     interval: Duration,
     sleep: Pin<Box<Sleep>>,
 }
-impl<O: Op> RateLimitOp<O> {
+impl<O: PullOp> RateLimitOp<O> {
     pub fn new(op: O, interval: Duration) -> Self {
-        RateLimitOp {
+        Self {
             op: op,
             interval: interval,
             sleep: Box::pin(time::sleep(interval)),
         }
     }
 }
-impl<O: Op> Op for RateLimitOp<O> {}
+impl<O: PullOp> Op for RateLimitOp<O> {}
 impl<O: PullOp> PullOp for RateLimitOp<O> {
     type Outflow = O::Outflow;
-}
-impl<O: PushOp> PushOp for RateLimitOp<O> {
-    type Inflow = O::Inflow;
 }
 impl<O: MovePullOp> MovePullOp for RateLimitOp<O> {
     fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<<Self::Outflow as Flow>::Domain>> {
@@ -65,23 +63,57 @@ impl<O: RefPullOp> RefPullOp for RateLimitOp<O>
         }
     }
 }
-// impl<O: MovePushOp> MovePushOp for RateLimitOp<O> {
-//     type Feedback = impl Future;
 
-//     fn push(&mut self, item: <Self::Inflow as Flow>::Domain) -> Self::Feedback {
-//         async move {
-//             let item = item;
-//             self.op.push(item).await;
-//         }
-//         // println!("{}: {:?}", self.tag, item);
-//         // self.op.push(item)
-//     }
-// }
-// impl<O: RefPushOp> RefPushOp for RateLimitOp<O> {
-//     type Feedback = O::Feedback;
 
-//     fn push(&mut self, item: &<Self::Inflow as Flow>::Domain) -> Self::Feedback {
-//         println!("{}: {:?}", self.tag, item);
-//         self.op.push(item)
-//     }
-// }
+
+
+
+pub struct BatchingOp<O: PullOp> {
+    op: O,
+    interval: Duration,
+    buffer: VecDeque<<O::Outflow as Flow>::Domain>,
+    sleep: Pin<Box<Sleep>>,
+}
+impl<O: PullOp> BatchingOp<O> {
+    pub fn new(op: O, interval: Duration) -> Self {
+        Self {
+            op: op,
+            interval: interval,
+            buffer: VecDeque::new(),
+            sleep: Box::pin(time::sleep(interval)),
+        }
+    }
+}
+impl<O: PullOp> Op for BatchingOp<O> {}
+impl<O: PullOp> PullOp for BatchingOp<O> {
+    type Outflow = O::Outflow;
+}
+impl<O: MovePullOp> MovePullOp for BatchingOp<O> {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<<Self::Outflow as Flow>::Domain>> {
+        // Pull an element from the upstream op, keeping track if EOS.
+        let poll_state = match self.op.poll_next(ctx) {
+            Poll::Ready(Some(item)) => {
+                self.buffer.push_back(item);
+                Poll::Pending
+            },
+            Poll::Ready(None) => Poll::Ready(None),
+            Poll::Pending => Poll::Pending,
+        };
+
+        match self.sleep.as_mut().poll(ctx) {
+            Poll::Ready(_) => {
+                // If timer is ready.
+                match self.buffer.pop_front() {
+                    // Get an item from the buffer.
+                    Some(item) => Poll::Ready(Some(item)),
+                    // If the buffer is empty, reset the timer.
+                    None => {
+                        self.sleep = Box::pin(time::sleep(self.interval));
+                        poll_state // Propegate EOS or pending.
+                    }
+                }
+            },
+            Poll::Pending => poll_state, // Propegate EOS or pending.
+        }
+    }
+}
