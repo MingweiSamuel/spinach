@@ -98,7 +98,7 @@ asynchronous execution context.</p>
 });</pre></div>
 </div><h4 id="method.enter" class="method"><code>pub fn <a href="#method.enter" class="fnname">enter</a>(&amp;self) -&gt; <a class="struct" href="../../tokio/runtime/struct.EnterGuard.html" title="struct tokio::runtime::EnterGuard">EnterGuard</a>&lt;'_&gt;</code><a class="srclink" href="../../src/tokio/runtime/mod.rs.html#488-490" title="goto source code">[src]</a></h4><div class="docblock"><p>Enter the runtime context.</p>
 <p>This allows you to construct types that must have an executor
-available on creation such as <a href="../../tokio/time/struct.Sleep.html"><code>Sleep</code></a> or <a href="struct@crate::net::TcpStream"><code>TcpStream</code></a>. It will
+available on creation such as <a href="../../tokio/time/struct.Sleep.html"><code>Sleep</code></a> or <a href="../../tokio/net/struct.TcpStream.html"><code>TcpStream</code></a>. It will
 also allow you to call methods such as <a href="../../tokio/task/fn.spawn.html"><code>tokio::spawn</code></a>.</p>
 <h1 id="example" class="section-header"><a href="#example">Example</a></h1>
 <div class="example-wrap"><pre class="rust rust-example-rendered">

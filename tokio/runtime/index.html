@@ -130,7 +130,7 @@ the <code>rt</code> feature flag.</p>
 <p>When configuring a runtime by hand, no resource drivers are enabled by
 default. In this case, attempting to use networking types or time types will
 fail. In order to enable these types, the resource drivers must be enabled.
-This is done with <a href="../../tokio/runtime/struct.Builder.html#structfield.enable_io"><code>Builder::enable_io</code></a> and <a href="../../tokio/runtime/struct.Builder.html#method.enable_time"><code>Builder::enable_time</code></a>. As a
+This is done with <a href="../../tokio/runtime/struct.Builder.html#method.enable_io"><code>Builder::enable_io</code></a> and <a href="../../tokio/runtime/struct.Builder.html#method.enable_time"><code>Builder::enable_time</code></a>. As a
 shorthand, <a href="../../tokio/runtime/struct.Builder.html#method.enable_all"><code>Builder::enable_all</code></a> enables both resource drivers.</p>
 <h2 id="lifetime-of-spawned-threads" class="section-header"><a href="#lifetime-of-spawned-threads">Lifetime of spawned threads</a></h2>
 <p>The runtime may spawn threads depending on its configuration and usage. The

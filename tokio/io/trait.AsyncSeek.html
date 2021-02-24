@@ -9,7 +9,7 @@
 with the asynchronous task system. In particular, the <code>start_seek</code>
 method, unlike <a href="https://doc.rust-lang.org/nightly/std/io/trait.Seek.html#tymethod.seek"><code>Seek::seek</code></a>, will not block the calling thread.</p>
 <p>Utilities for working with <code>AsyncSeek</code> values are provided by
-<a href="crate::io::AsyncSeekExt"><code>AsyncSeekExt</code></a>.</p>
+<a href="../../tokio/io/trait.AsyncSeekExt.html"><code>AsyncSeekExt</code></a>.</p>
 </div><h2 id="required-methods" class="small-section-header">Required methods<a href="#required-methods" class="anchor"></a></h2><div class="methods"><h3 id="tymethod.start_seek" class="method"><code>fn <a href="#tymethod.start_seek" class="fnname">start_seek</a>(self: <a class="struct" href="https://doc.rust-lang.org/nightly/core/pin/struct.Pin.html" title="struct core::pin::Pin">Pin</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;mut </a>Self&gt;, position: <a class="enum" href="https://doc.rust-lang.org/nightly/std/io/enum.SeekFrom.html" title="enum std::io::SeekFrom">SeekFrom</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>&gt;</code><a class="srclink" href="../../src/tokio/io/async_seek.rs.html#33" title="goto source code">[src]</a></h3><div class="docblock"><p>Attempts to seek to an offset, in bytes, in a stream.</p>
 <p>A seek beyond the end of a stream is allowed, but behavior is defined
 by the implementation.</p>
