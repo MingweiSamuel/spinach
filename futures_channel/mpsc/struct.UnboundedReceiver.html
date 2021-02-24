@@ -8,7 +8,7 @@
 still enabling the receiver to drain messages that are buffered.</p>
 </div><h4 id="method.try_next" class="method"><code>pub fn <a href="#method.try_next" class="fnname">try_next</a>(&amp;mut self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;T&gt;, <a class="struct" href="../../futures_channel/mpsc/struct.TryRecvError.html" title="struct futures_channel::mpsc::TryRecvError">TryRecvError</a>&gt;</code><a class="srclink" href="../../src/futures_channel/mpsc/mod.rs.html#1157-1164" title="goto source code">[src]</a></h4><div class="docblock"><p>Tries to receive the next message without notifying a context if empty.</p>
 <p>It is not recommended to call this function from inside of a future,
-only when you've otherwise arranged to be notified when the channel is
+only when you’ve otherwise arranged to be notified when the channel is
 no longer empty.</p>
 <p>This function will panic if called after <code>try_next</code> or <code>poll_next</code> has
 returned <code>None</code>.</p>

@@ -26,7 +26,7 @@ accross multiple threads.</p>
 <p>Calls to <code>shutdown</code> and <code>shutdown_timeout</code> require exclusive ownership of
 the runtime type and this can be achieved via <code>Arc::try_unwrap</code> when only
 one strong count reference is left over.</p>
-</div><h2 id="implementations" class="small-section-header">Implementations<a href="#implementations" class="anchor"></a></h2><h3 id="impl" class="impl"><code class="in-band">impl <a class="struct" href="../../tokio/runtime/struct.Runtime.html" title="struct tokio::runtime::Runtime">Runtime</a></code><a href="#impl" class="anchor"></a><a class="srclink" href="../../src/tokio/runtime/mod.rs.html#289-562" title="goto source code">[src]</a></h3><div class="impl-items"><h4 id="method.handle" class="method"><code>pub fn <a href="#method.handle" class="fnname">handle</a>(&amp;self) -&gt; &amp;<a class="struct" href="../../tokio/runtime/struct.Handle.html" title="struct tokio::runtime::Handle">Handle</a></code><a class="srclink" href="../../src/tokio/runtime/mod.rs.html#342-344" title="goto source code">[src]</a></h4><div class="docblock"><p>Return a handle to the runtime's spawner.</p>
+</div><h2 id="implementations" class="small-section-header">Implementations<a href="#implementations" class="anchor"></a></h2><h3 id="impl" class="impl"><code class="in-band">impl <a class="struct" href="../../tokio/runtime/struct.Runtime.html" title="struct tokio::runtime::Runtime">Runtime</a></code><a href="#impl" class="anchor"></a><a class="srclink" href="../../src/tokio/runtime/mod.rs.html#289-562" title="goto source code">[src]</a></h3><div class="impl-items"><h4 id="method.handle" class="method"><code>pub fn <a href="#method.handle" class="fnname">handle</a>(&amp;self) -&gt; &amp;<a class="struct" href="../../tokio/runtime/struct.Handle.html" title="struct tokio::runtime::Handle">Handle</a></code><a class="srclink" href="../../src/tokio/runtime/mod.rs.html#342-344" title="goto source code">[src]</a></h4><div class="docblock"><p>Return a handle to the runtime’s spawner.</p>
 <p>The returned handle can be used to spawn tasks that run on this runtime, and can
 be cloned to allow moving the <code>Handle</code> to other threads.</p>
 <h1 id="examples" class="section-header"><a href="#examples">Examples</a></h1>
@@ -40,7 +40,7 @@ be cloned to allow moving the <code>Handle</code> to other threads.</p>
 
 <span class="comment">// Use the handle...</span></pre></div>
 </div><h4 id="method.spawn" class="method"><code>pub fn <a href="#method.spawn" class="fnname">spawn</a>&lt;F&gt;(&amp;self, future: F) -&gt; <a class="struct" href="../../tokio/task/struct.JoinHandle.html" title="struct tokio::task::JoinHandle">JoinHandle</a>&lt;F::<a class="type" href="https://doc.rust-lang.org/nightly/core/future/future/trait.Future.html#associatedtype.Output" title="type core::future::future::Future::Output">Output</a>&gt;<span class="notable-traits"><span class="notable-traits-tooltip">ⓘ<div class="notable-traits-tooltiptext"><span class="docblock"><h3 class="notable">Notable traits for <a class="struct" href="../../tokio/task/struct.JoinHandle.html" title="struct tokio::task::JoinHandle">JoinHandle</a>&lt;T&gt;</h3><code class="content"><span class="where fmt-newline">impl&lt;T&gt; <a class="trait" href="https://doc.rust-lang.org/nightly/core/future/future/trait.Future.html" title="trait core::future::future::Future">Future</a> for <a class="struct" href="../../tokio/task/struct.JoinHandle.html" title="struct tokio::task::JoinHandle">JoinHandle</a>&lt;T&gt;</span><span class="where fmt-newline">    type <a href="https://doc.rust-lang.org/nightly/core/future/future/trait.Future.html#associatedtype.Output" class="type">Output</a> = <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;T, <a class="struct" href="../../tokio/task/struct.JoinError.html" title="struct tokio::task::JoinError">JoinError</a>&gt;;</span></code></span></div></span></span> <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;F: <a class="trait" href="https://doc.rust-lang.org/nightly/core/future/future/trait.Future.html" title="trait core::future::future::Future">Future</a> + <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Send.html" title="trait core::marker::Send">Send</a> + 'static,<br>&nbsp;&nbsp;&nbsp;&nbsp;F::<a class="type" href="https://doc.rust-lang.org/nightly/core/future/future/trait.Future.html#associatedtype.Output" title="type core::future::future::Future::Output">Output</a>: <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Send.html" title="trait core::marker::Send">Send</a> + 'static,&nbsp;</span></code><a class="srclink" href="../../src/tokio/runtime/mod.rs.html#372-378" title="goto source code">[src]</a></h4><div class="docblock"><p>Spawn a future onto the Tokio runtime.</p>
-<p>This spawns the given future onto the runtime's executor, usually a
+<p>This spawns the given future onto the runtime’s executor, usually a
 thread pool. The thread pool is then responsible for polling the future
 until it completes.</p>
 <p>See <a href="index.html">module level</a> documentation for more details.</p>
@@ -68,7 +68,7 @@ until it completes.</p>
     <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;now running on a worker thread&quot;</span>);
 });</pre></div>
 </div><h4 id="method.block_on" class="method"><code>pub fn <a href="#method.block_on" class="fnname">block_on</a>&lt;F:&nbsp;<a class="trait" href="https://doc.rust-lang.org/nightly/core/future/future/trait.Future.html" title="trait core::future::future::Future">Future</a>&gt;(&amp;self, future: F) -&gt; F::<a class="type" href="https://doc.rust-lang.org/nightly/core/future/future/trait.Future.html#associatedtype.Output" title="type core::future::future::Future::Output">Output</a></code><a class="srclink" href="../../src/tokio/runtime/mod.rs.html#446-454" title="goto source code">[src]</a></h4><div class="docblock"><p>Run a future to completion on the Tokio runtime. This is the
-runtime's entry point.</p>
+runtime’s entry point.</p>
 <p>This runs the given future on the runtime, blocking until it is
 complete, and yielding its resolved result. Any tasks or timers
 which the future spawns internally will be executed on the runtime.</p>
@@ -81,7 +81,7 @@ can be called concurrently from multiple threads. The first call
 will take ownership of the io and timer drivers. This means
 other threads which do not own the drivers will hook into that one.
 When the first <code>block_on</code> completes, other threads will be able to
-&quot;steal&quot; the driver to allow continued execution of their futures.</p>
+“steal” the driver to allow continued execution of their futures.</p>
 <h1 id="panics" class="section-header"><a href="#panics">Panics</a></h1>
 <p>This function panics if the provided future panics, or if called within an
 asynchronous execution context.</p>

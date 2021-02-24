@@ -10,7 +10,7 @@ dispatches I/O events to tasks that depend on them.</li>
 <li>A <strong>scheduler</strong> to execute <a href="../../tokio/task/index.html">tasks</a> that use these I/O resources.</li>
 <li>A <strong>timer</strong> for scheduling work to run after a set period of time.</li>
 </ul>
-<p>Tokio's <a href="../../tokio/runtime/struct.Runtime.html"><code>Runtime</code></a> bundles all of these services as a single type, allowing
+<p>Tokio’s <a href="../../tokio/runtime/struct.Runtime.html"><code>Runtime</code></a> bundles all of these services as a single type, allowing
 them to be started, shut down, and configured together. However, often it is
 not required to configure a <a href="../../tokio/runtime/struct.Runtime.html"><code>Runtime</code></a> manually, and a user may just use the
 <a href="../attr.main.html"><code>tokio::main</code></a> attribute macro, which creates a <a href="../../tokio/runtime/struct.Runtime.html"><code>Runtime</code></a> under the hood.</p>

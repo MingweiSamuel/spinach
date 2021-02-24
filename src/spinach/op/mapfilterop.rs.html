@@ -195,6 +195,9 @@
 <span id="192">192</span>
 <span id="193">193</span>
 <span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 
@@ -204,6 +207,7 @@
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">func</span>::{<span class="ident">PureFn</span>, <span class="ident">PureRefFn</span>};
 
+<span class="doccomment">/// Map-Flatten op for with owned-&gt;owned values.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MapFlattenMoveOp</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">Op</span>, <span class="ident">F</span>: <span class="ident">PureFn</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">F</span>::<span class="ident">Outdomain</span>: <span class="ident">IntoIterator</span>,
@@ -305,6 +309,7 @@
 <span class="comment">//     type Outflow = Df&lt;&lt;F::Outdomain as IntoIterator&gt;::Item&gt;;</span>
 <span class="comment">// }</span>
 
+<span class="doccomment">/// Map-Filter op for owned-&gt;owned values.</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span> <span class="ident">PullOp</span> <span class="kw">for</span> <span class="ident">MapFilterMoveOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span><span class="op">&lt;</span><span class="ident">F</span>::<span class="ident">Indomain</span><span class="op">&gt;</span><span class="op">&gt;</span>,
@@ -356,6 +361,7 @@
     }
 }
 
+<span class="doccomment">/// Map-Fold op for ref-&gt;owned values.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MapFoldRefOp</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">Op</span>, <span class="ident">F</span>: <span class="ident">PureRefFn</span><span class="op">&gt;</span> {
     <span class="ident">op</span>: <span class="ident">O</span>,
     <span class="ident">func</span>: <span class="ident">F</span>,

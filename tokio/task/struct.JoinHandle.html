@@ -44,7 +44,7 @@ If the return value is an i32, the join handle has type <code>JoinHandle&lt;i32&
 <span class="kw">let</span> <span class="ident">join_handle</span>: <span class="ident">task</span>::<span class="ident">JoinHandle</span><span class="op">&lt;</span>()<span class="op">&gt;</span> <span class="op">=</span> <span class="ident">task</span>::<span class="ident">spawn</span>(<span class="kw">async</span> {
     <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;I return nothing.&quot;</span>);
 });</pre></div>
-<p>Note that <code>handle.await</code> doesn't give you the return type directly. It is wrapped in a
+<p>Note that <code>handle.await</code> doesn’t give you the return type directly. It is wrapped in a
 <code>Result</code> because panics in the spawned task are caught by Tokio. The <code>?</code> operator has
 to be double chained to extract the returned value:</p>
 

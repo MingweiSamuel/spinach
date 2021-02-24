@@ -51,7 +51,7 @@ identifiers.</p>
 different set of keywords than Rust, we might come across macro input
 that involves raw identifiers to refer to ordinary variables in the
 other language with a name that happens to be a Rust keyword.</p>
-<p>The function below appends an identifier from the caller's input onto a
+<p>The function below appends an identifier from the caller’s input onto a
 fixed prefix. Without using <code>unraw()</code>, this would tend to produce
 invalid identifiers like <code>__pyo3_get_r#move</code>.</p>
 

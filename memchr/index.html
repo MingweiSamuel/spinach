@@ -5,11 +5,11 @@
 <p>The <code>memchr</code> function is traditionally provided by libc, however, the
 performance of <code>memchr</code> can vary significantly depending on the specific
 implementation of libc that is used. They can range from manually tuned
-Assembly implementations (like that found in GNU's libc) all the way to
+Assembly implementations (like that found in GNU’s libc) all the way to
 non-vectorized C implementations (like that found in MUSL).</p>
 <p>To smooth out the differences between implementations of libc, at least
 on <code>x86_64</code> for Rust 1.27+, this crate provides its own implementation of
-<code>memchr</code> that should perform competitively with the one found in GNU's libc.
+<code>memchr</code> that should perform competitively with the one found in GNU’s libc.
 The implementation is in pure Rust and has no dependency on a C compiler or an
 Assembler.</p>
 <p>Additionally, GNU libc also provides an extension, <code>memrchr</code>. This crate

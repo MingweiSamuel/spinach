@@ -47,7 +47,7 @@ branch, which evaluates if none of the other branches match their patterns:</p>
 <p>The macro aggregates all <code>&lt;async expression&gt;</code> expressions and runs them
 concurrently on the <strong>current</strong> task. Once the <strong>first</strong> expression
 completes with a value that matches its <code>&lt;pattern&gt;</code>, the <code>select!</code> macro
-returns the result of evaluating the completed branch's <code>&lt;handler&gt;</code>
+returns the result of evaluating the completed branch’s <code>&lt;handler&gt;</code>
 expression.</p>
 <p>Additionally, each branch may include an optional <code>if</code> precondition. This
 precondition is evaluated <strong>before</strong> the <code>&lt;async expression&gt;</code>. If the
@@ -57,7 +57,7 @@ capability is useful when using <code>select!</code> within a loop.</p>
 <ol>
 <li>Evaluate all provided <code>&lt;precondition&gt;</code> expressions. If the precondition
 returns <code>false</code>, disable the branch for the remainder of the current call
-to <code>select!</code>. Re-entering <code>select!</code> due to a loop clears the &quot;disabled&quot;
+to <code>select!</code>. Re-entering <code>select!</code> due to a loop clears the “disabled”
 state.</li>
 <li>Aggregate the <code>&lt;async expression&gt;</code>s from each branch, including the
 disabled ones. If the branch is disabled, <code>&lt;async expression&gt;</code> is still
@@ -188,7 +188,7 @@ expression>.</p>
     <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">next</span> <span class="op">=</span><span class="op">=</span> <span class="number">1</span> <span class="op">|</span><span class="op">|</span> <span class="ident">next</span> <span class="op">=</span><span class="op">=</span> <span class="number">4</span>);
 }</pre></div>
 <p>Collect the contents of two streams. In this example, we rely on pattern
-matching and the fact that <code>stream::iter</code> is &quot;fused&quot;, i.e. once the stream
+matching and the fact that <code>stream::iter</code> is “fused”, i.e. once the stream
 is complete, all calls to <code>next()</code> return <code>None</code>.</p>
 
 <div class="example-wrap"><pre class="rust rust-example-rendered">

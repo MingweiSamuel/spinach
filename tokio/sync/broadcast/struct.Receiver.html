@@ -35,7 +35,7 @@ wrapper.</p>
 dropped, indicating that no further values can be sent on the channel.</p>
 <p>If the <a href="../../../tokio/sync/broadcast/struct.Receiver.html"><code>Receiver</code></a> handle falls behind, once the channel is full, newly
 sent values will overwrite old values. At this point, a call to <a href="../../../tokio/sync/broadcast/struct.Receiver.html#method.recv"><code>recv</code></a>
-will return with <code>Err(RecvError::Lagged)</code> and the <a href="../../../tokio/sync/broadcast/struct.Receiver.html"><code>Receiver</code></a>'s
+will return with <code>Err(RecvError::Lagged)</code> and the <a href="../../../tokio/sync/broadcast/struct.Receiver.html"><code>Receiver</code></a>’s
 internal cursor is updated to point to the oldest value still held by
 the channel. A subsequent call to <a href="../../../tokio/sync/broadcast/struct.Receiver.html#method.recv"><code>recv</code></a> will return this value
 <strong>unless</strong> it has been since overwritten.</p>
@@ -83,7 +83,7 @@ the channel. A subsequent call to <a href="../../../tokio/sync/broadcast/struct.
     <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">30</span>, <span class="ident">rx</span>.<span class="ident">recv</span>().<span class="kw">await</span>.<span class="ident">unwrap</span>());
 }</pre></div>
 </div><h4 id="method.try_recv" class="method"><code>pub fn <a href="#method.try_recv" class="fnname">try_recv</a>(&amp;mut self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;T, <a class="enum" href="../../../tokio/sync/broadcast/error/enum.TryRecvError.html" title="enum tokio::sync::broadcast::error::TryRecvError">TryRecvError</a>&gt;</code><a class="srclink" href="../../../src/tokio/sync/broadcast.rs.html#922-925" title="goto source code">[src]</a></h4><div class="docblock"><p>Attempts to return a pending value on this receiver without awaiting.</p>
-<p>This is useful for a flavor of &quot;optimistic check&quot; before deciding to
+<p>This is useful for a flavor of “optimistic check” before deciding to
 await on a receiver.</p>
 <p>Compared with <a href="../../../tokio/sync/broadcast/struct.Receiver.html#method.recv"><code>recv</code></a>, this function has three failure cases instead of two
 (one for closed, one for an empty buffer, one for a lagging receiver).</p>
@@ -91,7 +91,7 @@ await on a receiver.</p>
 dropped, indicating that no further values can be sent on the channel.</p>
 <p>If the <a href="../../../tokio/sync/broadcast/struct.Receiver.html"><code>Receiver</code></a> handle falls behind, once the channel is full, newly
 sent values will overwrite old values. At this point, a call to <a href="../../../tokio/sync/broadcast/struct.Receiver.html#method.recv"><code>recv</code></a>
-will return with <code>Err(TryRecvError::Lagged)</code> and the <a href="../../../tokio/sync/broadcast/struct.Receiver.html"><code>Receiver</code></a>'s
+will return with <code>Err(TryRecvError::Lagged)</code> and the <a href="../../../tokio/sync/broadcast/struct.Receiver.html"><code>Receiver</code></a>’s
 internal cursor is updated to point to the oldest value still held by
 the channel. A subsequent call to <a href="../../../tokio/sync/broadcast/struct.Receiver.html#method.try_recv"><code>try_recv</code></a> will return this value
 <strong>unless</strong> it has been since overwritten. If there are no values to

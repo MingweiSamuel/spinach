@@ -20,7 +20,7 @@ this method if the underlying <a href="../../futures/prelude/trait.AsyncRead.htm
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">take</span>.<span class="ident">limit</span>(), <span class="number">2</span>);</pre></div>
 </div><h4 id="method.set_limit" class="method"><code>pub fn <a href="#method.set_limit" class="fnname">set_limit</a>(&amp;mut self, limit: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>)</code><a class="srclink" href="../../src/futures_util/io/take.rs.html#78" title="goto source code">[src]</a></h4><div class="docblock"><p>Sets the number of bytes that can be read before this instance will
 return EOF. This is the same as constructing a new <code>Take</code> instance, so
-the amount of bytes read and the previous limit value don't matter when
+the amount of bytes read and the previous limit value don’t matter when
 calling this method.</p>
 <h1 id="examples-1" class="section-header"><a href="#examples-1">Examples</a></h1>
 <div class="example-wrap"><pre class="rust rust-example-rendered">

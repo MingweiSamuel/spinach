@@ -28,7 +28,7 @@ be read out of the channel. In this case, all further attempts to send will
 result in an error.</p>
 <h1 id="clean-shutdown" class="section-header"><a href="#clean-shutdown">Clean Shutdown</a></h1>
 <p>When the <a href="../../../tokio/sync/mpsc/struct.Receiver.html"><code>Receiver</code></a> is dropped, it is possible for unprocessed messages to
-remain in the channel. Instead, it is usually desirable to perform a &quot;clean&quot;
+remain in the channel. Instead, it is usually desirable to perform a “clean”
 shutdown. To do this, the receiver first calls <code>close</code>, which will prevent
 any further messages to be sent into the channel. Then, the receiver
 consumes the channel to completion, at which point the receiver can be

@@ -88,11 +88,11 @@ fields in safe code in your destructor.</p>
 <p>You must make sure that you uphold the <a href="https://doc.rust-lang.org/nightly/core/pin/index.html#drop-guarantee"><code>Drop</code>
 guarantee</a>: once your struct is pinned, the memory that
 contains the content is not overwritten or deallocated without calling
-the content's destructors.</p>
-<p>Safe code doesn't need to worry about this - the only way to violate
+the content’s destructors.</p>
+<p>Safe code doesn’t need to worry about this - the only way to violate
 this requirement is to manually deallocate memory (which is <code>unsafe</code>),
 or to overwrite a field with something else.
-Because your custom destructor takes <a href="https://doc.rust-lang.org/nightly/core/pin/struct.Pin.html"><code>Pin</code></a><code>&lt;&amp;mut MyStruct&gt;</code>, it's
+Because your custom destructor takes <a href="https://doc.rust-lang.org/nightly/core/pin/struct.Pin.html"><code>Pin</code></a><code>&lt;&amp;mut MyStruct&gt;</code>, it’s
 impossible to obtain a mutable reference to a pin-projected field in safe
 code.</p>
 </li>
@@ -254,7 +254,7 @@ ensure that it is only implemented when all pin-projected fields implement
 <a href="https://doc.rust-lang.org/nightly/core/marker/trait.Unpin.html" title="Unpin"><code>Unpin</code></a>.</p>
 <p>See <a href="https://docs.rs/pin-project/1/pin_project/trait.UnsafeUnpin.html"><code>UnsafeUnpin</code></a> trait for more details.</p>
 <h1 id="pinned_drop" class="section-header"><a href="#pinned_drop"><code>#[pinned_drop]</code></a></h1>
-<p>In order to correctly implement pin projections, a type's <a href="https://doc.rust-lang.org/nightly/core/ops/drop/trait.Drop.html" title="Drop"><code>Drop</code></a> impl must
+<p>In order to correctly implement pin projections, a type’s <a href="https://doc.rust-lang.org/nightly/core/ops/drop/trait.Drop.html" title="Drop"><code>Drop</code></a> impl must
 not move out of any structurally pinned fields. Unfortunately,
 <a href="https://doc.rust-lang.org/nightly/core/ops/drop/trait.Drop.html#tymethod.drop" title="Drop::drop"><code>Drop::drop</code></a> takes <code>&amp;mut Self</code>, not <a href="https://doc.rust-lang.org/nightly/core/pin/struct.Pin.html"><code>Pin</code></a><code>&lt;&amp;mut Self&gt;</code>.</p>
 <p>To ensure that this requirement is upheld, the <code>#[pin_project]</code> attribute

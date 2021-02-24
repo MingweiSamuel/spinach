@@ -13,7 +13,7 @@ completing task execution:</p>
 <span class="kw">let</span> <span class="ident">enter</span> <span class="op">=</span> <span class="ident">enter</span>().<span class="ident">expect</span>(<span class="string">&quot;...&quot;</span>);
 <span class="comment">/* run task */</span>
 <span class="ident">drop</span>(<span class="ident">enter</span>);</pre></div>
-<p>Doing so ensures that executors aren't
+<p>Doing so ensures that executors aren’t
 accidentally invoked in a nested fashion.</p>
 <h1 id="error" class="section-header"><a href="#error">Error</a></h1>
 <p>Returns an error if the current thread is already marked, in which case the

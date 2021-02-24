@@ -26,7 +26,7 @@ certain timeout. Be aware that this will still not cancel the tasks — they
 are simply allowed to keep running after the method returns.</p>
 <p>Note that if you are using the single threaded runtime, this function will
 still spawn additional threads for blocking operations. The basic
-scheduler's single thread is only used for asynchronous code.</p>
+scheduler’s single thread is only used for asynchronous code.</p>
 <h1 id="examples" class="section-header"><a href="#examples">Examples</a></h1>
 <div class="example-wrap"><pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">tokio</span>::<span class="ident">task</span>;

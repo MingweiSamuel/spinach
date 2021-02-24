@@ -23,7 +23,7 @@ result in an error.</p>
 <h1 id="clean-shutdown" class="section-header"><a href="#clean-shutdown">Clean Shutdown</a></h1>
 <p>If the <a href="struct.Receiver.html"><code>Receiver</code></a> is simply dropped, then it is possible for
 there to be messages still in the channel that will not be processed. As
-such, it is usually desirable to perform a &quot;clean&quot; shutdown. To do this, the
+such, it is usually desirable to perform a “clean” shutdown. To do this, the
 receiver will first call <code>close</code>, which will prevent any further messages to
 be sent into the channel. Then, the receiver consumes the channel to
 completion, at which point the receiver can be dropped.</p>

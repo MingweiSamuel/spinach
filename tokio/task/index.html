@@ -6,8 +6,8 @@
 <p>A <em>task</em> is a light weight, non-blocking unit of execution. A task is similar
 to an OS thread, but rather than being managed by the OS scheduler, they are
 managed by the <a href="../../tokio/runtime/index.html">Tokio runtime</a>. Another name for this general pattern is
-<a href="https://en.wikipedia.org/wiki/Green_threads">green threads</a>. If you are familiar with <a href="https://tour.golang.org/concurrency/1">Go's goroutines</a>, <a href="https://kotlinlang.org/docs/reference/coroutines-overview.html">Kotlin's
-coroutines</a>, or <a href="http://erlang.org/doc/getting_started/conc_prog.html#processes">Erlang's processes</a>, you can think of Tokio's tasks as
+<a href="https://en.wikipedia.org/wiki/Green_threads">green threads</a>. If you are familiar with <a href="https://tour.golang.org/concurrency/1">Go’s goroutines</a>, <a href="https://kotlinlang.org/docs/reference/coroutines-overview.html">Kotlin’s
+coroutines</a>, or <a href="http://erlang.org/doc/getting_started/conc_prog.html#processes">Erlang’s processes</a>, you can think of Tokio’s tasks as
 something similar.</p>
 <p>Key points about tasks include:</p>
 <ul>
@@ -25,7 +25,7 @@ operating system allows each thread to run for a period of time, and then
 <em>preempts</em> it, temporarily pausing that thread and switching to another.
 Tasks, on the other hand, implement <em>cooperative multitasking</em>. In
 cooperative multitasking, a task is allowed to run until it <em>yields</em>,
-indicating to the Tokio runtime's scheduler that it cannot currently
+indicating to the Tokio runtime’s scheduler that it cannot currently
 continue executing. When a task yields, the Tokio runtime switches to
 executing the next task.</p>
 </li>
@@ -44,7 +44,7 @@ running blocking operations in an asynchronous context.</p>
 <p>This module provides the following APIs for working with tasks:</p>
 <h3 id="spawning" class="section-header"><a href="#spawning">Spawning</a></h3>
 <p>Perhaps the most important function in this module is <a href="../../tokio/task/fn.spawn.html"><code>task::spawn</code></a>. This
-function can be thought of as an async equivalent to the standard library's
+function can be thought of as an async equivalent to the standard library’s
 <a href="https://doc.rust-lang.org/nightly/std/thread/fn.spawn.html"><code>thread::spawn</code></a>. It takes an <code>async</code> block or other
 <a href="https://doc.rust-lang.org/nightly/core/future/future/trait.Future.html">future</a>, and creates a new task to run that work concurrently:</p>
 
@@ -71,7 +71,7 @@ the spawned task. For example:</p>
 <span class="comment">// Await the result of the spawned task.</span>
 <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">join</span>.<span class="kw">await</span><span class="question-mark">?</span>;
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">result</span>, <span class="string">&quot;hello world!&quot;</span>);</pre></div>
-<p>Again, like <code>std::thread</code>'s <a href="https://doc.rust-lang.org/nightly/std/thread/struct.JoinHandle.html"><code>JoinHandle</code> type</a>, if the spawned
+<p>Again, like <code>std::thread</code>’s <a href="https://doc.rust-lang.org/nightly/std/thread/struct.JoinHandle.html"><code>JoinHandle</code> type</a>, if the spawned
 task panics, awaiting its <code>JoinHandle</code> will return a <a href="../../tokio/task/struct.JoinError.html"><code>JoinError</code></a>`. For
 example:</p>
 
@@ -84,7 +84,7 @@ example:</p>
 
 <span class="comment">// The returned result indicates that the task failed.</span>
 <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">join</span>.<span class="kw">await</span>.<span class="ident">is_err</span>());</pre></div>
-<p><code>spawn</code>, <code>JoinHandle</code>, and <code>JoinError</code> are present when the &quot;rt&quot;
+<p><code>spawn</code>, <code>JoinHandle</code>, and <code>JoinError</code> are present when the “rt”
 feature flag is enabled.</p>
 <h3 id="blocking-and-yielding" class="section-header"><a href="#blocking-and-yielding">Blocking and Yielding</a></h3>
 <p>As we discussed above, code running in asynchronous tasks should not perform
@@ -138,9 +138,9 @@ context switches.</p>
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">result</span>, <span class="string">&quot;blocking completed&quot;</span>);</pre></div>
 <h4 id="yield_now" class="section-header"><a href="#yield_now">yield_now</a></h4>
 <p>In addition, this module provides a <a href="../../tokio/task/fn.yield_now.html"><code>task::yield_now</code></a> async function
-that is analogous to the standard library's <a href="https://doc.rust-lang.org/nightly/std/thread/fn.yield_now.html"><code>thread::yield_now</code></a>. Calling
+that is analogous to the standard library’s <a href="https://doc.rust-lang.org/nightly/std/thread/fn.yield_now.html"><code>thread::yield_now</code></a>. Calling
 and <code>await</code>ing this function will cause the current task to yield to the
-Tokio runtime's scheduler, allowing other tasks to be
+Tokio runtime’s scheduler, allowing other tasks to be
 scheduled. Eventually, the yielding task will be polled again, allowing it
 to execute. For example:</p>
 

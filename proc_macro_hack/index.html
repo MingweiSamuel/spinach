@@ -20,7 +20,7 @@ invoked in statement or expression position.</p>
 functions and private modules are fine but nothing can be public.</p>
 <p><a href="https://github.com/dtolnay/proc-macro-hack/tree/master/demo-hack-impl">» example of an implementation crate</a></p>
 <p>Just like you would use a #[proc_macro] attribute to define a natively
-supported procedural macro, use proc-macro-hack's #[proc_macro_hack]
+supported procedural macro, use proc-macro-hack’s #[proc_macro_hack]
 attribute to define a procedural macro that works in expression position.
 The function signature is the same as for ordinary function-like procedural
 macros.</p>
@@ -89,11 +89,11 @@ same proc-macro-hack macro nor calls to any other proc-macro-hack macros.
 Use <a href="https://docs.rs/proc-macro-nested"><code>proc-macro-nested</code></a> if you require support for nested invocations.</p>
 </li>
 <li>
-<p>By default, hygiene is structured such that the expanded code can't refer
+<p>By default, hygiene is structured such that the expanded code can’t refer
 to local variables other than those passed by name somewhere in the macro
-input. If your macro must refer to <em>local</em> variables that don't get named
+input. If your macro must refer to <em>local</em> variables that don’t get named
 in the macro input, use <code>#[proc_macro_hack(fake_call_site)]</code> on the
-re-export in your declaration crate. <em>Most macros won't need this.</em></p>
+re-export in your declaration crate. <em>Most macros won’t need this.</em></p>
 </li>
 <li>
 <p>On compilers that are new enough to natively support proc macros in

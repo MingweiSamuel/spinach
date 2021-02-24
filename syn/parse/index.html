@@ -80,7 +80,7 @@ implements the <a href="trait.Parse.html"><code>Parse</code></a> trait, which in
 <p>The <a href="../macro.parse_quote.html"><code>parse_quote!</code></a> macro also uses this approach.</p>
 <h1 id="the-parser-trait" class="section-header"><a href="#the-parser-trait">The <code>Parser</code> trait</a></h1>
 <p>Some types can be parsed in several ways depending on context. For example
-an <a href="../struct.Attribute.html"><code>Attribute</code></a> can be either &quot;outer&quot; like <code>#[...]</code> or &quot;inner&quot; like
+an <a href="../struct.Attribute.html"><code>Attribute</code></a> can be either “outer” like <code>#[...]</code> or “inner” like
 <code>#![...]</code> and parsing the wrong one would be a bug. Similarly <a href="../punctuated/index.html"><code>Punctuated</code></a>
 may or may not allow trailing punctuation, and parsing it the wrong way
 would either reject valid input or accept invalid input.</p>

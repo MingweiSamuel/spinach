@@ -31,7 +31,7 @@ would otherwise fall within it. This guarantees that calling
 <code>.into_inner()</code> immediately after a seek yields the underlying reader
 at the same position.</p>
 <p>See <a href="../../futures/prelude/trait.AsyncSeek.html"><code>AsyncSeek</code></a> for more details.</p>
-<p>Note: In the edge case where you're seeking with <code>SeekFrom::Current(n)</code>
+<p>Note: In the edge case where you’re seeking with <code>SeekFrom::Current(n)</code>
 where <code>n</code> minus the internal buffer length overflows an <code>i64</code>, two
 seeks will be performed instead of one. If the second seek returns
 <code>Err</code>, the underlying reader will be left at the same position it would

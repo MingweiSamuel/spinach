@@ -33,18 +33,15 @@
 <span id="30">30</span>
 <span id="31">31</span>
 <span id="32">32</span>
-<span id="33">33</span>
-<span id="34">34</span>
-<span id="35">35</span>
-<span id="36">36</span>
-<span id="37">37</span>
-<span id="38">38</span>
-<span id="39">39</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="comment">// use std::task::{ Context, Poll };</span>
-
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
+<span class="doccomment">/// An Op for converting an owned flow into a reference flow.</span>
+<span class="doccomment">/// Simply takes the reference of the owned value.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Note: Only supports Push. Supports both [`Df`] and [`Rx`].</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// To go from ref to owned (the opposite of this), use [`CloneOp`].</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ReferenceOp</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">Op</span><span class="op">&gt;</span> {
     <span class="ident">op</span>: <span class="ident">O</span>,
 }
@@ -54,22 +51,11 @@
     }
 }
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">Op</span><span class="op">&gt;</span> <span class="ident">Op</span> <span class="kw">for</span> <span class="ident">ReferenceOp</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span> {}
-<span class="comment">// impl&lt;O: PullOp&gt; PullOp for ReferenceOp&lt;O&gt; {</span>
-<span class="comment">//     type Outflow = O::Outflow;</span>
-<span class="comment">//     type Outdomain = &lt;O::Outflow as Flow&gt;::Domain;</span>
-<span class="comment">// }</span>
+
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">PushOp</span><span class="op">&gt;</span> <span class="ident">PushOp</span> <span class="kw">for</span> <span class="ident">ReferenceOp</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span> {
     <span class="kw">type</span> <span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">O</span>::<span class="ident">Inflow</span>;
 }
-<span class="comment">// impl&lt;O: MovePullOp&gt; RefPullOp for ReferenceOp&lt;O&gt;</span>
-<span class="comment">// where</span>
-<span class="comment">//     &lt;O::Outflow as Flow&gt;::Domain: Clone,</span>
-<span class="comment">// {</span>
-<span class="comment">//     fn poll_next(&amp;mut self, ctx: &amp;mut Context&lt;&#39;_&gt;) -&gt; Poll&lt;Option&lt;&amp;&lt;Self::Outflow as Flow&gt;::Domain&gt;&gt; {</span>
-<span class="comment">//         let polled = self.op.poll_next(ctx);</span>
-<span class="comment">//         polled.map(|opt| opt.as_ref())</span>
-<span class="comment">//     }</span>
-<span class="comment">// }</span>
+
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">RefPushOp</span><span class="op">&gt;</span> <span class="ident">MovePushOp</span> <span class="kw">for</span> <span class="ident">ReferenceOp</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="op">&lt;</span><span class="ident">O</span>::<span class="ident">Inflow</span> <span class="kw">as</span> <span class="ident">Flow</span><span class="op">&gt;</span>::<span class="ident">Domain</span>: <span class="ident">Clone</span>,

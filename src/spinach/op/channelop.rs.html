@@ -55,6 +55,17 @@
 <span id="52">52</span>
 <span id="53">53</span>
 <span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">future</span>::<span class="ident">Future</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
@@ -63,15 +74,21 @@
 
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
+<span class="doccomment">/// Create a connected sending and receiving channel pair, [`ChannelPushOp`] and [`ChannelPullOp`].</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Only supports owned [`Df`] flows.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">channel_op</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">buffer</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">ChannelPushOp</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">ChannelPullOp</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) {
     <span class="kw">let</span> (<span class="ident">send</span>, <span class="ident">recv</span>) <span class="op">=</span> <span class="ident">mpsc</span>::<span class="ident">channel</span>(<span class="ident">buffer</span>);
     (<span class="ident">ChannelPushOp</span>::<span class="ident">new</span>(<span class="ident">send</span>), <span class="ident">ChannelPullOp</span>::<span class="ident">new</span>(<span class="ident">recv</span>))
 }
 
+<span class="doccomment">/// The sending (push) half of a channel.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ChannelPushOp</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="ident">send</span>: <span class="ident">mpsc</span>::<span class="ident">Sender</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
 }
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">ChannelPushOp</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="doccomment">/// Wraps a [`tokio::sync::mpsc::Sender`] to create a new ChannelPushOp.</span>
+    <span class="doccomment">/// Note the [`channel_op`] function should be prefered over this constructor.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">send</span>: <span class="ident">mpsc</span>::<span class="ident">Sender</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> { <span class="ident">send</span> }
     }
@@ -90,10 +107,15 @@
     }
 }
 
+<span class="doccomment">/// The receiving (pull) half of a channel.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Supports only owned [`Df`] flows.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ChannelPullOp</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="ident">recv</span>: <span class="ident">mpsc</span>::<span class="ident">Receiver</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
 }
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">ChannelPullOp</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="doccomment">/// Wraps a [`tokio::sync::mpsc::Receiver`] to create a new ChannelPullOp.</span>
+    <span class="doccomment">/// Note the [`channel_op`] function should be prefered over this constructor.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">recv</span>: <span class="ident">mpsc</span>::<span class="ident">Receiver</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> { <span class="ident">recv</span> }
     }

@@ -11,8 +11,8 @@ value <code>a</code>, and use <code>b</code> as the next internal state.</p>
 <p>If the closure returns <code>None</code> instead of <code>Some(Future)</code>, then the <code>unfold()</code>
 will stop producing items and return <code>Poll::Ready(None)</code> in future
 calls to <code>poll()</code>.</p>
-<p>This function can typically be used when wanting to go from the &quot;world of
-futures&quot; to the &quot;world of streams&quot;: the provided closure can build a
+<p>This function can typically be used when wanting to go from the “world of
+futures” to the “world of streams”: the provided closure can build a
 <code>Future</code> using other library functions working on futures, and <code>unfold()</code>
 will turn it into a <code>Stream</code> by repeating the operation.</p>
 <h1 id="example" class="section-header"><a href="#example">Example</a></h1>

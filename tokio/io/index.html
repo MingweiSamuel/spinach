@@ -6,9 +6,9 @@
 defines two traits, <a href="../../tokio/io/trait.AsyncRead.html"><code>AsyncRead</code></a> and <a href="../../tokio/io/trait.AsyncWrite.html"><code>AsyncWrite</code></a>, which are asynchronous
 versions of the <a href="https://doc.rust-lang.org/nightly/std/io/trait.Read.html"><code>Read</code></a> and <a href="https://doc.rust-lang.org/nightly/std/io/trait.Write.html"><code>Write</code></a> traits in the standard library.</p>
 <h1 id="asyncread-and-asyncwrite" class="section-header"><a href="#asyncread-and-asyncwrite">AsyncRead and AsyncWrite</a></h1>
-<p>Like the standard library's <a href="https://doc.rust-lang.org/nightly/std/io/trait.Read.html"><code>Read</code></a> and <a href="https://doc.rust-lang.org/nightly/std/io/trait.Write.html"><code>Write</code></a> traits, <a href="../../tokio/io/trait.AsyncRead.html"><code>AsyncRead</code></a> and
+<p>Like the standard library’s <a href="https://doc.rust-lang.org/nightly/std/io/trait.Read.html"><code>Read</code></a> and <a href="https://doc.rust-lang.org/nightly/std/io/trait.Write.html"><code>Write</code></a> traits, <a href="../../tokio/io/trait.AsyncRead.html"><code>AsyncRead</code></a> and
 <a href="../../tokio/io/trait.AsyncWrite.html"><code>AsyncWrite</code></a> provide the most general interface for reading and writing
-input and output. Unlike the standard library's traits, however, they are
+input and output. Unlike the standard library’s traits, however, they are
 <em>asynchronous</em> — meaning that reading from or writing to a <code>tokio::io</code>
 type will <em>yield</em> to the Tokio scheduler when IO is not ready, rather than
 blocking. This allows other tasks to run while waiting on IO.</p>
@@ -22,8 +22,8 @@ respectively.</p>
 <code>AsyncWrite</code>. Instead, they will use the async functions defined in the
 extension traits. Library authors are expected to implement <code>AsyncRead</code>
 and <code>AsyncWrite</code> in order to provide types that behave like byte streams.</p>
-<p>Even with these differences, Tokio's <code>AsyncRead</code> and <code>AsyncWrite</code> traits
-can be used in almost exactly the same manner as the standard library's
+<p>Even with these differences, Tokio’s <code>AsyncRead</code> and <code>AsyncWrite</code> traits
+can be used in almost exactly the same manner as the standard library’s
 <code>Read</code> and <code>Write</code>. Most types in the standard library that implement <code>Read</code>
 and <code>Write</code> have asynchronous equivalents in <code>tokio</code> that implement
 <code>AsyncRead</code> and <code>AsyncWrite</code>, such as <a href="crate::fs::File"><code>File</code></a> and <a href="crate::net::TcpStream"><code>TcpStream</code></a>.</p>
@@ -47,7 +47,7 @@ can do the same with <a href="crate::fs::File"><code>tokio::fs::File</code></a>:
     <span class="prelude-val">Ok</span>(())
 }</pre></div>
 <h2 id="buffered-readers-and-writers" class="section-header"><a href="#buffered-readers-and-writers">Buffered Readers and Writers</a></h2>
-<p>Byte-based interfaces are unwieldy and can be inefficient, as we'd need to be
+<p>Byte-based interfaces are unwieldy and can be inefficient, as we’d need to be
 making near-constant calls to the operating system. To help with this,
 <code>std::io</code> comes with <a href="https://doc.rust-lang.org/nightly/std/io/index.html#bufreader-and-bufwriter">support for <em>buffered</em> readers and writers</a>,
 and therefore, <code>tokio::io</code> does as well.</p>
@@ -74,7 +74,7 @@ extra methods to any async reader:</p>
     <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">buffer</span>);
     <span class="prelude-val">Ok</span>(())
 }</pre></div>
-<p><a href="crate::io::BufWriter"><code>BufWriter</code></a> doesn't add any new ways of writing; it just buffers every call
+<p><a href="crate::io::BufWriter"><code>BufWriter</code></a> doesn’t add any new ways of writing; it just buffers every call
 to <a href="crate::io::AsyncWriteExt::write"><code>write</code></a>. However, you <strong>must</strong> flush
 <a href="crate::io::BufWriter"><code>BufWriter</code></a> to ensure that any buffered data is written.</p>
 
@@ -111,7 +111,7 @@ type that is encoded as bytes and/or decoded from bytes. Tokio
 provides some utility traits in the <a href="https://docs.rs/tokio-util/0.6/tokio_util/codec/index.html">tokio-util</a> crate that
 abstract the asynchronous buffering that is required and allows
 you to write <a href="https://docs.rs/tokio-util/0.6/tokio_util/codec/trait.Encoder.html"><code>Encoder</code></a> and <a href="https://docs.rs/tokio-util/0.6/tokio_util/codec/trait.Decoder.html"><code>Decoder</code></a> functions working with a
-buffer of bytes, and then use that <a href="https://docs.rs/tokio-util/0.6/tokio_util/codec/index.html">&quot;codec&quot;</a> to transform anything
+buffer of bytes, and then use that <a href="https://docs.rs/tokio-util/0.6/tokio_util/codec/index.html">“codec”</a> to transform anything
 that implements <a href="../../tokio/io/trait.AsyncRead.html"><code>AsyncRead</code></a> and <a href="../../tokio/io/trait.AsyncWrite.html"><code>AsyncWrite</code></a> into a <code>Sink</code>/<code>Stream</code> of
 your structured data.</p>
 <h1 id="standard-input-and-output" class="section-header"><a href="#standard-input-and-output">Standard input and output</a></h1>

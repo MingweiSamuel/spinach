@@ -6,10 +6,10 @@
 <p>This receiver can be turned into a <code>Stream</code> using <a href="https://docs.rs/tokio-stream/0.1/tokio_stream/wrappers/struct.ReceiverStream.html"><code>ReceiverStream</code></a>.</p>
 </div><h2 id="implementations" class="small-section-header">Implementations<a href="#implementations" class="anchor"></a></h2><h3 id="impl" class="impl"><code class="in-band">impl&lt;T&gt; <a class="struct" href="../../../tokio/sync/mpsc/struct.Receiver.html" title="struct tokio::sync::mpsc::Receiver">Receiver</a>&lt;T&gt;</code><a href="#impl" class="anchor"></a><a class="srclink" href="../../../src/tokio/sync/mpsc/bounded.rs.html#105-300" title="goto source code">[src]</a></h3><div class="impl-items"><h4 id="method.recv" class="method"><code>pub async fn <a href="#method.recv" class="fnname">recv</a>(&amp;mut self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;T&gt;</code><a class="srclink" href="../../../src/tokio/sync/mpsc/bounded.rs.html#162-165" title="goto source code">[src]</a></h4><div class="docblock"><p>Receives the next value for this receiver.</p>
 <p>This method returns <code>None</code> if the channel has been closed and there are
-no remaining messages in the channel's buffer. This indicates that no
+no remaining messages in the channel’s buffer. This indicates that no
 further values can ever be received from this <code>Receiver</code>. The channel is
 closed when all senders have been dropped, or when <a href="../../../tokio/sync/mpsc/struct.Receiver.html#method.close"><code>close</code></a> is called.</p>
-<p>If there are no messages in the channel's buffer, but the channel has
+<p>If there are no messages in the channel’s buffer, but the channel has
 not yet been closed, this method will sleep until a message is sent or
 the channel is closed.</p>
 <p>Note that if <a href="../../../tokio/sync/mpsc/struct.Receiver.html#method.close"><code>close</code></a> is called, but there are still outstanding
@@ -47,10 +47,10 @@ closed by <code>recv</code> until the permits are released.</p>
 }</pre></div>
 </div><h4 id="method.blocking_recv" class="method"><code>pub fn <a href="#method.blocking_recv" class="fnname">blocking_recv</a>(&amp;mut self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;T&gt;</code><a class="srclink" href="../../../src/tokio/sync/mpsc/bounded.rs.html#218-220" title="goto source code">[src]</a></h4><div class="docblock"><p>Blocking receive to call outside of asynchronous contexts.</p>
 <p>This method returns <code>None</code> if the channel has been closed and there are
-no remaining messages in the channel's buffer. This indicates that no
+no remaining messages in the channel’s buffer. This indicates that no
 further values can ever be received from this <code>Receiver</code>. The channel is
 closed when all senders have been dropped, or when <a href="../../../tokio/sync/mpsc/struct.Receiver.html#method.close"><code>close</code></a> is called.</p>
-<p>If there are no messages in the channel's buffer, but the channel has
+<p>If there are no messages in the channel’s buffer, but the channel has
 not yet been closed, this method will block until a message is sent or
 the channel is closed.</p>
 <p>This method is intended for use cases where you are sending from

@@ -9,7 +9,7 @@ is otherwise a direct mapping to <a href="https://doc.rust-lang.org/nightly/core
 <p>While usual Rust style is to import types directly, aliases of <a href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html"><code>Result</code></a>
 often are not, to make it easier to distinguish between them. <a href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html"><code>Result</code></a> is
 generally assumed to be <a href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html"><code>std::result::Result</code></a>, and so users of this alias
-will generally use <code>io::Result</code> instead of shadowing the <a href="https://doc.rust-lang.org/nightly/std/prelude/index.html">prelude</a>'s import
+will generally use <code>io::Result</code> instead of shadowing the <a href="https://doc.rust-lang.org/nightly/std/prelude/index.html">prelude</a>’s import
 of <a href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html"><code>std::result::Result</code></a>.</p>
 <h1 id="examples" class="section-header"><a href="#examples">Examples</a></h1>
 <p>A convenience function that bubbles an <code>io::Result</code> to its caller:</p>

@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["Df",""],["Rx",""]],"trait":[["Flow","This trait is sealed and cannot be implemented for types outside this crate."]]});
+initSidebarItems({"struct":[["Df","Flow representing a dataflow of distinct `T` values."],["Rx","Flow representing a reactive pipeline of a monotonically growing `F::Domain` value. “Monotonically growing” order is determined by the [`Merge`] function `F`."]],"trait":[["Flow","Trait for types representing different types of flows, either dataflow or reactive."]]});

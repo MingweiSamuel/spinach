@@ -6,7 +6,7 @@
 unfortunately a slice is a <em>borrowed</em> type in Rust which has an associated
 lifetime. When working with future and async I/O these lifetimes are not
 always appropriate, and are sometimes difficult to store in tasks. This
-type strives to fill this gap by providing an &quot;owned slice&quot; around an
+type strives to fill this gap by providing an “owned slice” around an
 underlying buffer of bytes.</p>
 <p>A <code>Window&lt;T&gt;</code> wraps an underlying buffer, <code>T</code>, and has configurable
 start/end indexes to alter the behavior of the <code>AsRef&lt;[u8]&gt;</code> implementation

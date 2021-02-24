@@ -83,7 +83,7 @@ macro.</p>
 }</pre></div>
 <p><br></p>
 <h3 id="combining-quoted-fragments" class="section-header"><a href="#combining-quoted-fragments">Combining quoted fragments</a></h3>
-<p>Usually you don't end up constructing an entire final <code>TokenStream</code> in one
+<p>Usually you don’t end up constructing an entire final <code>TokenStream</code> in one
 piece. Different parts may come from different helper functions. The tokens
 produced by <code>quote!</code> themselves implement <code>ToTokens</code> and so can be
 interpolated into later <code>quote!</code> invocations to build up a final result.</p>
@@ -99,7 +99,7 @@ interpolated into later <code>quote!</code> invocations to build up a final resu
 <p><br></p>
 <h3 id="constructing-identifiers" class="section-header"><a href="#constructing-identifiers">Constructing identifiers</a></h3>
 <p>Suppose we have an identifier <code>ident</code> which came from somewhere in a macro
-input and we need to modify it in some way for the macro output. Let's
+input and we need to modify it in some way for the macro output. Let’s
 consider prepending the identifier with an underscore.</p>
 <p>Simply interpolating the identifier next to an underscore will not have the
 behavior of concatenating them. The underscore and the identifier will
@@ -131,7 +131,7 @@ will not handle <code>ident</code> being a raw identifier.</p>
 }</pre></div>
 <p><br></p>
 <h3 id="making-method-calls" class="section-header"><a href="#making-method-calls">Making method calls</a></h3>
-<p>Let's say our macro requires some type specified in the macro input to have
+<p>Let’s say our macro requires some type specified in the macro input to have
 a constructor called <code>new</code>. We have the type in a variable called
 <code>field_type</code> of type <code>syn::Type</code> and want to invoke the constructor.</p>
 

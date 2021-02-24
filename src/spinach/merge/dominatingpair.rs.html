@@ -59,11 +59,15 @@
 <span id="56">56</span>
 <span id="57">57</span>
 <span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">cmp</span>::<span class="ident">Ordering</span>;
 
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">Merge</span>;
 
+<span class="doccomment">/// A composed lattice. Given two lattice merges AF and BF,</span>
+<span class="doccomment">/// merge in lexicographical order.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DominatingPair</span><span class="op">&lt;</span><span class="ident">AF</span>, <span class="ident">BF</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">AF</span>: <span class="ident">Merge</span>,

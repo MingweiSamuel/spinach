@@ -12,7 +12,7 @@
 <li>If the struct implements <a href="https://doc.rust-lang.org/nightly/core/ops/drop/trait.Drop.html#tymethod.drop"><code>Drop</code></a>, the <a href="https://doc.rust-lang.org/nightly/core/ops/drop/trait.Drop.html#tymethod.drop"><code>drop</code></a> method is not allowed to
 move the value of the field.</li>
 <li>If the struct wants to implement <a href="https://doc.rust-lang.org/nightly/core/marker/trait.Unpin.html"><code>Unpin</code></a>, it has to do so conditionally:
-The struct can only implement <a href="https://doc.rust-lang.org/nightly/core/marker/trait.Unpin.html"><code>Unpin</code></a> if the field's type is <a href="https://doc.rust-lang.org/nightly/core/marker/trait.Unpin.html"><code>Unpin</code></a>.</li>
+The struct can only implement <a href="https://doc.rust-lang.org/nightly/core/marker/trait.Unpin.html"><code>Unpin</code></a> if the field’s type is <a href="https://doc.rust-lang.org/nightly/core/marker/trait.Unpin.html"><code>Unpin</code></a>.</li>
 <li>The struct must not be <code>#[repr(packed)]</code>.</li>
 </ul>
 <h1 id="example" class="section-header"><a href="#example">Example</a></h1>

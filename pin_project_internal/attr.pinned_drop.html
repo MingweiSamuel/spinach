@@ -41,7 +41,7 @@ function just like dropping a type that directly implements <a href="https://doc
 <span class="kw">fn</span> <span class="ident">main</span>() {
     <span class="kw">let</span> <span class="ident">_x</span> <span class="op">=</span> <span class="ident">PrintOnDrop</span> { <span class="ident">field</span>: <span class="number">50</span> };
 }</pre></div>
-<p>See also <a href="../pin_project_internal/attr.pin_project.html#pinned_drop">&quot;pinned-drop&quot; section of <code>#[pin_project]</code> attribute</a>.</p>
+<p>See also <a href="../pin_project_internal/attr.pin_project.html#pinned_drop">“pinned-drop” section of <code>#[pin_project]</code> attribute</a>.</p>
 <h1 id="why-pinned_drop-attribute-is-needed" class="section-header"><a href="#why-pinned_drop-attribute-is-needed">Why <code>#[pinned_drop]</code> attribute is needed?</a></h1>
 <p>Implementing <code>PinnedDrop::drop</code> is safe, but calling it is not safe.
 This is because destructors can be called multiple times in safe code and

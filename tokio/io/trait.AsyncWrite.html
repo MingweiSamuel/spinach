@@ -22,9 +22,9 @@ written.</p>
 <li>
 <p><code>Poll::Pending</code> means that no data was written from the buffer
 provided. The I/O object is not currently writable but may become writable
-in the future. Most importantly, <strong>the current future's task is scheduled
+in the future. Most importantly, <strong>the current future’s task is scheduled
 to get unparked when the object is writable</strong>. This means that like
-<code>Future::poll</code> you'll receive a notification when the I/O object is
+<code>Future::poll</code> you’ll receive a notification when the I/O object is
 writable again.</p>
 </li>
 <li>
@@ -33,10 +33,10 @@ underlying object.</p>
 </li>
 </ul>
 <p>This trait importantly means that the <a href="https://doc.rust-lang.org/nightly/std/io/trait.Write.html#tymethod.write"><code>write</code></a> method only works in
-the context of a future's task. The object may panic if used outside of a task.</p>
+the context of a future’s task. The object may panic if used outside of a task.</p>
 <p>Note that this trait also represents that the  <a href="https://doc.rust-lang.org/nightly/std/io/trait.Write.html#tymethod.flush"><code>Write::flush</code></a> method
 works very similarly to the <code>write</code> method, notably that <code>Ok(())</code> means that the
-writer has successfully been flushed, a &quot;would block&quot; error means that the
+writer has successfully been flushed, a “would block” error means that the
 current task is ready to receive a notification when flushing can make more
 progress, and otherwise normal errors can happen as well.</p>
 <p>Utilities for working with <code>AsyncWrite</code> values are provided by
@@ -66,14 +66,14 @@ graceful shutdown logic.</p>
 <p>This <code>shutdown</code> method is required by implementers of the
 <code>AsyncWrite</code> trait. Wrappers typically just want to proxy this call
 through to the wrapped type, and base types will typically implement
-shutdown logic here or just return <code>Ok(().into())</code>. Note that if you're
+shutdown logic here or just return <code>Ok(().into())</code>. Note that if you’re
 wrapping an underlying <code>AsyncWrite</code> a call to <code>shutdown</code> implies that
-transitively the entire stream has been shut down. After your wrapper's
+transitively the entire stream has been shut down. After your wrapper’s
 shutdown logic has been executed you should shut down the underlying
 stream.</p>
 <p>Invocation of a <code>shutdown</code> implies an invocation of <code>flush</code>. Once this
 method returns <code>Ready</code> it implies that a flush successfully happened
-before the shutdown happened. That is, callers don't need to call
+before the shutdown happened. That is, callers don’t need to call
 <code>flush</code> before calling <code>shutdown</code>. They can rely that by calling
 <code>shutdown</code> any pending buffered data will be written out.</p>
 <h1 id="return-value" class="section-header"><a href="#return-value">Return value</a></h1>
@@ -90,7 +90,7 @@ I/O object itself is likely no longer usable.</p>
 <p><code>Poll::Pending</code> - indicates that shutdown is initiated but could
 not complete just yet. This may mean that more I/O needs to happen to
 continue this shutdown operation. The current task is scheduled to
-receive a notification when it's otherwise ready to continue the
+receive a notification when it’s otherwise ready to continue the
 shutdown operation. When woken up this method should be called again.</p>
 </li>
 <li>
@@ -103,10 +103,10 @@ This typically means that the I/O object is no longer usable.</p>
 <p>This function can return normal I/O errors through <code>Err</code>, described
 above. Additionally this method may also render the underlying
 <code>Write::write</code> method no longer usable (e.g. will return errors in the
-future). It's recommended that once <code>shutdown</code> is called the
+future). It’s recommended that once <code>shutdown</code> is called the
 <code>write</code> method is no longer called.</p>
 <h1 id="panics" class="section-header"><a href="#panics">Panics</a></h1>
-<p>This function will panic if not called within the context of a future's
+<p>This function will panic if not called within the context of a future’s
 task.</p>
 </div></div><span class="loading-content">Loading content...</span><h2 id="provided-methods" class="small-section-header">Provided methods<a href="#provided-methods" class="anchor"></a></h2><div class="methods"><h3 id="method.poll_write_vectored" class="method"><code>fn <a href="#method.poll_write_vectored" class="fnname">poll_write_vectored</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;self: <a class="struct" href="https://doc.rust-lang.org/nightly/core/pin/struct.Pin.html" title="struct core::pin::Pin">Pin</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;mut </a>Self&gt;, <br>&nbsp;&nbsp;&nbsp;&nbsp;cx: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/core/task/wake/struct.Context.html" title="struct core::task::wake::Context">Context</a>&lt;'_&gt;, <br>&nbsp;&nbsp;&nbsp;&nbsp;bufs: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;[</a><a class="struct" href="https://doc.rust-lang.org/nightly/std/io/struct.IoSlice.html" title="struct std::io::IoSlice">IoSlice</a>&lt;'_&gt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a><br>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/task/poll/enum.Poll.html" title="enum core::task::poll::Poll">Poll</a>&lt;<a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html" title="struct std::io::error::Error">Error</a>&gt;&gt;</code><a class="srclink" href="../../src/tokio/io/async_write.rs.html#154-164" title="goto source code">[src]</a></h3><div class="docblock"><p>Like <a href="../../tokio/io/trait.AsyncWrite.html#tymethod.poll_write"><code>poll_write</code></a>, except that it writes from a slice of buffers.</p>
 <p>Data is copied from each buffer in order, with the final buffer
@@ -120,7 +120,7 @@ buffer provided, or an empty one if none exists.</p>
 <code>cx.waker()</code>) to receive a notification when the object becomes
 writable or is closed.</p>
 <h1 id="note" class="section-header"><a href="#note">Note</a></h1>
-<p>This should be implemented as a single &quot;atomic&quot; write action. If any
+<p>This should be implemented as a single “atomic” write action. If any
 data has been partially written, it is wrong to return an error or
 pending.</p>
 </div><h3 id="method.is_write_vectored" class="method"><code>fn <a href="#method.is_write_vectored" class="fnname">is_write_vectored</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code><a class="srclink" href="../../src/tokio/io/async_write.rs.html#176-178" title="goto source code">[src]</a></h3><div class="docblock"><p>Determines if this writer has an efficient <a href="../../tokio/io/trait.AsyncWrite.html#method.poll_write_vectored"><code>poll_write_vectored</code></a>

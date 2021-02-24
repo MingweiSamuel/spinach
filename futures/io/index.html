@@ -9,7 +9,7 @@ traits, <a href="../../futures/prelude/trait.AsyncRead.html"><code>AsyncRead</co
 <a href="../../futures/prelude/trait.AsyncBufRead.html"><code>AsyncBufRead</code></a>, which mirror the <code>Read</code>,
 <code>Write</code>, <code>Seek</code>, and <code>BufRead</code> traits of the standard library. However,
 these traits integrate
-with the asynchronous task system, so that if an I/O object isn't ready
+with the asynchronous task system, so that if an I/O object isn’t ready
 for reading (or writing), the thread is not blocked, and instead the
 current task is queued to be woken when I/O is ready.</p>
 <p>In addition, the <a href="../../futures/io/trait.AsyncReadExt.html"><code>AsyncReadExt</code></a>,

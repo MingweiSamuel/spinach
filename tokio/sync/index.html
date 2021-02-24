@@ -152,7 +152,7 @@ resource. A task is spawned to synchronize a resource and waits on commands
 received on a <a href="../../tokio/sync/mpsc/index.html"><code>mpsc</code></a> channel. Each command includes a
 <a href="../../tokio/sync/oneshot/index.html"><code>oneshot</code></a> <code>Sender</code> on which the result of the command is sent.</p>
 <p><strong>Example:</strong> use a task to synchronize a <code>u64</code> counter. Each task sends an
-&quot;fetch and increment&quot; command. The counter value <strong>before</strong> the increment is
+“fetch and increment” command. The counter value <strong>before</strong> the increment is
 sent over the provided <code>oneshot</code> channel.</p>
 
 <div class="example-wrap"><pre class="rust rust-example-rendered">
@@ -207,8 +207,8 @@ sent over the provided <code>oneshot</code> channel.</p>
 <h2 id="broadcast-channel" class="section-header"><a href="#broadcast-channel"><code>broadcast</code> channel</a></h2>
 <p>The <a href="../../tokio/sync/broadcast/index.html"><code>broadcast</code> channel</a> supports sending <strong>many</strong> values from
 <strong>many</strong> producers to <strong>many</strong> consumers. Each consumer will receive
-<strong>each</strong> value. This channel can be used to implement &quot;fan out&quot; style
-patterns common with pub / sub or &quot;chat&quot; systems.</p>
+<strong>each</strong> value. This channel can be used to implement “fan out” style
+patterns common with pub / sub or “chat” systems.</p>
 <p>This channel tends to be used less often than <code>oneshot</code> and <code>mpsc</code> but still
 has its use cases.</p>
 <p>Basic usage</p>
