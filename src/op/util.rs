@@ -3,6 +3,7 @@ use std::task::{Context, Poll};
 
 use super::{Flow, MovePullOp};
 
+/// Helper future struct for getting a value from [`MovePullOp`]s.
 pub struct MoveNext<'a, O: MovePullOp> {
     op: &'a mut O,
 }
@@ -45,6 +46,9 @@ where
 //     }
 // }
 
+/// An async function which puts the current task to sleep.
+/// Unlike [`tokio::task::yield_now`], this marks the current task as not ready, so it
+/// will remain asleep until the task is awoken by an event.
 pub async fn sleep_yield_now() {
     /// Yield implementation
     struct SleepYieldNow {

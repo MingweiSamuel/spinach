@@ -3,11 +3,15 @@ use std::task::{Context, Poll};
 
 use super::*;
 
+/// An Op which logs each passing element to stdout, for debugging.
+///
+/// Supports both owned values and refs, and [`Df`] and [`Rx`] pipes.
 pub struct DebugOp<O: Op> {
     op: O,
     tag: &'static str,
 }
 impl<O: Op> DebugOp<O> {
+    /// Wrap OP, log with the tag TAG.
     pub fn new(op: O, tag: &'static str) -> Self {
         Self { op, tag }
     }

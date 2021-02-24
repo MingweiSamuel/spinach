@@ -7,6 +7,7 @@ use super::Merge;
 
 // SET MERGES //
 
+/// Classic set union lattice.
 pub struct Union<T> {
     _phantom: std::marker::PhantomData<T>,
 }
@@ -67,6 +68,7 @@ impl<T: Eq + Ord> Merge for Union<BTreeSet<T>> {
     }
 }
 
+/// Set intersection lattice.
 pub struct Intersect<T> {
     _phantom: std::marker::PhantomData<T>,
 }

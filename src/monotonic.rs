@@ -3,6 +3,7 @@ use std::hash::Hash;
 
 use crate::merge::{MapUnion, Merge};
 
+/// Specific type of monotonic function for filtering referenced values.
 pub trait MonotonicFilterRefFn {
     type Inmerge: Merge;
     type Outmerge: Merge;

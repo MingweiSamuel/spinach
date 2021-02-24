@@ -1,7 +1,11 @@
-// use std::task::{ Context, Poll };
-
 use super::*;
 
+/// An Op for converting an owned flow into a reference flow.
+/// Simply takes the reference of the owned value.
+///
+/// Note: Only supports Push. Supports both [`Df`] and [`Rx`].
+///
+/// To go from ref to owned (the opposite of this), use [`CloneOp`].
 pub struct ReferenceOp<O: Op> {
     op: O,
 }
@@ -11,22 +15,11 @@ impl<O: Op> ReferenceOp<O> {
     }
 }
 impl<O: Op> Op for ReferenceOp<O> {}
-// impl<O: PullOp> PullOp for ReferenceOp<O> {
-//     type Outflow = O::Outflow;
-//     type Outdomain = <O::Outflow as Flow>::Domain;
-// }
+
 impl<O: PushOp> PushOp for ReferenceOp<O> {
     type Inflow = O::Inflow;
 }
-// impl<O: MovePullOp> RefPullOp for ReferenceOp<O>
-// where
-//     <O::Outflow as Flow>::Domain: Clone,
-// {
-//     fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<&<Self::Outflow as Flow>::Domain>> {
-//         let polled = self.op.poll_next(ctx);
-//         polled.map(|opt| opt.as_ref())
-//     }
-// }
+
 impl<O: RefPushOp> MovePushOp for ReferenceOp<O>
 where
     <O::Inflow as Flow>::Domain: Clone,

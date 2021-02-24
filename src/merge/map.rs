@@ -8,6 +8,7 @@ use super::Merge;
 
 // MAP MERGES //
 
+/// Map union composed lattice.
 pub struct MapUnion<T> {
     _phantom: std::marker::PhantomData<T>,
 }

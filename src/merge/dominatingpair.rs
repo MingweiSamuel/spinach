@@ -2,6 +2,8 @@ use std::cmp::Ordering;
 
 use super::Merge;
 
+/// A composed lattice. Given two lattice merges AF and BF,
+/// merge in lexicographical order.
 pub struct DominatingPair<AF, BF>
 where
     AF: Merge,

@@ -2,10 +2,17 @@ use std::task::{Context, Poll};
 
 use super::*;
 
+/// An Op for converting a ref flow into an owned flow via [`Clone`].
+///
+/// Supports both [`Df`] and [`Rx`].
+///
+/// To go from owned to ref (the opposite of this), use [`ReferenceOp`].
 pub struct CloneOp<O: Op> {
     op: O,
 }
 impl<O: Op> CloneOp<O> {
+    /// Create a CloneOp from an existing Op. Note the values received
+    /// by this op must implement [`Clone`] for this op to be usable.
     pub fn new(op: O) -> Self {
         CloneOp { op }
     }

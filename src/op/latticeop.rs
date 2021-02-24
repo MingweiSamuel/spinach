@@ -4,11 +4,16 @@ use crate::merge::Merge;
 
 use super::*;
 
+/// A state-accumulating lattice op.
+///
+/// Input is owned `F::Domain` values as [`Df`] dataflow,
+/// output is reference `&F::Domain` values as [`Rx`] reactive.
 pub struct LatticeOp<O: Op, F: Merge> {
     op: O,
     state: F::Domain,
 }
 impl<O: Op, F: Merge> LatticeOp<O, F> {
+    /// Create a LatticeOp with the given BOTTOM value.
     pub fn new(op: O, bottom: F::Domain) -> Self {
         Self { op, state: bottom }
     }
@@ -17,6 +22,7 @@ impl<O: Op, F: Merge> LatticeOp<O, F>
 where
     F::Domain: Default,
 {
+    /// Create a LatticeOp using the default value as bottom.
     pub fn new_default(op: O) -> Self {
         Self {
             op,

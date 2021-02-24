@@ -1,3 +1,5 @@
+//! All the standard operators.
+
 mod optrait;
 pub use optrait::*;
 

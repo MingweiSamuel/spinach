@@ -106,14 +106,14 @@ pub async fn test_kvs() -> Result<(), String> {
     for _ in 0_usize..10 {
         comp.tick_refop().await;
     }
-    comp.add_split(read_foo_0).await;
+    comp.add_refsplit(read_foo_0).await;
     for _ in 0_usize..10 {
         comp.tick_refop().await;
     }
 
     write_pipe.push(("foo", 300, "ding")).await;
 
-    comp.add_split(read_foo_1).await;
+    comp.add_refsplit(read_foo_1).await;
 
     Ok(())
 }

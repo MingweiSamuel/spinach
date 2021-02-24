@@ -8,23 +8,30 @@ use crate::merge::Merge;
 
 use super::*;
 
+/// A computation node with a single pull end and a single push end.
 pub struct StaticComp<I: PullOp, O: PushOp<Inflow = I::Outflow>> {
     pull: I,
     push: O,
 }
 
 impl<I: PullOp, O: PushOp<Inflow = I::Outflow>> StaticComp<I, O> {
+    /// Create a StaticComp from PULL and PUSH ops.
     pub fn new(pull: I, push: O) -> Self {
         Self { pull, push }
     }
 }
 impl<I: MovePullOp, O: MovePushOp<Inflow = I::Outflow>> StaticComp<I, O> {
-    pub async fn run_moveop(mut self) {
+    /// If PULL and PUSH deal with owned values.
+    /// Continuously runs this Comp node. Never returns! Use `tick_moveop` instead.
+    pub async fn run_moveop(mut self) -> ! {
         while let Some(item) = MoveNext::new(&mut self.pull).await {
             self.push.push(item).await;
             // TODO handle the feedback.
         }
+        panic!();
     }
+    /// If PULL and PUSH deal with owned values.
+    /// Runs a single element from the pull side through the push side.
     pub async fn tick_moveop(&mut self) -> Option<<O::Feedback as Future>::Output> {
         if let Some(item) = MoveNext::new(&mut self.pull).await {
             Some(self.push.push(item).await)
@@ -34,11 +41,16 @@ impl<I: MovePullOp, O: MovePushOp<Inflow = I::Outflow>> StaticComp<I, O> {
     }
 }
 impl<I: RefPullOp, O: RefPushOp<Inflow = I::Outflow>> StaticComp<I, O> {
-    pub async fn run_refop(mut self) {
+    /// If PULL and PUSH deal with reference values.
+    /// Continuously runs this Comp node. Never returns! Use `tick_refop` instead.
+    pub async fn run_refop(mut self) -> ! {
         while let Some(_feedback) = RefCompFuture::new(&mut self.pull, vec![&mut self.push]).await {
             // TODO: handle the feedback.
         }
+        panic!();
     }
+    /// If PULL and PUSH deal with reference values.
+    /// Runs a single element from the pull side through the push side.
     pub async fn tick_refop(&mut self) -> Option<<O::Feedback as Future>::Output> {
         RefCompFuture::new(&mut self.pull, vec![&mut self.push])
             .await
@@ -46,12 +58,14 @@ impl<I: RefPullOp, O: RefPushOp<Inflow = I::Outflow>> StaticComp<I, O> {
     }
 }
 
+/// A computation node with a single pull and dynamically many push ends.
 pub struct DynComp<F: Merge, I: PullOp<Outflow = Rx<F>>, O: PushOp<Inflow = Rx<F>>> {
     pull: I,
     pushes: Vec<O>,
 }
 
 impl<F: Merge, I: PullOp<Outflow = Rx<F>>, O: PushOp<Inflow = Rx<F>>> DynComp<F, I, O> {
+    /// Create a DynComp from a pull end. Push ends can be added dynamically with `add_split`.
     pub fn new(pull: I) -> Self {
         Self {
             pull,
@@ -63,7 +77,16 @@ impl<F: Merge, I: MovePullOp<Outflow = Rx<F>>, O: MovePushOp<Inflow = Rx<F>>> Dy
 where
     <I::Outflow as Flow>::Domain: Clone,
 {
-    pub async fn run_moveop(mut self) {
+    /// For cloneable owned values.
+    /// Adds a split off.
+    pub async fn add_movesplit(&mut self, push: O) -> Option<Vec<<O::Feedback as Future>::Output>> {
+        self.pushes.push(push);
+        self.tick_moveop().await
+    }
+
+    /// For cloneable owned values.
+    /// Continuously runs this Comp node. Never returns! Use `tick_moveop` instead.
+    pub async fn run_moveop(mut self) -> ! {
         while let Some(item) = MoveNext::new(&mut self.pull).await {
             for push in &mut self.pushes {
                 push.push(item.clone()).await;
@@ -71,7 +94,11 @@ where
             }
             // // TODO handle the feedback.
         }
+        panic!();
     }
+
+    /// For cloneable owned values.
+    /// Runs a single element from the pull side through all the push sides.
     pub async fn tick_moveop(&mut self) -> Option<Vec<<O::Feedback as Future>::Output>> {
         if let Some(item) = MoveNext::new(&mut self.pull).await {
             let futs = self.pushes.iter_mut().map(|push| push.push(item.clone())); // TODO: one extra clone...
@@ -82,12 +109,15 @@ where
     }
 }
 impl<F: Merge, I: RefPullOp<Outflow = Rx<F>>, O: RefPushOp<Inflow = Rx<F>>> DynComp<F, I, O> {
+    /// For reference values.
     /// Adds a split off.
-    pub async fn add_split(&mut self, push: O) -> Option<Vec<<O::Feedback as Future>::Output>> {
+    pub async fn add_refsplit(&mut self, push: O) -> Option<Vec<<O::Feedback as Future>::Output>> {
         self.pushes.push(push);
         self.tick_refop().await
     }
 
+    /// For reference values.
+    /// Continuously runs this Comp node. Never returns! Use `tick_moveop` instead.
     pub async fn run_refop(mut self) {
         while let Some(_feedback) =
             RefCompFuture::new(&mut self.pull, self.pushes.iter_mut().collect()).await
@@ -95,11 +125,15 @@ impl<F: Merge, I: RefPullOp<Outflow = Rx<F>>, O: RefPushOp<Inflow = Rx<F>>> DynC
             // TODO: handle the feedback.
         }
     }
+
+    /// For reference values.
+    /// Runs a single element from the pull side through all the push sides.
     pub async fn tick_refop(&mut self) -> Option<Vec<<O::Feedback as Future>::Output>> {
         RefCompFuture::new(&mut self.pull, self.pushes.iter_mut().collect()).await
     }
 }
 
+/// Internal future for dealing with reference comp work.
 struct RefCompFuture<'a, I, O>
 where
     I: RefPullOp,

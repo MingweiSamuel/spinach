@@ -6,6 +6,13 @@ use std::task::{Context, Poll, Waker};
 
 use super::*;
 
+/// Create a connected sending and receiving handoff pair, [`HandoffPushOp`] and [`HandoffPullOp`].
+///
+/// This is meant as a lightweight single-threaded single-item-buffered alternative to [`channel_op`].
+///
+/// Supports both [`Df`] and [`Rx`] flows.
+///
+/// TODO: NOTE: [`Rx`] flows end up in the single element buffer, so they may unneccearily block.
 pub fn handoff_op<F: Flow>() -> (HandoffPushOp<F>, HandoffPullOp<F>) {
     let handoff = Default::default();
     let handoff = Rc::new(RefCell::new(handoff));
@@ -15,6 +22,7 @@ pub fn handoff_op<F: Flow>() -> (HandoffPushOp<F>, HandoffPullOp<F>) {
     )
 }
 
+/// Internal handoff struct.
 struct Handoff<F: Flow> {
     item: Option<F::Domain>,
     recv_waker: Option<Waker>,
@@ -32,6 +40,7 @@ impl<F: Flow> Default for Handoff<F> {
     }
 }
 
+/// Internal future struct for sending half of handoff.
 struct HandoffSend<F: Flow> {
     item: Option<F::Domain>,
     handoff: Rc<RefCell<Handoff<F>>>,
@@ -67,6 +76,7 @@ impl<F: Flow> Future for HandoffSend<F> {
     }
 }
 
+/// The sending (push) half of a handoff.
 pub struct HandoffPushOp<F: Flow> {
     handoff: Rc<RefCell<Handoff<F>>>,
 }
@@ -91,6 +101,7 @@ impl<F: Flow> MovePushOp for HandoffPushOp<F> {
     }
 }
 
+/// The receiving (pull) half of a handoff.
 pub struct HandoffPullOp<F: Flow> {
     handoff: Rc<RefCell<Handoff<F>>>,
 }

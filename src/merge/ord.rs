@@ -4,6 +4,7 @@ use super::Merge;
 
 // ORD MERGES //
 
+/// For totally-ordered demains, take the max value.
 pub struct Max<T: Ord> {
     _phantom: std::marker::PhantomData<T>,
 }
@@ -21,6 +22,7 @@ impl<T: Ord> Merge for Max<T> {
     }
 }
 
+/// For totally-ordered demains, take the min value.
 pub struct Min<T: Ord> {
     _phantom: std::marker::PhantomData<T>,
 }

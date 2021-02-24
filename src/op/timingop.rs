@@ -10,6 +10,10 @@ use crate::merge::Merge;
 
 use super::*;
 
+/// An op which releases individual values on a timer interval.
+///
+/// Values will be implicitly buffered by stalling the pipeline,
+/// so this can be considered "blocking".
 pub struct BlockingIntervalOp<O: PullOp> {
     op: O,
     interval: Duration,
@@ -69,6 +73,10 @@ impl<T, O: RefPullOp<Outflow = Df<T>>> RefPullOp for BlockingIntervalOp<O> {
     }
 }
 
+/// An op which releases individual values on a timer interval.
+///
+/// If the timer is not ready and a value is produced, the value will be dropped.
+/// Therefore, this only applies to [`Rx`] flows.
 pub struct LeakyIntervalOp<O: PullOp> {
     op: O,
     interval: Duration,
@@ -122,6 +130,10 @@ impl<F: Merge, O: RefPullOp<Outflow = Rx<F>>> RefPullOp for LeakyIntervalOp<O> {
     }
 }
 
+/// An op which releases batches of values on a timer interval.
+///
+/// Values are buffered in a queue. Once an interval is reached all buffered
+/// values will become available at once. In this sense it is non-blocking.
 pub struct BatchingOp<O: PullOp> {
     op: O,
     interval: Duration,

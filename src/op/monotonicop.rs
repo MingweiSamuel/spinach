@@ -4,6 +4,7 @@ use super::*;
 
 use crate::monotonic::MonotonicFilterRefFn;
 
+/// A specific type of monotonic mapping Op for [`Rx`] pipelines.
 pub struct MonotonicFilterRefOp<O: Op, F: MonotonicFilterRefFn> {
     op: O,
     func: F,

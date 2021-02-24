@@ -1,6 +1,8 @@
+//! All lattice merges.
+
 use std::cmp::Ordering;
 
-/// Merge trait.
+/// Merge trait, a merge function which defines a lattice.
 pub trait Merge {
     type Domain;
 
