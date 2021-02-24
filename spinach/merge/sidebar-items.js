@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["DominatingPair",""],["Intersect",""],["MapUnion",""],["Max",""],["Min",""],["RangeToZeroI32","Mingwei's weird semilattice. Merge is defined as, given signed integers A and B, take the value in the range [A, B] (or [B, A]) which is closest to zero. (Note that in general this will be A, B, or zero)."],["Union",""]],"trait":[["Merge","Merge trait."]]});
