@@ -1,3 +1,5 @@
+//! Monotonic functions.
+
 use std::collections::{BTreeMap, HashMap};
 use std::hash::Hash;
 

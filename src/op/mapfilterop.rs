@@ -6,7 +6,7 @@ use super::*;
 
 use crate::func::{PureFn, PureRefFn};
 
-/// Map-Flatten op for with owned->owned values.
+/// Map-Flatten op for owned->owned values.
 pub struct MapFlattenMoveOp<O: Op, F: PureFn>
 where
     F::Outdomain: IntoIterator,
@@ -90,6 +90,7 @@ where
     }
 }
 
+/// Map-Filter op for owned->owned values.
 pub struct MapFilterMoveOp<O: Op, F: PureFn> {
     op: O,
     func: F,
@@ -108,7 +109,6 @@ impl<O: Op, F: PureFn> Op for MapFilterMoveOp<O, F> {}
 //     type Outflow = Df<<F::Outdomain as IntoIterator>::Item>;
 // }
 
-/// Map-Filter op for owned->owned values.
 impl<T, O, F> PullOp for MapFilterMoveOp<O, F>
 where
     O: PullOp<Outflow = Df<F::Indomain>>,

@@ -1,3 +1,5 @@
+//! Function traits.
+
 /// Represents a pure function, owned->owned values.
 pub trait PureFn {
     type Indomain;
