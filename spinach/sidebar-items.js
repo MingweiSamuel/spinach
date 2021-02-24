@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["func","Function traits."],["merge","All lattice merges."],["monotonic",""],["op","All the standard operators."]]});
+initSidebarItems({"mod":[["func","Function traits."],["merge","All lattice merges."],["monotonic","Monotonic functions."],["op","All the standard operators."]]});
