@@ -2,7 +2,7 @@
 #![allow(clippy::redundant_closure)]
 #![feature(cell_update)]
 #![feature(drain_filter)]
-// #![feature(impl_trait_in_bindings)]
+#![feature(try_blocks)]
 #![feature(type_alias_impl_trait)]
 #![feature(btree_retain)]
 #![feature(external_doc)]
