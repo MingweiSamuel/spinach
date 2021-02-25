@@ -108,16 +108,16 @@
 <span class="comment">// use super::*;</span>
 <span class="comment">// use super::flow::Flow;</span>
 
-<span class="comment">// use crate::merge::Merge;</span>
+<span class="comment">// use crate::lattice::Lattice;</span>
 
-<span class="comment">// pub struct ExplodeOp&lt;O: Op, F: Merge&gt;</span>
+<span class="comment">// pub struct ExplodeOp&lt;O: Op, F: Lattice&gt;</span>
 <span class="comment">// where</span>
 <span class="comment">//     F::Domain: Clone</span>
 <span class="comment">// {</span>
 <span class="comment">//     op: O,</span>
 <span class="comment">//     state: F::Domain,</span>
 <span class="comment">// }</span>
-<span class="comment">// impl&lt;O: Op, F: Merge&gt; ExplodeOp&lt;O, F&gt;</span>
+<span class="comment">// impl&lt;O: Op, F: Lattice&gt; ExplodeOp&lt;O, F&gt;</span>
 <span class="comment">// where</span>
 <span class="comment">//     F::Domain: Clone</span>
 <span class="comment">// {</span>
@@ -128,7 +128,7 @@
 <span class="comment">//         }</span>
 <span class="comment">//     }</span>
 <span class="comment">// }</span>
-<span class="comment">// impl&lt;O: Op, F: Merge&gt; ExplodeOp&lt;O, F&gt;</span>
+<span class="comment">// impl&lt;O: Op, F: Lattice&gt; ExplodeOp&lt;O, F&gt;</span>
 <span class="comment">// where</span>
 <span class="comment">//     F::Domain: Clone + Default</span>
 <span class="comment">// {</span>
@@ -140,12 +140,12 @@
 <span class="comment">//     }</span>
 <span class="comment">// }</span>
 
-<span class="comment">// impl&lt;O: Op, F: Merge&gt; Op for ExplodeOp&lt;O, F&gt;</span>
+<span class="comment">// impl&lt;O: Op, F: Lattice&gt; Op for ExplodeOp&lt;O, F&gt;</span>
 <span class="comment">// where</span>
 <span class="comment">//     F::Domain: Clone</span>
 <span class="comment">// {}</span>
 
-<span class="comment">// impl&lt;O: PullOp, F: Merge&gt; PullOp for DebugOp&lt;O&gt;</span>
+<span class="comment">// impl&lt;O: PullOp, F: Lattice&gt; PullOp for DebugOp&lt;O&gt;</span>
 <span class="comment">// where</span>
 <span class="comment">//     F::Domain: Clone</span>
 <span class="comment">// {</span>
