@@ -4,7 +4,7 @@ use std::collections::hash_map;
 use std::collections::{BTreeMap, HashMap};
 use std::hash::Hash;
 
-use super::Merge;
+use super::Lattice;
 
 // MAP MERGES //
 
@@ -13,12 +13,12 @@ pub struct MapUnion<T> {
     _phantom: std::marker::PhantomData<T>,
 }
 
-impl<K, F> Merge for MapUnion<HashMap<K, F>>
+impl<K, F> Lattice for MapUnion<HashMap<K, F>>
 where
     K: Hash + Eq,
-    F: Merge,
+    F: Lattice,
 {
-    type Domain = HashMap<K, <F as Merge>::Domain>;
+    type Domain = HashMap<K, <F as Lattice>::Domain>;
 
     fn merge_in(val: &mut Self::Domain, delta: Self::Domain) {
         for (k, v) in delta {
@@ -95,12 +95,12 @@ where
     }
 }
 
-impl<K, F> Merge for MapUnion<BTreeMap<K, F>>
+impl<K, F> Lattice for MapUnion<BTreeMap<K, F>>
 where
     K: Ord + Eq,
-    F: Merge,
+    F: Lattice,
 {
-    type Domain = BTreeMap<K, <F as Merge>::Domain>;
+    type Domain = BTreeMap<K, <F as Lattice>::Domain>;
 
     fn merge_in(val: &mut Self::Domain, delta: Self::Domain) {
         for (k, v) in delta {
@@ -180,12 +180,12 @@ where
 // pub struct MapIntersection<T> {
 //     _phantom: std::marker::PhantomData<T>,
 // }
-// impl <K, F> Merge for MapIntersection<HashMap<K, F>>
+// impl <K, F> Lattice for MapIntersection<HashMap<K, F>>
 // where
 //     K: Eq + Hash,
-//     F: Merge,
+//     F: Lattice,
 // {
-//     type Domain = HashMap<K, <F as Merge>::Domain>;
+//     type Domain = HashMap<K, <F as Lattice>::Domain>;
 
 //     fn merge_in(val: &mut Self::Domain, delta: Self::Domain) {
 //         todo!("this is broken.");

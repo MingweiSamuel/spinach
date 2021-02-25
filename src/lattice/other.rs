@@ -1,12 +1,12 @@
 use std::cmp::Ordering;
 
-use super::Merge;
+use super::Lattice;
 
 // /// Wrap an existing lattice in `Option`, where None is smaller than all other elements.
-// pub struct Optional<F: Merge> {
+// pub struct Optional<F: Lattice> {
 //     _phantom: std::marker::PhantomData<F>,
 // }
-// impl<F: Merge> Merge for Optional<F> {
+// impl<F: Lattice> Lattice for Optional<F> {
 //     type Domain = Option<F::Domain>;
 
 //     fn merge_in(val: &mut Self::Domain, delta: Self::Domain) {
@@ -33,11 +33,11 @@ use super::Merge;
 // }
 
 /// Mingwei's weird semilattice.
-/// Merge is defined as, given signed integers A and B, take the value in the
+/// Lattice is defined as, given signed integers A and B, take the value in the
 /// range [A, B] (or [B, A]) which is closest to zero.
 /// (Note that in general this will be A, B, or zero).
 pub struct RangeToZeroI32;
-impl Merge for RangeToZeroI32 {
+impl Lattice for RangeToZeroI32 {
     type Domain = i32;
 
     fn merge_in(val: &mut i32, delta: i32) {

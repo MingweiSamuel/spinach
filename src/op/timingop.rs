@@ -6,7 +6,7 @@ use std::time::Duration;
 
 use tokio::time::{self, Sleep};
 
-use crate::merge::Merge;
+use crate::lattice::Lattice;
 
 use super::*;
 
@@ -82,7 +82,7 @@ pub struct LeakyIntervalOp<O: PullOp> {
     interval: Duration,
     sleep: Pin<Box<Sleep>>,
 }
-impl<F: Merge, O: PullOp<Outflow = Rx<F>>> LeakyIntervalOp<O> {
+impl<F: Lattice, O: PullOp<Outflow = Rx<F>>> LeakyIntervalOp<O> {
     pub fn new(op: O, interval: Duration) -> Self {
         Self {
             op,
@@ -91,11 +91,11 @@ impl<F: Merge, O: PullOp<Outflow = Rx<F>>> LeakyIntervalOp<O> {
         }
     }
 }
-impl<F: Merge, O: PullOp<Outflow = Rx<F>>> Op for LeakyIntervalOp<O> {}
-impl<F: Merge, O: PullOp<Outflow = Rx<F>>> PullOp for LeakyIntervalOp<O> {
+impl<F: Lattice, O: PullOp<Outflow = Rx<F>>> Op for LeakyIntervalOp<O> {}
+impl<F: Lattice, O: PullOp<Outflow = Rx<F>>> PullOp for LeakyIntervalOp<O> {
     type Outflow = Rx<F>;
 }
-impl<F: Merge, O: MovePullOp<Outflow = Rx<F>>> MovePullOp for LeakyIntervalOp<O> {
+impl<F: Lattice, O: MovePullOp<Outflow = Rx<F>>> MovePullOp for LeakyIntervalOp<O> {
     fn poll_next(
         &mut self,
         ctx: &mut Context<'_>,
@@ -112,7 +112,7 @@ impl<F: Merge, O: MovePullOp<Outflow = Rx<F>>> MovePullOp for LeakyIntervalOp<O>
         }
     }
 }
-impl<F: Merge, O: RefPullOp<Outflow = Rx<F>>> RefPullOp for LeakyIntervalOp<O> {
+impl<F: Lattice, O: RefPullOp<Outflow = Rx<F>>> RefPullOp for LeakyIntervalOp<O> {
     fn poll_next(
         &mut self,
         ctx: &mut Context<'_>,

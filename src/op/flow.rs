@@ -1,4 +1,4 @@
-use crate::merge::Merge;
+use crate::lattice::Lattice;
 
 /// Trait for types representing different types of flows, either dataflow or reactive.
 ///
@@ -13,8 +13,8 @@ pub struct Df<T> {
 }
 
 /// Flow representing a reactive pipeline of a monotonically growing `F::Domain` value.
-/// "Monotonically growing" order is determined by the [`Merge`] function `F`.
-pub struct Rx<F: Merge> {
+/// "Monotonically growing" order is determined by the [`Lattice`] function `F`.
+pub struct Rx<F: Lattice> {
     _private: F::Domain,
 }
 
@@ -22,7 +22,7 @@ impl<T> Flow for Df<T> {
     type Domain = T;
 }
 
-impl<F: Merge> Flow for Rx<F> {
+impl<F: Lattice> Flow for Rx<F> {
     type Domain = F::Domain;
 }
 
@@ -33,5 +33,5 @@ mod private {
 
     // Implement for those same types, but no others.
     impl<T> Sealed for Df<T> {}
-    impl<F: Merge> Sealed for Rx<F> {}
+    impl<F: Lattice> Sealed for Rx<F> {}
 }

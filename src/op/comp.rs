@@ -4,7 +4,7 @@ use std::task::{Context, Poll};
 
 use futures::future::{join_all, JoinAll};
 
-use crate::merge::Merge;
+use crate::lattice::Lattice;
 
 use super::*;
 
@@ -59,12 +59,12 @@ impl<I: RefPullOp, O: RefPushOp<Inflow = I::Outflow>> StaticComp<I, O> {
 }
 
 /// A computation node with a single pull and dynamically many push ends.
-pub struct DynComp<F: Merge, I: PullOp<Outflow = Rx<F>>, O: PushOp<Inflow = Rx<F>>> {
+pub struct DynComp<F: Lattice, I: PullOp<Outflow = Rx<F>>, O: PushOp<Inflow = Rx<F>>> {
     pull: I,
     pushes: Vec<O>,
 }
 
-impl<F: Merge, I: PullOp<Outflow = Rx<F>>, O: PushOp<Inflow = Rx<F>>> DynComp<F, I, O> {
+impl<F: Lattice, I: PullOp<Outflow = Rx<F>>, O: PushOp<Inflow = Rx<F>>> DynComp<F, I, O> {
     /// Create a DynComp from a pull end. Push ends can be added dynamically with `add_split`.
     pub fn new(pull: I) -> Self {
         Self {
@@ -73,7 +73,7 @@ impl<F: Merge, I: PullOp<Outflow = Rx<F>>, O: PushOp<Inflow = Rx<F>>> DynComp<F,
         }
     }
 }
-impl<F: Merge, I: MovePullOp<Outflow = Rx<F>>, O: MovePushOp<Inflow = Rx<F>>> DynComp<F, I, O>
+impl<F: Lattice, I: MovePullOp<Outflow = Rx<F>>, O: MovePushOp<Inflow = Rx<F>>> DynComp<F, I, O>
 where
     <I::Outflow as Flow>::Domain: Clone,
 {
@@ -108,7 +108,7 @@ where
         }
     }
 }
-impl<F: Merge, I: RefPullOp<Outflow = Rx<F>>, O: RefPushOp<Inflow = Rx<F>>> DynComp<F, I, O> {
+impl<F: Lattice, I: RefPullOp<Outflow = Rx<F>>, O: RefPushOp<Inflow = Rx<F>>> DynComp<F, I, O> {
     /// For reference values.
     /// Adds a split off.
     pub async fn add_refsplit(&mut self, push: O) -> Option<Vec<<O::Feedback as Future>::Output>> {

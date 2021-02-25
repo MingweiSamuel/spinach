@@ -3,17 +3,17 @@
 use std::collections::{BTreeMap, HashMap};
 use std::hash::Hash;
 
-use crate::merge::{MapUnion, Merge};
+use crate::lattice::{Lattice, MapUnion};
 
 /// Specific type of monotonic function for filtering referenced values.
 pub trait MonotonicFilterRefFn {
-    type Inmerge: Merge;
-    type Outmerge: Merge;
+    type Inmerge: Lattice;
+    type Outmerge: Lattice;
 
     fn call<'a>(
         &self,
-        item: &'a <Self::Inmerge as Merge>::Domain,
-    ) -> Option<&'a <Self::Outmerge as Merge>::Domain>;
+        item: &'a <Self::Inmerge as Lattice>::Domain,
+    ) -> Option<&'a <Self::Outmerge as Lattice>::Domain>;
 }
 
 pub struct MapProject<K, T> {
@@ -29,7 +29,7 @@ impl<K, T> MapProject<K, T> {
     }
 }
 
-impl<K: Hash + Eq, F: Merge> MonotonicFilterRefFn for MapProject<K, HashMap<K, F>> {
+impl<K: Hash + Eq, F: Lattice> MonotonicFilterRefFn for MapProject<K, HashMap<K, F>> {
     type Inmerge = MapUnion<HashMap<K, F>>;
     type Outmerge = F;
 
@@ -37,7 +37,7 @@ impl<K: Hash + Eq, F: Merge> MonotonicFilterRefFn for MapProject<K, HashMap<K, F
         item.get(&self.key)
     }
 }
-impl<K: Ord + Eq, F: Merge> MonotonicFilterRefFn for MapProject<K, BTreeMap<K, F>> {
+impl<K: Ord + Eq, F: Lattice> MonotonicFilterRefFn for MapProject<K, BTreeMap<K, F>> {
     type Inmerge = MapUnion<BTreeMap<K, F>>;
     type Outmerge = F;
 

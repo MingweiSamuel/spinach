@@ -1,23 +1,23 @@
 use std::cmp::Ordering;
 
-use super::Merge;
+use super::Lattice;
 
 /// A composed lattice. Given two lattice merges AF and BF,
 /// merge in lexicographical order.
 pub struct DominatingPair<AF, BF>
 where
-    AF: Merge,
-    BF: Merge,
+    AF: Lattice,
+    BF: Lattice,
 {
     _phantom: std::marker::PhantomData<(AF, BF)>,
 }
 
-impl<AF, BF> Merge for DominatingPair<AF, BF>
+impl<AF, BF> Lattice for DominatingPair<AF, BF>
 where
-    AF: Merge,
-    BF: Merge,
+    AF: Lattice,
+    BF: Lattice,
 {
-    type Domain = (<AF as Merge>::Domain, <BF as Merge>::Domain);
+    type Domain = (<AF as Lattice>::Domain, <BF as Lattice>::Domain);
 
     fn merge_in(val: &mut Self::Domain, delta: Self::Domain) {
         match AF::partial_cmp(&val.0, &delta.0) {

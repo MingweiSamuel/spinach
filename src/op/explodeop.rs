@@ -4,16 +4,16 @@
 // use super::*;
 // use super::flow::Flow;
 
-// use crate::merge::Merge;
+// use crate::lattice::Lattice;
 
-// pub struct ExplodeOp<O: Op, F: Merge>
+// pub struct ExplodeOp<O: Op, F: Lattice>
 // where
 //     F::Domain: Clone
 // {
 //     op: O,
 //     state: F::Domain,
 // }
-// impl<O: Op, F: Merge> ExplodeOp<O, F>
+// impl<O: Op, F: Lattice> ExplodeOp<O, F>
 // where
 //     F::Domain: Clone
 // {
@@ -24,7 +24,7 @@
 //         }
 //     }
 // }
-// impl<O: Op, F: Merge> ExplodeOp<O, F>
+// impl<O: Op, F: Lattice> ExplodeOp<O, F>
 // where
 //     F::Domain: Clone + Default
 // {
@@ -36,12 +36,12 @@
 //     }
 // }
 
-// impl<O: Op, F: Merge> Op for ExplodeOp<O, F>
+// impl<O: Op, F: Lattice> Op for ExplodeOp<O, F>
 // where
 //     F::Domain: Clone
 // {}
 
-// impl<O: PullOp, F: Merge> PullOp for DebugOp<O>
+// impl<O: PullOp, F: Lattice> PullOp for DebugOp<O>
 // where
 //     F::Domain: Clone
 // {

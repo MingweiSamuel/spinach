@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::time::Duration;
 
 use spinach::func::*;
-use spinach::merge::{DominatingPair, MapUnion, Max, Merge};
+use spinach::lattice::{DominatingPair, Lattice, MapUnion, Max};
 use spinach::monotonic::MapProject;
 use spinach::op::*;
 
@@ -67,7 +67,7 @@ pub async fn test_kvs() -> Result<(), String> {
     struct TupleToHashMapFn;
     impl PureFn for TupleToHashMapFn {
         type Indomain = (&'static str, usize, &'static str);
-        type Outdomain = Option<<MyLattice as Merge>::Domain>;
+        type Outdomain = Option<<MyLattice as Lattice>::Domain>;
         fn call(&self, (k, t, v): Self::Indomain) -> Self::Outdomain {
             let mut map = HashMap::new();
             map.insert(k, (t, v));

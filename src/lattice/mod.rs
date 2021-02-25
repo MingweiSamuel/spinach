@@ -2,8 +2,8 @@
 
 use std::cmp::Ordering;
 
-/// Merge trait, a merge function which defines a lattice.
-pub trait Merge {
+/// Lattice trait, a merge function which defines a lattice.
+pub trait Lattice {
     type Domain;
 
     fn merge_in(val: &mut Self::Domain, delta: Self::Domain);

@@ -10,7 +10,7 @@
 
 pub mod func;
 
-pub mod merge;
+pub mod lattice;
 
 pub mod op;
 
