@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Df","Flow representing a dataflow of distinct `T` values."],["Rx","Flow representing a reactive pipeline of a monotonically growing `F::Domain` value. “Monotonically growing” order is determined by the [`Lattice`] function `F`."]],"trait":[["Flow","Trait for types representing different types of flows, either dataflow or reactive."]]});

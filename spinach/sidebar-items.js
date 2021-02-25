@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["func","Function traits."],["lattice","All lattice merges."],["monotonic","Monotonic functions."],["op","All the standard operators."]]});
+initSidebarItems({"mod":[["comp","Computation nodes."],["flow","Flow types, either [`Rx`] or [`Df`]."],["func","Function traits."],["lattice","All lattice merges."],["monotonic","Monotonic functions."],["op","All the standard operators."]]});

@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["DynComp","A computation node with a single pull and dynamically many push ends."],["StaticComp","A computation node with a single pull end and a single push end."]]});

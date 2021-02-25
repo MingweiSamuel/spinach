@@ -40,11 +40,13 @@
 <span id="37">37</span>
 <span id="38">38</span>
 <span id="39">39</span>
+<span id="40">40</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">futures</span>::<span class="ident">future</span>::{<span class="ident">join_all</span>, <span class="ident">JoinAll</span>};
 
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">flow</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">monotonic</span>::<span class="ident">MonotonicFilterRefFn</span>;
 
 <span class="doccomment">/// A specific type of monotonic mapping Op for [`Rx`] pipelines.</span>

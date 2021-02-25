@@ -74,11 +74,15 @@
 <span id="71">71</span>
 <span id="72">72</span>
 <span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">future</span>::<span class="ident">Future</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 
-<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">Flow</span>, <span class="ident">MovePullOp</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">flow</span>::<span class="kw-2">*</span>;
+
+<span class="kw">use</span> <span class="kw">super</span>::<span class="ident">MovePullOp</span>;
 
 <span class="doccomment">/// Helper future struct for getting a value from [`MovePullOp`]s.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MoveNext</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">O</span>: <span class="ident">MovePullOp</span><span class="op">&gt;</span> {
