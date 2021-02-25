@@ -7,6 +7,7 @@ use tokio::net::UdpSocket;
 
 use super::*;
 
+/// Buffer size for the [`UdpPullOp`]. NOTE that any packets longer than this will be truncated!
 pub const UDP_BUFFER: usize = 4096;
 
 /// Create a pull and push pair from a [`UdpSocket`].
@@ -67,6 +68,13 @@ impl MovePushOp for UdpPushOp {
 
     #[must_use]
     fn push(&mut self, item: <Self::Inflow as Flow>::Domain) -> Self::Feedback {
+        if item.len() > UDP_BUFFER {
+            panic!(
+                "Message length {} longer than limit, {}.",
+                item.len(),
+                UDP_BUFFER
+            );
+        }
         let sock = self.sock.clone();
         async move { sock.send(&item[..]).await }
     }
