@@ -1,12 +1,14 @@
+//! Computation nodes.
+
 use std::future::Future;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 
 use futures::future::{join_all, JoinAll};
 
+use crate::flow::*;
 use crate::lattice::Lattice;
-
-use super::*;
+use crate::op::*;
 
 /// A computation node with a single pull end and a single push end.
 pub struct StaticComp<I: PullOp, O: PushOp<Inflow = I::Outflow>> {

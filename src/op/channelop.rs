@@ -3,6 +3,8 @@ use std::task::{Context, Poll};
 
 use tokio::sync::mpsc;
 
+use crate::flow::*;
+
 use super::*;
 
 /// Create a connected sending and receiving channel pair, [`ChannelPushOp`] and [`ChannelPullOp`].

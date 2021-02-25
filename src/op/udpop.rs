@@ -5,6 +5,8 @@ use std::task::{Context, Poll};
 use tokio::io::ReadBuf;
 use tokio::net::UdpSocket;
 
+use crate::flow::*;
+
 use super::*;
 
 /// Buffer size for the [`UdpPullOp`]. NOTE that any packets longer than this will be truncated!

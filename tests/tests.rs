@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 use std::time::Duration;
 
+use spinach::comp::*;
+use spinach::flow::*;
 use spinach::func::*;
 use spinach::lattice::{DominatingPair, Lattice, MapUnion, Max};
 use spinach::monotonic::MapProject;

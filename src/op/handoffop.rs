@@ -4,6 +4,8 @@ use std::pin::Pin;
 use std::rc::Rc;
 use std::task::{Context, Poll, Waker};
 
+use crate::flow::*;
+
 use super::*;
 
 /// Create a connected sending and receiving handoff pair, [`HandoffPushOp`] and [`HandoffPullOp`].

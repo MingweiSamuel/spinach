@@ -4,6 +4,7 @@ use futures::future::{join_all, JoinAll};
 
 use super::*;
 
+use crate::flow::*;
 use crate::func::{PureFn, PureRefFn};
 
 /// Map-Flatten op for owned->owned values.

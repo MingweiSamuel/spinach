@@ -1,3 +1,5 @@
+use crate::flow::*;
+
 use super::*;
 
 /// An Op for converting an owned flow into a reference flow.

@@ -1,7 +1,9 @@
 use std::future::Future;
 use std::task::{Context, Poll};
 
-use super::{Flow, MovePullOp};
+use crate::flow::*;
+
+use super::MovePullOp;
 
 /// Helper future struct for getting a value from [`MovePullOp`]s.
 pub struct MoveNext<'a, O: MovePullOp> {

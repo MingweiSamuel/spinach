@@ -1,6 +1,8 @@
 use std::future;
 use std::task::{Context, Poll};
 
+use crate::flow::*;
+
 use super::*;
 
 /// An Op which does nothing. Supports both [`Df`] and [`Rx`].

@@ -1,5 +1,6 @@
 use std::task::{Context, Poll};
 
+use crate::flow::*;
 use crate::lattice::Lattice;
 
 use super::*;

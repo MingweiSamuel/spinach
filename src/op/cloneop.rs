@@ -1,5 +1,7 @@
 use std::task::{Context, Poll};
 
+use crate::flow::*;
+
 use super::*;
 
 /// An Op for converting a ref flow into an owned flow via [`Clone`].

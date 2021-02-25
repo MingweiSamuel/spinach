@@ -1,3 +1,5 @@
+//! Flow types, either [`Rx`] or [`Df`].
+
 use crate::lattice::Lattice;
 
 /// Trait for types representing different types of flows, either dataflow or reactive.

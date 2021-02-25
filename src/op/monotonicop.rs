@@ -2,6 +2,7 @@ use futures::future::{join_all, JoinAll};
 
 use super::*;
 
+use crate::flow::*;
 use crate::monotonic::MonotonicFilterRefFn;
 
 /// A specific type of monotonic mapping Op for [`Rx`] pipelines.

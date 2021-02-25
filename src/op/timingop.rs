@@ -6,6 +6,7 @@ use std::time::Duration;
 
 use tokio::time::{self, Sleep};
 
+use crate::flow::*;
 use crate::lattice::Lattice;
 
 use super::*;

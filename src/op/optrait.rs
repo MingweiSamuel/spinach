@@ -1,7 +1,7 @@
 use std::future::Future;
 use std::task::{Context, Poll};
 
-use super::Flow;
+use crate::flow::*;
 
 /// An empty trait indicating a struct can be used as an Op.
 pub trait Op {}

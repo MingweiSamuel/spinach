@@ -6,12 +6,6 @@ pub use optrait::*;
 mod util;
 pub use util::*;
 
-mod flow;
-pub use flow::*;
-
-mod comp;
-pub use comp::*;
-
 // mod dyncomp;
 // pub use dyncomp::*;
 

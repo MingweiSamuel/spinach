@@ -12,6 +12,10 @@ pub mod func;
 
 pub mod lattice;
 
+pub mod comp;
+
 pub mod op;
+
+pub mod flow;
 
 pub mod monotonic;

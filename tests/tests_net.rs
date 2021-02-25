@@ -2,6 +2,7 @@ use std::time::Duration;
 
 use tokio::net::UdpSocket;
 
+use spinach::comp::*;
 use spinach::func::*;
 use spinach::op::*;
 

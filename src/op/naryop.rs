@@ -3,6 +3,8 @@ use std::task::{Context, Poll};
 
 use tokio::join;
 
+use crate::flow::*;
+
 use super::*;
 
 /// An Op which pushes to two downstream ops.
