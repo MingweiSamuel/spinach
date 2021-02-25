@@ -96,7 +96,7 @@ jobs:
       - name: Push target/doc to gh-pages
         shell: bash
         run: |
-          git -C target/doc init
+          git -C target/doc init -q
           git -C target/doc remote add origin "$(git remote get-url origin)"
           git -C target/doc fetch origin gh-pages:gh-pages
           git -C target/doc config credential.helper "$(git config credential.helper)"
@@ -107,5 +107,10 @@ jobs:
           git -C target/doc reset
           git -C target/doc checkout -- .gitignore index.html
           git -C target/doc add -A
-          git -C target/doc -c 'user.name=github-actions[bot]' -c 'user.email=41898282+github-actions[bot]@users.noreply.github.com' commit -m "Autogen Docs $(date -I) $(git rev-parse HEAD)"
-          git -C target/doc push -u origin gh-pages --quiet
+          if git -C target/doc -c 'user.name=github-actions[bot]' -c 'user.email=41898282+github-actions[bot]@users.noreply.github.com' \
+            commit -m "Autogen Docs $(date -I) $(git rev-parse HEAD)";
+          then
+            git -C target/doc push -u origin gh-pages --quiet
+          else
+            echo 'No changes to commit'
+          fi
