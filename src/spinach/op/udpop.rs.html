@@ -74,6 +74,14 @@
 <span id="71">71</span>
 <span id="72">72</span>
 <span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">future</span>::<span class="ident">Future</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>;
@@ -84,6 +92,7 @@
 
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
+<span class="doccomment">/// Buffer size for the [`UdpPullOp`]. NOTE that any packets longer than this will be truncated!</span>
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">UDP_BUFFER</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">4096</span>;
 
 <span class="doccomment">/// Create a pull and push pair from a [`UdpSocket`].</span>
@@ -144,6 +153,13 @@
 
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="kw">fn</span> <span class="ident">push</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">item</span>: <span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Inflow</span> <span class="kw">as</span> <span class="ident">Flow</span><span class="op">&gt;</span>::<span class="ident">Domain</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Feedback</span> {
+        <span class="kw">if</span> <span class="ident">item</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="ident">UDP_BUFFER</span> {
+            <span class="macro">panic</span><span class="macro">!</span>(
+                <span class="string">&quot;Message length {} longer than limit, {}.&quot;</span>,
+                <span class="ident">item</span>.<span class="ident">len</span>(),
+                <span class="ident">UDP_BUFFER</span>
+            );
+        }
         <span class="kw">let</span> <span class="ident">sock</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">sock</span>.<span class="ident">clone</span>();
         <span class="kw">async</span> <span class="kw">move</span> { <span class="ident">sock</span>.<span class="ident">send</span>(<span class="kw-2">&amp;</span><span class="ident">item</span>[..]).<span class="kw">await</span> }
     }
