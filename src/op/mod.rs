@@ -50,3 +50,6 @@ pub use timingop::*;
 
 mod udpop;
 pub use udpop::*;
+
+mod naryop;
+pub use naryop::*;
