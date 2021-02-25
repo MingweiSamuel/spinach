@@ -3,9 +3,6 @@
 mod optrait;
 pub use optrait::*;
 
-mod util;
-pub use util::*;
-
 // mod dyncomp;
 // pub use dyncomp::*;
 
