@@ -103,6 +103,7 @@ impl<I: MovePullOp, O: MovePushOp<Inflow = I::Outflow>> StaticComp<I, O> {
     /// If PULL and PUSH deal with owned values.
     /// Runs a single element from the pull side through the push side.
     pub async fn tick_moveop(&mut self) -> Option<<O::Feedback as Future>::Output> {
+        #[allow(clippy::manual_map)]
         if let Some(item) = MoveNext::new(&mut self.pull).await {
             Some(self.push.push(item).await)
         } else {
