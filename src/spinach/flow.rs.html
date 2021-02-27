@@ -31,41 +31,27 @@
 <span id="28">28</span>
 <span id="29">29</span>
 <span id="30">30</span>
-<span id="31">31</span>
-<span id="32">32</span>
-<span id="33">33</span>
-<span id="34">34</span>
-<span id="35">35</span>
-<span id="36">36</span>
-<span id="37">37</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Flow types, either [`Rx`] or [`Df`].</span>
 
 <span class="doccomment">/// Trait for types representing different types of flows, either dataflow or reactive.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// This trait is sealed and cannot be implemented for types outside this crate.</span>
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Flow</span>: <span class="ident">private</span>::<span class="ident">Sealed</span> {
-    <span class="kw">type</span> <span class="ident">Domain</span>;
-}
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Flow</span>: <span class="ident">private</span>::<span class="ident">Sealed</span> {}
 
 <span class="doccomment">/// Flow representing a dataflow of distinct `T` values.</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Df</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="ident">_private</span>: <span class="ident">T</span>,
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Df</span> {
+    <span class="ident">_private</span>: (),
 }
 
 <span class="doccomment">/// Flow representing a reactive pipeline of a monotonically growing `F::Domain` value.</span>
 <span class="doccomment">/// &quot;Monotonically growing&quot; order is determined by the [`Lattice`] function `F`.</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Rx</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="ident">_private</span>: <span class="ident">T</span>,
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Rx</span> {
+    <span class="ident">_private</span>: (),
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Flow</span> <span class="kw">for</span> <span class="ident">Df</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="kw">type</span> <span class="ident">Domain</span> <span class="op">=</span> <span class="ident">T</span>;
-}
-
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Flow</span> <span class="kw">for</span> <span class="ident">Rx</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="kw">type</span> <span class="ident">Domain</span> <span class="op">=</span> <span class="ident">T</span>;
-}
+<span class="kw">impl</span> <span class="ident">Flow</span> <span class="kw">for</span> <span class="ident">Df</span> {}
+<span class="kw">impl</span> <span class="ident">Flow</span> <span class="kw">for</span> <span class="ident">Rx</span> {}
 
 <span class="kw">mod</span> <span class="ident">private</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
@@ -73,8 +59,8 @@
     <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Sealed</span> {}
 
     <span class="comment">// Implement for those same types, but no others.</span>
-    <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Sealed</span> <span class="kw">for</span> <span class="ident">Df</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {}
-    <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Sealed</span> <span class="kw">for</span> <span class="ident">Rx</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {}
+    <span class="kw">impl</span> <span class="ident">Sealed</span> <span class="kw">for</span> <span class="ident">Df</span> {}
+    <span class="kw">impl</span> <span class="ident">Sealed</span> <span class="kw">for</span> <span class="ident">Rx</span> {}
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="spinach"></div>
