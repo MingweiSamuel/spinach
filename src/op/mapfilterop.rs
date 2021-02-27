@@ -5,7 +5,7 @@ use futures::future::{join_all, JoinAll};
 use super::*;
 
 use crate::flow::*;
-use crate::func::{PureFn, PureRefFn};
+use crate::func::*;
 
 /// Map-Flatten op for owned->owned values.
 pub struct MapFlattenMoveOp<O: Op, F: PureFn>
@@ -194,5 +194,28 @@ where
                 .into_iter()
                 .map(|item| self.op.push(item)),
         )
+    }
+}
+
+/// Map op for ref->ref values.
+pub struct MapRefRefOp<O: RefPushOp<Inflow = Rx<F::Outdomain>>, F: PureRefRefFn> {
+    op: O,
+    func: F,
+}
+impl<O: RefPushOp<Inflow = Rx<F::Outdomain>>, F: PureRefRefFn> MapRefRefOp<O, F> {
+    pub fn new(op: O, func: F) -> Self {
+        Self { op, func }
+    }
+}
+impl<O: RefPushOp<Inflow = Rx<F::Outdomain>>, F: PureRefRefFn> Op for MapRefRefOp<O, F> {}
+
+impl<O: RefPushOp<Inflow = Rx<F::Outdomain>>, F: PureRefRefFn> PushOp for MapRefRefOp<O, F> {
+    type Inflow = Rx<F::Indomain>;
+}
+impl<O: RefPushOp<Inflow = Rx<F::Outdomain>>, F: PureRefRefFn> RefPushOp for MapRefRefOp<O, F> {
+    type Feedback = O::Feedback;
+
+    fn push(&mut self, item: &<Self::Inflow as Flow>::Domain) -> Self::Feedback {
+        self.op.push(self.func.call(item))
     }
 }

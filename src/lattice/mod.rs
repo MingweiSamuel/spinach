@@ -42,3 +42,6 @@ pub use dominatingpair::*;
 
 mod other;
 pub use other::*;
+
+mod hide;
+pub use hide::*;

@@ -13,3 +13,9 @@ pub trait PureRefFn {
     type Outdomain;
     fn call(&self, item: &Self::Indomain) -> Self::Outdomain;
 }
+
+pub trait PureRefRefFn {
+    type Indomain;
+    type Outdomain;
+    fn call<'a>(&self, item: &'a Self::Indomain) -> &'a Self::Outdomain;
+}

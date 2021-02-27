@@ -1,7 +1,5 @@
 //! Flow types, either [`Rx`] or [`Df`].
 
-use crate::lattice::Lattice;
-
 /// Trait for types representing different types of flows, either dataflow or reactive.
 ///
 /// This trait is sealed and cannot be implemented for types outside this crate.
@@ -16,16 +14,16 @@ pub struct Df<T> {
 
 /// Flow representing a reactive pipeline of a monotonically growing `F::Domain` value.
 /// "Monotonically growing" order is determined by the [`Lattice`] function `F`.
-pub struct Rx<F: Lattice> {
-    _private: F::Domain,
+pub struct Rx<T> {
+    _private: T,
 }
 
 impl<T> Flow for Df<T> {
     type Domain = T;
 }
 
-impl<F: Lattice> Flow for Rx<F> {
-    type Domain = F::Domain;
+impl<T> Flow for Rx<T> {
+    type Domain = T;
 }
 
 mod private {
@@ -35,5 +33,5 @@ mod private {
 
     // Implement for those same types, but no others.
     impl<T> Sealed for Df<T> {}
-    impl<F: Lattice> Sealed for Rx<F> {}
+    impl<T> Sealed for Rx<T> {}
 }
