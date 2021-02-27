@@ -1,7 +1,5 @@
 use std::task::{Context, Poll};
 
-use crate::flow::*;
-
 use super::*;
 
 /// An Op for converting a ref flow into an owned flow via [`Clone`].
@@ -22,29 +20,28 @@ impl<O: Op> CloneOp<O> {
 impl<O: Op> Op for CloneOp<O> {}
 impl<O: PullOp> PullOp for CloneOp<O> {
     type Outflow = O::Outflow;
+    type Outdomain = O::Outdomain;
 }
 impl<O: PushOp> PushOp for CloneOp<O> {
     type Inflow = O::Inflow;
+    type Indomain = O::Indomain;
 }
 impl<O: RefPullOp> MovePullOp for CloneOp<O>
 where
-    <O::Outflow as Flow>::Domain: Clone,
+    O::Outdomain: Clone,
 {
-    fn poll_next(
-        &mut self,
-        ctx: &mut Context<'_>,
-    ) -> Poll<Option<<Self::Outflow as Flow>::Domain>> {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
         let polled = self.op.poll_next(ctx);
         polled.map(|opt| opt.cloned())
     }
 }
 impl<O: MovePushOp> RefPushOp for CloneOp<O>
 where
-    <O::Inflow as Flow>::Domain: Clone,
+    O::Indomain: Clone,
 {
     type Feedback = O::Feedback;
 
-    fn push(&mut self, item: &<Self::Inflow as Flow>::Domain) -> Self::Feedback {
+    fn push(&mut self, item: &Self::Indomain) -> Self::Feedback {
         self.op.push(item.clone())
     }
 }

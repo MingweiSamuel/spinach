@@ -35,18 +35,13 @@ where
 }
 
 impl<O: Op, F: Lattice> Op for LatticeOp<O, F> {}
-impl<O: PullOp<Outflow = Df<F::Domain>>, F: Lattice> PullOp for LatticeOp<O, F> {
-    type Outflow = Rx<Hide<F>>;
-}
-impl<O: PushOp<Inflow = Rx<Hide<F>>>, F: Lattice> PushOp for LatticeOp<O, F> {
-    type Inflow = Df<F::Domain>;
-}
 
-impl<O: MovePullOp<Outflow = Df<F::Domain>>, F: Lattice> RefPullOp for LatticeOp<O, F> {
-    fn poll_next(
-        &mut self,
-        ctx: &mut Context<'_>,
-    ) -> Poll<Option<&<Self::Outflow as Flow>::Domain>> {
+impl<O: MovePullOp<Outflow = Df, Outdomain = F::Domain>, F: Lattice> PullOp for LatticeOp<O, F> {
+    type Outflow = Rx;
+    type Outdomain = Hide<F>;
+}
+impl<O: MovePullOp<Outflow = Df, Outdomain = F::Domain>, F: Lattice> RefPullOp for LatticeOp<O, F> {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<&Self::Outdomain>> {
         if let Poll::Ready(Some(item)) = self.op.poll_next(ctx) {
             F::merge_in(&mut self.state, item);
         }
@@ -56,10 +51,15 @@ impl<O: MovePullOp<Outflow = Df<F::Domain>>, F: Lattice> RefPullOp for LatticeOp
         Poll::Ready(Some(hide))
     }
 }
-impl<O: RefPushOp<Inflow = Rx<Hide<F>>>, F: Lattice> MovePushOp for LatticeOp<O, F> {
+
+impl<O: RefPushOp<Inflow = Rx, Indomain = Hide<F>>, F: Lattice> PushOp for LatticeOp<O, F> {
+    type Inflow = Df;
+    type Indomain = F::Domain;
+}
+impl<O: RefPushOp<Inflow = Rx, Indomain = Hide<F>>, F: Lattice> MovePushOp for LatticeOp<O, F> {
     type Feedback = O::Feedback;
 
-    fn push(&mut self, item: <Self::Inflow as Flow>::Domain) -> Self::Feedback {
+    fn push(&mut self, item: Self::Indomain) -> Self::Feedback {
         F::merge_in(&mut self.state, item);
         let hide = Hide::ref_cast(&self.state);
         self.op.push(hide)

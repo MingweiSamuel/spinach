@@ -18,7 +18,7 @@ pub fn udp_op(sock: UdpSocket) -> (UdpPullOp, UdpPushOp) {
     (UdpPullOp::new(sock.clone()), UdpPushOp::new(sock))
 }
 
-/// The receving (pull) side of a udp connection.
+/// The receving (pull) side of a UDP connection.
 pub struct UdpPullOp {
     sock: Arc<UdpSocket>,
     buffer: [u8; UDP_BUFFER],
@@ -33,13 +33,11 @@ impl UdpPullOp {
 }
 impl Op for UdpPullOp {}
 impl PullOp for UdpPullOp {
-    type Outflow = Df<Vec<u8>>;
+    type Outflow = Df;
+    type Outdomain = Vec<u8>;
 }
 impl MovePullOp for UdpPullOp {
-    fn poll_next(
-        &mut self,
-        ctx: &mut Context<'_>,
-    ) -> Poll<Option<<Self::Outflow as Flow>::Domain>> {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
         let mut readbuf = ReadBuf::new(&mut self.buffer);
         match self.sock.poll_recv(ctx, &mut readbuf) {
             Poll::Ready(Ok(())) => Poll::Ready(Some(readbuf.filled().into())),
@@ -52,7 +50,7 @@ impl MovePullOp for UdpPullOp {
     }
 }
 
-/// The sending (push) side of a udp connection.
+/// The sending (push) side of a UDP connection.
 pub struct UdpPushOp {
     sock: Arc<UdpSocket>,
 }
@@ -63,13 +61,14 @@ impl UdpPushOp {
 }
 impl Op for UdpPushOp {}
 impl PushOp for UdpPushOp {
-    type Inflow = Df<Vec<u8>>;
+    type Inflow = Df;
+    type Indomain = Vec<u8>;
 }
 impl MovePushOp for UdpPushOp {
     type Feedback = impl Future;
 
     #[must_use]
-    fn push(&mut self, item: <Self::Inflow as Flow>::Domain) -> Self::Feedback {
+    fn push(&mut self, item: Self::Indomain) -> Self::Feedback {
         if item.len() > UDP_BUFFER {
             panic!(
                 "Message length {} longer than limit, {}.",

@@ -31,20 +31,19 @@ where
 }
 impl<O: Op, F: PureFn> Op for MapFlattenMoveOp<O, F> where F::Outdomain: IntoIterator {}
 
-impl<O: PullOp<Outflow = Df<F::Indomain>>, F: PureFn> PullOp for MapFlattenMoveOp<O, F>
+impl<O: PullOp<Outflow = Df, Outdomain = F::Indomain>, F: PureFn> PullOp for MapFlattenMoveOp<O, F>
 where
     F::Outdomain: IntoIterator,
 {
-    type Outflow = Df<<F::Outdomain as IntoIterator>::Item>;
+    type Outflow = Df;
+    type Outdomain = <F::Outdomain as IntoIterator>::Item;
 }
-impl<O: MovePullOp<Outflow = Df<F::Indomain>>, F: PureFn> MovePullOp for MapFlattenMoveOp<O, F>
+impl<O: MovePullOp<Outflow = Df, Outdomain = F::Indomain>, F: PureFn> MovePullOp
+    for MapFlattenMoveOp<O, F>
 where
     F::Outdomain: IntoIterator,
 {
-    fn poll_next(
-        &mut self,
-        ctx: &mut Context<'_>,
-    ) -> Poll<Option<<Self::Outflow as Flow>::Domain>> {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
         match self.out.as_mut().and_then(|out| out.next()) {
             Some(item) => Poll::Ready(Some(item)),
             None => {
@@ -70,18 +69,19 @@ where
 impl<O, F: PureFn> PushOp for MapFlattenMoveOp<O, F>
 where
     F::Outdomain: IntoIterator,
-    O: PushOp<Inflow = Df<<<F as PureFn>::Outdomain as IntoIterator>::Item>>,
+    O: PushOp<Inflow = Df, Indomain = <<F as PureFn>::Outdomain as IntoIterator>::Item>,
 {
-    type Inflow = Df<F::Indomain>;
+    type Inflow = Df;
+    type Indomain = F::Indomain;
 }
 impl<O, F: PureFn> MovePushOp for MapFlattenMoveOp<O, F>
 where
     F::Outdomain: IntoIterator,
-    O: MovePushOp<Inflow = Df<<<F as PureFn>::Outdomain as IntoIterator>::Item>>,
+    O: MovePushOp<Inflow = Df, Indomain = <<F as PureFn>::Outdomain as IntoIterator>::Item>,
 {
     type Feedback = JoinAll<O::Feedback>;
 
-    fn push(&mut self, item: <Self::Inflow as Flow>::Domain) -> Self::Feedback {
+    fn push(&mut self, item: Self::Indomain) -> Self::Feedback {
         join_all(
             self.func
                 .call(item)
@@ -112,20 +112,18 @@ impl<O: Op, F: PureFn> Op for MapFilterMoveOp<O, F> {}
 
 impl<T, O, F> PullOp for MapFilterMoveOp<O, F>
 where
-    O: PullOp<Outflow = Df<F::Indomain>>,
+    O: PullOp<Outflow = Df, Outdomain = F::Indomain>,
     F: PureFn<Outdomain = Option<T>>,
 {
-    type Outflow = Df<T>;
+    type Outflow = Df;
+    type Outdomain = T;
 }
 impl<T, O, F> MovePullOp for MapFilterMoveOp<O, F>
 where
-    O: MovePullOp<Outflow = Df<F::Indomain>>,
+    O: MovePullOp<Outflow = Df, Outdomain = F::Indomain>,
     F: PureFn<Outdomain = Option<T>>,
 {
-    fn poll_next(
-        &mut self,
-        ctx: &mut Context<'_>,
-    ) -> Poll<Option<<Self::Outflow as Flow>::Domain>> {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
         match self.op.poll_next(ctx) {
             Poll::Pending => Poll::Pending,
             Poll::Ready(None) => Poll::Ready(None), // EOS
@@ -139,19 +137,20 @@ where
 
 impl<T, O, F> PushOp for MapFilterMoveOp<O, F>
 where
-    O: PushOp<Inflow = Df<T>>,
+    O: PushOp<Inflow = Df, Indomain = T>,
     F: PureFn<Outdomain = Option<T>>,
 {
-    type Inflow = Df<F::Indomain>;
+    type Inflow = Df;
+    type Indomain = F::Indomain;
 }
 impl<T, O, F> MovePushOp for MapFilterMoveOp<O, F>
 where
-    O: MovePushOp<Inflow = Df<T>>,
+    O: MovePushOp<Inflow = Df, Indomain = T>,
     F: PureFn<Outdomain = Option<T>>,
 {
     type Feedback = JoinAll<O::Feedback>;
 
-    fn push(&mut self, item: <Self::Inflow as Flow>::Domain) -> Self::Feedback {
+    fn push(&mut self, item: Self::Indomain) -> Self::Feedback {
         join_all(
             self.func
                 .call(item)
@@ -176,18 +175,19 @@ impl<O: Op, F: PureRefFn> Op for MapFoldRefOp<O, F> {}
 impl<O, F: PureRefFn> PushOp for MapFoldRefOp<O, F>
 where
     F::Outdomain: IntoIterator,
-    O: PushOp<Inflow = Df<<<F as PureRefFn>::Outdomain as IntoIterator>::Item>>,
+    O: PushOp<Inflow = Df, Indomain = <<F as PureRefFn>::Outdomain as IntoIterator>::Item>,
 {
-    type Inflow = Df<F::Indomain>;
+    type Inflow = Df;
+    type Indomain = F::Indomain;
 }
 impl<O, F: PureRefFn> RefPushOp for MapFoldRefOp<O, F>
 where
     F::Outdomain: IntoIterator,
-    O: MovePushOp<Inflow = Df<<<F as PureRefFn>::Outdomain as IntoIterator>::Item>>,
+    O: MovePushOp<Inflow = Df, Indomain = <<F as PureRefFn>::Outdomain as IntoIterator>::Item>,
 {
     type Feedback = JoinAll<O::Feedback>;
 
-    fn push(&mut self, item: &<Self::Inflow as Flow>::Domain) -> Self::Feedback {
+    fn push(&mut self, item: &Self::Indomain) -> Self::Feedback {
         join_all(
             self.func
                 .call(item)
@@ -198,24 +198,29 @@ where
 }
 
 /// Map op for ref->ref values.
-pub struct MapRefRefOp<O: RefPushOp<Inflow = Rx<F::Outdomain>>, F: PureRefRefFn> {
+pub struct MapRefRefOp<O: RefPushOp<Inflow = Rx, Indomain = F::Outdomain>, F: PureRefRefFn> {
     op: O,
     func: F,
 }
-impl<O: RefPushOp<Inflow = Rx<F::Outdomain>>, F: PureRefRefFn> MapRefRefOp<O, F> {
+impl<O: RefPushOp<Inflow = Rx, Indomain = F::Outdomain>, F: PureRefRefFn> MapRefRefOp<O, F> {
     pub fn new(op: O, func: F) -> Self {
         Self { op, func }
     }
 }
-impl<O: RefPushOp<Inflow = Rx<F::Outdomain>>, F: PureRefRefFn> Op for MapRefRefOp<O, F> {}
+impl<O: RefPushOp<Inflow = Rx, Indomain = F::Outdomain>, F: PureRefRefFn> Op for MapRefRefOp<O, F> {}
 
-impl<O: RefPushOp<Inflow = Rx<F::Outdomain>>, F: PureRefRefFn> PushOp for MapRefRefOp<O, F> {
-    type Inflow = Rx<F::Indomain>;
+impl<O: RefPushOp<Inflow = Rx, Indomain = F::Outdomain>, F: PureRefRefFn> PushOp
+    for MapRefRefOp<O, F>
+{
+    type Inflow = Rx;
+    type Indomain = F::Indomain;
 }
-impl<O: RefPushOp<Inflow = Rx<F::Outdomain>>, F: PureRefRefFn> RefPushOp for MapRefRefOp<O, F> {
+impl<O: RefPushOp<Inflow = Rx, Indomain = F::Outdomain>, F: PureRefRefFn> RefPushOp
+    for MapRefRefOp<O, F>
+{
     type Feedback = O::Feedback;
 
-    fn push(&mut self, item: &<Self::Inflow as Flow>::Domain) -> Self::Feedback {
+    fn push(&mut self, item: &Self::Indomain) -> Self::Feedback {
         self.op.push(self.func.call(item))
     }
 }

@@ -7,7 +7,6 @@ use std::time::Duration;
 use tokio::time::{self, Sleep};
 
 use crate::flow::*;
-use crate::lattice::Lattice;
 
 use super::*;
 
@@ -20,7 +19,7 @@ pub struct BlockingIntervalOp<O: PullOp> {
     interval: Duration,
     sleep: Pin<Box<Sleep>>,
 }
-impl<T, O: PullOp<Outflow = Df<T>>> BlockingIntervalOp<O> {
+impl<T, O: PullOp<Outflow = Df, Outdomain = T>> BlockingIntervalOp<O> {
     pub fn new(op: O, interval: Duration) -> Self {
         Self {
             op,
@@ -29,15 +28,13 @@ impl<T, O: PullOp<Outflow = Df<T>>> BlockingIntervalOp<O> {
         }
     }
 }
-impl<T, O: PullOp<Outflow = Df<T>>> Op for BlockingIntervalOp<O> {}
-impl<T, O: PullOp<Outflow = Df<T>>> PullOp for BlockingIntervalOp<O> {
-    type Outflow = Df<T>;
+impl<T, O: PullOp<Outflow = Df, Outdomain = T>> Op for BlockingIntervalOp<O> {}
+impl<T, O: PullOp<Outflow = Df, Outdomain = T>> PullOp for BlockingIntervalOp<O> {
+    type Outflow = Df;
+    type Outdomain = T;
 }
-impl<T, O: MovePullOp<Outflow = Df<T>>> MovePullOp for BlockingIntervalOp<O> {
-    fn poll_next(
-        &mut self,
-        ctx: &mut Context<'_>,
-    ) -> Poll<Option<<Self::Outflow as Flow>::Domain>> {
+impl<T, O: MovePullOp<Outflow = Df, Outdomain = T>> MovePullOp for BlockingIntervalOp<O> {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
         match self.sleep.as_mut().poll(ctx) {
             Poll::Ready(_) => {
                 match self.op.poll_next(ctx) {
@@ -53,11 +50,8 @@ impl<T, O: MovePullOp<Outflow = Df<T>>> MovePullOp for BlockingIntervalOp<O> {
         }
     }
 }
-impl<T, O: RefPullOp<Outflow = Df<T>>> RefPullOp for BlockingIntervalOp<O> {
-    fn poll_next(
-        &mut self,
-        ctx: &mut Context<'_>,
-    ) -> Poll<Option<&<Self::Outflow as Flow>::Domain>> {
+impl<T, O: RefPullOp<Outflow = Df, Outdomain = T>> RefPullOp for BlockingIntervalOp<O> {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<&Self::Outdomain>> {
         match self.sleep.as_mut().poll(ctx) {
             Poll::Ready(_) => {
                 match self.op.poll_next(ctx) {
@@ -83,7 +77,7 @@ pub struct LeakyIntervalOp<O: PullOp> {
     interval: Duration,
     sleep: Pin<Box<Sleep>>,
 }
-impl<F: Lattice, O: PullOp<Outflow = Rx<F>>> LeakyIntervalOp<O> {
+impl<T, O: PullOp<Outflow = Rx, Outdomain = T>> LeakyIntervalOp<O> {
     pub fn new(op: O, interval: Duration) -> Self {
         Self {
             op,
@@ -92,15 +86,13 @@ impl<F: Lattice, O: PullOp<Outflow = Rx<F>>> LeakyIntervalOp<O> {
         }
     }
 }
-impl<F: Lattice, O: PullOp<Outflow = Rx<F>>> Op for LeakyIntervalOp<O> {}
-impl<F: Lattice, O: PullOp<Outflow = Rx<F>>> PullOp for LeakyIntervalOp<O> {
-    type Outflow = Rx<F>;
+impl<T, O: PullOp<Outflow = Rx, Outdomain = T>> Op for LeakyIntervalOp<O> {}
+impl<T, O: PullOp<Outflow = Rx, Outdomain = T>> PullOp for LeakyIntervalOp<O> {
+    type Outflow = Rx;
+    type Outdomain = T;
 }
-impl<F: Lattice, O: MovePullOp<Outflow = Rx<F>>> MovePullOp for LeakyIntervalOp<O> {
-    fn poll_next(
-        &mut self,
-        ctx: &mut Context<'_>,
-    ) -> Poll<Option<<Self::Outflow as Flow>::Domain>> {
+impl<T, O: MovePullOp<Outflow = Rx, Outdomain = T>> MovePullOp for LeakyIntervalOp<O> {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
         match self.op.poll_next(ctx) {
             Poll::Ready(Some(item)) => match self.sleep.as_mut().poll(ctx) {
                 Poll::Ready(_) => {
@@ -113,11 +105,8 @@ impl<F: Lattice, O: MovePullOp<Outflow = Rx<F>>> MovePullOp for LeakyIntervalOp<
         }
     }
 }
-impl<F: Lattice, O: RefPullOp<Outflow = Rx<F>>> RefPullOp for LeakyIntervalOp<O> {
-    fn poll_next(
-        &mut self,
-        ctx: &mut Context<'_>,
-    ) -> Poll<Option<&<Self::Outflow as Flow>::Domain>> {
+impl<T, O: RefPullOp<Outflow = Rx, Outdomain = T>> RefPullOp for LeakyIntervalOp<O> {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<&Self::Outdomain>> {
         match self.op.poll_next(ctx) {
             Poll::Ready(Some(item)) => match self.sleep.as_mut().poll(ctx) {
                 Poll::Ready(_) => {
@@ -138,10 +127,10 @@ impl<F: Lattice, O: RefPullOp<Outflow = Rx<F>>> RefPullOp for LeakyIntervalOp<O>
 pub struct BatchingOp<O: PullOp> {
     op: O,
     interval: Duration,
-    buffer: VecDeque<<O::Outflow as Flow>::Domain>,
+    buffer: VecDeque<O::Outdomain>,
     sleep: Pin<Box<Sleep>>,
 }
-impl<T, O: PullOp<Outflow = Df<T>>> BatchingOp<O> {
+impl<T, O: PullOp<Outflow = Df, Outdomain = T>> BatchingOp<O> {
     pub fn new(op: O, interval: Duration) -> Self {
         Self {
             op,
@@ -151,15 +140,13 @@ impl<T, O: PullOp<Outflow = Df<T>>> BatchingOp<O> {
         }
     }
 }
-impl<T, O: PullOp<Outflow = Df<T>>> Op for BatchingOp<O> {}
-impl<T, O: PullOp<Outflow = Df<T>>> PullOp for BatchingOp<O> {
+impl<T, O: PullOp<Outflow = Df, Outdomain = T>> Op for BatchingOp<O> {}
+impl<T, O: PullOp<Outflow = Df, Outdomain = T>> PullOp for BatchingOp<O> {
     type Outflow = O::Outflow;
+    type Outdomain = O::Outdomain;
 }
-impl<T, O: MovePullOp<Outflow = Df<T>>> MovePullOp for BatchingOp<O> {
-    fn poll_next(
-        &mut self,
-        ctx: &mut Context<'_>,
-    ) -> Poll<Option<<Self::Outflow as Flow>::Domain>> {
+impl<T, O: MovePullOp<Outflow = Df, Outdomain = T>> MovePullOp for BatchingOp<O> {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
         // Pull an element from the upstream op, keeping track if EOS.
         let poll_state = match self.op.poll_next(ctx) {
             Poll::Ready(Some(item)) => {

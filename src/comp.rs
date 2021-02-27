@@ -22,7 +22,7 @@ impl<O: MovePullOp> Future for MoveNext<'_, O>
 where
     Self: Unpin,
 {
-    type Output = Option<<O::Outflow as Flow>::Domain>;
+    type Output = Option<O::Outdomain>;
 
     fn poll(self: std::pin::Pin<&mut Self>, ctx: &mut Context<'_>) -> Poll<Self::Output> {
         self.get_mut().op.poll_next(ctx)
@@ -79,18 +79,18 @@ pub async fn sleep_yield_now() {
 }
 
 /// A computation node with a single pull end and a single push end.
-pub struct StaticComp<I: PullOp, O: PushOp<Inflow = I::Outflow>> {
+pub struct StaticComp<I: PullOp, O: PushOp<Indomain = I::Outdomain>> {
     pull: I,
     push: O,
 }
 
-impl<I: PullOp, O: PushOp<Inflow = I::Outflow>> StaticComp<I, O> {
+impl<I: PullOp, O: PushOp<Indomain = I::Outdomain>> StaticComp<I, O> {
     /// Create a StaticComp from PULL and PUSH ops.
     pub fn new(pull: I, push: O) -> Self {
         Self { pull, push }
     }
 }
-impl<I: MovePullOp, O: MovePushOp<Inflow = I::Outflow>> StaticComp<I, O> {
+impl<I: MovePullOp, O: MovePushOp<Indomain = I::Outdomain>> StaticComp<I, O> {
     /// If PULL and PUSH deal with owned values.
     /// Continuously runs this Comp node. Never returns! Use `tick_moveop` instead.
     pub async fn run_moveop(mut self) -> ! {
@@ -111,7 +111,7 @@ impl<I: MovePullOp, O: MovePushOp<Inflow = I::Outflow>> StaticComp<I, O> {
         }
     }
 }
-impl<I: RefPullOp, O: RefPushOp<Inflow = I::Outflow>> StaticComp<I, O> {
+impl<I: RefPullOp, O: RefPushOp<Indomain = I::Outdomain>> StaticComp<I, O> {
     /// If PULL and PUSH deal with reference values.
     /// Continuously runs this Comp node. Never returns! Use `tick_refop` instead.
     pub async fn run_refop(mut self) -> ! {
@@ -130,12 +130,12 @@ impl<I: RefPullOp, O: RefPushOp<Inflow = I::Outflow>> StaticComp<I, O> {
 }
 
 /// A computation node with a single pull and dynamically many push ends.
-pub struct DynComp<T, I: PullOp<Outflow = Rx<T>>, O: PushOp<Inflow = Rx<T>>> {
+pub struct DynComp<I: PullOp<Outflow = Rx>, O: PushOp<Inflow = Rx, Indomain = I::Outdomain>> {
     pull: I,
     pushes: Vec<O>,
 }
 
-impl<T, I: PullOp<Outflow = Rx<T>>, O: PushOp<Inflow = Rx<T>>> DynComp<T, I, O> {
+impl<I: PullOp<Outflow = Rx>, O: PushOp<Inflow = Rx, Indomain = I::Outdomain>> DynComp<I, O> {
     /// Create a DynComp from a pull end. Push ends can be added dynamically with `add_split`.
     pub fn new(pull: I) -> Self {
         Self {
@@ -144,9 +144,9 @@ impl<T, I: PullOp<Outflow = Rx<T>>, O: PushOp<Inflow = Rx<T>>> DynComp<T, I, O> 
         }
     }
 }
-impl<T, I: MovePullOp<Outflow = Rx<T>>, O: MovePushOp<Inflow = Rx<T>>> DynComp<T, I, O>
+impl<I: MovePullOp<Outflow = Rx>, O: MovePushOp<Inflow = Rx, Indomain = I::Outdomain>> DynComp<I, O>
 where
-    <I::Outflow as Flow>::Domain: Clone,
+    I::Outdomain: Clone,
 {
     /// For cloneable owned values.
     /// Adds a split off.
@@ -179,7 +179,7 @@ where
         }
     }
 }
-impl<T, I: RefPullOp<Outflow = Rx<T>>, O: RefPushOp<Inflow = Rx<T>>> DynComp<T, I, O> {
+impl<I: RefPullOp<Outflow = Rx>, O: RefPushOp<Inflow = Rx, Indomain = I::Outdomain>> DynComp<I, O> {
     /// For reference values.
     /// Adds a split off.
     pub async fn add_refsplit(&mut self, push: O) -> Option<Vec<<O::Feedback as Future>::Output>> {
@@ -208,7 +208,7 @@ impl<T, I: RefPullOp<Outflow = Rx<T>>, O: RefPushOp<Inflow = Rx<T>>> DynComp<T, 
 struct RefCompFuture<'a, I, O>
 where
     I: RefPullOp,
-    O: RefPushOp<Inflow = I::Outflow>,
+    O: RefPushOp<Indomain = I::Outdomain>,
 {
     pull: &'a mut I,
     pushes: Vec<&'a mut O>,
@@ -217,7 +217,7 @@ where
 impl<'a, I, O> RefCompFuture<'a, I, O>
 where
     I: RefPullOp,
-    O: RefPushOp<Inflow = I::Outflow>,
+    O: RefPushOp<Indomain = I::Outdomain>,
 {
     pub fn new(pull: &'a mut I, pushes: Vec<&'a mut O>) -> Self {
         Self {
@@ -230,7 +230,7 @@ where
 impl<'a, I, O> Future for RefCompFuture<'a, I, O>
 where
     I: RefPullOp,
-    O: RefPushOp<Inflow = I::Outflow>,
+    O: RefPushOp<Indomain = I::Outdomain>,
     Self: Unpin,
 {
     type Output = Option<Vec<<O::Feedback as Future>::Output>>;

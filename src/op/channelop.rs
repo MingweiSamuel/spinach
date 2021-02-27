@@ -28,13 +28,14 @@ impl<T> ChannelPushOp<T> {
 }
 impl<T> Op for ChannelPushOp<T> {}
 impl<T> PushOp for ChannelPushOp<T> {
-    type Inflow = Df<T>;
+    type Inflow = Df;
+    type Indomain = T;
 }
 impl<T> MovePushOp for ChannelPushOp<T> {
     type Feedback = impl Future;
 
     #[must_use]
-    fn push(&mut self, item: <Self::Inflow as Flow>::Domain) -> Self::Feedback {
+    fn push(&mut self, item: Self::Indomain) -> Self::Feedback {
         let send = self.send.clone();
         async move { send.clone().send(item).await }
     }
@@ -55,13 +56,11 @@ impl<T> ChannelPullOp<T> {
 }
 impl<T> Op for ChannelPullOp<T> {}
 impl<T> PullOp for ChannelPullOp<T> {
-    type Outflow = Df<T>;
+    type Outflow = Df;
+    type Outdomain = T;
 }
 impl<T> MovePullOp for ChannelPullOp<T> {
-    fn poll_next(
-        &mut self,
-        ctx: &mut Context<'_>,
-    ) -> Poll<Option<<Self::Outflow as Flow>::Domain>> {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
         self.recv.poll_recv(ctx)
     }
 }

@@ -4,7 +4,6 @@ use ref_cast::RefCast;
 
 use super::*;
 
-use crate::flow::*;
 use crate::lattice::Hide;
 use crate::monotonic::MonotonicFilterRefFn;
 
@@ -22,17 +21,18 @@ impl<O: Op, F: MonotonicFilterRefFn> Op for MonotonicFilterRefOp<O, F> {}
 
 impl<O, F: MonotonicFilterRefFn> PushOp for MonotonicFilterRefOp<O, F>
 where
-    O: PushOp<Inflow = Rx<Hide<F::Outmerge>>>,
+    O: PushOp<Indomain = Hide<F::Outmerge>>,
 {
-    type Inflow = Rx<Hide<F::Inmerge>>;
+    type Inflow = O::Inflow;
+    type Indomain = Hide<F::Inmerge>;
 }
 impl<O, F: MonotonicFilterRefFn> RefPushOp for MonotonicFilterRefOp<O, F>
 where
-    O: RefPushOp<Inflow = Rx<Hide<F::Outmerge>>>,
+    O: RefPushOp<Indomain = Hide<F::Outmerge>>,
 {
     type Feedback = JoinAll<O::Feedback>;
 
-    fn push(&mut self, item: &<Self::Inflow as Flow>::Domain) -> Self::Feedback {
+    fn push(&mut self, item: &Self::Indomain) -> Self::Feedback {
         join_all(self.func.call(item.reveal()).into_iter().map(|item| {
             let hide = Hide::ref_cast(item);
             self.op.push(hide)

@@ -9,55 +9,51 @@ use super::*;
 ///
 /// If used as a push-op, pushed values are immediately dropped.
 /// If used as a pull-op, never produces any values.
-pub struct NullOp<F: Flow> {
-    _phantom: std::marker::PhantomData<F>,
+pub struct NullOp<F: Flow, T> {
+    _phantom: std::marker::PhantomData<(F, T)>,
 }
-impl<F: Flow> NullOp<F> {
+impl<F: Flow, T> NullOp<F, T> {
     pub fn new() -> Self {
         Self {
             _phantom: std::marker::PhantomData,
         }
     }
 }
-impl<F: Flow> Default for NullOp<F> {
+impl<F: Flow, T> Default for NullOp<F, T> {
     fn default() -> Self {
         Self::new()
     }
 }
-impl<F: Flow> Op for NullOp<F> {}
-impl<F: Flow> PullOp for NullOp<F> {
+impl<F: Flow, T> Op for NullOp<F, T> {}
+impl<F: Flow, T> PullOp for NullOp<F, T> {
     type Outflow = F;
+    type Outdomain = T;
 }
-impl<F: Flow> PushOp for NullOp<F> {
+impl<F: Flow, T> PushOp for NullOp<F, T> {
     type Inflow = F;
+    type Indomain = T;
 }
-impl<F: Flow> MovePullOp for NullOp<F> {
-    fn poll_next(
-        &mut self,
-        _ctx: &mut Context<'_>,
-    ) -> Poll<Option<<Self::Outflow as Flow>::Domain>> {
+impl<F: Flow, T> MovePullOp for NullOp<F, T> {
+    fn poll_next(&mut self, _ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
         Poll::Pending
     }
 }
-impl<F: Flow> RefPullOp for NullOp<F> {
-    fn poll_next(
-        &mut self,
-        _ctx: &mut Context<'_>,
-    ) -> Poll<Option<&<Self::Outflow as Flow>::Domain>> {
+impl<F: Flow, T> RefPullOp for NullOp<F, T> {
+    fn poll_next(&mut self, _ctx: &mut Context<'_>) -> Poll<Option<&Self::Outdomain>> {
         Poll::Pending
     }
 }
-impl<F: Flow> MovePushOp for NullOp<F> {
+impl<F: Flow, T> MovePushOp for NullOp<F, T> {
     type Feedback = future::Ready<()>;
 
-    fn push(&mut self, _item: <Self::Inflow as Flow>::Domain) -> Self::Feedback {
+    fn push(&mut self, _item: Self::Indomain) -> Self::Feedback {
         future::ready(())
     }
 }
-impl<F: Flow> RefPushOp for NullOp<F> {
+impl<F: Flow, T> RefPushOp for NullOp<F, T> {
     type Feedback = future::Ready<()>;
 
-    fn push(&mut self, _item: &<Self::Inflow as Flow>::Domain) -> Self::Feedback {
+    fn push(&mut self, _item: &Self::Indomain) -> Self::Feedback {
         future::ready(())
     }
 }

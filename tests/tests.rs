@@ -39,7 +39,7 @@ pub async fn test_cycle_channel() -> Result<(), String> {
 
 #[tokio::test]
 pub async fn test_cycle_handoff() -> Result<(), String> {
-    let (push_pipe, pull_pipe) = handoff_op::<Df<usize>>();
+    let (push_pipe, pull_pipe) = handoff_op::<Df, usize>();
     let mut push_pipe = push_pipe;
 
     let pull_pipe = MapFilterMoveOp::new(pull_pipe, IncrementFn);
@@ -89,7 +89,7 @@ pub async fn test_kvs() -> Result<(), String> {
     let pull_pipe = MapFilterMoveOp::new(pull_pipe, TupleToHashMapFn);
     let pull_pipe = LatticeOp::<_, MyLattice>::new_default(pull_pipe);
 
-    let read_foo_0 = NullOp::<Rx<<MyKeyLattice as Lattice>::Domain>>::new();
+    let read_foo_0 = NullOp::<Rx, <MyKeyLattice as Lattice>::Domain>::new();
     let read_foo_0 = DebugOp::new(read_foo_0, "foo 0");
     let read_foo_0 = MapRefRefOp::new(read_foo_0, RevealRefFn(std::marker::PhantomData));
     let read_foo_0 = MonotonicFilterRefOp::new(
@@ -97,7 +97,7 @@ pub async fn test_kvs() -> Result<(), String> {
         MapProject::<&'static str, MyHashMap>::new("foo"),
     );
 
-    let read_foo_1 = NullOp::<Rx<<MyKeyLattice as Lattice>::Domain>>::new();
+    let read_foo_1 = NullOp::<Rx, <MyKeyLattice as Lattice>::Domain>::new();
     let read_foo_1 = DebugOp::new(read_foo_1, "foo 1");
     let read_foo_1 = MapRefRefOp::new(read_foo_1, RevealRefFn(std::marker::PhantomData));
     let read_foo_1 = MonotonicFilterRefOp::new(

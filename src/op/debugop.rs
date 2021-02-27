@@ -1,8 +1,6 @@
 use std::fmt::Debug;
 use std::task::{Context, Poll};
 
-use crate::flow::*;
-
 use super::*;
 
 /// An Op which logs each passing element to stdout, for debugging.
@@ -21,18 +19,17 @@ impl<O: Op> DebugOp<O> {
 impl<O: Op> Op for DebugOp<O> {}
 impl<O: PullOp> PullOp for DebugOp<O> {
     type Outflow = O::Outflow;
+    type Outdomain = O::Outdomain;
 }
 impl<O: PushOp> PushOp for DebugOp<O> {
     type Inflow = O::Inflow;
+    type Indomain = O::Indomain;
 }
 impl<O: MovePullOp> MovePullOp for DebugOp<O>
 where
-    <O::Outflow as Flow>::Domain: Debug,
+    O::Outdomain: Debug,
 {
-    fn poll_next(
-        &mut self,
-        ctx: &mut Context<'_>,
-    ) -> Poll<Option<<Self::Outflow as Flow>::Domain>> {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
         let polled = self.op.poll_next(ctx);
         if let Poll::Ready(Some(item)) = &polled {
             println!("{}: {:?}", self.tag, item);
@@ -42,12 +39,9 @@ where
 }
 impl<O: RefPullOp> RefPullOp for DebugOp<O>
 where
-    <O::Outflow as Flow>::Domain: Debug,
+    O::Outdomain: Debug,
 {
-    fn poll_next(
-        &mut self,
-        ctx: &mut Context<'_>,
-    ) -> Poll<Option<&<Self::Outflow as Flow>::Domain>> {
+    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<&Self::Outdomain>> {
         let polled = self.op.poll_next(ctx);
         if let Poll::Ready(Some(item)) = &polled {
             println!("{}: {:?}", self.tag, item);
@@ -57,22 +51,22 @@ where
 }
 impl<O: MovePushOp> MovePushOp for DebugOp<O>
 where
-    <O::Inflow as Flow>::Domain: Debug,
+    O::Indomain: Debug,
 {
     type Feedback = O::Feedback;
 
-    fn push(&mut self, item: <Self::Inflow as Flow>::Domain) -> Self::Feedback {
+    fn push(&mut self, item: Self::Indomain) -> Self::Feedback {
         println!("{}: {:?}", self.tag, item);
         self.op.push(item)
     }
 }
 impl<O: RefPushOp> RefPushOp for DebugOp<O>
 where
-    <O::Inflow as Flow>::Domain: Debug,
+    O::Indomain: Debug,
 {
     type Feedback = O::Feedback;
 
-    fn push(&mut self, item: &<Self::Inflow as Flow>::Domain) -> Self::Feedback {
+    fn push(&mut self, item: &Self::Indomain) -> Self::Feedback {
         println!("{}: {:?}", self.tag, item);
         self.op.push(item)
     }

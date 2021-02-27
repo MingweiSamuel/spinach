@@ -1,5 +1,3 @@
-use crate::flow::*;
-
 use super::*;
 
 /// An Op for converting an owned flow into a reference flow.
@@ -20,15 +18,16 @@ impl<O: Op> Op for ReferenceOp<O> {}
 
 impl<O: PushOp> PushOp for ReferenceOp<O> {
     type Inflow = O::Inflow;
+    type Indomain = O::Indomain;
 }
 
 impl<O: RefPushOp> MovePushOp for ReferenceOp<O>
 where
-    <O::Inflow as Flow>::Domain: Clone,
+    O::Indomain: Clone,
 {
     type Feedback = O::Feedback;
 
-    fn push(&mut self, item: <Self::Inflow as Flow>::Domain) -> Self::Feedback {
+    fn push(&mut self, item: Self::Indomain) -> Self::Feedback {
         self.op.push(&item)
     }
 }
