@@ -42,12 +42,12 @@ where
 }
 impl<O: RefPullOp> RefPullOp for DebugOp<O>
 where
-    <O::Outflow as Flow>::Domain: Debug,
+    for<'a> <O::Outflow as Flow>::RefDomain<'a>: Debug,
 {
-    fn poll_next(
-        &mut self,
+    fn poll_next<'a>(
+        &'a mut self,
         ctx: &mut Context<'_>,
-    ) -> Poll<Option<&<Self::Outflow as Flow>::Domain>> {
+    ) -> Poll<Option<<Self::Outflow as Flow>::RefDomain<'a>>> {
         let polled = self.op.poll_next(ctx);
         if let Poll::Ready(Some(item)) = &polled {
             println!("{}: {:?}", self.tag, item);
@@ -68,11 +68,11 @@ where
 }
 impl<O: RefPushOp> RefPushOp for DebugOp<O>
 where
-    <O::Inflow as Flow>::Domain: Debug,
+    for<'a> <O::Inflow as Flow>::RefDomain<'a>: Debug,
 {
     type Feedback = O::Feedback;
 
-    fn push(&mut self, item: &<Self::Inflow as Flow>::Domain) -> Self::Feedback {
+    fn push<'a>(&mut self, item: <Self::Inflow as Flow>::RefDomain<'a>) -> Self::Feedback {
         println!("{}: {:?}", self.tag, item);
         self.op.push(item)
     }

@@ -25,10 +25,10 @@ pub trait MovePullOp: PullOp {
 
 /// Pull-based op for reference values.
 pub trait RefPullOp: PullOp {
-    fn poll_next(
-        &mut self,
+    fn poll_next<'a>(
+        &'a mut self,
         ctx: &mut Context<'_>,
-    ) -> Poll<Option<&<Self::Outflow as Flow>::Domain>>;
+    ) -> Poll<Option<<Self::Outflow as Flow>::RefDomain<'a>>>;
 }
 
 /// Push-based op for owned values.
@@ -44,5 +44,5 @@ pub trait RefPushOp: PushOp {
     type Feedback: Future;
 
     #[must_use]
-    fn push(&mut self, item: &<Self::Inflow as Flow>::Domain) -> Self::Feedback;
+    fn push<'a>(&mut self, item: <Self::Inflow as Flow>::RefDomain<'a>) -> Self::Feedback;
 }

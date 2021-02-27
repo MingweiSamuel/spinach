@@ -30,7 +30,7 @@ impl<T> Op for ChannelPushOp<T> {}
 impl<T> PushOp for ChannelPushOp<T> {
     type Inflow = Df<T>;
 }
-impl<T> MovePushOp for ChannelPushOp<T> {
+impl<T: 'static> MovePushOp for ChannelPushOp<T> {
     type Feedback = impl Future;
 
     #[must_use]
@@ -57,7 +57,7 @@ impl<T> Op for ChannelPullOp<T> {}
 impl<T> PullOp for ChannelPullOp<T> {
     type Outflow = Df<T>;
 }
-impl<T> MovePullOp for ChannelPullOp<T> {
+impl<T: 'static> MovePullOp for ChannelPullOp<T> {
     fn poll_next(
         &mut self,
         ctx: &mut Context<'_>,

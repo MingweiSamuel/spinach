@@ -18,7 +18,7 @@ pub fn udp_op(sock: UdpSocket) -> (UdpPullOp, UdpPushOp) {
     (UdpPullOp::new(sock.clone()), UdpPushOp::new(sock))
 }
 
-/// The receving (pull) side of a udp connection.
+/// The receving (pull) side of a UDP connection.
 pub struct UdpPullOp {
     sock: Arc<UdpSocket>,
     buffer: [u8; UDP_BUFFER],
@@ -52,7 +52,7 @@ impl MovePullOp for UdpPullOp {
     }
 }
 
-/// The sending (push) side of a udp connection.
+/// The sending (push) side of a UDP connection.
 pub struct UdpPushOp {
     sock: Arc<UdpSocket>,
 }

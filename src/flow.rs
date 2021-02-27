@@ -7,6 +7,7 @@ use crate::lattice::Lattice;
 /// This trait is sealed and cannot be implemented for types outside this crate.
 pub trait Flow: private::Sealed {
     type Domain;
+    type RefDomain<'a>;
 }
 
 /// Flow representing a dataflow of distinct `T` values.
@@ -20,12 +21,16 @@ pub struct Rx<F: Lattice> {
     _private: F::Domain,
 }
 
-impl<T> Flow for Df<T> {
+impl<T: 'static> Flow for Df<T> {
     type Domain = T;
+    type RefDomain<'a> = &'a T;
 }
 
+use crate::lattice::{ Hide, HideRef };
+
 impl<F: Lattice> Flow for Rx<F> {
-    type Domain = F::Domain;
+    type Domain = Hide<F>;
+    type RefDomain<'a> = HideRef<'a, F>;
 }
 
 mod private {

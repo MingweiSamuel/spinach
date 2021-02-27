@@ -11,6 +11,8 @@ use crate::func::{PureFn, PureRefFn};
 pub struct MapFlattenMoveOp<O: Op, F: PureFn>
 where
     F::Outdomain: IntoIterator,
+    <F::Outdomain as IntoIterator>::Item: 'static,
+    F::Indomain: 'static,
 {
     op: O,
     func: F,
@@ -92,7 +94,10 @@ where
 }
 
 /// Map-Filter op for owned->owned values.
-pub struct MapFilterMoveOp<O: Op, F: PureFn> {
+pub struct MapFilterMoveOp<O: Op, F: PureFn>
+where
+    F::Indomain: 'static,
+{
     op: O,
     func: F,
 }
@@ -110,14 +115,14 @@ impl<O: Op, F: PureFn> Op for MapFilterMoveOp<O, F> {}
 //     type Outflow = Df<<F::Outdomain as IntoIterator>::Item>;
 // }
 
-impl<T, O, F> PullOp for MapFilterMoveOp<O, F>
+impl<T: 'static, O, F> PullOp for MapFilterMoveOp<O, F>
 where
     O: PullOp<Outflow = Df<F::Indomain>>,
     F: PureFn<Outdomain = Option<T>>,
 {
     type Outflow = Df<T>;
 }
-impl<T, O, F> MovePullOp for MapFilterMoveOp<O, F>
+impl<T: 'static, O, F> MovePullOp for MapFilterMoveOp<O, F>
 where
     O: MovePullOp<Outflow = Df<F::Indomain>>,
     F: PureFn<Outdomain = Option<T>>,
@@ -137,14 +142,14 @@ where
     }
 }
 
-impl<T, O, F> PushOp for MapFilterMoveOp<O, F>
+impl<T: 'static, O, F> PushOp for MapFilterMoveOp<O, F>
 where
     O: PushOp<Inflow = Df<T>>,
     F: PureFn<Outdomain = Option<T>>,
 {
     type Inflow = Df<F::Indomain>;
 }
-impl<T, O, F> MovePushOp for MapFilterMoveOp<O, F>
+impl<T: 'static, O, F> MovePushOp for MapFilterMoveOp<O, F>
 where
     O: MovePushOp<Inflow = Df<T>>,
     F: PureFn<Outdomain = Option<T>>,
@@ -162,7 +167,10 @@ where
 }
 
 /// Map-Fold op for ref->owned values.
-pub struct MapFoldRefOp<O: Op, F: PureRefFn> {
+pub struct MapFoldRefOp<O: Op, F: PureRefFn>
+where
+    F::Indomain: 'static,
+{
     op: O,
     func: F,
 }
@@ -177,6 +185,7 @@ impl<O, F: PureRefFn> PushOp for MapFoldRefOp<O, F>
 where
     F::Outdomain: IntoIterator,
     O: PushOp<Inflow = Df<<<F as PureRefFn>::Outdomain as IntoIterator>::Item>>,
+    <F::Outdomain as std::iter::IntoIterator>::Item: 'static,
 {
     type Inflow = Df<F::Indomain>;
 }
@@ -184,6 +193,7 @@ impl<O, F: PureRefFn> RefPushOp for MapFoldRefOp<O, F>
 where
     F::Outdomain: IntoIterator,
     O: MovePushOp<Inflow = Df<<<F as PureRefFn>::Outdomain as IntoIterator>::Item>>,
+    <F::Outdomain as std::iter::IntoIterator>::Item: 'static,
 {
     type Feedback = JoinAll<O::Feedback>;
 
