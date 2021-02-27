@@ -64,11 +64,17 @@
 <span id="61">61</span>
 <span id="62">62</span>
 <span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 
+<span class="kw">use</span> <span class="ident">ref_cast</span>::<span class="ident">RefCast</span>;
+
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">flow</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lattice</span>::<span class="ident">Lattice</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lattice</span>::{ <span class="ident">Lattice</span>, <span class="ident">Hide</span> };
 
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
@@ -101,9 +107,9 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">Op</span>, <span class="ident">F</span>: <span class="ident">Lattice</span><span class="op">&gt;</span> <span class="ident">Op</span> <span class="kw">for</span> <span class="ident">LatticeOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span> {}
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span><span class="op">&lt;</span><span class="ident">F</span>::<span class="ident">Domain</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">F</span>: <span class="ident">Lattice</span><span class="op">&gt;</span> <span class="ident">PullOp</span> <span class="kw">for</span> <span class="ident">LatticeOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span> {
-    <span class="kw">type</span> <span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Rx</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>;
+    <span class="kw">type</span> <span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Rx</span><span class="op">&lt;</span><span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span><span class="op">&gt;</span>;
 }
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">PushOp</span><span class="op">&lt;</span><span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">Rx</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">F</span>: <span class="ident">Lattice</span><span class="op">&gt;</span> <span class="ident">PushOp</span> <span class="kw">for</span> <span class="ident">LatticeOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">PushOp</span><span class="op">&lt;</span><span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">Rx</span><span class="op">&lt;</span><span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">F</span>: <span class="ident">Lattice</span><span class="op">&gt;</span> <span class="ident">PushOp</span> <span class="kw">for</span> <span class="ident">LatticeOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span> {
     <span class="kw">type</span> <span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">Df</span><span class="op">&lt;</span><span class="ident">F</span>::<span class="ident">Domain</span><span class="op">&gt;</span>;
 }
 
@@ -117,15 +123,17 @@
         }
 
         <span class="comment">// Note: even if upstream is closed, this remains open.</span>
-        <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">state</span>))
+        <span class="kw">let</span> <span class="ident">hide</span> <span class="op">=</span> <span class="ident">Hide</span>::<span class="ident">ref_cast</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">state</span>);
+        <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">hide</span>))
     }
 }
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">RefPushOp</span><span class="op">&lt;</span><span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">Rx</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">F</span>: <span class="ident">Lattice</span><span class="op">&gt;</span> <span class="ident">MovePushOp</span> <span class="kw">for</span> <span class="ident">LatticeOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">RefPushOp</span><span class="op">&lt;</span><span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">Rx</span><span class="op">&lt;</span><span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">F</span>: <span class="ident">Lattice</span><span class="op">&gt;</span> <span class="ident">MovePushOp</span> <span class="kw">for</span> <span class="ident">LatticeOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span> {
     <span class="kw">type</span> <span class="ident">Feedback</span> <span class="op">=</span> <span class="ident">O</span>::<span class="ident">Feedback</span>;
 
     <span class="kw">fn</span> <span class="ident">push</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">item</span>: <span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Inflow</span> <span class="kw">as</span> <span class="ident">Flow</span><span class="op">&gt;</span>::<span class="ident">Domain</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Feedback</span> {
         <span class="ident">F</span>::<span class="ident">merge_in</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">state</span>, <span class="ident">item</span>);
-        <span class="self">self</span>.<span class="ident">op</span>.<span class="ident">push</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">state</span>)
+        <span class="kw">let</span> <span class="ident">hide</span> <span class="op">=</span> <span class="ident">Hide</span>::<span class="ident">ref_cast</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">state</span>);
+        <span class="self">self</span>.<span class="ident">op</span>.<span class="ident">push</span>(<span class="ident">hide</span>)
     }
 }
 </pre></div>
