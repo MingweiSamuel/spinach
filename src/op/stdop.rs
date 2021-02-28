@@ -1,5 +1,5 @@
 use std::future;
-use std::task::{Context, Poll};
+use std::io::Write;
 
 use crate::flow::*;
 
@@ -9,39 +9,35 @@ use super::*;
 ///
 /// If used as a push-op, pushed values are immediately dropped.
 /// If used as a pull-op, never produces any values.
-pub struct NullOp<F: Flow, T> {
+pub struct StdOutOp<F: Flow, T: AsRef<[u8]>> {
     _phantom: std::marker::PhantomData<(F, T)>,
 }
-impl<F: Flow, T> NullOp<F, T> {
+
+impl<F: Flow, T: AsRef<[u8]>> StdOutOp<F, T> {
     pub fn new() -> Self {
         Self {
             _phantom: std::marker::PhantomData,
         }
     }
 }
-impl<F: Flow, T> Default for NullOp<F, T> {
+
+impl<F: Flow, T: AsRef<[u8]>> Default for StdOutOp<F, T> {
     fn default() -> Self {
         Self::new()
     }
 }
-impl<F: Flow, T> Op for NullOp<F, T> {}
 
-impl<F: Flow, T> PullOp for NullOp<F, T> {
-    type Outflow = F;
-    type Outdomain<'s> = T;
+impl<F: Flow, T: AsRef<[u8]>> Op for StdOutOp<F, T> {}
 
-    fn poll_next<'s>(&'s mut self, _ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain<'s>>> {
-        Poll::Pending
-    }
-}
-
-impl<F: Flow, T> PushOp for NullOp<F, T> {
+impl<F: Flow, T: AsRef<[u8]>> PushOp for StdOutOp<F, T> {
     type Inflow = F;
     type Indomain<'p> = T;
 
     type Feedback = future::Ready<()>;
-
-    fn push<'p>(&mut self, _item: Self::Indomain<'p>) -> Self::Feedback {
+ 
+    fn push<'p>(&mut self, item: Self::Indomain<'p>) -> Self::Feedback {
+        let bytes = item.as_ref();
+        std::io::stdout().write_all(bytes).expect("Failed to write to stdout.");
         future::ready(())
     }
 }

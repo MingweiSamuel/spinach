@@ -18,30 +18,31 @@ impl<O: Op> CloneOp<O> {
     }
 }
 impl<O: Op> Op for CloneOp<O> {}
-impl<O: PullOp> PullOp for CloneOp<O> {
-    type Outflow = O::Outflow;
-    type Outdomain = O::Outdomain;
-}
-impl<O: PushOp> PushOp for CloneOp<O> {
-    type Inflow = O::Inflow;
-    type Indomain = O::Indomain;
-}
-impl<O: RefPullOp> MovePullOp for CloneOp<O>
+impl<T, O> PullOp for CloneOp<O>
 where
-    O::Outdomain: Clone,
+    for<'a> O: PullOp<Outdomain<'a> = &'a T>,
+    T: Clone,
 {
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
+    type Outflow = O::Outflow;
+    type Outdomain<'s> = T;
+
+    fn poll_next<'s>(&'s mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain<'s>>> {
         let polled = self.op.poll_next(ctx);
         polled.map(|opt| opt.cloned())
     }
 }
-impl<O: MovePushOp> RefPushOp for CloneOp<O>
+
+impl<T, O> PushOp for CloneOp<O>
 where
-    O::Indomain: Clone,
+    for<'a> O: PushOp<Indomain<'a> = T>,
+    T: 'static + Clone,
 {
+    type Inflow = O::Inflow;
+    type Indomain<'p> = &'p T;
+
     type Feedback = O::Feedback;
 
-    fn push(&mut self, item: &Self::Indomain) -> Self::Feedback {
+    fn push<'p>(&mut self, item: Self::Indomain<'p>) -> Self::Feedback {
         self.op.push(item.clone())
     }
 }

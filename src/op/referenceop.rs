@@ -9,25 +9,25 @@ use super::*;
 pub struct ReferenceOp<O: Op> {
     op: O,
 }
+
 impl<O: Op> ReferenceOp<O> {
     pub fn new(op: O) -> Self {
-        ReferenceOp { op }
+        Self { op }
     }
 }
+
 impl<O: Op> Op for ReferenceOp<O> {}
 
-impl<O: PushOp> PushOp for ReferenceOp<O> {
-    type Inflow = O::Inflow;
-    type Indomain = O::Indomain;
-}
-
-impl<O: RefPushOp> MovePushOp for ReferenceOp<O>
+impl<T, O> PushOp for ReferenceOp<O>
 where
-    O::Indomain: Clone,
+    for<'a> O: PushOp<Indomain<'a> = &'a T>,
 {
+    type Inflow = O::Inflow;
+    type Indomain<'p> = T;
+
     type Feedback = O::Feedback;
 
-    fn push(&mut self, item: Self::Indomain) -> Self::Feedback {
+    fn push<'p>(&mut self, item: Self::Indomain<'p>) -> Self::Feedback {
         self.op.push(&item)
     }
 }

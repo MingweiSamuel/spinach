@@ -88,15 +88,15 @@ impl<F: Flow, T> HandoffPushOp<F, T> {
     }
 }
 impl<F: Flow, T> Op for HandoffPushOp<F, T> {}
+
 impl<F: Flow, T> PushOp for HandoffPushOp<F, T> {
     type Inflow = F;
-    type Indomain = T;
-}
-impl<F: Flow, T> MovePushOp for HandoffPushOp<F, T> {
+    type Indomain<'p> = T;
+
     type Feedback = impl Future;
 
     #[must_use]
-    fn push(&mut self, item: Self::Indomain) -> Self::Feedback {
+    fn push<'p>(&mut self, item: Self::Indomain<'p>) -> Self::Feedback {
         HandoffSend {
             item: Some(item),
             handoff: self.handoff.clone(),
@@ -116,10 +116,9 @@ impl<F: Flow, T> HandoffPullOp<F, T> {
 impl<F: Flow, T> Op for HandoffPullOp<F, T> {}
 impl<F: Flow, T> PullOp for HandoffPullOp<F, T> {
     type Outflow = F;
-    type Outdomain = T;
-}
-impl<F: Flow, T> MovePullOp for HandoffPullOp<F, T> {
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
+    type Outdomain<'s> = T;
+
+    fn poll_next<'s>(&'s mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain<'s>>> {
         let mut handoff_mut = self.handoff.borrow_mut();
         match handoff_mut.item.take() {
             Some(item) => {

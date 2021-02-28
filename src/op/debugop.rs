@@ -17,56 +17,33 @@ impl<O: Op> DebugOp<O> {
     }
 }
 impl<O: Op> Op for DebugOp<O> {}
-impl<O: PullOp> PullOp for DebugOp<O> {
+
+impl<O: PullOp> PullOp for DebugOp<O>
+where
+    for<'a> O::Outdomain<'a>: Debug,
+{
     type Outflow = O::Outflow;
-    type Outdomain = O::Outdomain;
+    type Outdomain<'s> = O::Outdomain<'s>;
+
+    fn poll_next<'s>(&'s mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain<'s>>> {
+        let polled = self.op.poll_next(ctx);
+        if let Poll::Ready(Some(item)) = &polled {
+            println!("{}: {:?}", self.tag, item);
+        }
+        polled
+    }
 }
-impl<O: PushOp> PushOp for DebugOp<O> {
+
+impl<O: PushOp> PushOp for DebugOp<O>
+where
+    for<'a> O::Indomain<'a>: Debug,
+{
     type Inflow = O::Inflow;
-    type Indomain = O::Indomain;
-}
-impl<O: MovePullOp> MovePullOp for DebugOp<O>
-where
-    O::Outdomain: Debug,
-{
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
-        let polled = self.op.poll_next(ctx);
-        if let Poll::Ready(Some(item)) = &polled {
-            println!("{}: {:?}", self.tag, item);
-        }
-        polled
-    }
-}
-impl<O: RefPullOp> RefPullOp for DebugOp<O>
-where
-    O::Outdomain: Debug,
-{
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<&Self::Outdomain>> {
-        let polled = self.op.poll_next(ctx);
-        if let Poll::Ready(Some(item)) = &polled {
-            println!("{}: {:?}", self.tag, item);
-        }
-        polled
-    }
-}
-impl<O: MovePushOp> MovePushOp for DebugOp<O>
-where
-    O::Indomain: Debug,
-{
+    type Indomain<'p> = O::Indomain<'p>;
+
     type Feedback = O::Feedback;
 
-    fn push(&mut self, item: Self::Indomain) -> Self::Feedback {
-        println!("{}: {:?}", self.tag, item);
-        self.op.push(item)
-    }
-}
-impl<O: RefPushOp> RefPushOp for DebugOp<O>
-where
-    O::Indomain: Debug,
-{
-    type Feedback = O::Feedback;
-
-    fn push(&mut self, item: &Self::Indomain) -> Self::Feedback {
+    fn push<'p>(&mut self, item: Self::Indomain<'p>) -> Self::Feedback {
         println!("{}: {:?}", self.tag, item);
         self.op.push(item)
     }

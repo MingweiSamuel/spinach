@@ -3,14 +3,14 @@
 mod optrait;
 pub use optrait::*;
 
-// mod dyncomp;
-// pub use dyncomp::*;
-
 mod nullop;
 pub use nullop::*;
 
 mod debugop;
 pub use debugop::*;
+
+mod stdop;
+pub use stdop::*;
 
 mod mapfilterop;
 pub use mapfilterop::*;
@@ -33,8 +33,8 @@ pub use latticeop::*;
 mod monotonicop;
 pub use monotonicop::*;
 
-mod explodeop;
-pub use explodeop::*;
+// mod explodeop;
+// pub use explodeop::*;
 
 mod timingop;
 pub use timingop::*;
@@ -44,3 +44,6 @@ pub use udpop::*;
 
 mod naryop;
 pub use naryop::*;
+
+// mod rendezvousop;
+// pub use rendezvousop::*;

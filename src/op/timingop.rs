@@ -14,44 +14,29 @@ use super::*;
 ///
 /// Values will be implicitly buffered by stalling the pipeline,
 /// so this can be considered "blocking".
-pub struct BlockingIntervalOp<O: PullOp> {
+pub struct BlockingIntervalOp<O: PullOp<Outflow = Df>> {
     op: O,
     interval: Duration,
     sleep: Pin<Box<Sleep>>,
 }
-impl<T, O: PullOp<Outflow = Df, Outdomain = T>> BlockingIntervalOp<O> {
+
+impl<O: PullOp<Outflow = Df>> BlockingIntervalOp<O> {
     pub fn new(op: O, interval: Duration) -> Self {
-        Self {
+        Self { 
             op,
             interval,
             sleep: Box::pin(time::sleep(interval)),
         }
     }
 }
-impl<T, O: PullOp<Outflow = Df, Outdomain = T>> Op for BlockingIntervalOp<O> {}
-impl<T, O: PullOp<Outflow = Df, Outdomain = T>> PullOp for BlockingIntervalOp<O> {
+
+impl<O: PullOp<Outflow = Df>> Op for BlockingIntervalOp<O> {}
+
+impl<O: PullOp<Outflow = Df>> PullOp for BlockingIntervalOp<O> {
     type Outflow = Df;
-    type Outdomain = T;
-}
-impl<T, O: MovePullOp<Outflow = Df, Outdomain = T>> MovePullOp for BlockingIntervalOp<O> {
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
-        match self.sleep.as_mut().poll(ctx) {
-            Poll::Ready(_) => {
-                match self.op.poll_next(ctx) {
-                    Poll::Ready(Some(item)) => {
-                        // If item available, reset the timer.
-                        self.sleep = Box::pin(time::sleep(self.interval));
-                        Poll::Ready(Some(item))
-                    }
-                    other => other, // Forward Poll::Ready(None) and Poll::Pending.
-                }
-            }
-            Poll::Pending => Poll::Pending, // Forward Poll::Pending (i.e. interval not ready yet).
-        }
-    }
-}
-impl<T, O: RefPullOp<Outflow = Df, Outdomain = T>> RefPullOp for BlockingIntervalOp<O> {
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<&Self::Outdomain>> {
+    type Outdomain<'s> = O::Outdomain<'s>;
+
+    fn poll_next<'s>(&'s mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain<'s>>> {
         match self.sleep.as_mut().poll(ctx) {
             Poll::Ready(_) => {
                 match self.op.poll_next(ctx) {
@@ -72,12 +57,13 @@ impl<T, O: RefPullOp<Outflow = Df, Outdomain = T>> RefPullOp for BlockingInterva
 ///
 /// If the timer is not ready and a value is produced, the value will be dropped.
 /// Therefore, this only applies to [`Rx`] flows.
-pub struct LeakyIntervalOp<O: PullOp> {
+pub struct LeakyIntervalOp<O: PullOp<Outflow = Rx>> {
     op: O,
     interval: Duration,
     sleep: Pin<Box<Sleep>>,
 }
-impl<T, O: PullOp<Outflow = Rx, Outdomain = T>> LeakyIntervalOp<O> {
+
+impl<O: PullOp<Outflow = Rx>> LeakyIntervalOp<O> {
     pub fn new(op: O, interval: Duration) -> Self {
         Self {
             op,
@@ -86,27 +72,14 @@ impl<T, O: PullOp<Outflow = Rx, Outdomain = T>> LeakyIntervalOp<O> {
         }
     }
 }
-impl<T, O: PullOp<Outflow = Rx, Outdomain = T>> Op for LeakyIntervalOp<O> {}
-impl<T, O: PullOp<Outflow = Rx, Outdomain = T>> PullOp for LeakyIntervalOp<O> {
+
+impl<O: PullOp<Outflow = Rx>> Op for LeakyIntervalOp<O> {}
+
+impl<O: PullOp<Outflow = Rx>> PullOp for LeakyIntervalOp<O> {
     type Outflow = Rx;
-    type Outdomain = T;
-}
-impl<T, O: MovePullOp<Outflow = Rx, Outdomain = T>> MovePullOp for LeakyIntervalOp<O> {
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
-        match self.op.poll_next(ctx) {
-            Poll::Ready(Some(item)) => match self.sleep.as_mut().poll(ctx) {
-                Poll::Ready(_) => {
-                    self.sleep = Box::pin(time::sleep(self.interval));
-                    Poll::Ready(Some(item))
-                }
-                Poll::Pending => Poll::Pending,
-            },
-            other => other, // Forward Poll::Ready(None) and Poll::Pending.
-        }
-    }
-}
-impl<T, O: RefPullOp<Outflow = Rx, Outdomain = T>> RefPullOp for LeakyIntervalOp<O> {
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<&Self::Outdomain>> {
+    type Outdomain<'s> = O::Outdomain<'s>;
+
+    fn poll_next<'s>(&'s mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain<'s>>> {
         match self.op.poll_next(ctx) {
             Poll::Ready(Some(item)) => match self.sleep.as_mut().poll(ctx) {
                 Poll::Ready(_) => {
@@ -124,13 +97,20 @@ impl<T, O: RefPullOp<Outflow = Rx, Outdomain = T>> RefPullOp for LeakyIntervalOp
 ///
 /// Values are buffered in a queue. Once an interval is reached all buffered
 /// values will become available at once. In this sense it is non-blocking.
-pub struct BatchingOp<O: PullOp> {
+pub struct BatchingOp<O, T>
+where
+    for<'a> O: PullOp<Outflow = Df, Outdomain<'a> = T>, 
+{
     op: O,
     interval: Duration,
-    buffer: VecDeque<O::Outdomain>,
+    buffer: VecDeque<T>,
     sleep: Pin<Box<Sleep>>,
 }
-impl<T, O: PullOp<Outflow = Df, Outdomain = T>> BatchingOp<O> {
+
+impl<O, T> BatchingOp<O, T>
+where
+    for<'a> O: PullOp<Outflow = Df, Outdomain<'a> = T>, 
+{
     pub fn new(op: O, interval: Duration) -> Self {
         Self {
             op,
@@ -140,13 +120,20 @@ impl<T, O: PullOp<Outflow = Df, Outdomain = T>> BatchingOp<O> {
         }
     }
 }
-impl<T, O: PullOp<Outflow = Df, Outdomain = T>> Op for BatchingOp<O> {}
-impl<T, O: PullOp<Outflow = Df, Outdomain = T>> PullOp for BatchingOp<O> {
+
+impl<O, T> Op for BatchingOp<O, T>
+where
+    for<'a> O: PullOp<Outflow = Df, Outdomain<'a> = T>, 
+{}
+
+impl<O, T> PullOp for BatchingOp<O, T>
+where
+    for<'a> O: PullOp<Outflow = Df, Outdomain<'a> = T>, 
+{
     type Outflow = O::Outflow;
-    type Outdomain = O::Outdomain;
-}
-impl<T, O: MovePullOp<Outflow = Df, Outdomain = T>> MovePullOp for BatchingOp<O> {
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
+    type Outdomain<'s> = T;
+
+    fn poll_next<'s>(&'s mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain<'s>>> {
         // Pull an element from the upstream op, keeping track if EOS.
         let poll_state = match self.op.poll_next(ctx) {
             Poll::Ready(Some(item)) => {

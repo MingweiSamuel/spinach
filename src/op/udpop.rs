@@ -34,10 +34,9 @@ impl UdpPullOp {
 impl Op for UdpPullOp {}
 impl PullOp for UdpPullOp {
     type Outflow = Df;
-    type Outdomain = Vec<u8>;
-}
-impl MovePullOp for UdpPullOp {
-    fn poll_next(&mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
+    type Outdomain<'s> = Vec<u8>;
+
+    fn poll_next<'s>(&'s mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain<'s>>> {
         let mut readbuf = ReadBuf::new(&mut self.buffer);
         match self.sock.poll_recv(ctx, &mut readbuf) {
             Poll::Ready(Ok(())) => Poll::Ready(Some(readbuf.filled().into())),
@@ -62,13 +61,12 @@ impl UdpPushOp {
 impl Op for UdpPushOp {}
 impl PushOp for UdpPushOp {
     type Inflow = Df;
-    type Indomain = Vec<u8>;
-}
-impl MovePushOp for UdpPushOp {
+    type Indomain<'p> = Vec<u8>;
+
     type Feedback = impl Future;
 
     #[must_use]
-    fn push(&mut self, item: Self::Indomain) -> Self::Feedback {
+    fn push<'p>(&mut self, item: Self::Indomain<'p>) -> Self::Feedback {
         if item.len() > UDP_BUFFER {
             panic!(
                 "Message length {} longer than limit, {}.",
