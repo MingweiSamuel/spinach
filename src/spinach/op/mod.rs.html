@@ -47,20 +47,23 @@
 <span id="44">44</span>
 <span id="45">45</span>
 <span id="46">46</span>
+<span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! All the standard operators.</span>
 
 <span class="kw">mod</span> <span class="ident">optrait</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">optrait</span>::<span class="kw-2">*</span>;
 
-<span class="comment">// mod dyncomp;</span>
-<span class="comment">// pub use dyncomp::*;</span>
-
 <span class="kw">mod</span> <span class="ident">nullop</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">nullop</span>::<span class="kw-2">*</span>;
 
 <span class="kw">mod</span> <span class="ident">debugop</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">debugop</span>::<span class="kw-2">*</span>;
+
+<span class="kw">mod</span> <span class="ident">stdop</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">stdop</span>::<span class="kw-2">*</span>;
 
 <span class="kw">mod</span> <span class="ident">mapfilterop</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">mapfilterop</span>::<span class="kw-2">*</span>;
@@ -83,8 +86,8 @@
 <span class="kw">mod</span> <span class="ident">monotonicop</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">monotonicop</span>::<span class="kw-2">*</span>;
 
-<span class="kw">mod</span> <span class="ident">explodeop</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">explodeop</span>::<span class="kw-2">*</span>;
+<span class="comment">// mod explodeop;</span>
+<span class="comment">// pub use explodeop::*;</span>
 
 <span class="kw">mod</span> <span class="ident">timingop</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">timingop</span>::<span class="kw-2">*</span>;
@@ -94,6 +97,9 @@
 
 <span class="kw">mod</span> <span class="ident">naryop</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">naryop</span>::<span class="kw-2">*</span>;
+
+<span class="comment">// mod rendezvousop;</span>
+<span class="comment">// pub use rendezvousop::*;</span>
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="spinach"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>

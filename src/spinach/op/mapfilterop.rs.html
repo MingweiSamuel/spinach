@@ -213,20 +213,6 @@
 <span id="210">210</span>
 <span id="211">211</span>
 <span id="212">212</span>
-<span id="213">213</span>
-<span id="214">214</span>
-<span id="215">215</span>
-<span id="216">216</span>
-<span id="217">217</span>
-<span id="218">218</span>
-<span id="219">219</span>
-<span id="220">220</span>
-<span id="221">221</span>
-<span id="222">222</span>
-<span id="223">223</span>
-<span id="224">224</span>
-<span id="225">225</span>
-<span id="226">226</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 
@@ -261,19 +247,15 @@
 }
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">Op</span>, <span class="ident">F</span>: <span class="ident">PureFn</span><span class="op">&gt;</span> <span class="ident">Op</span> <span class="kw">for</span> <span class="ident">MapFlattenMoveOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="ident">F</span>::<span class="ident">Outdomain</span>: <span class="ident">IntoIterator</span> {}
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Outdomain</span> <span class="op">=</span> <span class="ident">F</span>::<span class="ident">Indomain</span><span class="op">&gt;</span>, <span class="ident">F</span>: <span class="ident">PureFn</span><span class="op">&gt;</span> <span class="ident">PullOp</span> <span class="kw">for</span> <span class="ident">MapFlattenMoveOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span>: <span class="ident">PureFn</span><span class="op">&gt;</span> <span class="ident">PullOp</span> <span class="kw">for</span> <span class="ident">MapFlattenMoveOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span>
 <span class="kw">where</span>
+    <span class="kw">for</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Outdomain</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">F</span>::<span class="ident">Indomain</span><span class="op">&gt;</span>,
     <span class="ident">F</span>::<span class="ident">Outdomain</span>: <span class="ident">IntoIterator</span>,
 {
     <span class="kw">type</span> <span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span>;
-    <span class="kw">type</span> <span class="ident">Outdomain</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">F</span>::<span class="ident">Outdomain</span> <span class="kw">as</span> <span class="ident">IntoIterator</span><span class="op">&gt;</span>::<span class="ident">Item</span>;
-}
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">MovePullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Outdomain</span> <span class="op">=</span> <span class="ident">F</span>::<span class="ident">Indomain</span><span class="op">&gt;</span>, <span class="ident">F</span>: <span class="ident">PureFn</span><span class="op">&gt;</span> <span class="ident">MovePullOp</span>
-    <span class="kw">for</span> <span class="ident">MapFlattenMoveOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>::<span class="ident">Outdomain</span>: <span class="ident">IntoIterator</span>,
-{
-    <span class="kw">fn</span> <span class="ident">poll_next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Outdomain</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="kw">type</span> <span class="ident">Outdomain</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span><span class="op">&gt;</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">F</span>::<span class="ident">Outdomain</span> <span class="kw">as</span> <span class="ident">IntoIterator</span><span class="op">&gt;</span>::<span class="ident">Item</span>;
+
+    <span class="kw">fn</span> <span class="ident">poll_next</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;s</span> <span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Outdomain</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">out</span>.<span class="ident">as_mut</span>().<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">out</span><span class="op">|</span> <span class="ident">out</span>.<span class="ident">next</span>()) {
             <span class="prelude-val">Some</span>(<span class="ident">item</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">item</span>)),
             <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> {
@@ -291,27 +273,20 @@
                 }
             }
         }
-        <span class="comment">// let val = self.op.poll_next(ctx);</span>
-        <span class="comment">// val.map(|opt| opt.and_then(|x| self.func.call(x)))</span>
     }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span>: <span class="ident">PureFn</span><span class="op">&gt;</span> <span class="ident">PushOp</span> <span class="kw">for</span> <span class="ident">MapFlattenMoveOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">F</span>::<span class="ident">Outdomain</span>: <span class="ident">IntoIterator</span>,
-    <span class="ident">O</span>: <span class="ident">PushOp</span><span class="op">&lt;</span><span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Indomain</span> <span class="op">=</span> <span class="op">&lt;</span><span class="op">&lt;</span><span class="ident">F</span> <span class="kw">as</span> <span class="ident">PureFn</span><span class="op">&gt;</span>::<span class="ident">Outdomain</span> <span class="kw">as</span> <span class="ident">IntoIterator</span><span class="op">&gt;</span>::<span class="ident">Item</span><span class="op">&gt;</span>,
+    <span class="kw">for</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">O</span>: <span class="ident">PushOp</span><span class="op">&lt;</span><span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Indomain</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="op">=</span> <span class="op">&lt;</span><span class="op">&lt;</span><span class="ident">F</span> <span class="kw">as</span> <span class="ident">PureFn</span><span class="op">&gt;</span>::<span class="ident">Outdomain</span> <span class="kw">as</span> <span class="ident">IntoIterator</span><span class="op">&gt;</span>::<span class="ident">Item</span><span class="op">&gt;</span>,
 {
     <span class="kw">type</span> <span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">Df</span>;
-    <span class="kw">type</span> <span class="ident">Indomain</span> <span class="op">=</span> <span class="ident">F</span>::<span class="ident">Indomain</span>;
-}
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span>: <span class="ident">PureFn</span><span class="op">&gt;</span> <span class="ident">MovePushOp</span> <span class="kw">for</span> <span class="ident">MapFlattenMoveOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>::<span class="ident">Outdomain</span>: <span class="ident">IntoIterator</span>,
-    <span class="ident">O</span>: <span class="ident">MovePushOp</span><span class="op">&lt;</span><span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Indomain</span> <span class="op">=</span> <span class="op">&lt;</span><span class="op">&lt;</span><span class="ident">F</span> <span class="kw">as</span> <span class="ident">PureFn</span><span class="op">&gt;</span>::<span class="ident">Outdomain</span> <span class="kw">as</span> <span class="ident">IntoIterator</span><span class="op">&gt;</span>::<span class="ident">Item</span><span class="op">&gt;</span>,
-{
+    <span class="kw">type</span> <span class="ident">Indomain</span><span class="op">&lt;</span><span class="lifetime">&#39;p</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">F</span>::<span class="ident">Indomain</span>;
+
     <span class="kw">type</span> <span class="ident">Feedback</span> <span class="op">=</span> <span class="ident">JoinAll</span><span class="op">&lt;</span><span class="ident">O</span>::<span class="ident">Feedback</span><span class="op">&gt;</span>;
 
-    <span class="kw">fn</span> <span class="ident">push</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">item</span>: <span class="self">Self</span>::<span class="ident">Indomain</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Feedback</span> {
+    <span class="kw">fn</span> <span class="ident">push</span><span class="op">&lt;</span><span class="lifetime">&#39;p</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">item</span>: <span class="self">Self</span>::<span class="ident">Indomain</span><span class="op">&lt;</span><span class="lifetime">&#39;p</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Feedback</span> {
         <span class="ident">join_all</span>(
             <span class="self">self</span>.<span class="ident">func</span>
                 .<span class="ident">call</span>(<span class="ident">item</span>)
@@ -342,18 +317,13 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span> <span class="ident">PullOp</span> <span class="kw">for</span> <span class="ident">MapFilterMoveOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Outdomain</span> <span class="op">=</span> <span class="ident">F</span>::<span class="ident">Indomain</span><span class="op">&gt;</span>,
+    <span class="kw">for</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Outdomain</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">F</span>::<span class="ident">Indomain</span><span class="op">&gt;</span>,
     <span class="ident">F</span>: <span class="ident">PureFn</span><span class="op">&lt;</span><span class="ident">Outdomain</span> <span class="op">=</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 {
     <span class="kw">type</span> <span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span>;
-    <span class="kw">type</span> <span class="ident">Outdomain</span> <span class="op">=</span> <span class="ident">T</span>;
-}
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span> <span class="ident">MovePullOp</span> <span class="kw">for</span> <span class="ident">MapFilterMoveOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">O</span>: <span class="ident">MovePullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Outdomain</span> <span class="op">=</span> <span class="ident">F</span>::<span class="ident">Indomain</span><span class="op">&gt;</span>,
-    <span class="ident">F</span>: <span class="ident">PureFn</span><span class="op">&lt;</span><span class="ident">Outdomain</span> <span class="op">=</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-{
-    <span class="kw">fn</span> <span class="ident">poll_next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Outdomain</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="kw">type</span> <span class="ident">Outdomain</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">T</span>;
+
+    <span class="kw">fn</span> <span class="ident">poll_next</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;s</span> <span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Outdomain</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">op</span>.<span class="ident">poll_next</span>(<span class="ident">ctx</span>) {
             <span class="ident">Poll</span>::<span class="ident">Pending</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Poll</span>::<span class="ident">Pending</span>,
             <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">None</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">None</span>), <span class="comment">// EOS</span>
@@ -367,20 +337,15 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span> <span class="ident">PushOp</span> <span class="kw">for</span> <span class="ident">MapFilterMoveOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">O</span>: <span class="ident">PushOp</span><span class="op">&lt;</span><span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Indomain</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span>,
+    <span class="kw">for</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">O</span>: <span class="ident">PushOp</span><span class="op">&lt;</span><span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Indomain</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span>,
     <span class="ident">F</span>: <span class="ident">PureFn</span><span class="op">&lt;</span><span class="ident">Outdomain</span> <span class="op">=</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 {
     <span class="kw">type</span> <span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">Df</span>;
-    <span class="kw">type</span> <span class="ident">Indomain</span> <span class="op">=</span> <span class="ident">F</span>::<span class="ident">Indomain</span>;
-}
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span> <span class="ident">MovePushOp</span> <span class="kw">for</span> <span class="ident">MapFilterMoveOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">O</span>: <span class="ident">MovePushOp</span><span class="op">&lt;</span><span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Indomain</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span>,
-    <span class="ident">F</span>: <span class="ident">PureFn</span><span class="op">&lt;</span><span class="ident">Outdomain</span> <span class="op">=</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-{
+    <span class="kw">type</span> <span class="ident">Indomain</span><span class="op">&lt;</span><span class="lifetime">&#39;p</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">F</span>::<span class="ident">Indomain</span>;
+
     <span class="kw">type</span> <span class="ident">Feedback</span> <span class="op">=</span> <span class="ident">JoinAll</span><span class="op">&lt;</span><span class="ident">O</span>::<span class="ident">Feedback</span><span class="op">&gt;</span>;
 
-    <span class="kw">fn</span> <span class="ident">push</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">item</span>: <span class="self">Self</span>::<span class="ident">Indomain</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Feedback</span> {
+    <span class="kw">fn</span> <span class="ident">push</span><span class="op">&lt;</span><span class="lifetime">&#39;p</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">item</span>: <span class="self">Self</span>::<span class="ident">Indomain</span><span class="op">&lt;</span><span class="lifetime">&#39;p</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Feedback</span> {
         <span class="ident">join_all</span>(
             <span class="self">self</span>.<span class="ident">func</span>
                 .<span class="ident">call</span>(<span class="ident">item</span>)
@@ -404,20 +369,16 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span>: <span class="ident">PureRefFn</span><span class="op">&gt;</span> <span class="ident">PushOp</span> <span class="kw">for</span> <span class="ident">MapFoldRefOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span>
 <span class="kw">where</span>
+    <span class="ident">F</span>::<span class="ident">Indomain</span>: <span class="lifetime">&#39;static</span>,
     <span class="ident">F</span>::<span class="ident">Outdomain</span>: <span class="ident">IntoIterator</span>,
-    <span class="ident">O</span>: <span class="ident">PushOp</span><span class="op">&lt;</span><span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Indomain</span> <span class="op">=</span> <span class="op">&lt;</span><span class="op">&lt;</span><span class="ident">F</span> <span class="kw">as</span> <span class="ident">PureRefFn</span><span class="op">&gt;</span>::<span class="ident">Outdomain</span> <span class="kw">as</span> <span class="ident">IntoIterator</span><span class="op">&gt;</span>::<span class="ident">Item</span><span class="op">&gt;</span>,
+    <span class="kw">for</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">O</span>: <span class="ident">PushOp</span><span class="op">&lt;</span><span class="ident">Indomain</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="op">=</span> <span class="op">&lt;</span><span class="op">&lt;</span><span class="ident">F</span> <span class="kw">as</span> <span class="ident">PureRefFn</span><span class="op">&gt;</span>::<span class="ident">Outdomain</span> <span class="kw">as</span> <span class="ident">IntoIterator</span><span class="op">&gt;</span>::<span class="ident">Item</span><span class="op">&gt;</span>,
 {
-    <span class="kw">type</span> <span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">Df</span>;
-    <span class="kw">type</span> <span class="ident">Indomain</span> <span class="op">=</span> <span class="ident">F</span>::<span class="ident">Indomain</span>;
-}
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span>: <span class="ident">PureRefFn</span><span class="op">&gt;</span> <span class="ident">RefPushOp</span> <span class="kw">for</span> <span class="ident">MapFoldRefOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">F</span>::<span class="ident">Outdomain</span>: <span class="ident">IntoIterator</span>,
-    <span class="ident">O</span>: <span class="ident">MovePushOp</span><span class="op">&lt;</span><span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Indomain</span> <span class="op">=</span> <span class="op">&lt;</span><span class="op">&lt;</span><span class="ident">F</span> <span class="kw">as</span> <span class="ident">PureRefFn</span><span class="op">&gt;</span>::<span class="ident">Outdomain</span> <span class="kw">as</span> <span class="ident">IntoIterator</span><span class="op">&gt;</span>::<span class="ident">Item</span><span class="op">&gt;</span>,
-{
+    <span class="kw">type</span> <span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">O</span>::<span class="ident">Inflow</span>;
+    <span class="kw">type</span> <span class="ident">Indomain</span><span class="op">&lt;</span><span class="lifetime">&#39;p</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;p</span> <span class="ident">F</span>::<span class="ident">Indomain</span>;
+
     <span class="kw">type</span> <span class="ident">Feedback</span> <span class="op">=</span> <span class="ident">JoinAll</span><span class="op">&lt;</span><span class="ident">O</span>::<span class="ident">Feedback</span><span class="op">&gt;</span>;
 
-    <span class="kw">fn</span> <span class="ident">push</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Indomain</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Feedback</span> {
+    <span class="kw">fn</span> <span class="ident">push</span><span class="op">&lt;</span><span class="lifetime">&#39;p</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">item</span>: <span class="self">Self</span>::<span class="ident">Indomain</span><span class="op">&lt;</span><span class="lifetime">&#39;p</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Feedback</span> {
         <span class="ident">join_all</span>(
             <span class="self">self</span>.<span class="ident">func</span>
                 .<span class="ident">call</span>(<span class="ident">item</span>)
@@ -428,29 +389,40 @@
 }
 
 <span class="doccomment">/// Map op for ref-&gt;ref values.</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MapRefRefOp</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">RefPushOp</span><span class="op">&lt;</span><span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">Rx</span>, <span class="ident">Indomain</span> <span class="op">=</span> <span class="ident">F</span>::<span class="ident">Outdomain</span><span class="op">&gt;</span>, <span class="ident">F</span>: <span class="ident">PureRefRefFn</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MapRefRefOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span>: <span class="ident">PureRefRefFn</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="ident">F</span>::<span class="ident">Indomain</span>: <span class="lifetime">&#39;static</span>,
+    <span class="kw">for</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">O</span>: <span class="ident">PushOp</span><span class="op">&lt;</span><span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">Rx</span>, <span class="ident">Indomain</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">F</span>::<span class="ident">Outdomain</span><span class="op">&gt;</span>,
+{
     <span class="ident">op</span>: <span class="ident">O</span>,
     <span class="ident">func</span>: <span class="ident">F</span>,
 }
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">RefPushOp</span><span class="op">&lt;</span><span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">Rx</span>, <span class="ident">Indomain</span> <span class="op">=</span> <span class="ident">F</span>::<span class="ident">Outdomain</span><span class="op">&gt;</span>, <span class="ident">F</span>: <span class="ident">PureRefRefFn</span><span class="op">&gt;</span> <span class="ident">MapRefRefOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span>: <span class="ident">PureRefRefFn</span><span class="op">&gt;</span> <span class="ident">MapRefRefOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="ident">F</span>::<span class="ident">Indomain</span>: <span class="lifetime">&#39;static</span>,
+    <span class="kw">for</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">O</span>: <span class="ident">PushOp</span><span class="op">&lt;</span><span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">Rx</span>, <span class="ident">Indomain</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">F</span>::<span class="ident">Outdomain</span><span class="op">&gt;</span>,
+{
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">op</span>: <span class="ident">O</span>, <span class="ident">func</span>: <span class="ident">F</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> { <span class="ident">op</span>, <span class="ident">func</span> }
     }
 }
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">RefPushOp</span><span class="op">&lt;</span><span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">Rx</span>, <span class="ident">Indomain</span> <span class="op">=</span> <span class="ident">F</span>::<span class="ident">Outdomain</span><span class="op">&gt;</span>, <span class="ident">F</span>: <span class="ident">PureRefRefFn</span><span class="op">&gt;</span> <span class="ident">Op</span> <span class="kw">for</span> <span class="ident">MapRefRefOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span> {}
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span>: <span class="ident">PureRefRefFn</span><span class="op">&gt;</span> <span class="ident">Op</span> <span class="kw">for</span> <span class="ident">MapRefRefOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="ident">F</span>::<span class="ident">Indomain</span>: <span class="lifetime">&#39;static</span>,
+    <span class="kw">for</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">O</span>: <span class="ident">PushOp</span><span class="op">&lt;</span><span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">Rx</span>, <span class="ident">Indomain</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">F</span>::<span class="ident">Outdomain</span><span class="op">&gt;</span>,
+{}
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">RefPushOp</span><span class="op">&lt;</span><span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">Rx</span>, <span class="ident">Indomain</span> <span class="op">=</span> <span class="ident">F</span>::<span class="ident">Outdomain</span><span class="op">&gt;</span>, <span class="ident">F</span>: <span class="ident">PureRefRefFn</span><span class="op">&gt;</span> <span class="ident">PushOp</span>
-    <span class="kw">for</span> <span class="ident">MapRefRefOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span>: <span class="ident">PureRefRefFn</span><span class="op">&gt;</span> <span class="ident">PushOp</span> <span class="kw">for</span> <span class="ident">MapRefRefOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="ident">F</span>::<span class="ident">Indomain</span>: <span class="lifetime">&#39;static</span>,
+    <span class="kw">for</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">O</span>: <span class="ident">PushOp</span><span class="op">&lt;</span><span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">Rx</span>, <span class="ident">Indomain</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">F</span>::<span class="ident">Outdomain</span><span class="op">&gt;</span>,
 {
     <span class="kw">type</span> <span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">Rx</span>;
-    <span class="kw">type</span> <span class="ident">Indomain</span> <span class="op">=</span> <span class="ident">F</span>::<span class="ident">Indomain</span>;
-}
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">RefPushOp</span><span class="op">&lt;</span><span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">Rx</span>, <span class="ident">Indomain</span> <span class="op">=</span> <span class="ident">F</span>::<span class="ident">Outdomain</span><span class="op">&gt;</span>, <span class="ident">F</span>: <span class="ident">PureRefRefFn</span><span class="op">&gt;</span> <span class="ident">RefPushOp</span>
-    <span class="kw">for</span> <span class="ident">MapRefRefOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span>
-{
+    <span class="kw">type</span> <span class="ident">Indomain</span><span class="op">&lt;</span><span class="lifetime">&#39;p</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;p</span> <span class="ident">F</span>::<span class="ident">Indomain</span>;
+
     <span class="kw">type</span> <span class="ident">Feedback</span> <span class="op">=</span> <span class="ident">O</span>::<span class="ident">Feedback</span>;
 
-    <span class="kw">fn</span> <span class="ident">push</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">item</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Indomain</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Feedback</span> {
+    <span class="kw">fn</span> <span class="ident">push</span><span class="op">&lt;</span><span class="lifetime">&#39;p</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">item</span>: <span class="self">Self</span>::<span class="ident">Indomain</span><span class="op">&lt;</span><span class="lifetime">&#39;p</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Feedback</span> {
         <span class="self">self</span>.<span class="ident">op</span>.<span class="ident">push</span>(<span class="self">self</span>.<span class="ident">func</span>.<span class="ident">call</span>(<span class="ident">item</span>))
     }
 }

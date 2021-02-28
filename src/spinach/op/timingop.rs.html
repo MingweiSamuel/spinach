@@ -164,19 +164,6 @@
 <span id="161">161</span>
 <span id="162">162</span>
 <span id="163">163</span>
-<span id="164">164</span>
-<span id="165">165</span>
-<span id="166">166</span>
-<span id="167">167</span>
-<span id="168">168</span>
-<span id="169">169</span>
-<span id="170">170</span>
-<span id="171">171</span>
-<span id="172">172</span>
-<span id="173">173</span>
-<span id="174">174</span>
-<span id="175">175</span>
-<span id="176">176</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">VecDeque</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">future</span>::<span class="ident">Future</span>;
@@ -194,44 +181,29 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// Values will be implicitly buffered by stalling the pipeline,</span>
 <span class="doccomment">/// so this can be considered &quot;blocking&quot;.</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BlockingIntervalOp</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BlockingIntervalOp</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span><span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="ident">op</span>: <span class="ident">O</span>,
     <span class="ident">interval</span>: <span class="ident">Duration</span>,
     <span class="ident">sleep</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Sleep</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Outdomain</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">BlockingIntervalOp</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span> {
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">BlockingIntervalOp</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">op</span>: <span class="ident">O</span>, <span class="ident">interval</span>: <span class="ident">Duration</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="self">Self</span> {
+        <span class="self">Self</span> { 
             <span class="ident">op</span>,
             <span class="ident">interval</span>,
             <span class="ident">sleep</span>: <span class="ident">Box</span>::<span class="ident">pin</span>(<span class="ident">time</span>::<span class="ident">sleep</span>(<span class="ident">interval</span>)),
         }
     }
 }
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Outdomain</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">Op</span> <span class="kw">for</span> <span class="ident">BlockingIntervalOp</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span> {}
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Outdomain</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">PullOp</span> <span class="kw">for</span> <span class="ident">BlockingIntervalOp</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span> {
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">Op</span> <span class="kw">for</span> <span class="ident">BlockingIntervalOp</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span> {}
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">PullOp</span> <span class="kw">for</span> <span class="ident">BlockingIntervalOp</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span> {
     <span class="kw">type</span> <span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span>;
-    <span class="kw">type</span> <span class="ident">Outdomain</span> <span class="op">=</span> <span class="ident">T</span>;
-}
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">O</span>: <span class="ident">MovePullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Outdomain</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">MovePullOp</span> <span class="kw">for</span> <span class="ident">BlockingIntervalOp</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">poll_next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Outdomain</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">sleep</span>.<span class="ident">as_mut</span>().<span class="ident">poll</span>(<span class="ident">ctx</span>) {
-            <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="kw">match</span> <span class="self">self</span>.<span class="ident">op</span>.<span class="ident">poll_next</span>(<span class="ident">ctx</span>) {
-                    <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">item</span>)) <span class="op">=</span><span class="op">&gt;</span> {
-                        <span class="comment">// If item available, reset the timer.</span>
-                        <span class="self">self</span>.<span class="ident">sleep</span> <span class="op">=</span> <span class="ident">Box</span>::<span class="ident">pin</span>(<span class="ident">time</span>::<span class="ident">sleep</span>(<span class="self">self</span>.<span class="ident">interval</span>));
-                        <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">item</span>))
-                    }
-                    <span class="ident">other</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">other</span>, <span class="comment">// Forward Poll::Ready(None) and Poll::Pending.</span>
-                }
-            }
-            <span class="ident">Poll</span>::<span class="ident">Pending</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Poll</span>::<span class="ident">Pending</span>, <span class="comment">// Forward Poll::Pending (i.e. interval not ready yet).</span>
-        }
-    }
-}
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">O</span>: <span class="ident">RefPullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Outdomain</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">RefPullOp</span> <span class="kw">for</span> <span class="ident">BlockingIntervalOp</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">poll_next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Outdomain</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="kw">type</span> <span class="ident">Outdomain</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">O</span>::<span class="ident">Outdomain</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span><span class="op">&gt;</span>;
+
+    <span class="kw">fn</span> <span class="ident">poll_next</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;s</span> <span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Outdomain</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">sleep</span>.<span class="ident">as_mut</span>().<span class="ident">poll</span>(<span class="ident">ctx</span>) {
             <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">match</span> <span class="self">self</span>.<span class="ident">op</span>.<span class="ident">poll_next</span>(<span class="ident">ctx</span>) {
@@ -252,12 +224,13 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// If the timer is not ready and a value is produced, the value will be dropped.</span>
 <span class="doccomment">/// Therefore, this only applies to [`Rx`] flows.</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LeakyIntervalOp</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LeakyIntervalOp</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Rx</span><span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="ident">op</span>: <span class="ident">O</span>,
     <span class="ident">interval</span>: <span class="ident">Duration</span>,
     <span class="ident">sleep</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Sleep</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Rx</span>, <span class="ident">Outdomain</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">LeakyIntervalOp</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span> {
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Rx</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">LeakyIntervalOp</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">op</span>: <span class="ident">O</span>, <span class="ident">interval</span>: <span class="ident">Duration</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> {
             <span class="ident">op</span>,
@@ -266,27 +239,14 @@
         }
     }
 }
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Rx</span>, <span class="ident">Outdomain</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">Op</span> <span class="kw">for</span> <span class="ident">LeakyIntervalOp</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span> {}
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Rx</span>, <span class="ident">Outdomain</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">PullOp</span> <span class="kw">for</span> <span class="ident">LeakyIntervalOp</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span> {
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Rx</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">Op</span> <span class="kw">for</span> <span class="ident">LeakyIntervalOp</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span> {}
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Rx</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">PullOp</span> <span class="kw">for</span> <span class="ident">LeakyIntervalOp</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span> {
     <span class="kw">type</span> <span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Rx</span>;
-    <span class="kw">type</span> <span class="ident">Outdomain</span> <span class="op">=</span> <span class="ident">T</span>;
-}
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">O</span>: <span class="ident">MovePullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Rx</span>, <span class="ident">Outdomain</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">MovePullOp</span> <span class="kw">for</span> <span class="ident">LeakyIntervalOp</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">poll_next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Outdomain</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">op</span>.<span class="ident">poll_next</span>(<span class="ident">ctx</span>) {
-            <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">item</span>)) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">sleep</span>.<span class="ident">as_mut</span>().<span class="ident">poll</span>(<span class="ident">ctx</span>) {
-                <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="self">self</span>.<span class="ident">sleep</span> <span class="op">=</span> <span class="ident">Box</span>::<span class="ident">pin</span>(<span class="ident">time</span>::<span class="ident">sleep</span>(<span class="self">self</span>.<span class="ident">interval</span>));
-                    <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">item</span>))
-                }
-                <span class="ident">Poll</span>::<span class="ident">Pending</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Poll</span>::<span class="ident">Pending</span>,
-            },
-            <span class="ident">other</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">other</span>, <span class="comment">// Forward Poll::Ready(None) and Poll::Pending.</span>
-        }
-    }
-}
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">O</span>: <span class="ident">RefPullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Rx</span>, <span class="ident">Outdomain</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">RefPullOp</span> <span class="kw">for</span> <span class="ident">LeakyIntervalOp</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">poll_next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Outdomain</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="kw">type</span> <span class="ident">Outdomain</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">O</span>::<span class="ident">Outdomain</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span><span class="op">&gt;</span>;
+
+    <span class="kw">fn</span> <span class="ident">poll_next</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;s</span> <span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Outdomain</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">op</span>.<span class="ident">poll_next</span>(<span class="ident">ctx</span>) {
             <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">item</span>)) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">sleep</span>.<span class="ident">as_mut</span>().<span class="ident">poll</span>(<span class="ident">ctx</span>) {
                 <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> {
@@ -304,13 +264,20 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// Values are buffered in a queue. Once an interval is reached all buffered</span>
 <span class="doccomment">/// values will become available at once. In this sense it is non-blocking.</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BatchingOp</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BatchingOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">T</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="kw">for</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Outdomain</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span>, 
+{
     <span class="ident">op</span>: <span class="ident">O</span>,
     <span class="ident">interval</span>: <span class="ident">Duration</span>,
-    <span class="ident">buffer</span>: <span class="ident">VecDeque</span><span class="op">&lt;</span><span class="ident">O</span>::<span class="ident">Outdomain</span><span class="op">&gt;</span>,
+    <span class="ident">buffer</span>: <span class="ident">VecDeque</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
     <span class="ident">sleep</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Sleep</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Outdomain</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">BatchingOp</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span> {
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">BatchingOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">T</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="kw">for</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Outdomain</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span>, 
+{
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">op</span>: <span class="ident">O</span>, <span class="ident">interval</span>: <span class="ident">Duration</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> {
             <span class="ident">op</span>,
@@ -320,13 +287,20 @@
         }
     }
 }
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Outdomain</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">Op</span> <span class="kw">for</span> <span class="ident">BatchingOp</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span> {}
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Outdomain</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">PullOp</span> <span class="kw">for</span> <span class="ident">BatchingOp</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span> {
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Op</span> <span class="kw">for</span> <span class="ident">BatchingOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">T</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="kw">for</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Outdomain</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span>, 
+{}
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">PullOp</span> <span class="kw">for</span> <span class="ident">BatchingOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">T</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="kw">for</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Outdomain</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span>, 
+{
     <span class="kw">type</span> <span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">O</span>::<span class="ident">Outflow</span>;
-    <span class="kw">type</span> <span class="ident">Outdomain</span> <span class="op">=</span> <span class="ident">O</span>::<span class="ident">Outdomain</span>;
-}
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">O</span>: <span class="ident">MovePullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Outdomain</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">MovePullOp</span> <span class="kw">for</span> <span class="ident">BatchingOp</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">poll_next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Outdomain</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="kw">type</span> <span class="ident">Outdomain</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">T</span>;
+
+    <span class="kw">fn</span> <span class="ident">poll_next</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;s</span> <span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Outdomain</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="comment">// Pull an element from the upstream op, keeping track if EOS.</span>
         <span class="kw">let</span> <span class="ident">poll_state</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">op</span>.<span class="ident">poll_next</span>(<span class="ident">ctx</span>) {
             <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">item</span>)) <span class="op">=</span><span class="op">&gt;</span> {
