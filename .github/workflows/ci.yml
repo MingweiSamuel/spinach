@@ -49,6 +49,7 @@ jobs:
 
   lints:
     name: Lints
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
