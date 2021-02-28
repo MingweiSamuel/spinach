@@ -7,7 +7,7 @@ use super::*;
 use crate::lattice::Hide;
 use crate::monotonic::MonotonicFilterRefFn;
 
-/// A specific type of monotonic mapping Op for [`Rx`] pipelines.
+/// A specific type of monotonic mapping Op.
 pub struct MonotonicFilterRefOp<O: Op, F: MonotonicFilterRefFn> {
     op: O,
     func: F,
