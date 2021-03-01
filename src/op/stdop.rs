@@ -5,10 +5,7 @@ use crate::flow::*;
 
 use super::*;
 
-/// An Op which does nothing. Supports both [`Df`] and [`Rx`].
-///
-/// If used as a push-op, pushed values are immediately dropped.
-/// If used as a pull-op, never produces any values.
+/// An Op which writes to stdout.
 pub struct StdOutOp<F: Flow, T: AsRef<[u8]>> {
     _phantom: std::marker::PhantomData<(F, T)>,
 }
