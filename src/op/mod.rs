@@ -45,5 +45,5 @@ pub use udpop::*;
 mod naryop;
 pub use naryop::*;
 
-// mod rendezvousop;
-// pub use rendezvousop::*;
+mod rendezvousop;
+pub use rendezvousop::*;
