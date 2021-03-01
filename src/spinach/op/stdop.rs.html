@@ -41,9 +41,6 @@
 <span id="38">38</span>
 <span id="39">39</span>
 <span id="40">40</span>
-<span id="41">41</span>
-<span id="42">42</span>
-<span id="43">43</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">future</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>::<span class="ident">Write</span>;
@@ -52,10 +49,7 @@
 
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
-<span class="doccomment">/// An Op which does nothing. Supports both [`Df`] and [`Rx`].</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// If used as a push-op, pushed values are immediately dropped.</span>
-<span class="doccomment">/// If used as a pull-op, never produces any values.</span>
+<span class="doccomment">/// An Op which writes to stdout.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">StdOutOp</span><span class="op">&lt;</span><span class="ident">F</span>: <span class="ident">Flow</span>, <span class="ident">T</span>: <span class="ident">AsRef</span><span class="op">&lt;</span>[<span class="ident">u8</span>]<span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="ident">_phantom</span>: <span class="ident">std</span>::<span class="ident">marker</span>::<span class="ident">PhantomData</span><span class="op">&lt;</span>(<span class="ident">F</span>, <span class="ident">T</span>)<span class="op">&gt;</span>,
 }
