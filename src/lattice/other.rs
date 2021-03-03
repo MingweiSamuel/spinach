@@ -2,35 +2,34 @@ use std::cmp::Ordering;
 
 use super::Lattice;
 
-// /// Wrap an existing lattice in `Option`, where None is smaller than all other elements.
-// pub struct Optional<F: Lattice> {
-//     _phantom: std::marker::PhantomData<F>,
-// }
-// impl<F: Lattice> Lattice for Optional<F> {
-//     type Domain = Option<F::Domain>;
+/// Wrap an existing lattice in `Option`, where None is smaller than all other elements.
+pub struct RefOptional<'a, F: Lattice> {
+    _phantom: std::marker::PhantomData<&'a F>,
+}
+impl<'a, F: Lattice> Lattice for RefOptional<'a, F> {
+    type Domain = Option<&'a F::Domain>;
 
-//     fn merge_in(val: &mut Self::Domain, delta: Self::Domain) {
-//         *val = val.or(delta);
-//         not_implemented!()
-//     }
+    fn merge_in(val: &mut Self::Domain, delta: Self::Domain) {
+        *val = val.or(delta);
+    }
 
-//     fn partial_cmp(a: &Self::Domain, b: &Self::Domain) -> Option<Ordering> {
-//         match a {
-//             None => {
-//                 match b {
-//                     None => Some(Ordering::Equal),
-//                     Some(_) => Some(Ordering::Less),
-//                 }
-//             }
-//             Some(a) => {
-//                 match b {
-//                     None => Some(Ordering::Greater),
-//                     Some(b) => F::partial_cmp(a, b),
-//                 }
-//             }
-//         }
-//     }
-// }
+    fn partial_cmp(a: &Self::Domain, b: &Self::Domain) -> Option<Ordering> {
+        match a {
+            None => {
+                match b {
+                    None => Some(Ordering::Equal),
+                    Some(_) => Some(Ordering::Less),
+                }
+            }
+            Some(a) => {
+                match b {
+                    None => Some(Ordering::Greater),
+                    Some(b) => F::partial_cmp(a, b),
+                }
+            }
+        }
+    }
+}
 
 /// Mingwei's weird semilattice.
 /// Lattice is defined as, given signed integers A and B, take the value in the

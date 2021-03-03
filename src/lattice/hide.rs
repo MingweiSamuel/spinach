@@ -1,6 +1,10 @@
+use std::collections::{btree_set, hash_set, BTreeMap, BTreeSet, HashMap, HashSet};
+use std::hash::Hash;
+use std::ops::Neg;
+
 use ref_cast::RefCast;
 
-use super::Lattice;
+use super::{Lattice, Max, Min, Union, MapUnion, RefOptional};
 
 #[repr(transparent)]
 #[derive(RefCast)]
@@ -15,5 +19,55 @@ impl<F: Lattice> Hide<F> {
     }
     pub fn into_reveal(self) -> F::Domain {
         self.0
+    }
+}
+
+impl<T: Ord + Neg> Neg for Hide<Max<T>>
+where
+    T::Output: Ord,
+{
+    type Output = Hide<Min<T::Output>>;
+    fn neg(self) -> Self::Output {
+        Hide::new(self.into_reveal().neg())
+    }
+}
+
+impl<T: Ord + Neg> Neg for Hide<Min<T>>
+where
+    T::Output: Ord,
+{
+    type Output = Hide<Max<T::Output>>;
+    fn neg(self) -> Self::Output {
+        Hide::new(self.into_reveal().neg())
+    }
+}
+
+impl<K: Eq + Ord, F: Lattice> Hide<MapUnion<BTreeMap<K, F>>> {
+    pub fn get(&self, key: &K) -> Hide<RefOptional<'_, F>> {
+        let opt = self.reveal().get(key);
+        Hide::new(opt)
+    }
+}
+impl<K: Eq + Hash, F: Lattice> Hide<MapUnion<HashMap<K, F>>> {
+    pub fn get(&self, key: &K) -> Hide<RefOptional<'_, F>> {
+        let opt = self.reveal().get(key);
+        Hide::new(opt)
+    }
+}
+
+impl<T: Eq + Ord> Hide<Union<BTreeSet<T>>> {
+    pub fn iter(&self) -> btree_set::Iter<'_, T> {
+        self.reveal().iter()
+    }
+    pub fn into_iter(self) -> btree_set::IntoIter<T> {
+        self.into_reveal().into_iter()
+    }
+}
+impl<T: Eq + Hash> Hide<Union<HashSet<T>>> {
+    pub fn iter(&self) -> hash_set::Iter<'_, T> {
+        self.reveal().iter()
+    }
+    pub fn into_iter(self) -> hash_set::IntoIter<T> {
+        self.into_reveal().into_iter()
     }
 }
