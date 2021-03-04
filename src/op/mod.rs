@@ -18,6 +18,9 @@ pub use mapfilterop::*;
 mod cloneop;
 pub use cloneop::*;
 
+mod toownedop;
+pub use toownedop::*;
+
 mod referenceop;
 pub use referenceop::*;
 

@@ -3,17 +3,16 @@ use std::time::Duration;
 use tokio::net::UdpSocket;
 
 use spinach::comp::*;
-use spinach::func::*;
 use spinach::op::*;
 
-pub struct SerStrFn;
-impl PureFn for SerStrFn {
-    type Indomain = &'static str;
-    type Outdomain = Option<Vec<u8>>;
-    fn call(&self, item: Self::Indomain) -> Self::Outdomain {
-        Some(item.to_owned().as_bytes().into())
-    }
-}
+// pub struct SerStrFn;
+// impl PureFn for SerStrFn {
+//     type Indomain = &'static str;
+//     type Outdomain = Option<Vec<u8>>;
+//     fn call(&self, item: Self::Indomain) -> Self::Outdomain {
+//         Some(item.to_owned().as_bytes().into())
+//     }
+// }
 
 // pub struct DeStrFn;
 // impl PureFn for DeStrFn {
@@ -33,6 +32,7 @@ pub async fn test_udp_echo() -> Result<(), String> {
         .await
         .map_err(|err| err.to_string())?;
     let (pull_pipe, push_pipe) = udp_op(sock);
+    let pull_pipe = ToOwnedOp::new(pull_pipe);
     let comp = StaticMoveComp::new(pull_pipe, push_pipe);
 
     tokio::spawn(async move {
@@ -47,10 +47,9 @@ pub async fn test_udp_echo() -> Result<(), String> {
         .await
         .map_err(|err| err.to_string())?;
     let (pull_pipe, mut push_pipe) = udp_op(sock);
+    let pull_pipe = ToOwnedOp::new(pull_pipe);
 
     let recv_pipe = StdOutOp::new();
-    // let recv_pipe = DebugOp::new(recv_pipe, "RECV");
-    // let recv_pipe = MapFlattenMoveOp::new(recv_pipe, DeStrFn);
     let comp = StaticMoveComp::new(pull_pipe, recv_pipe);
 
     tokio::spawn(async move {
@@ -58,10 +57,8 @@ pub async fn test_udp_echo() -> Result<(), String> {
         panic!();
     });
 
-    push_pipe.push("hello world".to_owned().into_bytes()).await;
-    push_pipe
-        .push("goodbye world".to_owned().into_bytes())
-        .await;
+    push_pipe.push("hello world").await;
+    push_pipe.push("goodbye world").await;
 
     tokio::time::sleep(Duration::from_secs(1)).await;
 
