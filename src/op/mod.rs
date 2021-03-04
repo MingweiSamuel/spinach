@@ -24,6 +24,9 @@ pub use toownedop::*;
 mod referenceop;
 pub use referenceop::*;
 
+mod asrefop;
+pub use asrefop::*;
+
 mod channelop;
 pub use channelop::*;
 

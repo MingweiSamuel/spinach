@@ -7,7 +7,7 @@ use super::*;
 ///
 /// Supports both [`Df`] and [`Rx`].
 ///
-/// To go from owned to ref (the opposite of this), use [`ReferenceOp`].
+/// To go from owned to ref (the opposite of this), use [`AsRefOp`].
 pub struct ToOwnedOp<O: Op, T: ?Sized + ToOwned> {
     op: O,
     _phantom: std::marker::PhantomData<T>,
