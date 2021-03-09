@@ -12,8 +12,11 @@ pub use debugop::*;
 mod stdop;
 pub use stdop::*;
 
-mod mapfilterop;
-pub use mapfilterop::*;
+mod mapflattenop;
+pub use mapflattenop::*;
+
+mod maprendezvous;
+pub use maprendezvous::*;
 
 mod cloneop;
 pub use cloneop::*;

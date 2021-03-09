@@ -12,18 +12,17 @@ use super::*;
 pub struct SplitOp<O, P>
 where
     O: PushOp<Inflow = Df>,
-    for<'a> O::Indomain<'a>: Copy,
-    for<'a> P: PushOp<Inflow = Df, Indomain<'a> = O::Indomain<'a>>,
+    P: PushOp<Inflow = Df>,
 {
     op0: O,
     op1: P,
 }
 
-impl<O, P> SplitOp<O, P>
+impl<O, P, T> SplitOp<O, P>
 where
-    O: PushOp<Inflow = Df>,
-    for<'a> O::Indomain<'a>: Copy,
-    for<'a> P: PushOp<Inflow = Df, Indomain<'a> = O::Indomain<'a>>,
+    T: Copy,
+    for<'a> O: PushOp<Inflow = Df, Indomain<'a> = T>,
+    for<'a> P: PushOp<Inflow = Df, Indomain<'a> = T>,
 {
     /// Split op to op0 and op1.
     pub fn new(op0: O, op1: P) -> Self {
@@ -31,18 +30,18 @@ where
     }
 }
 
-impl<O, P> Op for SplitOp<O, P>
+impl<O, P, T> Op for SplitOp<O, P>
 where
-    O: PushOp<Inflow = Df>,
-    for<'a> O::Indomain<'a>: Copy,
-    for<'a> P: PushOp<Inflow = Df, Indomain<'a> = O::Indomain<'a>>,
+    T: Copy,
+    for<'a> O: PushOp<Inflow = Df, Indomain<'a> = T>,
+    for<'a> P: PushOp<Inflow = Df, Indomain<'a> = T>,
 {}
 
-impl<O, P> PushOp for SplitOp<O, P>
+impl<O, P, T> PushOp for SplitOp<O, P>
 where
-    O: PushOp<Inflow = Df>,
-    for<'a> O::Indomain<'a>: Copy,
-    for<'a> P: PushOp<Inflow = Df, Indomain<'a> = O::Indomain<'a>>,
+    T: Copy,
+    for<'a> O: PushOp<Inflow = Df, Indomain<'a> = T>,
+    for<'a> P: PushOp<Inflow = Df, Indomain<'a> = T>,
 {
     type Inflow = Df;
     type Indomain<'p> = O::Indomain<'p>;
@@ -62,16 +61,16 @@ where
 pub struct MergeOp<O, P>
 where
     O: PullOp<Outflow = Df>,
-    for<'a> P: PullOp<Outflow = Df, Outdomain<'a> = O::Outdomain<'a>>,
+    P: PullOp<Outflow = Df>,
 {
     op0: O,
     op1: P,
 }
 
-impl<O, P> MergeOp<O, P>
+impl<O, P, T> MergeOp<O, P>
 where
-    O: PullOp<Outflow = Df>,
-    for<'a> P: PullOp<Outflow = Df, Outdomain<'a> = O::Outdomain<'a>>,
+    for<'a> O: PullOp<Outflow = Df, Outdomain<'a> = T>,
+    for<'a> P: PullOp<Outflow = Df, Outdomain<'a> = T>,
 {
     /// Receive from both OP0 and OP1, where priority is to pull from OP0.
     pub fn new(op0: O, op1: P) -> Self {
@@ -79,16 +78,16 @@ where
     }
 }
 
-impl<O, P> Op for MergeOp<O, P>
+impl<O, P, T> Op for MergeOp<O, P>
 where
-    O: PullOp<Outflow = Df>,
-    for<'a> P: PullOp<Outflow = Df, Outdomain<'a> = O::Outdomain<'a>>,
+    for<'a> O: PullOp<Outflow = Df, Outdomain<'a> = T>,
+    for<'a> P: PullOp<Outflow = Df, Outdomain<'a> = T>,
 {}
 
-impl<O, P> PullOp for MergeOp<O, P>
+impl<O, P, T> PullOp for MergeOp<O, P>
 where
-    O: PullOp<Outflow = Df>,
-    for<'a> P: PullOp<Outflow = Df, Outdomain<'a> = O::Outdomain<'a>>,
+    for<'a> O: PullOp<Outflow = Df, Outdomain<'a> = T>,
+    for<'a> P: PullOp<Outflow = Df, Outdomain<'a> = T>,
 {
     type Outflow = O::Outflow;
     type Outdomain<'s> = O::Outdomain<'s>;

@@ -51,7 +51,7 @@ where
                         if let Some(outitem) = newout.next() {
                             Poll::Ready(Some(outitem))
                         } else {
-                            Poll::Pending
+                            self.poll_next(ctx)
                         }
                     }
                 }
@@ -140,18 +140,18 @@ where
 }
 
 /// Map-Fold op for ref->owned values.
-pub struct MapFoldRefOp<O: Op, F: PureRefFn> {
+pub struct MapFlattenRefOp<O: Op, F: PureRefFn> {
     op: O,
     func: F,
 }
-impl<O: Op, F: PureRefFn> MapFoldRefOp<O, F> {
+impl<O: Op, F: PureRefFn> MapFlattenRefOp<O, F> {
     pub fn new(op: O, func: F) -> Self {
         Self { op, func }
     }
 }
-impl<O: Op, F: PureRefFn> Op for MapFoldRefOp<O, F> {}
+impl<O: Op, F: PureRefFn> Op for MapFlattenRefOp<O, F> {}
 
-impl<O, F: PureRefFn> PushOp for MapFoldRefOp<O, F>
+impl<O, F: PureRefFn> PushOp for MapFlattenRefOp<O, F>
 where
     F::Indomain: 'static,
     F::Outdomain: IntoIterator,

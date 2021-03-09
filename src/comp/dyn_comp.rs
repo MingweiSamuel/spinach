@@ -49,11 +49,11 @@ where
     /// For cloneable owned values.
     /// Continuously runs this Comp node. Never returns! Use `tick_moveop` instead.
     pub async fn run(mut self) -> ! {
-        while let Some(_feedback) = self.tick().await
-        {
-            // TODO: handle the feedback.
+        loop {
+            if let Some(_feedback) = self.tick().await {
+                // TODO: handle the feedback.
+            }
         }
-        panic!();
     }
 
     /// For cloneable owned values.

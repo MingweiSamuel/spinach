@@ -1,0 +1,120 @@
+#![feature(type_alias_impl_trait)]
+
+use std::collections::{HashMap, HashSet};
+use std::time::Duration;
+
+use spinach::comp::*;
+use spinach::func::*;
+use spinach::lattice::{Hide, Lattice, Union, MapUnion};
+use spinach::op::*;
+
+#[tokio::test]
+pub async fn test_shj() -> Result<(), String> {
+
+    let local = tokio::task::LocalSet::new();
+    local.run_until(async {
+
+        type Tup = (&'static str, &'static str);
+
+        let (r_table_into, r_table_out) = channel_op::<Tup>(10);
+        let (r_probe_into, r_probe_out) = channel_op::<Tup>(10);
+
+        let r_into = SplitOp::new(r_probe_into, r_table_into);
+        // let r_into = DebugOp::new(r_into, "r_into");
+
+        let (s_table_into, s_table_out) = channel_op::<Tup>(10);
+        let (s_probe_into, s_probe_out) = channel_op::<Tup>(10);
+
+        let s_into = SplitOp::new(s_probe_into, s_table_into);
+        // let s_into = DebugOp::new(s_into, "s_into");
+
+        {
+            type TableLattice = MapUnion<HashMap<&'static str, Union<HashSet<&'static str>>>>;
+
+            struct TupleToHashMapFn;
+            impl PureFn for TupleToHashMapFn {
+                type Indomain = Tup;
+                type Outdomain = Option<<TableLattice as Lattice>::Domain>;
+                fn call(&self, (k, v): Self::Indomain) -> Self::Outdomain {
+                    let mut map = HashMap::new();
+                    map.insert(k, Some(v).into_iter().collect());
+                    Some(map)
+                }
+            }
+
+            let r_table_out = MapFilterMoveOp::new(r_table_out, TupleToHashMapFn);
+            let r_table_out = LatticeOp::<_, TableLattice>::new_default(r_table_out);
+            
+            let s_table_out = MapFilterMoveOp::new(s_table_out, TupleToHashMapFn);
+            let s_table_out = LatticeOp::<_, TableLattice>::new_default(s_table_out);
+
+
+            struct RendezvousJoinFn;
+            impl RendezvousFn for RendezvousJoinFn {
+                type InDf = Tup;
+                type InRx = Hide<TableLattice>;
+                type Outdomain = Vec<(&'static str, &'static str, &'static str)>;
+                fn call<'a>(&self, ((k, v), hashmap): (Self::InDf, &'a Self::InRx)) -> Self::Outdomain {
+                    hashmap
+                        .reveal()
+                        .get(k)
+                        .into_iter()
+                        .flatten()
+                        .copied()
+                        .map(|x| (k, x, v))
+                        .collect()
+                }
+            }
+
+
+            struct TupleStrFn;
+            impl PureFn for TupleStrFn {
+                type Indomain = (&'static str, &'static str, &'static str);
+                type Outdomain = Option<String>;
+                fn call<'a>(&self, tup: Self::Indomain) -> Self::Outdomain {
+                    Some(format!("{:?}\n", tup))
+                }
+            }
+
+
+            let r_out = RendezvousOp::new(r_probe_out, s_table_out);
+            let r_out = MapFlattenMoveRendezvousOp::new(r_out, RendezvousJoinFn);
+            // let r_out = DebugOp::new(r_out, "r_out");
+
+            let s_out = RendezvousOp::new(s_probe_out, r_table_out);
+            let s_out = MapFlattenMoveRendezvousOp::new(s_out, RendezvousJoinFn);
+            // let s_out = DebugOp::new(s_out, "s_out");
+
+
+            let out = MergeOp::new(r_out, s_out);
+            let out = MapFilterMoveOp::new(out, TupleStrFn);
+
+            let comp = StaticMoveComp::new(out, StdOutOp::new());
+
+            tokio::task::spawn_local(async move {
+                comp.run().await;
+            });
+        }
+
+        tokio::task::spawn_local(async move {
+            let mut r_into = r_into;
+            let mut s_into = s_into;
+
+            r_into.push(("Mingwei", "Samuel")).await;
+            r_into.push(("Pranav", "Gaddamadugu")).await;
+
+            s_into.push(("Pranav", "d0cd")).await;
+            
+            r_into.push(("Matthew", "Milano")).await;
+            r_into.push(("Joseph", "Hellerstein")).await;
+
+            s_into.push(("Joseph", "jhellerstein")).await;
+            s_into.push(("Matthew", "mpmilano")).await;
+            s_into.push(("Mingwei", "MingweiSamuel")).await;
+        }).await.unwrap();
+
+        tokio::time::sleep(Duration::from_secs(1)).await;
+
+        Ok(())
+    }).await
+}

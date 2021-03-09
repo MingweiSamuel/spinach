@@ -18,9 +18,10 @@ impl<O: Op> DebugOp<O> {
 }
 impl<O: Op> Op for DebugOp<O> {}
 
-impl<O: PullOp> PullOp for DebugOp<O>
+impl<O, T> PullOp for DebugOp<O>
 where
-    for<'a> O::Outdomain<'a>: Debug,
+    T: Debug,
+    for<'a> O: PullOp<Outdomain<'a> = T>,
 {
     type Outflow = O::Outflow;
     type Outdomain<'s> = O::Outdomain<'s>;
@@ -34,9 +35,10 @@ where
     }
 }
 
-impl<O: PushOp> PushOp for DebugOp<O>
+impl<O, T> PushOp for DebugOp<O>
 where
-    for<'a> O::Indomain<'a>: Debug,
+    T: Debug,
+    for<'a> O: PushOp<Indomain<'a> = T>,
 {
     type Inflow = O::Inflow;
     type Indomain<'p> = O::Indomain<'p>;

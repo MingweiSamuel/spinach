@@ -19,3 +19,10 @@ pub trait PureRefRefFn {
     type Outdomain;
     fn call<'a>(&self, item: &'a Self::Indomain) -> &'a Self::Outdomain;
 }
+
+pub trait RendezvousFn {
+    type InDf;
+    type InRx;
+    type Outdomain;
+    fn call<'a>(&self, item: (Self::InDf, &'a Self::InRx)) -> Self::Outdomain;
+}

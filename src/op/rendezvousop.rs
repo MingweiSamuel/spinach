@@ -9,12 +9,15 @@ pub struct RendezvousOp<O: PullOp<Outflow = Df>, P: PullOp<Outflow = Rx>> {
     op_df: O,
     op_rx: P,
 }
+
 impl<O: PullOp<Outflow = Df>, P: PullOp<Outflow = Rx>> RendezvousOp<O, P> {
     pub fn new(op_df: O, op_rx: P) -> Self {
         Self { op_df, op_rx }
     }
 }
+
 impl<O: PullOp<Outflow = Df>, P: PullOp<Outflow = Rx>> Op for RendezvousOp<O, P> {}
+
 impl<O: PullOp<Outflow = Df>, P: PullOp<Outflow = Rx>> PullOp for RendezvousOp<O, P>
 {
     type Outflow = O::Outflow;

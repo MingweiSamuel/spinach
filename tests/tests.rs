@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use std::fmt::Debug;
-// use std::time::Duration;
+use std::time::Duration;
 
 use spinach::comp::*;
 use spinach::flow::*;
@@ -9,53 +9,83 @@ use spinach::lattice::{DominatingPair, Hide, Lattice, MapUnion, Max};
 use spinach::monotonic::MapProject;
 use spinach::op::*;
 
-// pub struct IncrementFn;
-// impl PureFn for IncrementFn {
-//     type Indomain = usize;
-//     type Outdomain = Option<usize>;
-//     fn call(&self, item: Self::Indomain) -> Self::Outdomain {
-//         Some(item + 1)
-//     }
-// }
+pub struct IncrementFn;
+impl PureFn for IncrementFn {
+    type Indomain = usize;
+    type Outdomain = Option<usize>;
+    fn call(&self, item: Self::Indomain) -> Self::Outdomain {
+        Some(item + 1)
+    }
+}
 
-// #[tokio::test]
-// pub async fn test_cycle_channel() -> Result<(), String> {
-//     let (push_pipe, pull_pipe) = channel_op::<usize>(10);
-//     let mut push_pipe = push_pipe;
+#[tokio::test]
+pub async fn test_handoff() -> Result<(), String> {
+    let local = tokio::task::LocalSet::new();
+    local.run_until(async {
+        let (mut push_pipe, pull_pipe) = handoff_op::<Df, usize>();
+        let pull_pipe = DebugOp::new(pull_pipe, "test_handoff");
+        let comp = StaticMoveComp::new(pull_pipe, NullOp::new());
+        
+        tokio::task::spawn_local(async move {
+            comp.run().await;
+        });
 
-//     let pull_pipe = MapFilterMoveOp::new(pull_pipe, IncrementFn);
-//     let pull_pipe = DebugOp::new(pull_pipe, "channel");
-//     let pull_pipe = BlockingIntervalOp::new(pull_pipe, Duration::from_millis(100));
+        let a = push_pipe.push(0);
+        let b = push_pipe.push(1);
+        tokio::join!(a, b);
+        
+        push_pipe.push(10).await;
+        push_pipe.push(11).await;
+        push_pipe.push(12).await;
+        push_pipe.push(13).await;
+        push_pipe.push(14).await;
+        push_pipe.push(25).await;
+        push_pipe.push(26).await;
 
-//     push_pipe.push(350).await;
-//     push_pipe.push(650).await;
+        tokio::time::sleep(Duration::from_secs(1)).await;
 
-//     let mut comp = StaticComp::new(pull_pipe, push_pipe);
-//     for _ in 0_usize..10 {
-//         comp.tick_moveop().await;
-//     }
+        Ok(())
+    }).await
+}
 
-//     Ok(())
-// }
+#[tokio::test]
+pub async fn test_cycle_channel() -> Result<(), String> {
+    let (push_pipe, pull_pipe) = channel_op::<usize>(10);
+    let mut push_pipe = push_pipe;
 
-// #[tokio::test]
-// pub async fn test_cycle_handoff() -> Result<(), String> {
-//     let (push_pipe, pull_pipe) = handoff_op::<Df, usize>();
-//     let mut push_pipe = push_pipe;
+    let pull_pipe = MapFilterMoveOp::new(pull_pipe, IncrementFn);
+    let pull_pipe = DebugOp::new(pull_pipe, "channel");
+    let pull_pipe = BlockingIntervalOp::new(pull_pipe, Duration::from_millis(100));
 
-//     let pull_pipe = MapFilterMoveOp::new(pull_pipe, IncrementFn);
-//     let pull_pipe = DebugOp::new(pull_pipe, "handoff");
-//     let pull_pipe = BlockingIntervalOp::new(pull_pipe, Duration::from_millis(100));
+    push_pipe.push(350).await;
+    push_pipe.push(650).await;
 
-//     push_pipe.push(150).await;
+    let mut comp = StaticMoveComp::new(pull_pipe, push_pipe);
+    for _ in 0_usize..10 {
+        comp.tick().await;
+    }
 
-//     let mut comp = StaticComp::new(pull_pipe, push_pipe);
-//     for _ in 0_usize..10 {
-//         comp.tick_moveop().await;
-//     }
+    Ok(())
+}
 
-//     Ok(())
-// }
+#[tokio::test]
+pub async fn test_cycle_handoff() -> Result<(), String> {
+    let (push_pipe, pull_pipe) = handoff_op::<Df, usize>();
+    let mut push_pipe = push_pipe;
+
+    let pull_pipe = MapFilterMoveOp::new(pull_pipe, IncrementFn);
+    let pull_pipe = DebugOp::new(pull_pipe, "handoff");
+    let pull_pipe = BlockingIntervalOp::new(pull_pipe, Duration::from_millis(100));
+
+    push_pipe.push(150).await;
+
+    let mut comp = StaticMoveComp::new(pull_pipe, push_pipe);
+    for _ in 0_usize..10 {
+        comp.tick().await;
+    }
+
+    Ok(())
+}
 
 pub struct RevealRefFn<F: Lattice>(std::marker::PhantomData<F>);
 impl<F: Lattice> PureRefFn for RevealRefFn<F>
@@ -71,9 +101,9 @@ where
 
 #[tokio::test]
 pub async fn test_kvs() -> Result<(), String> {
-    type MyKeyLattice = DominatingPair<Max<usize>, Max<&'static str>>;
+    type MyValueLattice = DominatingPair<Max<usize>, Max<&'static str>>;
 
-    type MyHashMap = HashMap<&'static str, MyKeyLattice>;
+    type MyHashMap = HashMap<&'static str, MyValueLattice>;
 
     type MyLattice = MapUnion<MyHashMap>;
 
@@ -94,14 +124,14 @@ pub async fn test_kvs() -> Result<(), String> {
     let pull_pipe = LatticeOp::<_, MyLattice>::new_default(pull_pipe);
 
     let read_foo_0 = StdOutOp::<Rx, _>::new();
-    let read_foo_0 = MapFoldRefOp::new(read_foo_0, RevealRefFn(std::marker::PhantomData));
+    let read_foo_0 = MapFlattenRefOp::new(read_foo_0, RevealRefFn(std::marker::PhantomData));
     let read_foo_0 = MonotonicFilterRefOp::new(
         read_foo_0,
         MapProject::<&'static str, MyHashMap>::new("foo"),
     );
     
     let read_foo_1 = StdOutOp::<Rx, _>::new();
-    let read_foo_1 = MapFoldRefOp::new(read_foo_1, RevealRefFn(std::marker::PhantomData));
+    let read_foo_1 = MapFlattenRefOp::new(read_foo_1, RevealRefFn(std::marker::PhantomData));
     let read_foo_1 = MonotonicFilterRefOp::new(
         read_foo_1,
         MapProject::<&'static str, MyHashMap>::new("foo"),
