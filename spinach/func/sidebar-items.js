@@ -1,1 +1,1 @@
-initSidebarItems({"trait":[["PureFn","Represents a pure function, owned->owned values."],["PureRefFn","Represents a pure function, reference->owned values."],["PureRefRefFn",""]]});
+initSidebarItems({"trait":[["PureFn","Represents a pure function, owned->owned values."],["PureRefFn","Represents a pure function, reference->owned values."],["PureRefRefFn",""],["RendezvousFn",""]]});
