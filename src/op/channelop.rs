@@ -31,12 +31,11 @@ impl<T> PushOp for ChannelPushOp<T> {
     type Inflow = Df;
     type Indomain<'p> = T;
 
-    type Feedback = impl Future;
+    type Feedback<'s> = impl Future;
 
     #[must_use]
-    fn push<'p>(&mut self, item: Self::Indomain<'p>) -> Self::Feedback {
-        let send = self.send.clone();
-        async move { send.clone().send(item).await }
+    fn push<'s, 'p>(&'s mut self, item: Self::Indomain<'p>) -> Self::Feedback<'s> {
+        self.send.send(item)
     }
 }
 

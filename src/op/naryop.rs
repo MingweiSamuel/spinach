@@ -46,9 +46,9 @@ where
     type Inflow = Df;
     type Indomain<'p> = O::Indomain<'p>;
 
-    type Feedback = impl Future;
+    type Feedback<'s> = impl Future;
 
-    fn push<'p>(&mut self, item: Self::Indomain<'p>) -> Self::Feedback {
+    fn push<'s, 'p>(&'s mut self, item: Self::Indomain<'p>) -> Self::Feedback<'s> {
         let f0 = self.op0.push(item);
         let f1 = self.op1.push(item);
         async move { join!(f0, f1) }

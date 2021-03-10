@@ -67,10 +67,10 @@ impl<T: 'static + AsRef<[u8]>> PushOp for UdpPushOp<T> {
     type Inflow = Df;
     type Indomain<'p> = T;
 
-    type Feedback = impl Future;
+    type Feedback<'s> = impl Future;
 
     #[must_use]
-    fn push<'p>(&mut self, item: Self::Indomain<'p>) -> Self::Feedback {
+    fn push<'s, 'p>(&'s mut self, item: Self::Indomain<'p>) -> Self::Feedback<'s> {
         let slice = item.as_ref();
         if slice.len() > UDP_BUFFER {
             panic!(

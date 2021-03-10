@@ -30,9 +30,9 @@ impl<F: Flow, T: AsRef<[u8]>> PushOp for StdOutOp<F, T> {
     type Inflow = F;
     type Indomain<'p> = T;
 
-    type Feedback = future::Ready<()>;
+    type Feedback<'s> = future::Ready<()>;
  
-    fn push<'p>(&mut self, item: Self::Indomain<'p>) -> Self::Feedback {
+    fn push<'s, 'p>(&'s mut self, item: Self::Indomain<'p>) -> Self::Feedback<'s> {
         let bytes = item.as_ref();
         std::io::stdout().write_all(bytes).expect("Failed to write to stdout.");
         future::ready(())

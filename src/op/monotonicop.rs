@@ -1,4 +1,6 @@
-use futures::future::{join_all, JoinAll};
+use std::future::{self, Ready};
+
+use futures::future::{Either};
 
 use ref_cast::RefCast;
 
@@ -41,12 +43,15 @@ where
     type Inflow = O::Inflow;
     type Indomain<'p> = &'p Hide<F::Inmerge>;
 
-    type Feedback = JoinAll<O::Feedback>;
+    type Feedback<'s> = Either<O::Feedback<'s>, Ready<()>>;
 
-    fn push<'p>(&mut self, item: Self::Indomain<'p>) -> Self::Feedback {
-        join_all(self.func.call(item.reveal()).into_iter().map(|item| {
+    fn push<'s, 'p>(&'s mut self, item: Self::Indomain<'p>) -> Self::Feedback<'s> {
+        if let Some(item) = self.func.call(item.reveal()) {
             let hide = Hide::ref_cast(item);
-            self.op.push(hide)
-        }))
+            Either::Left(self.op.push(hide))
+        }
+        else {
+            Either::Right(future::ready(()))
+        }
     }
 }

@@ -39,9 +39,9 @@ impl<F: Flow, T> PushOp for NullOp<F, T> {
     type Inflow = F;
     type Indomain<'p> = T;
 
-    type Feedback = future::Ready<()>;
+    type Feedback<'s> = future::Ready<()>;
 
-    fn push<'p>(&mut self, _item: Self::Indomain<'p>) -> Self::Feedback {
+    fn push<'s, 'p>(&'s mut self, _item: Self::Indomain<'p>) -> Self::Feedback<'s> {
         future::ready(())
     }
 }

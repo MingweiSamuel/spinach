@@ -41,10 +41,10 @@ where
 
     /// If PULL and PUSH deal with owned values.
     /// Runs a single element from the pull side through the push side.
-    pub async fn tick(&mut self) -> Option<<O::Feedback as Future>::Output> {
+    pub async fn tick(&mut self) -> Option<<O::Feedback<'_> as Future>::Output> {
+        let fut = StaticCompFuture::new(&mut self.pull, &mut self.push);
         #[allow(clippy::manual_map)]
-        if let Some(feedback) =
-            StaticCompFuture::new(&mut self.pull, &mut self.push).await
+        if let Some(feedback) = (&fut).await
         {
             Some(feedback)
         }
@@ -62,7 +62,7 @@ where
 {
     pull: &'s mut I,
     push: &'s mut O,
-    push_fut: Option<Pin<Box<O::Feedback>>>,
+    push_fut: Option<Pin<Box<O::Feedback<'s>>>>,
 }
 
 impl<'s, I, O> StaticCompFuture<'s, I, O>
@@ -79,13 +79,13 @@ where
     }
 }
 
-impl<'s, I, O> Future for StaticCompFuture<'s, I, O>
+impl<'s, I, O> Future for &'s StaticCompFuture<'s, I, O>
 where
     I: PullOp,
     for<'a> O: PushOp<Inflow = I::Outflow, Indomain<'a> = I::Outdomain<'a>>,
     Self: Unpin,
 {
-    type Output = Option<<O::Feedback as Future>::Output>;
+    type Output = Option<<O::Feedback<'s> as Future>::Output>;
 
     fn poll(self: Pin<&mut Self>, ctx: &mut Context<'_>) -> Poll<Self::Output> {
         let this = self.get_mut();

@@ -44,18 +44,17 @@ impl<F: Flow, T> Default for Handoff<F, T> {
 }
 
 /// Internal future struct for sending half of handoff.
-pub struct HandoffSend<F: Flow, T> {
+pub struct HandoffSend<'s, F: Flow, T> {
     item: Option<T>,
-    handoff: Rc<RefCell<Handoff<F, T>>>,
+    handoff: &'s Rc<RefCell<Handoff<F, T>>>,
 }
 
-impl<F: Flow, T> Unpin for HandoffSend<F, T> {}
+impl<'s, F: Flow, T> Unpin for HandoffSend<'s, F, T> {}
 
-impl<F: Flow, T> Future for HandoffSend<F, T> {
+impl<'s, F: Flow, T> Future for HandoffSend<'s, F, T> {
     type Output = ();
 
     fn poll(self: Pin<&mut Self>, ctx: &mut Context<'_>) -> Poll<Self::Output> {
-        println!("PUSH POLL");
         let this = self.get_mut();
         match this.item.take() {
             Some(item) => {
@@ -84,30 +83,45 @@ impl<F: Flow, T> Future for HandoffSend<F, T> {
 }
 
 /// The sending (push) half of a handoff.
-pub struct HandoffPushOp<F: Flow, T> {
+pub struct HandoffPushOp<F: Flow, T>
+where
+    F: 'static,
+    T: 'static,
+{
     handoff: Rc<RefCell<Handoff<F, T>>>,
 }
 
-impl<F: Flow, T> HandoffPushOp<F, T> {
+impl<F: Flow, T> HandoffPushOp<F, T>
+where
+    F: 'static,
+    T: 'static,
+{
     fn create(handoff: Rc<RefCell<Handoff<F, T>>>) -> Self {
         Self { handoff }
     }
 }
 
-impl<F: Flow, T> Op for HandoffPushOp<F, T> {}
+impl<F: Flow, T> Op for HandoffPushOp<F, T>
+where
+    F: 'static,
+    T: 'static,
+{}
 
-impl<F: Flow, T> PushOp for HandoffPushOp<F, T> {
+impl<F: Flow, T> PushOp for HandoffPushOp<F, T>
+where
+    F: 'static,
+    T: 'static,
+{
     type Inflow = F;
     type Indomain<'p> = T;
 
-    type Feedback = HandoffSend<F, T>;
+    type Feedback<'s> = HandoffSend<'s, F, T>;
 
     #[must_use]
-    fn push<'p>(&mut self, item: Self::Indomain<'p>) -> Self::Feedback {
-        println!("PUSH");
+    fn push<'s, 'p>(&'s mut self, item: Self::Indomain<'p>) -> Self::Feedback<'s> {
         HandoffSend {
             item: Some(item),
-            handoff: self.handoff.clone(),
+            handoff: &self.handoff,
         }
     }
 }

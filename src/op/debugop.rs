@@ -43,9 +43,9 @@ where
     type Inflow = O::Inflow;
     type Indomain<'p> = O::Indomain<'p>;
 
-    type Feedback = O::Feedback;
+    type Feedback<'s> = O::Feedback<'s>;
 
-    fn push<'p>(&mut self, item: Self::Indomain<'p>) -> Self::Feedback {
+    fn push<'s, 'p>(&'s mut self, item: Self::Indomain<'p>) -> Self::Feedback<'s> {
         println!("{}: {:?}", self.tag, item);
         self.op.push(item)
     }

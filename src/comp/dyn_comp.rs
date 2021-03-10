@@ -41,7 +41,7 @@ where
 {
     /// For cloneable owned values.
     /// Adds a split off.
-    pub async fn add_split(&mut self, push: O) -> Option<Vec<<O::Feedback as Future>::Output>> {
+    pub async fn add_split(&mut self, push: O) -> Option<Vec<<O::Feedback<'_> as Future>::Output>> {
         self.pushes.push(push);
         self.tick().await
     }
@@ -58,8 +58,9 @@ where
 
     /// For cloneable owned values.
     /// Runs a single element from the pull side through all the push sides.
-    pub async fn tick(&mut self) -> Option<Vec<<O::Feedback as Future>::Output>> {
-        DynCompFuture::new(&mut self.pull, self.pushes.iter_mut().collect()).await
+    pub async fn tick(&mut self) -> Option<Vec<<O::Feedback<'_> as Future>::Output>> {
+        let fut = DynCompFuture::new(&mut self.pull, self.pushes.iter_mut().collect());
+        (&fut).await
     }
 }
 
@@ -72,7 +73,7 @@ where
 {
     pull: &'s mut I,
     pushes: Vec<&'s mut O>,
-    push_fut: Option<Pin<Box<JoinAll<O::Feedback>>>>,
+    push_fut: Option<Pin<Box<JoinAll<O::Feedback<'s>>>>>,
 }
 
 impl<'s, I, O> DynCompFuture<'s, I, O>
@@ -90,14 +91,14 @@ where
     }
 }
 
-impl<'s, I, O> Future for DynCompFuture<'s, I, O>
+impl<'s, I, O> Future for &'s DynCompFuture<'s, I, O>
 where
     I: PullOp<Outflow = Rx>,
     for<'a> I::Outdomain<'a>: Copy,
     for<'a> O: PushOp<Inflow = Rx, Indomain<'a> = I::Outdomain<'a>>,
     Self: Unpin,
 {
-    type Output = Option<Vec<<O::Feedback as Future>::Output>>;
+    type Output = Option<Vec<<O::Feedback<'s> as Future>::Output>>;
 
     fn poll(self: Pin<&mut Self>, ctx: &mut Context<'_>) -> Poll<Self::Output> {
         let this = self.get_mut();

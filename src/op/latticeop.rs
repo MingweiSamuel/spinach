@@ -61,9 +61,9 @@ where
     type Inflow = Df;
     type Indomain<'p> = F::Domain;
 
-    type Feedback = O::Feedback;
+    type Feedback<'s> = O::Feedback<'s>;
 
-    fn push<'p>(&mut self, item: Self::Indomain<'p>) -> Self::Feedback {
+    fn push<'s, 'p>(&'s mut self, item: Self::Indomain<'p>) -> Self::Feedback<'s> {
         F::merge_in(&mut self.state, item);
         let hide = Hide::ref_cast(&self.state);
         self.op.push(hide)

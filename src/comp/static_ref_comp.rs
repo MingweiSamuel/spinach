@@ -41,8 +41,8 @@ where
 
     /// If PULL and PUSH deal with owned values.
     /// Runs a single element from the pull side through the push side.
-    pub fn tick(&mut self) -> StaticMoveCompFuture<'_, I, O, T> {
-        StaticMoveCompFuture::new(&mut self.pull, &mut self.push)
+    pub fn tick(&mut self) -> &'_ StaticMoveCompFuture<'_, I, O, T> {
+        &StaticMoveCompFuture::new(&mut self.pull, &mut self.push)
     }
 }
 
@@ -54,7 +54,7 @@ where
 {
     pull: &'s mut I,
     push: &'s mut O,
-    push_fut: Option<Pin<Box<O::Feedback>>>,
+    push_fut: Option<Pin<Box<O::Feedback<'s>>>>,
 }
 
 impl<'s, I, O, T: ?Sized> StaticMoveCompFuture<'s, I, O, T>
@@ -71,13 +71,13 @@ where
     }
 }
 
-impl<'s, I, O, T: ?Sized> Future for StaticMoveCompFuture<'s, I, O, T>
+impl<'s, I, O, T: ?Sized> Future for &'s StaticMoveCompFuture<'s, I, O, T>
 where
     for<'a> I: PullOp<Outdomain<'a> = &'a T>,
     for<'a> O: PushOp<Inflow = I::Outflow, Indomain<'a> = &'a T>,
     Self: Unpin,
 {
-    type Output = Option<<O::Feedback as Future>::Output>;
+    type Output = Option<<O::Feedback<'s> as Future>::Output>;
 
     fn poll(self: Pin<&mut Self>, ctx: &mut Context<'_>) -> Poll<Self::Output> {
         let this = self.get_mut();

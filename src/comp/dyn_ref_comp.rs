@@ -37,7 +37,7 @@ where
 {
     /// For cloneable owned values.
     /// Adds a split off.
-    pub fn add_split(&mut self, push: O) -> DynRefCompFuture<'_, I, O, T> {
+    pub fn add_split(&mut self, push: O) -> &'_ DynRefCompFuture<'_, I, O, T> {
         self.pushes.push(push);
         self.tick()
     }
@@ -54,8 +54,8 @@ where
 
     /// For cloneable owned values.
     /// Runs a single element from the pull side through all the push sides.
-    pub fn tick(&mut self) -> DynRefCompFuture<'_, I, O, T> {
-        DynRefCompFuture::new(&mut self.pull, self.pushes.iter_mut().collect())
+    pub fn tick(&mut self) -> &'_ DynRefCompFuture<'_, I, O, T> {
+        &DynRefCompFuture::new(&mut self.pull, self.pushes.iter_mut().collect())
     }
 }
 
@@ -67,7 +67,7 @@ where
 {
     pull: &'s mut I,
     pushes: Vec<&'s mut O>,
-    push_fut: Option<Pin<Box<JoinAll<O::Feedback>>>>,
+    push_fut: Option<Pin<Box<JoinAll<O::Feedback<'s>>>>>,
 }
 
 impl<'s, I, O, T: ?Sized> DynRefCompFuture<'s, I, O, T>
@@ -84,13 +84,13 @@ where
     }
 }
 
-impl<'s, I, O, T: ?Sized> Future for DynRefCompFuture<'s, I, O, T>
+impl<'s, I, O, T: ?Sized> Future for &'s DynRefCompFuture<'s, I, O, T>
 where
     for<'a> I: PullOp<Outflow = Rx, Outdomain<'a> = &'a T>,
     for<'a> O: PushOp<Inflow = Rx, Indomain<'a> = &'a T>,
     Self: Unpin,
 {
-    type Output = Option<Vec<<O::Feedback as Future>::Output>>;
+    type Output = Option<Vec<<O::Feedback<'s> as Future>::Output>>;
 
     fn poll(self: Pin<&mut Self>, ctx: &mut Context<'_>) -> Poll<Self::Output> {
         let this = self.get_mut();

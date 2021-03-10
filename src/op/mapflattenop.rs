@@ -1,6 +1,7 @@
+use std::future::{self, Future, Ready};
 use std::task::{Context, Poll};
 
-use futures::future::{join_all, JoinAll};
+use futures::future::{Either};
 
 use super::*;
 
@@ -68,15 +69,18 @@ where
     type Inflow = Df;
     type Indomain<'p> = F::Indomain;
 
-    type Feedback = JoinAll<O::Feedback>;
+    type Feedback<'s> = impl Future;
 
-    fn push<'p>(&mut self, item: Self::Indomain<'p>) -> Self::Feedback {
-        join_all(
-            self.func
-                .call(item)
-                .into_iter()
-                .map(|item| self.op.push(item)),
-        )
+    fn push<'s, 'p>(&'s mut self, item: Self::Indomain<'p>) -> Self::Feedback<'s> {
+        let items = self.func.call(item);
+        async move {
+            let this = self;
+            let mut out = Vec::new();
+            for item in items {
+                out.push(this.op.push(item).await);
+            }
+            out
+        }
     }
 }
 
@@ -127,15 +131,15 @@ where
     type Inflow = Df;
     type Indomain<'p> = F::Indomain;
 
-    type Feedback = JoinAll<O::Feedback>;
+    type Feedback<'s> = Either<O::Feedback<'s>, Ready<()>>;
 
-    fn push<'p>(&mut self, item: Self::Indomain<'p>) -> Self::Feedback {
-        join_all(
-            self.func
-                .call(item)
-                .into_iter()
-                .map(|item| self.op.push(item)),
-        )
+    fn push<'s, 'p>(&'s mut self, item: Self::Indomain<'p>) -> Self::Feedback<'s> {
+        if let Some(item) = self.func.call(item) {
+            Either::Left(self.op.push(item))
+        }
+        else {
+            Either::Right(future::ready(()))
+        }
     }
 }
 
@@ -160,15 +164,17 @@ where
     type Inflow = O::Inflow;
     type Indomain<'p> = &'p F::Indomain;
 
-    type Feedback = JoinAll<O::Feedback>;
+    type Feedback<'s> = impl Future;
 
-    fn push<'p>(&mut self, item: Self::Indomain<'p>) -> Self::Feedback {
-        join_all(
-            self.func
-                .call(item)
-                .into_iter()
-                .map(|item| self.op.push(item)),
-        )
+    fn push<'s, 'p>(&'s mut self, item: Self::Indomain<'p>) -> Self::Feedback<'s> {
+        let items = self.func.call(item);
+        async move {
+            let out = Vec::new();
+            for item in items {
+                out.push(self.op.push(item).await);
+            }
+            out
+        }
     }
 }
 
@@ -204,9 +210,9 @@ where
     type Inflow = Rx;
     type Indomain<'p> = &'p F::Indomain;
 
-    type Feedback = O::Feedback;
+    type Feedback<'s> = O::Feedback<'s>;
 
-    fn push<'p>(&mut self, item: Self::Indomain<'p>) -> Self::Feedback {
+    fn push<'s, 'p>(&'s mut self, item: Self::Indomain<'p>) -> Self::Feedback<'s> {
         self.op.push(self.func.call(item))
     }
 }

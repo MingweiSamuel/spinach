@@ -26,9 +26,9 @@ pub trait PushOp: Op {
     type Indomain<'p>;
 
     /// The future returned by the `push()` method.
-    type Feedback: Future;
+    type Feedback<'s>: Future;
 
     /// Pushes a value into this op. `item` has GAT lifetime paramer `Self::Indomain<'p>`.
     #[must_use]
-    fn push<'p>(&mut self, item: Self::Indomain<'p>) -> Self::Feedback;
+    fn push<'s, 'p>(&'s mut self, item: Self::Indomain<'p>) -> Self::Feedback<'s>;
 }
