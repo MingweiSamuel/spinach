@@ -55,7 +55,6 @@ impl<F: Flow, T> Future for HandoffSend<F, T> {
     type Output = ();
 
     fn poll(self: Pin<&mut Self>, ctx: &mut Context<'_>) -> Poll<Self::Output> {
-        println!("PUSH POLL");
         let this = self.get_mut();
         match this.item.take() {
             Some(item) => {
@@ -65,7 +64,6 @@ impl<F: Flow, T> Future for HandoffSend<F, T> {
                     handoff_mut.item.replace(item);
                     // Wake up receiver.
                     if let Some(waker) = &handoff_mut.recv_waker {
-                        println!("WAKEUP WAKER!");
                         waker.wake_by_ref()
                     }
                     // Done.
@@ -73,7 +71,7 @@ impl<F: Flow, T> Future for HandoffSend<F, T> {
                 } else {
                     // Buffer full, wait.
                     let old_waker = handoff_mut.send_waker.replace(ctx.waker().clone());
-                    // assert!(old_waker.is_none()); // Does not allow multiple producer.
+                    assert!(old_waker.is_none()); // Does not allow multiple producer.
                     Poll::Pending
                 }
             }
@@ -104,7 +102,6 @@ impl<F: Flow, T> PushOp for HandoffPushOp<F, T> {
 
     #[must_use]
     fn push<'p>(&mut self, item: Self::Indomain<'p>) -> Self::Feedback {
-        println!("PUSH");
         HandoffSend {
             item: Some(item),
             handoff: self.handoff.clone(),

@@ -48,9 +48,10 @@ pub async fn test_shj() -> Result<(), String> {
             let s_table_out = MapFilterMoveOp::new(s_table_out, TupleToHashMapFn);
             let s_table_out = LatticeOp::<_, TableLattice>::new_default(s_table_out);
 
+            type Tup3 = (&'static str, &'static str, &'static str);
 
-            struct RendezvousJoinFn;
-            impl RendezvousFn for RendezvousJoinFn {
+            struct RendezvousJoinFn<F: Fn(Tup3) -> Tup3>(F);
+            impl<F: Fn(Tup3) -> Tup3> RendezvousFn for RendezvousJoinFn<F> {
                 type InDf = Tup;
                 type InRx = Hide<TableLattice>;
                 type Outdomain = Vec<(&'static str, &'static str, &'static str)>;
@@ -61,11 +62,10 @@ pub async fn test_shj() -> Result<(), String> {
                         .into_iter()
                         .flatten()
                         .copied()
-                        .map(|x| (k, x, v))
+                        .map(|x| self.0((k, x, v)))
                         .collect()
                 }
             }
-
 
             struct TupleStrFn;
             impl PureFn for TupleStrFn {
@@ -78,11 +78,11 @@ pub async fn test_shj() -> Result<(), String> {
 
 
             let r_out = RendezvousOp::new(r_probe_out, s_table_out);
-            let r_out = MapFlattenMoveRendezvousOp::new(r_out, RendezvousJoinFn);
+            let r_out = MapFlattenMoveRendezvousOp::new(r_out, RendezvousJoinFn(|(k, x, v)| (k, v, x)));
             // let r_out = DebugOp::new(r_out, "r_out");
 
             let s_out = RendezvousOp::new(s_probe_out, r_table_out);
-            let s_out = MapFlattenMoveRendezvousOp::new(s_out, RendezvousJoinFn);
+            let s_out = MapFlattenMoveRendezvousOp::new(s_out, RendezvousJoinFn(|(k, x, v)| (k, x, v)));
             // let s_out = DebugOp::new(s_out, "s_out");
 
 
@@ -93,6 +93,12 @@ pub async fn test_shj() -> Result<(), String> {
 
             tokio::task::spawn_local(async move {
                 comp.run().await;
+                // let mut comp = comp;
+                // comp.tick().await;
+                // comp.tick().await;
+                // comp.tick().await;
+                // comp.tick().await;
+                // comp.tick().await;
             });
         }
 
@@ -100,17 +106,17 @@ pub async fn test_shj() -> Result<(), String> {
             let mut r_into = r_into;
             let mut s_into = s_into;
 
-            r_into.push(("Mingwei", "Samuel")).await;
-            r_into.push(("Pranav", "Gaddamadugu")).await;
-
-            s_into.push(("Pranav", "d0cd")).await;
-            
-            r_into.push(("Matthew", "Milano")).await;
-            r_into.push(("Joseph", "Hellerstein")).await;
-
             s_into.push(("Joseph", "jhellerstein")).await;
             s_into.push(("Matthew", "mpmilano")).await;
             s_into.push(("Mingwei", "MingweiSamuel")).await;
+
+            r_into.push(("Mingwei", "Samuel")).await;
+            r_into.push(("Pranav", "Gaddamadugu")).await;
+            r_into.push(("Matthew", "Milano")).await;
+
+            s_into.push(("Pranav", "d0cd")).await;
+
+            r_into.push(("Joseph", "Hellerstein")).await;
         }).await.unwrap();
 
         tokio::time::sleep(Duration::from_secs(1)).await;

@@ -92,16 +92,15 @@ where
 
         // Get a future if none created.
         if this.push_fut.is_none() {
-            if let Poll::Ready(opt_item) = this.pull.poll_next(ctx) {
-                match opt_item {
-                    Some(item) => {
-                        let fut = this.push.push(item);
-                        this.push_fut = Some(Box::pin(fut));
-                    }
-                    None => {
-                        return Poll::Ready(None);
-                    }
-                }
+            match this.pull.poll_next(ctx) {
+                Poll::Ready(Some(item)) => {
+                    let fut = this.push.push(item);
+                    this.push_fut = Some(Box::pin(fut));
+                },
+                Poll::Ready(None) => {
+                    return Poll::Ready(None);
+                },
+                Poll::Pending => {},
             }
         }
 
