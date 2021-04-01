@@ -54,7 +54,7 @@ impl<F: Flow, T> Unpin for HandoffSend<F, T> {}
 impl<F: Flow, T> Future for HandoffSend<F, T> {
     type Output = ();
 
-    fn poll(self: Pin<&mut Self>, ctx: &mut Context<'_>) -> Poll<Self::Output> {
+    fn poll(self: Pin<&mut Self>, _ctx: &mut Context<'_>) -> Poll<Self::Output> {
         let this = self.get_mut();
         match this.item.take() {
             Some(item) => {
@@ -70,8 +70,9 @@ impl<F: Flow, T> Future for HandoffSend<F, T> {
                     Poll::Ready(())
                 } else {
                     // Buffer full, wait.
-                    let old_waker = handoff_mut.send_waker.replace(ctx.waker().clone());
-                    assert!(old_waker.is_none()); // Does not allow multiple producer.
+                    // TODO!!!!!
+                    // let old_waker = handoff_mut.send_waker.replace(ctx.waker().clone());
+                    // assert!(old_waker.is_none()); // Does not allow multiple producer.
                     Poll::Pending
                 }
             }

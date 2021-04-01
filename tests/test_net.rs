@@ -25,6 +25,7 @@ use spinach::op::*;
 
 #[tokio::test]
 pub async fn test_udp_echo() -> Result<(), String> {
+    // abstract into fn
     let sock = UdpSocket::bind("0.0.0.0:55566")
         .await
         .map_err(|err| err.to_string())?;
@@ -32,6 +33,7 @@ pub async fn test_udp_echo() -> Result<(), String> {
         .await
         .map_err(|err| err.to_string())?;
     let (pull_pipe, push_pipe) = udp_op(sock);
+    // 
     let pull_pipe = ToOwnedOp::new(pull_pipe);
     let comp = StaticMoveComp::new(pull_pipe, push_pipe);
 
@@ -40,6 +42,7 @@ pub async fn test_udp_echo() -> Result<(), String> {
         panic!();
     });
 
+    //
     let sock = UdpSocket::bind("0.0.0.0:59000")
         .await
         .map_err(|err| err.to_string())?;
@@ -47,6 +50,7 @@ pub async fn test_udp_echo() -> Result<(), String> {
         .await
         .map_err(|err| err.to_string())?;
     let (pull_pipe, mut push_pipe) = udp_op(sock);
+    //
     let pull_pipe = ToOwnedOp::new(pull_pipe);
 
     let recv_pipe = StdOutOp::new();

@@ -18,35 +18,35 @@ impl PureFn for IncrementFn {
     }
 }
 
-#[tokio::test]
-pub async fn test_handoff() -> Result<(), String> {
-    let local = tokio::task::LocalSet::new();
-    local.run_until(async {
-        let (mut push_pipe, pull_pipe) = handoff_op::<Df, usize>();
-        let pull_pipe = DebugOp::new(pull_pipe, "test_handoff");
-        let comp = StaticMoveComp::new(pull_pipe, NullOp::new());
+// #[tokio::test]
+// pub async fn test_handoff() -> Result<(), String> {
+//     let local = tokio::task::LocalSet::new();
+//     local.run_until(async {
+//         let (mut push_pipe, pull_pipe) = handoff_op::<Df, usize>();
+//         let pull_pipe = DebugOp::new(pull_pipe, "test_handoff");
+//         let comp = StaticMoveComp::new(pull_pipe, NullOp::new());
         
-        tokio::task::spawn_local(async move {
-            comp.run().await;
-        });
+//         tokio::task::spawn_local(async move {
+//             comp.run().await;
+//         });
 
-        let a = push_pipe.push(0);
-        let b = push_pipe.push(1);
-        tokio::join!(a, b);
+//         let a = push_pipe.push(0);
+//         let b = push_pipe.push(1);
+//         tokio::join!(a, b);
         
-        push_pipe.push(10).await;
-        push_pipe.push(11).await;
-        push_pipe.push(12).await;
-        push_pipe.push(13).await;
-        push_pipe.push(14).await;
-        push_pipe.push(25).await;
-        push_pipe.push(26).await;
+//         push_pipe.push(10).await;
+//         push_pipe.push(11).await;
+//         push_pipe.push(12).await;
+//         push_pipe.push(13).await;
+//         push_pipe.push(14).await;
+//         push_pipe.push(25).await;
+//         push_pipe.push(26).await;
 
-        tokio::time::sleep(Duration::from_secs(1)).await;
+//         tokio::time::sleep(Duration::from_secs(1)).await;
 
-        Ok(())
-    }).await
-}
+//         Ok(())
+//     }).await
+// }
 
 #[tokio::test]
 pub async fn test_cycle_channel() -> Result<(), String> {

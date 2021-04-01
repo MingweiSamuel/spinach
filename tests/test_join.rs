@@ -8,7 +8,7 @@ use spinach::func::*;
 use spinach::lattice::{Hide, Lattice, Union, MapUnion};
 use spinach::op::*;
 
-#[tokio::test]
+// #[tokio::test]
 pub async fn test_shj() -> Result<(), String> {
 
     let local = tokio::task::LocalSet::new();
@@ -16,14 +16,14 @@ pub async fn test_shj() -> Result<(), String> {
 
         type Tup = (&'static str, &'static str);
 
-        let (r_table_into, r_table_out) = channel_op::<Tup>(10);
-        let (r_probe_into, r_probe_out) = channel_op::<Tup>(10);
+        let (r_table_into, r_table_out) = channel_op::<Tup>(2);
+        let (r_probe_into, r_probe_out) = channel_op::<Tup>(2);
 
         let r_into = SplitOp::new(r_probe_into, r_table_into);
         // let r_into = DebugOp::new(r_into, "r_into");
 
-        let (s_table_into, s_table_out) = channel_op::<Tup>(10);
-        let (s_probe_into, s_probe_out) = channel_op::<Tup>(10);
+        let (s_table_into, s_table_out) = channel_op::<Tup>(5);
+        let (s_probe_into, s_probe_out) = channel_op::<Tup>(5);
 
         let s_into = SplitOp::new(s_probe_into, s_table_into);
         // let s_into = DebugOp::new(s_into, "s_into");
@@ -108,7 +108,7 @@ pub async fn test_shj() -> Result<(), String> {
 
             s_into.push(("Joseph", "jhellerstein")).await;
             s_into.push(("Matthew", "mpmilano")).await;
-            s_into.push(("Mingwei", "MingweiSamuel")).await;
+            s_into.push(("Mingwei", "mingweisamuel")).await;
 
             r_into.push(("Mingwei", "Samuel")).await;
             r_into.push(("Pranav", "Gaddamadugu")).await;
