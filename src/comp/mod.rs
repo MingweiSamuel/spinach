@@ -17,3 +17,6 @@ pub use dyn_comp::*;
 
 mod dyn_ref_comp;
 pub use dyn_ref_comp::*;
+
+mod lattice_comp;
+pub use lattice_comp::*;
