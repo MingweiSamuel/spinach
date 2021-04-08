@@ -713,7 +713,7 @@
 
 <span class="kw">use</span> <span class="ident">pin_project_lite</span>::<span class="ident">pin_project</span>;
 
-<span class="macro">cfg_rt</span><span class="macro">!</span> {
+<span class="macro">cfg_rt!</span> {
     <span class="doccomment">/// A set of tasks which are executed on the same thread.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// In some cases, it is necessary to run one or more futures that do not</span>
@@ -947,7 +947,7 @@
     <span class="ident">waker</span>: <span class="ident">AtomicWaker</span>,
 }
 
-<span class="macro">pin_project</span><span class="macro">!</span> {
+<span class="macro">pin_project!</span> {
     <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
     <span class="kw">struct</span> <span class="ident">RunUntil</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">F</span><span class="op">&gt;</span> {
         <span class="ident">local_set</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">LocalSet</span>,
@@ -956,9 +956,9 @@
     }
 }
 
-<span class="macro">scoped_thread_local</span><span class="macro">!</span>(<span class="kw">static</span> <span class="ident">CURRENT</span>: <span class="ident">Context</span>);
+<span class="macro">scoped_thread_local!</span>(<span class="kw">static</span> <span class="ident">CURRENT</span>: <span class="ident">Context</span>);
 
-<span class="macro">cfg_rt</span><span class="macro">!</span> {
+<span class="macro">cfg_rt!</span> {
     <span class="doccomment">/// Spawns a `!Send` future on the local task set.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// The spawned future will be run on the same thread that called `spawn_local.`</span>
@@ -1307,7 +1307,7 @@
                 <span class="ident">task</span>.<span class="ident">shutdown</span>();
             }
 
-            <span class="macro">assert</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">context</span>.<span class="ident">tasks</span>.<span class="ident">borrow</span>().<span class="ident">owned</span>.<span class="ident">is_empty</span>());
+            <span class="macro">assert!</span>(<span class="self">self</span>.<span class="ident">context</span>.<span class="ident">tasks</span>.<span class="ident">borrow</span>().<span class="ident">owned</span>.<span class="ident">is_empty</span>());
         });
     }
 }
@@ -1379,7 +1379,7 @@
         <span class="ident">CURRENT</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">maybe_cx</span><span class="op">|</span> {
             <span class="kw">let</span> <span class="ident">cx</span> <span class="op">=</span> <span class="ident">maybe_cx</span>.<span class="ident">expect</span>(<span class="string">&quot;scheduler context missing&quot;</span>);
 
-            <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">cx</span>.<span class="ident">shared</span>.<span class="ident">ptr_eq</span>(<span class="self">self</span>));
+            <span class="macro">assert!</span>(<span class="ident">cx</span>.<span class="ident">shared</span>.<span class="ident">ptr_eq</span>(<span class="self">self</span>));
 
             <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="ident">NonNull</span>::<span class="ident">from</span>(<span class="ident">task</span>.<span class="ident">header</span>());
             <span class="comment">// safety: task must be contained by list. It is inserted into the</span>

@@ -891,7 +891,7 @@
         <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="self">self</span>,
         <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>,
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">AsyncFdReadyGuard</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">event</span> <span class="op">=</span> <span class="macro">ready</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">registration</span>.<span class="ident">poll_read_ready</span>(<span class="ident">cx</span>))<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">event</span> <span class="op">=</span> <span class="macro">ready!</span>(<span class="self">self</span>.<span class="ident">registration</span>.<span class="ident">poll_read_ready</span>(<span class="ident">cx</span>))<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(<span class="ident">AsyncFdReadyGuard</span> {
             <span class="ident">async_fd</span>: <span class="self">self</span>,
@@ -929,7 +929,7 @@
         <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="self">self</span>,
         <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>,
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">AsyncFdReadyMutGuard</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">event</span> <span class="op">=</span> <span class="macro">ready</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">registration</span>.<span class="ident">poll_read_ready</span>(<span class="ident">cx</span>))<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">event</span> <span class="op">=</span> <span class="macro">ready!</span>(<span class="self">self</span>.<span class="ident">registration</span>.<span class="ident">poll_read_ready</span>(<span class="ident">cx</span>))<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(<span class="ident">AsyncFdReadyMutGuard</span> {
             <span class="ident">async_fd</span>: <span class="self">self</span>,
@@ -969,7 +969,7 @@
         <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="self">self</span>,
         <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>,
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">AsyncFdReadyGuard</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">event</span> <span class="op">=</span> <span class="macro">ready</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">registration</span>.<span class="ident">poll_write_ready</span>(<span class="ident">cx</span>))<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">event</span> <span class="op">=</span> <span class="macro">ready!</span>(<span class="self">self</span>.<span class="ident">registration</span>.<span class="ident">poll_write_ready</span>(<span class="ident">cx</span>))<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(<span class="ident">AsyncFdReadyGuard</span> {
             <span class="ident">async_fd</span>: <span class="self">self</span>,
@@ -1007,7 +1007,7 @@
         <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="self">self</span>,
         <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>,
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">AsyncFdReadyMutGuard</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">event</span> <span class="op">=</span> <span class="macro">ready</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">registration</span>.<span class="ident">poll_write_ready</span>(<span class="ident">cx</span>))<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">event</span> <span class="op">=</span> <span class="macro">ready!</span>(<span class="self">self</span>.<span class="ident">registration</span>.<span class="ident">poll_write_ready</span>(<span class="ident">cx</span>))<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(<span class="ident">AsyncFdReadyMutGuard</span> {
             <span class="ident">async_fd</span>: <span class="self">self</span>,

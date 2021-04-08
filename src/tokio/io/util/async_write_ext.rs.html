@@ -1023,9 +1023,9 @@
 
 <span class="kw">use</span> <span class="ident">bytes</span>::<span class="ident">Buf</span>;
 
-<span class="macro">cfg_io_util</span><span class="macro">!</span> {
+<span class="macro">cfg_io_util!</span> {
     <span class="doccomment">/// Defines numeric writer</span>
-    <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">write_impl</span> {
+    <span class="macro">macro_rules!</span> <span class="ident">write_impl</span> {
         (
             $(
                 $(<span class="attribute">#[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">outer</span>:<span class="ident">meta</span>]</span>)<span class="op">*</span>
@@ -1238,7 +1238,7 @@
             <span class="ident">write_all</span>(<span class="self">self</span>, <span class="ident">src</span>)
         }
 
-        <span class="macro">write_impl</span><span class="macro">!</span> {
+        <span class="macro">write_impl!</span> {
             <span class="doccomment">/// Writes an unsigned 8-bit integer to the underlying writer.</span>
             <span class="doccomment">///</span>
             <span class="doccomment">/// Equivalent to:</span>

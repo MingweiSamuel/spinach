@@ -1568,7 +1568,7 @@
             {
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">vec</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
 
-                <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">elem</span>) <span class="op">=</span> <span class="macro">tri</span><span class="macro">!</span>(<span class="ident">visitor</span>.<span class="ident">next_element</span>()) {
+                <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">elem</span>) <span class="op">=</span> <span class="macro">tri!</span>(<span class="ident">visitor</span>.<span class="ident">next_element</span>()) {
                     <span class="ident">vec</span>.<span class="ident">push</span>(<span class="ident">elem</span>);
                 }
 
@@ -1594,8 +1594,8 @@
                     <span class="prelude-val">Some</span>(<span class="ident">KeyClass</span>::<span class="ident">Map</span>(<span class="ident">first_key</span>)) <span class="op">=</span><span class="op">&gt;</span> {
                         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">values</span> <span class="op">=</span> <span class="ident">Map</span>::<span class="ident">new</span>();
 
-                        <span class="ident">values</span>.<span class="ident">insert</span>(<span class="ident">first_key</span>, <span class="macro">tri</span><span class="macro">!</span>(<span class="ident">visitor</span>.<span class="ident">next_value</span>()));
-                        <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">key</span>, <span class="ident">value</span>)) <span class="op">=</span> <span class="macro">tri</span><span class="macro">!</span>(<span class="ident">visitor</span>.<span class="ident">next_entry</span>()) {
+                        <span class="ident">values</span>.<span class="ident">insert</span>(<span class="ident">first_key</span>, <span class="macro">tri!</span>(<span class="ident">visitor</span>.<span class="ident">next_value</span>()));
+                        <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">key</span>, <span class="ident">value</span>)) <span class="op">=</span> <span class="macro">tri!</span>(<span class="ident">visitor</span>.<span class="ident">next_entry</span>()) {
                             <span class="ident">values</span>.<span class="ident">insert</span>(<span class="ident">key</span>, <span class="ident">value</span>);
                         }
 
@@ -1617,7 +1617,7 @@
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">deserialize_number</span> {
+<span class="macro">macro_rules!</span> <span class="ident">deserialize_number</span> {
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">method</span>:<span class="ident">ident</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;arbitrary_precision&quot;</span>))]</span>
         <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">method</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">visitor</span>: <span class="ident">V</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V</span>::<span class="ident">Value</span>, <span class="ident">Error</span><span class="op">&gt;</span>
@@ -1649,7 +1649,7 @@
 {
     <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">array</span>.<span class="ident">len</span>();
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">deserializer</span> <span class="op">=</span> <span class="ident">SeqDeserializer</span>::<span class="ident">new</span>(<span class="ident">array</span>);
-    <span class="kw">let</span> <span class="ident">seq</span> <span class="op">=</span> <span class="macro">tri</span><span class="macro">!</span>(<span class="ident">visitor</span>.<span class="ident">visit_seq</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">deserializer</span>));
+    <span class="kw">let</span> <span class="ident">seq</span> <span class="op">=</span> <span class="macro">tri!</span>(<span class="ident">visitor</span>.<span class="ident">visit_seq</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">deserializer</span>));
     <span class="kw">let</span> <span class="ident">remaining</span> <span class="op">=</span> <span class="ident">deserializer</span>.<span class="ident">iter</span>.<span class="ident">len</span>();
     <span class="kw">if</span> <span class="ident">remaining</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
         <span class="prelude-val">Ok</span>(<span class="ident">seq</span>)
@@ -1667,7 +1667,7 @@
 {
     <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">object</span>.<span class="ident">len</span>();
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">deserializer</span> <span class="op">=</span> <span class="ident">MapDeserializer</span>::<span class="ident">new</span>(<span class="ident">object</span>);
-    <span class="kw">let</span> <span class="ident">map</span> <span class="op">=</span> <span class="macro">tri</span><span class="macro">!</span>(<span class="ident">visitor</span>.<span class="ident">visit_map</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">deserializer</span>));
+    <span class="kw">let</span> <span class="ident">map</span> <span class="op">=</span> <span class="macro">tri!</span>(<span class="ident">visitor</span>.<span class="ident">visit_map</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">deserializer</span>));
     <span class="kw">let</span> <span class="ident">remaining</span> <span class="op">=</span> <span class="ident">deserializer</span>.<span class="ident">iter</span>.<span class="ident">len</span>();
     <span class="kw">if</span> <span class="ident">remaining</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
         <span class="prelude-val">Ok</span>(<span class="ident">map</span>)
@@ -1698,20 +1698,20 @@
         }
     }
 
-    <span class="macro">deserialize_number</span><span class="macro">!</span>(<span class="ident">deserialize_i8</span>);
-    <span class="macro">deserialize_number</span><span class="macro">!</span>(<span class="ident">deserialize_i16</span>);
-    <span class="macro">deserialize_number</span><span class="macro">!</span>(<span class="ident">deserialize_i32</span>);
-    <span class="macro">deserialize_number</span><span class="macro">!</span>(<span class="ident">deserialize_i64</span>);
-    <span class="macro">deserialize_number</span><span class="macro">!</span>(<span class="ident">deserialize_u8</span>);
-    <span class="macro">deserialize_number</span><span class="macro">!</span>(<span class="ident">deserialize_u16</span>);
-    <span class="macro">deserialize_number</span><span class="macro">!</span>(<span class="ident">deserialize_u32</span>);
-    <span class="macro">deserialize_number</span><span class="macro">!</span>(<span class="ident">deserialize_u64</span>);
-    <span class="macro">deserialize_number</span><span class="macro">!</span>(<span class="ident">deserialize_f32</span>);
-    <span class="macro">deserialize_number</span><span class="macro">!</span>(<span class="ident">deserialize_f64</span>);
+    <span class="macro">deserialize_number!</span>(<span class="ident">deserialize_i8</span>);
+    <span class="macro">deserialize_number!</span>(<span class="ident">deserialize_i16</span>);
+    <span class="macro">deserialize_number!</span>(<span class="ident">deserialize_i32</span>);
+    <span class="macro">deserialize_number!</span>(<span class="ident">deserialize_i64</span>);
+    <span class="macro">deserialize_number!</span>(<span class="ident">deserialize_u8</span>);
+    <span class="macro">deserialize_number!</span>(<span class="ident">deserialize_u16</span>);
+    <span class="macro">deserialize_number!</span>(<span class="ident">deserialize_u32</span>);
+    <span class="macro">deserialize_number!</span>(<span class="ident">deserialize_u64</span>);
+    <span class="macro">deserialize_number!</span>(<span class="ident">deserialize_f32</span>);
+    <span class="macro">deserialize_number!</span>(<span class="ident">deserialize_f64</span>);
 
-    <span class="macro">serde_if_integer128</span><span class="macro">!</span> {
-        <span class="macro">deserialize_number</span><span class="macro">!</span>(<span class="ident">deserialize_i128</span>);
-        <span class="macro">deserialize_number</span><span class="macro">!</span>(<span class="ident">deserialize_u128</span>);
+    <span class="macro">serde_if_integer128!</span> {
+        <span class="macro">deserialize_number!</span>(<span class="ident">deserialize_i128</span>);
+        <span class="macro">deserialize_number!</span>(<span class="ident">deserialize_u128</span>);
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
@@ -2053,7 +2053,7 @@
         <span class="kw">if</span> <span class="ident">len</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
             <span class="ident">visitor</span>.<span class="ident">visit_unit</span>()
         } <span class="kw">else</span> {
-            <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="macro">tri</span><span class="macro">!</span>(<span class="ident">visitor</span>.<span class="ident">visit_seq</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>));
+            <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="macro">tri!</span>(<span class="ident">visitor</span>.<span class="ident">visit_seq</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>));
             <span class="kw">let</span> <span class="ident">remaining</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">iter</span>.<span class="ident">len</span>();
             <span class="kw">if</span> <span class="ident">remaining</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
                 <span class="prelude-val">Ok</span>(<span class="ident">ret</span>)
@@ -2066,7 +2066,7 @@
         }
     }
 
-    <span class="macro">forward_to_deserialize_any</span><span class="macro">!</span> {
+    <span class="macro">forward_to_deserialize_any!</span> {
         <span class="ident">bool</span> <span class="ident">i8</span> <span class="ident">i16</span> <span class="ident">i32</span> <span class="ident">i64</span> <span class="ident">i128</span> <span class="ident">u8</span> <span class="ident">u16</span> <span class="ident">u32</span> <span class="ident">u64</span> <span class="ident">u128</span> <span class="ident">f32</span> <span class="ident">f64</span> <span class="ident">char</span> <span class="ident">str</span> <span class="ident">string</span>
         <span class="ident">bytes</span> <span class="ident">byte_buf</span> <span class="ident">option</span> <span class="ident">unit</span> <span class="ident">unit_struct</span> <span class="ident">newtype_struct</span> <span class="ident">seq</span> <span class="ident">tuple</span>
         <span class="ident">tuple_struct</span> <span class="ident">map</span> <span class="kw">struct</span> <span class="kw">enum</span> <span class="ident">identifier</span> <span class="ident">ignored_any</span>
@@ -2156,14 +2156,14 @@
         <span class="ident">visitor</span>.<span class="ident">visit_map</span>(<span class="self">self</span>)
     }
 
-    <span class="macro">forward_to_deserialize_any</span><span class="macro">!</span> {
+    <span class="macro">forward_to_deserialize_any!</span> {
         <span class="ident">bool</span> <span class="ident">i8</span> <span class="ident">i16</span> <span class="ident">i32</span> <span class="ident">i64</span> <span class="ident">i128</span> <span class="ident">u8</span> <span class="ident">u16</span> <span class="ident">u32</span> <span class="ident">u64</span> <span class="ident">u128</span> <span class="ident">f32</span> <span class="ident">f64</span> <span class="ident">char</span> <span class="ident">str</span> <span class="ident">string</span>
         <span class="ident">bytes</span> <span class="ident">byte_buf</span> <span class="ident">option</span> <span class="ident">unit</span> <span class="ident">unit_struct</span> <span class="ident">newtype_struct</span> <span class="ident">seq</span> <span class="ident">tuple</span>
         <span class="ident">tuple_struct</span> <span class="ident">map</span> <span class="kw">struct</span> <span class="kw">enum</span> <span class="ident">identifier</span> <span class="ident">ignored_any</span>
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">deserialize_value_ref_number</span> {
+<span class="macro">macro_rules!</span> <span class="ident">deserialize_value_ref_number</span> {
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">method</span>:<span class="ident">ident</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;arbitrary_precision&quot;</span>))]</span>
         <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">method</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">visitor</span>: <span class="ident">V</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V</span>::<span class="ident">Value</span>, <span class="ident">Error</span><span class="op">&gt;</span>
@@ -2195,7 +2195,7 @@
 {
     <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">array</span>.<span class="ident">len</span>();
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">deserializer</span> <span class="op">=</span> <span class="ident">SeqRefDeserializer</span>::<span class="ident">new</span>(<span class="ident">array</span>);
-    <span class="kw">let</span> <span class="ident">seq</span> <span class="op">=</span> <span class="macro">tri</span><span class="macro">!</span>(<span class="ident">visitor</span>.<span class="ident">visit_seq</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">deserializer</span>));
+    <span class="kw">let</span> <span class="ident">seq</span> <span class="op">=</span> <span class="macro">tri!</span>(<span class="ident">visitor</span>.<span class="ident">visit_seq</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">deserializer</span>));
     <span class="kw">let</span> <span class="ident">remaining</span> <span class="op">=</span> <span class="ident">deserializer</span>.<span class="ident">iter</span>.<span class="ident">len</span>();
     <span class="kw">if</span> <span class="ident">remaining</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
         <span class="prelude-val">Ok</span>(<span class="ident">seq</span>)
@@ -2213,7 +2213,7 @@
 {
     <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">object</span>.<span class="ident">len</span>();
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">deserializer</span> <span class="op">=</span> <span class="ident">MapRefDeserializer</span>::<span class="ident">new</span>(<span class="ident">object</span>);
-    <span class="kw">let</span> <span class="ident">map</span> <span class="op">=</span> <span class="macro">tri</span><span class="macro">!</span>(<span class="ident">visitor</span>.<span class="ident">visit_map</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">deserializer</span>));
+    <span class="kw">let</span> <span class="ident">map</span> <span class="op">=</span> <span class="macro">tri!</span>(<span class="ident">visitor</span>.<span class="ident">visit_map</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">deserializer</span>));
     <span class="kw">let</span> <span class="ident">remaining</span> <span class="op">=</span> <span class="ident">deserializer</span>.<span class="ident">iter</span>.<span class="ident">len</span>();
     <span class="kw">if</span> <span class="ident">remaining</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
         <span class="prelude-val">Ok</span>(<span class="ident">map</span>)
@@ -2242,20 +2242,20 @@
         }
     }
 
-    <span class="macro">deserialize_value_ref_number</span><span class="macro">!</span>(<span class="ident">deserialize_i8</span>);
-    <span class="macro">deserialize_value_ref_number</span><span class="macro">!</span>(<span class="ident">deserialize_i16</span>);
-    <span class="macro">deserialize_value_ref_number</span><span class="macro">!</span>(<span class="ident">deserialize_i32</span>);
-    <span class="macro">deserialize_value_ref_number</span><span class="macro">!</span>(<span class="ident">deserialize_i64</span>);
-    <span class="macro">deserialize_value_ref_number</span><span class="macro">!</span>(<span class="ident">deserialize_u8</span>);
-    <span class="macro">deserialize_value_ref_number</span><span class="macro">!</span>(<span class="ident">deserialize_u16</span>);
-    <span class="macro">deserialize_value_ref_number</span><span class="macro">!</span>(<span class="ident">deserialize_u32</span>);
-    <span class="macro">deserialize_value_ref_number</span><span class="macro">!</span>(<span class="ident">deserialize_u64</span>);
-    <span class="macro">deserialize_value_ref_number</span><span class="macro">!</span>(<span class="ident">deserialize_f32</span>);
-    <span class="macro">deserialize_value_ref_number</span><span class="macro">!</span>(<span class="ident">deserialize_f64</span>);
+    <span class="macro">deserialize_value_ref_number!</span>(<span class="ident">deserialize_i8</span>);
+    <span class="macro">deserialize_value_ref_number!</span>(<span class="ident">deserialize_i16</span>);
+    <span class="macro">deserialize_value_ref_number!</span>(<span class="ident">deserialize_i32</span>);
+    <span class="macro">deserialize_value_ref_number!</span>(<span class="ident">deserialize_i64</span>);
+    <span class="macro">deserialize_value_ref_number!</span>(<span class="ident">deserialize_u8</span>);
+    <span class="macro">deserialize_value_ref_number!</span>(<span class="ident">deserialize_u16</span>);
+    <span class="macro">deserialize_value_ref_number!</span>(<span class="ident">deserialize_u32</span>);
+    <span class="macro">deserialize_value_ref_number!</span>(<span class="ident">deserialize_u64</span>);
+    <span class="macro">deserialize_value_ref_number!</span>(<span class="ident">deserialize_f32</span>);
+    <span class="macro">deserialize_value_ref_number!</span>(<span class="ident">deserialize_f64</span>);
 
-    <span class="macro">serde_if_integer128</span><span class="macro">!</span> {
-        <span class="macro">deserialize_number</span><span class="macro">!</span>(<span class="ident">deserialize_i128</span>);
-        <span class="macro">deserialize_number</span><span class="macro">!</span>(<span class="ident">deserialize_u128</span>);
+    <span class="macro">serde_if_integer128!</span> {
+        <span class="macro">deserialize_number!</span>(<span class="ident">deserialize_i128</span>);
+        <span class="macro">deserialize_number!</span>(<span class="ident">deserialize_u128</span>);
     }
 
     <span class="kw">fn</span> <span class="ident">deserialize_option</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">visitor</span>: <span class="ident">V</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V</span>::<span class="ident">Value</span>, <span class="ident">Error</span><span class="op">&gt;</span>
@@ -2582,7 +2582,7 @@
         <span class="kw">if</span> <span class="ident">len</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
             <span class="ident">visitor</span>.<span class="ident">visit_unit</span>()
         } <span class="kw">else</span> {
-            <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="macro">tri</span><span class="macro">!</span>(<span class="ident">visitor</span>.<span class="ident">visit_seq</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>));
+            <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="macro">tri!</span>(<span class="ident">visitor</span>.<span class="ident">visit_seq</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>));
             <span class="kw">let</span> <span class="ident">remaining</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">iter</span>.<span class="ident">len</span>();
             <span class="kw">if</span> <span class="ident">remaining</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
                 <span class="prelude-val">Ok</span>(<span class="ident">ret</span>)
@@ -2595,7 +2595,7 @@
         }
     }
 
-    <span class="macro">forward_to_deserialize_any</span><span class="macro">!</span> {
+    <span class="macro">forward_to_deserialize_any!</span> {
         <span class="ident">bool</span> <span class="ident">i8</span> <span class="ident">i16</span> <span class="ident">i32</span> <span class="ident">i64</span> <span class="ident">i128</span> <span class="ident">u8</span> <span class="ident">u16</span> <span class="ident">u32</span> <span class="ident">u64</span> <span class="ident">u128</span> <span class="ident">f32</span> <span class="ident">f64</span> <span class="ident">char</span> <span class="ident">str</span> <span class="ident">string</span>
         <span class="ident">bytes</span> <span class="ident">byte_buf</span> <span class="ident">option</span> <span class="ident">unit</span> <span class="ident">unit_struct</span> <span class="ident">newtype_struct</span> <span class="ident">seq</span> <span class="ident">tuple</span>
         <span class="ident">tuple_struct</span> <span class="ident">map</span> <span class="kw">struct</span> <span class="kw">enum</span> <span class="ident">identifier</span> <span class="ident">ignored_any</span>
@@ -2685,7 +2685,7 @@
         <span class="ident">visitor</span>.<span class="ident">visit_map</span>(<span class="self">self</span>)
     }
 
-    <span class="macro">forward_to_deserialize_any</span><span class="macro">!</span> {
+    <span class="macro">forward_to_deserialize_any!</span> {
         <span class="ident">bool</span> <span class="ident">i8</span> <span class="ident">i16</span> <span class="ident">i32</span> <span class="ident">i64</span> <span class="ident">i128</span> <span class="ident">u8</span> <span class="ident">u16</span> <span class="ident">u32</span> <span class="ident">u64</span> <span class="ident">u128</span> <span class="ident">f32</span> <span class="ident">f64</span> <span class="ident">char</span> <span class="ident">str</span> <span class="ident">string</span>
         <span class="ident">bytes</span> <span class="ident">byte_buf</span> <span class="ident">option</span> <span class="ident">unit</span> <span class="ident">unit_struct</span> <span class="ident">newtype_struct</span> <span class="ident">seq</span> <span class="ident">tuple</span>
         <span class="ident">tuple_struct</span> <span class="ident">map</span> <span class="kw">struct</span> <span class="kw">enum</span> <span class="ident">identifier</span> <span class="ident">ignored_any</span>
@@ -2696,7 +2696,7 @@
     <span class="ident">key</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span>, <span class="ident">str</span><span class="op">&gt;</span>,
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">deserialize_integer_key</span> {
+<span class="macro">macro_rules!</span> <span class="ident">deserialize_integer_key</span> {
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">method</span>:<span class="ident">ident</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">visit</span>:<span class="ident">ident</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">method</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">visitor</span>: <span class="ident">V</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V</span>::<span class="ident">Value</span>, <span class="ident">Error</span><span class="op">&gt;</span>
         <span class="kw">where</span>
@@ -2722,18 +2722,18 @@
         <span class="ident">BorrowedCowStrDeserializer</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">key</span>).<span class="ident">deserialize_any</span>(<span class="ident">visitor</span>)
     }
 
-    <span class="macro">deserialize_integer_key</span><span class="macro">!</span>(<span class="ident">deserialize_i8</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">visit_i8</span>);
-    <span class="macro">deserialize_integer_key</span><span class="macro">!</span>(<span class="ident">deserialize_i16</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">visit_i16</span>);
-    <span class="macro">deserialize_integer_key</span><span class="macro">!</span>(<span class="ident">deserialize_i32</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">visit_i32</span>);
-    <span class="macro">deserialize_integer_key</span><span class="macro">!</span>(<span class="ident">deserialize_i64</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">visit_i64</span>);
-    <span class="macro">deserialize_integer_key</span><span class="macro">!</span>(<span class="ident">deserialize_u8</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">visit_u8</span>);
-    <span class="macro">deserialize_integer_key</span><span class="macro">!</span>(<span class="ident">deserialize_u16</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">visit_u16</span>);
-    <span class="macro">deserialize_integer_key</span><span class="macro">!</span>(<span class="ident">deserialize_u32</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">visit_u32</span>);
-    <span class="macro">deserialize_integer_key</span><span class="macro">!</span>(<span class="ident">deserialize_u64</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">visit_u64</span>);
+    <span class="macro">deserialize_integer_key!</span>(<span class="ident">deserialize_i8</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">visit_i8</span>);
+    <span class="macro">deserialize_integer_key!</span>(<span class="ident">deserialize_i16</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">visit_i16</span>);
+    <span class="macro">deserialize_integer_key!</span>(<span class="ident">deserialize_i32</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">visit_i32</span>);
+    <span class="macro">deserialize_integer_key!</span>(<span class="ident">deserialize_i64</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">visit_i64</span>);
+    <span class="macro">deserialize_integer_key!</span>(<span class="ident">deserialize_u8</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">visit_u8</span>);
+    <span class="macro">deserialize_integer_key!</span>(<span class="ident">deserialize_u16</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">visit_u16</span>);
+    <span class="macro">deserialize_integer_key!</span>(<span class="ident">deserialize_u32</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">visit_u32</span>);
+    <span class="macro">deserialize_integer_key!</span>(<span class="ident">deserialize_u64</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">visit_u64</span>);
 
-    <span class="macro">serde_if_integer128</span><span class="macro">!</span> {
-        <span class="macro">deserialize_integer_key</span><span class="macro">!</span>(<span class="ident">deserialize_i128</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">visit_i128</span>);
-        <span class="macro">deserialize_integer_key</span><span class="macro">!</span>(<span class="ident">deserialize_u128</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">visit_u128</span>);
+    <span class="macro">serde_if_integer128!</span> {
+        <span class="macro">deserialize_integer_key!</span>(<span class="ident">deserialize_i128</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">visit_i128</span>);
+        <span class="macro">deserialize_integer_key!</span>(<span class="ident">deserialize_u128</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">visit_u128</span>);
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
@@ -2771,7 +2771,7 @@
             .<span class="ident">deserialize_enum</span>(<span class="ident">name</span>, <span class="ident">variants</span>, <span class="ident">visitor</span>)
     }
 
-    <span class="macro">forward_to_deserialize_any</span><span class="macro">!</span> {
+    <span class="macro">forward_to_deserialize_any!</span> {
         <span class="ident">bool</span> <span class="ident">f32</span> <span class="ident">f64</span> <span class="ident">char</span> <span class="ident">str</span> <span class="ident">string</span> <span class="ident">bytes</span> <span class="ident">byte_buf</span> <span class="ident">unit</span> <span class="ident">unit_struct</span> <span class="ident">seq</span> <span class="ident">tuple</span>
         <span class="ident">tuple_struct</span> <span class="ident">map</span> <span class="kw">struct</span> <span class="ident">identifier</span> <span class="ident">ignored_any</span>
     }
@@ -2891,7 +2891,7 @@
         <span class="ident">visitor</span>.<span class="ident">visit_enum</span>(<span class="self">self</span>)
     }
 
-    <span class="macro">forward_to_deserialize_any</span><span class="macro">!</span> {
+    <span class="macro">forward_to_deserialize_any!</span> {
         <span class="ident">bool</span> <span class="ident">i8</span> <span class="ident">i16</span> <span class="ident">i32</span> <span class="ident">i64</span> <span class="ident">i128</span> <span class="ident">u8</span> <span class="ident">u16</span> <span class="ident">u32</span> <span class="ident">u64</span> <span class="ident">u128</span> <span class="ident">f32</span> <span class="ident">f64</span> <span class="ident">char</span> <span class="ident">str</span> <span class="ident">string</span>
         <span class="ident">bytes</span> <span class="ident">byte_buf</span> <span class="ident">option</span> <span class="ident">unit</span> <span class="ident">unit_struct</span> <span class="ident">newtype_struct</span> <span class="ident">seq</span> <span class="ident">tuple</span>
         <span class="ident">tuple_struct</span> <span class="ident">map</span> <span class="kw">struct</span> <span class="ident">identifier</span> <span class="ident">ignored_any</span>

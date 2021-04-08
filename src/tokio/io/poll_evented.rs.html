@@ -220,7 +220,7 @@
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ops</span>::<span class="ident">Deref</span>;
 
-<span class="macro">cfg_io_driver</span><span class="macro">!</span> {
+<span class="macro">cfg_io_driver!</span> {
     <span class="doccomment">/// Associates an I/O resource that implements the [`std::io::Read`] and/or</span>
     <span class="doccomment">/// [`std::io::Write`] traits with the reactor that drives it.</span>
     <span class="doccomment">///</span>
@@ -349,7 +349,7 @@
     }
 }
 
-<span class="macro">feature</span><span class="macro">!</span> {
+<span class="macro">feature!</span> {
     <span class="attribute">#![<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;net&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;process&quot;</span>)]</span>
 
     <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">io</span>::<span class="ident">ReadBuf</span>;
@@ -367,7 +367,7 @@
         {
             <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>::<span class="ident">Read</span>;
 
-            <span class="kw">let</span> <span class="ident">n</span> <span class="op">=</span> <span class="macro">ready</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">registration</span>.<span class="ident">poll_read_io</span>(<span class="ident">cx</span>, <span class="op">|</span><span class="op">|</span> {
+            <span class="kw">let</span> <span class="ident">n</span> <span class="op">=</span> <span class="macro">ready!</span>(<span class="self">self</span>.<span class="ident">registration</span>.<span class="ident">poll_read_io</span>(<span class="ident">cx</span>, <span class="op">|</span><span class="op">|</span> {
                 <span class="kw">let</span> <span class="ident">b</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span>(<span class="ident">buf</span>.<span class="ident">unfilled_mut</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> [<span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">MaybeUninit</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>] <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> [<span class="ident">u8</span>]);
                 <span class="self">self</span>.<span class="ident">io</span>.<span class="ident">as_ref</span>().<span class="ident">unwrap</span>().<span class="ident">read</span>(<span class="ident">b</span>)
             }))<span class="question-mark">?</span>;

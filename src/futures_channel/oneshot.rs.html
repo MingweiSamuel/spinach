@@ -606,7 +606,7 @@
         <span class="comment">// is closed and sets the `complete` flag to `true`, whereupon</span>
         <span class="comment">// the receiver may call `poll()`.</span>
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">mut</span> <span class="ident">slot</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">try_lock</span>() {
-            <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">slot</span>.<span class="ident">is_none</span>());
+            <span class="macro">assert!</span>(<span class="ident">slot</span>.<span class="ident">is_none</span>());
             <span class="kw-2">*</span><span class="ident">slot</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">t</span>);
             <span class="ident">drop</span>(<span class="ident">slot</span>);
 
@@ -890,7 +890,7 @@
 
 <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">Canceled</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-        <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;oneshot canceled&quot;</span>)
+        <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;oneshot canceled&quot;</span>)
     }
 }
 

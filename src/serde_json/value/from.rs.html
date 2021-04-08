@@ -279,7 +279,7 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;arbitrary_precision&quot;</span>)]</span>
 <span class="kw">use</span> <span class="ident">serde</span>::<span class="ident">serde_if_integer128</span>;
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">from_integer</span> {
+<span class="macro">macro_rules!</span> <span class="ident">from_integer</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty</span>:<span class="ident">ident</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Value</span> {
@@ -291,14 +291,14 @@
     };
 }
 
-<span class="macro">from_integer</span><span class="macro">!</span> {
+<span class="macro">from_integer!</span> {
     <span class="ident">i8</span> <span class="ident">i16</span> <span class="ident">i32</span> <span class="ident">i64</span> <span class="ident">isize</span>
     <span class="ident">u8</span> <span class="ident">u16</span> <span class="ident">u32</span> <span class="ident">u64</span> <span class="ident">usize</span>
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;arbitrary_precision&quot;</span>)]</span>
-<span class="macro">serde_if_integer128</span><span class="macro">!</span> {
-    <span class="macro">from_integer</span><span class="macro">!</span> {
+<span class="macro">serde_if_integer128!</span> {
+    <span class="macro">from_integer!</span> {
         <span class="ident">i128</span> <span class="ident">u128</span>
     }
 }

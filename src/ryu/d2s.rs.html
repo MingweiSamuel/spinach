@@ -389,7 +389,7 @@
     <span class="comment">// The average output length is 16.38 digits, so we check high-to-low.</span>
     <span class="comment">// Function precondition: v is not an 18, 19, or 20-digit number.</span>
     <span class="comment">// (17 digits are sufficient for round-tripping.)</span>
-    <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">v</span> <span class="op">&lt;</span> <span class="number">100000000000000000</span>);
+    <span class="macro">debug_assert!</span>(<span class="ident">v</span> <span class="op">&lt;</span> <span class="number">100000000000000000</span>);
 
     <span class="kw">if</span> <span class="ident">v</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">10000000000000000</span> {
         <span class="number">17</span>
@@ -491,7 +491,7 @@
                 <span class="kw-2">&amp;</span><span class="ident">compute_inv_pow5</span>(<span class="ident">q</span>),
                 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;small&quot;</span>))]</span>
                 {
-                    <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">q</span> <span class="op">&lt;</span> <span class="ident">DOUBLE_POW5_INV_SPLIT</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span>);
+                    <span class="macro">debug_assert!</span>(<span class="ident">q</span> <span class="op">&lt;</span> <span class="ident">DOUBLE_POW5_INV_SPLIT</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span>);
                     <span class="ident">DOUBLE_POW5_INV_SPLIT</span>.<span class="ident">get_unchecked</span>(<span class="ident">q</span> <span class="kw">as</span> <span class="ident">usize</span>)
                 },
                 <span class="ident">i</span> <span class="kw">as</span> <span class="ident">u32</span>,
@@ -550,7 +550,7 @@
                 <span class="kw-2">&amp;</span><span class="ident">compute_pow5</span>(<span class="ident">i</span> <span class="kw">as</span> <span class="ident">u32</span>),
                 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;small&quot;</span>))]</span>
                 {
-                    <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">i</span> <span class="op">&lt;</span> <span class="ident">DOUBLE_POW5_SPLIT</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">i32</span>);
+                    <span class="macro">debug_assert!</span>(<span class="ident">i</span> <span class="op">&lt;</span> <span class="ident">DOUBLE_POW5_SPLIT</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">i32</span>);
                     <span class="ident">DOUBLE_POW5_SPLIT</span>.<span class="ident">get_unchecked</span>(<span class="ident">i</span> <span class="kw">as</span> <span class="ident">usize</span>)
                 },
                 <span class="ident">j</span> <span class="kw">as</span> <span class="ident">u32</span>,

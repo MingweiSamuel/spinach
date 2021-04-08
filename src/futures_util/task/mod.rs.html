@@ -32,7 +32,7 @@
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Task notification</span>
 
-<span class="macro">cfg_target_has_atomic</span><span class="macro">!</span> {
+<span class="macro">cfg_target_has_atomic!</span> {
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_task</span>::<span class="ident">ArcWake</span>;
 

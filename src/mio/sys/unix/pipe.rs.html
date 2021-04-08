@@ -631,7 +631,7 @@
         <span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;solaris&quot;</span>,
         <span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;illumos&quot;</span>,
     )))]</span>
-    <span class="macro">compile_error</span><span class="macro">!</span>(<span class="string">&quot;unsupported target for `mio::unix::pipe`&quot;</span>);
+    <span class="macro">compile_error!</span>(<span class="string">&quot;unsupported target for `mio::unix::pipe`&quot;</span>);
 
     <span class="comment">// Safety: we just initialised the `fds` above.</span>
     <span class="kw">let</span> <span class="ident">r</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">Receiver</span>::<span class="ident">from_raw_fd</span>(<span class="ident">fds</span>[<span class="number">0</span>]) };

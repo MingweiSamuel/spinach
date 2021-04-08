@@ -96,7 +96,7 @@
     }
 }
 
-<span class="macro">pin_project</span><span class="macro">!</span> {
+<span class="macro">pin_project!</span> {
     <span class="doccomment">/// Future returned by [`read_buf`](crate::io::AsyncReadExt::read_buf).</span>
     <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
     <span class="attribute">#[<span class="ident">must_use</span> <span class="op">=</span> <span class="string">&quot;futures do nothing unless you `.await` or poll them&quot;</span>]</span>
@@ -130,10 +130,10 @@
             <span class="kw">let</span> <span class="ident">dst</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span>(<span class="ident">dst</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> [<span class="ident">MaybeUninit</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>]) };
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> <span class="ident">ReadBuf</span>::<span class="ident">uninit</span>(<span class="ident">dst</span>);
             <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="ident">buf</span>.<span class="ident">filled</span>().<span class="ident">as_ptr</span>();
-            <span class="macro">ready</span><span class="macro">!</span>(<span class="ident">Pin</span>::<span class="ident">new</span>(<span class="ident">me</span>.<span class="ident">reader</span>).<span class="ident">poll_read</span>(<span class="ident">cx</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>)<span class="question-mark">?</span>);
+            <span class="macro">ready!</span>(<span class="ident">Pin</span>::<span class="ident">new</span>(<span class="ident">me</span>.<span class="ident">reader</span>).<span class="ident">poll_read</span>(<span class="ident">cx</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>)<span class="question-mark">?</span>);
 
             <span class="comment">// Ensure the pointer does not change from under us</span>
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">ptr</span>, <span class="ident">buf</span>.<span class="ident">filled</span>().<span class="ident">as_ptr</span>());
+            <span class="macro">assert_eq!</span>(<span class="ident">ptr</span>, <span class="ident">buf</span>.<span class="ident">filled</span>().<span class="ident">as_ptr</span>());
             <span class="ident">buf</span>.<span class="ident">filled</span>().<span class="ident">len</span>()
         };
 

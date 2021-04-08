@@ -260,7 +260,7 @@
 <span class="kw">use</span> <span class="ident">futures_core</span>::<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 <span class="kw">use</span> <span class="ident">pin_project</span>::<span class="ident">pin_project</span>;
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">generate</span> {
+<span class="macro">macro_rules!</span> <span class="ident">generate</span> {
     ($(
         $(<span class="attribute">#[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">doc</span>:<span class="ident">meta</span>]</span>)<span class="op">*</span>
         (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">Join</span>:<span class="ident">ident</span>, <span class="op">&lt;</span><span class="ident">Fut1</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">Fut</span>:<span class="ident">ident</span>),<span class="kw-2">*</span><span class="op">&gt;</span>),
@@ -285,9 +285,9 @@
             )<span class="op">*</span>
         {
             <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-                <span class="ident">f</span>.<span class="ident">debug_struct</span>(<span class="macro">stringify</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">Join</span>))
+                <span class="ident">f</span>.<span class="ident">debug_struct</span>(<span class="macro">stringify!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">Join</span>))
                     .<span class="ident">field</span>(<span class="string">&quot;Fut1&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">Fut1</span>)
-                    $(.<span class="ident">field</span>(<span class="macro">stringify</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">Fut</span>), <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="macro-nonterminal">$</span><span class="macro-nonterminal">Fut</span>))<span class="op">*</span>
+                    $(.<span class="ident">field</span>(<span class="macro">stringify!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">Fut</span>), <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="macro-nonterminal">$</span><span class="macro-nonterminal">Fut</span>))<span class="op">*</span>
                     .<span class="ident">finish</span>()
             }
         }
@@ -341,7 +341,7 @@
     )<span class="kw-2">*</span>)
 }
 
-<span class="macro">generate</span><span class="macro">!</span> {
+<span class="macro">generate!</span> {
     <span class="doccomment">/// Future for the [`try_join`](try_join()) function.</span>
     (<span class="ident">TryJoin</span>, <span class="op">&lt;</span><span class="ident">Fut1</span>, <span class="ident">Fut2</span><span class="op">&gt;</span>),
 

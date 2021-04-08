@@ -144,7 +144,7 @@
     <span class="ident">buf</span>: <span class="ident">Box</span><span class="op">&lt;</span>[<span class="ident">u8</span>]<span class="op">&gt;</span>,
 }
 
-<span class="macro">cfg_io_util</span><span class="macro">!</span> {
+<span class="macro">cfg_io_util!</span> {
     <span class="doccomment">/// Asynchronously copies the entire contents of a reader into a writer.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function returns a future that will continuously read data from</span>
@@ -190,7 +190,7 @@
             <span class="ident">amt</span>: <span class="number">0</span>,
             <span class="ident">pos</span>: <span class="number">0</span>,
             <span class="ident">cap</span>: <span class="number">0</span>,
-            <span class="ident">buf</span>: <span class="macro">vec</span><span class="macro">!</span>[<span class="number">0</span>; <span class="number">2048</span>].<span class="ident">into_boxed_slice</span>(),
+            <span class="ident">buf</span>: <span class="macro">vec!</span>[<span class="number">0</span>; <span class="number">2048</span>].<span class="ident">into_boxed_slice</span>(),
         }.<span class="kw">await</span>
     }
 }
@@ -209,7 +209,7 @@
             <span class="kw">if</span> <span class="self">self</span>.<span class="ident">pos</span> <span class="op">=</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">cap</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">read_done</span> {
                 <span class="kw">let</span> <span class="ident">me</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="self">self</span>;
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> <span class="ident">ReadBuf</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">me</span>.<span class="ident">buf</span>);
-                <span class="macro">ready</span><span class="macro">!</span>(<span class="ident">Pin</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">me</span>.<span class="ident">reader</span>).<span class="ident">poll_read</span>(<span class="ident">cx</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>))<span class="question-mark">?</span>;
+                <span class="macro">ready!</span>(<span class="ident">Pin</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">me</span>.<span class="ident">reader</span>).<span class="ident">poll_read</span>(<span class="ident">cx</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>))<span class="question-mark">?</span>;
                 <span class="kw">let</span> <span class="ident">n</span> <span class="op">=</span> <span class="ident">buf</span>.<span class="ident">filled</span>().<span class="ident">len</span>();
                 <span class="kw">if</span> <span class="ident">n</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
                     <span class="self">self</span>.<span class="ident">read_done</span> <span class="op">=</span> <span class="bool-val">true</span>;
@@ -222,7 +222,7 @@
             <span class="comment">// If our buffer has some data, let&#39;s write it out!</span>
             <span class="kw">while</span> <span class="self">self</span>.<span class="ident">pos</span> <span class="op">&lt;</span> <span class="self">self</span>.<span class="ident">cap</span> {
                 <span class="kw">let</span> <span class="ident">me</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="self">self</span>;
-                <span class="kw">let</span> <span class="ident">i</span> <span class="op">=</span> <span class="macro">ready</span><span class="macro">!</span>(<span class="ident">Pin</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">me</span>.<span class="ident">writer</span>).<span class="ident">poll_write</span>(<span class="ident">cx</span>, <span class="kw-2">&amp;</span><span class="ident">me</span>.<span class="ident">buf</span>[<span class="ident">me</span>.<span class="ident">pos</span>..<span class="ident">me</span>.<span class="ident">cap</span>]))<span class="question-mark">?</span>;
+                <span class="kw">let</span> <span class="ident">i</span> <span class="op">=</span> <span class="macro">ready!</span>(<span class="ident">Pin</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">me</span>.<span class="ident">writer</span>).<span class="ident">poll_write</span>(<span class="ident">cx</span>, <span class="kw-2">&amp;</span><span class="ident">me</span>.<span class="ident">buf</span>[<span class="ident">me</span>.<span class="ident">pos</span>..<span class="ident">me</span>.<span class="ident">cap</span>]))<span class="question-mark">?</span>;
                 <span class="kw">if</span> <span class="ident">i</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
                     <span class="kw">return</span> <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Err</span>(<span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">new</span>(
                         <span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">WriteZero</span>,
@@ -238,7 +238,7 @@
             <span class="comment">// data and finish the transfer.</span>
             <span class="kw">if</span> <span class="self">self</span>.<span class="ident">pos</span> <span class="op">=</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">cap</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">read_done</span> {
                 <span class="kw">let</span> <span class="ident">me</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="self">self</span>;
-                <span class="macro">ready</span><span class="macro">!</span>(<span class="ident">Pin</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">me</span>.<span class="ident">writer</span>).<span class="ident">poll_flush</span>(<span class="ident">cx</span>))<span class="question-mark">?</span>;
+                <span class="macro">ready!</span>(<span class="ident">Pin</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">me</span>.<span class="ident">writer</span>).<span class="ident">poll_flush</span>(<span class="ident">cx</span>))<span class="question-mark">?</span>;
                 <span class="kw">return</span> <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Ok</span>(<span class="self">self</span>.<span class="ident">amt</span>));
             }
         }

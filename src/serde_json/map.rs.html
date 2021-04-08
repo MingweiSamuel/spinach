@@ -1211,9 +1211,9 @@
         <span class="ident">S</span>: <span class="ident">serde</span>::<span class="ident">ser</span>::<span class="ident">Serializer</span>,
     {
         <span class="kw">use</span> <span class="ident">serde</span>::<span class="ident">ser</span>::<span class="ident">SerializeMap</span>;
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">map</span> <span class="op">=</span> <span class="macro">tri</span><span class="macro">!</span>(<span class="ident">serializer</span>.<span class="ident">serialize_map</span>(<span class="prelude-val">Some</span>(<span class="self">self</span>.<span class="ident">len</span>())));
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">map</span> <span class="op">=</span> <span class="macro">tri!</span>(<span class="ident">serializer</span>.<span class="ident">serialize_map</span>(<span class="prelude-val">Some</span>(<span class="self">self</span>.<span class="ident">len</span>())));
         <span class="kw">for</span> (<span class="ident">k</span>, <span class="ident">v</span>) <span class="kw">in</span> <span class="self">self</span> {
-            <span class="macro">tri</span><span class="macro">!</span>(<span class="ident">map</span>.<span class="ident">serialize_entry</span>(<span class="ident">k</span>, <span class="ident">v</span>));
+            <span class="macro">tri!</span>(<span class="ident">map</span>.<span class="ident">serialize_entry</span>(<span class="ident">k</span>, <span class="ident">v</span>));
         }
         <span class="ident">map</span>.<span class="ident">end</span>()
     }
@@ -1250,7 +1250,7 @@
             {
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">values</span> <span class="op">=</span> <span class="ident">Map</span>::<span class="ident">new</span>();
 
-                <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">key</span>, <span class="ident">value</span>)) <span class="op">=</span> <span class="macro">tri</span><span class="macro">!</span>(<span class="ident">visitor</span>.<span class="ident">next_entry</span>()) {
+                <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">key</span>, <span class="ident">value</span>)) <span class="op">=</span> <span class="macro">tri!</span>(<span class="ident">visitor</span>.<span class="ident">next_entry</span>()) {
                     <span class="ident">values</span>.<span class="ident">insert</span>(<span class="ident">key</span>, <span class="ident">value</span>);
                 }
 
@@ -1282,7 +1282,7 @@
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">delegate_iterator</span> {
+<span class="macro">macro_rules!</span> <span class="ident">delegate_iterator</span> {
     ((<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>:<span class="ident">ident</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">generics</span>:<span class="ident">tt</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">ty</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="kw">impl</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">generics</span>)<span class="op">*</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">generics</span>)<span class="op">*</span> {
             <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>;
@@ -1639,7 +1639,7 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;preserve_order&quot;</span>)]</span>
 <span class="kw">type</span> <span class="ident">IterImpl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">indexmap</span>::<span class="ident">map</span>::<span class="ident">Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">String</span>, <span class="ident">Value</span><span class="op">&gt;</span>;
 
-<span class="macro">delegate_iterator</span><span class="macro">!</span>((<span class="ident">Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>) <span class="op">=</span><span class="op">&gt;</span> (<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">String</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Value</span>));
+<span class="macro">delegate_iterator!</span>((<span class="ident">Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>) <span class="op">=</span><span class="op">&gt;</span> (<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">String</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Value</span>));
 
 <span class="comment">//////////////////////////////////////////////////////////////////////////////</span>
 
@@ -1664,7 +1664,7 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;preserve_order&quot;</span>)]</span>
 <span class="kw">type</span> <span class="ident">IterMutImpl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">indexmap</span>::<span class="ident">map</span>::<span class="ident">IterMut</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">String</span>, <span class="ident">Value</span><span class="op">&gt;</span>;
 
-<span class="macro">delegate_iterator</span><span class="macro">!</span>((<span class="ident">IterMut</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>) <span class="op">=</span><span class="op">&gt;</span> (<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">String</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">Value</span>));
+<span class="macro">delegate_iterator!</span>((<span class="ident">IterMut</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>) <span class="op">=</span><span class="op">&gt;</span> (<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">String</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">Value</span>));
 
 <span class="comment">//////////////////////////////////////////////////////////////////////////////</span>
 
@@ -1689,7 +1689,7 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;preserve_order&quot;</span>)]</span>
 <span class="kw">type</span> <span class="ident">IntoIterImpl</span> <span class="op">=</span> <span class="ident">indexmap</span>::<span class="ident">map</span>::<span class="ident">IntoIter</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Value</span><span class="op">&gt;</span>;
 
-<span class="macro">delegate_iterator</span><span class="macro">!</span>((<span class="ident">IntoIter</span>) <span class="op">=</span><span class="op">&gt;</span> (<span class="ident">String</span>, <span class="ident">Value</span>));
+<span class="macro">delegate_iterator!</span>((<span class="ident">IntoIter</span>) <span class="op">=</span><span class="op">&gt;</span> (<span class="ident">String</span>, <span class="ident">Value</span>));
 
 <span class="comment">//////////////////////////////////////////////////////////////////////////////</span>
 
@@ -1703,7 +1703,7 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;preserve_order&quot;</span>)]</span>
 <span class="kw">type</span> <span class="ident">KeysImpl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">indexmap</span>::<span class="ident">map</span>::<span class="ident">Keys</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">String</span>, <span class="ident">Value</span><span class="op">&gt;</span>;
 
-<span class="macro">delegate_iterator</span><span class="macro">!</span>((<span class="ident">Keys</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">String</span>);
+<span class="macro">delegate_iterator!</span>((<span class="ident">Keys</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">String</span>);
 
 <span class="comment">//////////////////////////////////////////////////////////////////////////////</span>
 
@@ -1717,7 +1717,7 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;preserve_order&quot;</span>)]</span>
 <span class="kw">type</span> <span class="ident">ValuesImpl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">indexmap</span>::<span class="ident">map</span>::<span class="ident">Values</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">String</span>, <span class="ident">Value</span><span class="op">&gt;</span>;
 
-<span class="macro">delegate_iterator</span><span class="macro">!</span>((<span class="ident">Values</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Value</span>);
+<span class="macro">delegate_iterator!</span>((<span class="ident">Values</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Value</span>);
 
 <span class="comment">//////////////////////////////////////////////////////////////////////////////</span>
 
@@ -1731,7 +1731,7 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;preserve_order&quot;</span>)]</span>
 <span class="kw">type</span> <span class="ident">ValuesMutImpl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">indexmap</span>::<span class="ident">map</span>::<span class="ident">ValuesMut</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">String</span>, <span class="ident">Value</span><span class="op">&gt;</span>;
 
-<span class="macro">delegate_iterator</span><span class="macro">!</span>((<span class="ident">ValuesMut</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">Value</span>);
+<span class="macro">delegate_iterator!</span>((<span class="ident">ValuesMut</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">Value</span>);
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="serde_json" data-search-js="../../search-index.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>

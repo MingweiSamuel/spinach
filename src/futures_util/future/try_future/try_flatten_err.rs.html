@@ -102,7 +102,7 @@
         <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="kw">loop</span> {
             <span class="kw">match</span> <span class="self">self</span>.<span class="ident">as_mut</span>().<span class="ident">project</span>() {
                 <span class="ident">TryFlattenErrProj</span>::<span class="ident">First</span>(<span class="ident">f</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="kw">match</span> <span class="macro">ready</span><span class="macro">!</span>(<span class="ident">f</span>.<span class="ident">try_poll</span>(<span class="ident">cx</span>)) {
+                    <span class="kw">match</span> <span class="macro">ready!</span>(<span class="ident">f</span>.<span class="ident">try_poll</span>(<span class="ident">cx</span>)) {
                         <span class="prelude-val">Err</span>(<span class="ident">f</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">set</span>(<span class="self">Self</span>::<span class="ident">Second</span>(<span class="ident">f</span>)),
                         <span class="prelude-val">Ok</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> {
                             <span class="self">self</span>.<span class="ident">set</span>(<span class="self">Self</span>::<span class="ident">Empty</span>);
@@ -111,11 +111,11 @@
                     }
                 },
                 <span class="ident">TryFlattenErrProj</span>::<span class="ident">Second</span>(<span class="ident">f</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="kw">let</span> <span class="ident">output</span> <span class="op">=</span> <span class="macro">ready</span><span class="macro">!</span>(<span class="ident">f</span>.<span class="ident">try_poll</span>(<span class="ident">cx</span>));
+                    <span class="kw">let</span> <span class="ident">output</span> <span class="op">=</span> <span class="macro">ready!</span>(<span class="ident">f</span>.<span class="ident">try_poll</span>(<span class="ident">cx</span>));
                     <span class="self">self</span>.<span class="ident">set</span>(<span class="self">Self</span>::<span class="ident">Empty</span>);
                     <span class="kw">break</span> <span class="ident">output</span>;
                 },
-                <span class="ident">TryFlattenErrProj</span>::<span class="ident">Empty</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;TryFlattenErr polled after completion&quot;</span>),
+                <span class="ident">TryFlattenErrProj</span>::<span class="ident">Empty</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(<span class="string">&quot;TryFlattenErr polled after completion&quot;</span>),
             }
         })
     }

@@ -123,7 +123,7 @@
                     <span class="comment">// Don&#39;t panic in a panic</span>
                     <span class="kw">return</span> <span class="bool-val">false</span>;
                 } <span class="kw">else</span> {
-                    <span class="macro">panic</span><span class="macro">!</span>(
+                    <span class="macro">panic!</span>(
                         <span class="string">&quot;Cannot drop a runtime in a context where blocking is not allowed. \
                         This happens when a runtime is dropped from within an asynchronous context.&quot;</span>
                     );

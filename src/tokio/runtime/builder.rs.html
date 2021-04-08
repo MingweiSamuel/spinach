@@ -793,7 +793,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// This will panic if `val` is not larger than `0`.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">worker_threads</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">val</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span> {
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">val</span> <span class="op">&gt;</span> <span class="number">0</span>, <span class="string">&quot;Worker threads cannot be set to 0&quot;</span>);
+        <span class="macro">assert!</span>(<span class="ident">val</span> <span class="op">&gt;</span> <span class="number">0</span>, <span class="string">&quot;Worker threads cannot be set to 0&quot;</span>);
         <span class="self">self</span>.<span class="ident">worker_threads</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">val</span>);
         <span class="self">self</span>
     }
@@ -812,7 +812,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// This will panic if `val` is not larger than `0`.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">max_blocking_threads</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">val</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span> {
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">val</span> <span class="op">&gt;</span> <span class="number">0</span>, <span class="string">&quot;Max blocking threads cannot be set to 0&quot;</span>);
+        <span class="macro">assert!</span>(<span class="ident">val</span> <span class="op">&gt;</span> <span class="number">0</span>, <span class="string">&quot;Max blocking threads cannot be set to 0&quot;</span>);
         <span class="self">self</span>.<span class="ident">max_blocking_threads</span> <span class="op">=</span> <span class="ident">val</span>;
         <span class="self">self</span>
     }
@@ -1032,7 +1032,7 @@
     }
 }
 
-<span class="macro">cfg_io_driver</span><span class="macro">!</span> {
+<span class="macro">cfg_io_driver!</span> {
     <span class="kw">impl</span> <span class="ident">Builder</span> {
         <span class="doccomment">/// Enables the I/O driver.</span>
         <span class="doccomment">///</span>
@@ -1056,7 +1056,7 @@
     }
 }
 
-<span class="macro">cfg_time</span><span class="macro">!</span> {
+<span class="macro">cfg_time!</span> {
     <span class="kw">impl</span> <span class="ident">Builder</span> {
         <span class="doccomment">/// Enables the time driver.</span>
         <span class="doccomment">///</span>
@@ -1079,7 +1079,7 @@
     }
 }
 
-<span class="macro">cfg_test_util</span><span class="macro">!</span> {
+<span class="macro">cfg_test_util!</span> {
     <span class="kw">impl</span> <span class="ident">Builder</span> {
         <span class="doccomment">/// Controls if the runtime&#39;s clock starts paused or advancing.</span>
         <span class="doccomment">///</span>
@@ -1104,7 +1104,7 @@
     }
 }
 
-<span class="macro">cfg_rt_multi_thread</span><span class="macro">!</span> {
+<span class="macro">cfg_rt_multi_thread!</span> {
     <span class="kw">impl</span> <span class="ident">Builder</span> {
         <span class="kw">fn</span> <span class="ident">build_threaded_runtime</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span> {
             <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">loom</span>::<span class="ident">sys</span>::<span class="ident">num_cpus</span>;

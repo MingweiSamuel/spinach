@@ -922,7 +922,7 @@
 <span class="doccomment">//!   critical section. Semaphores are useful for implementing limiting or</span>
 <span class="doccomment">//!   bounding of any kind.</span>
 
-<span class="macro">cfg_sync</span><span class="macro">!</span> {
+<span class="macro">cfg_sync!</span> {
     <span class="kw">mod</span> <span class="ident">barrier</span>;
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">barrier</span>::{<span class="ident">Barrier</span>, <span class="ident">BarrierWaitResult</span>};
 
@@ -953,11 +953,11 @@
     <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">watch</span>;
 }
 
-<span class="macro">cfg_not_sync</span><span class="macro">!</span> {
+<span class="macro">cfg_not_sync!</span> {
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;fs&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;signal&quot;</span>, <span class="ident">all</span>(<span class="ident">unix</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;process&quot;</span>)))]</span>
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod</span> <span class="ident">batch_semaphore</span>;
 
-    <span class="macro">cfg_fs</span><span class="macro">!</span> {
+    <span class="macro">cfg_fs!</span> {
         <span class="kw">mod</span> <span class="ident">mutex</span>;
         <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="ident">mutex</span>::<span class="ident">Mutex</span>;
     }
@@ -965,7 +965,7 @@
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;rt&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;signal&quot;</span>, <span class="ident">all</span>(<span class="ident">unix</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;process&quot;</span>)))]</span>
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod</span> <span class="ident">notify</span>;
 
-    <span class="macro">cfg_atomic_waker_impl</span><span class="macro">!</span> {
+    <span class="macro">cfg_atomic_waker_impl!</span> {
         <span class="kw">mod</span> <span class="ident">task</span>;
         <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="ident">task</span>::<span class="ident">AtomicWaker</span>;
     }
@@ -976,7 +976,7 @@
             <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;signal&quot;</span>))]</span>
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod</span> <span class="ident">oneshot</span>;
 
-    <span class="macro">cfg_signal_internal</span><span class="macro">!</span> {
+    <span class="macro">cfg_signal_internal!</span> {
         <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod</span> <span class="ident">mpsc</span>;
     }
 }

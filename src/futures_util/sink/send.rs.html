@@ -99,7 +99,7 @@
 
         <span class="comment">// we&#39;re done sending the item, but want to block on flushing the</span>
         <span class="comment">// sink</span>
-        <span class="macro">ready</span><span class="macro">!</span>(<span class="ident">Pin</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">this</span>.<span class="ident">sink</span>).<span class="ident">poll_flush</span>(<span class="ident">cx</span>))<span class="question-mark">?</span>;
+        <span class="macro">ready!</span>(<span class="ident">Pin</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">this</span>.<span class="ident">sink</span>).<span class="ident">poll_flush</span>(<span class="ident">cx</span>))<span class="question-mark">?</span>;
 
         <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Ok</span>(()))
     }

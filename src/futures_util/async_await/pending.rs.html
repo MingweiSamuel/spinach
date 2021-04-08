@@ -60,7 +60,7 @@
 <span class="doccomment">/// It is also gated behind the `async-await` feature of this library, which is</span>
 <span class="doccomment">/// activated by default.</span>
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">pending</span> {
+<span class="macro">macro_rules!</span> <span class="ident">pending</span> {
     () <span class="op">=</span><span class="op">&gt;</span> {
         <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">__private</span>::<span class="ident">async_await</span>::<span class="ident">pending_once</span>().<span class="kw">await</span>
     }

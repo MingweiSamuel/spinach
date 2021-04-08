@@ -156,7 +156,7 @@
             }
         }
 
-        <span class="kw">match</span> <span class="macro">ready</span><span class="macro">!</span>(<span class="ident">rd</span>.<span class="ident">as_mut</span>().<span class="ident">poll_read</span>(<span class="ident">cx</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">g</span>.<span class="ident">buf</span>[<span class="ident">g</span>.<span class="ident">len</span>..])) {
+        <span class="kw">match</span> <span class="macro">ready!</span>(<span class="ident">rd</span>.<span class="ident">as_mut</span>().<span class="ident">poll_read</span>(<span class="ident">cx</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">g</span>.<span class="ident">buf</span>[<span class="ident">g</span>.<span class="ident">len</span>..])) {
             <span class="prelude-val">Ok</span>(<span class="number">0</span>) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="ident">ret</span> <span class="op">=</span> <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Ok</span>(<span class="ident">g</span>.<span class="ident">len</span> <span class="op">-</span> <span class="ident">start_len</span>));
                 <span class="kw">break</span>;

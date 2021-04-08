@@ -122,7 +122,7 @@
     <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="ident">SelectOk</span> {
         <span class="ident">inner</span>: <span class="ident">iter</span>.<span class="ident">into_iter</span>().<span class="ident">collect</span>()
     };
-    <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">ret</span>.<span class="ident">inner</span>.<span class="ident">is_empty</span>(), <span class="string">&quot;iterator provided to select_ok was empty&quot;</span>);
+    <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">ret</span>.<span class="ident">inner</span>.<span class="ident">is_empty</span>(), <span class="string">&quot;iterator provided to select_ok was empty&quot;</span>);
     <span class="ident">ret</span>
 }
 

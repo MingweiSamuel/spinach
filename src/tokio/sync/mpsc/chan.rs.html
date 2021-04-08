@@ -592,12 +592,12 @@
         <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">block</span>::<span class="ident">Read</span>::<span class="kw-2">*</span>;
 
         <span class="comment">// Keep track of task budget</span>
-        <span class="kw">let</span> <span class="ident">coop</span> <span class="op">=</span> <span class="macro">ready</span><span class="macro">!</span>(<span class="kw">crate</span>::<span class="ident">coop</span>::<span class="ident">poll_proceed</span>(<span class="ident">cx</span>));
+        <span class="kw">let</span> <span class="ident">coop</span> <span class="op">=</span> <span class="macro">ready!</span>(<span class="kw">crate</span>::<span class="ident">coop</span>::<span class="ident">poll_proceed</span>(<span class="ident">cx</span>));
 
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">rx_fields</span>.<span class="ident">with_mut</span>(<span class="op">|</span><span class="ident">rx_fields_ptr</span><span class="op">|</span> {
             <span class="kw">let</span> <span class="ident">rx_fields</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">rx_fields_ptr</span> };
 
-            <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">try_recv</span> {
+            <span class="macro">macro_rules!</span> <span class="ident">try_recv</span> {
                 () <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="kw">match</span> <span class="ident">rx_fields</span>.<span class="ident">list</span>.<span class="ident">pop</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">tx</span>) {
                         <span class="prelude-val">Some</span>(<span class="ident">Value</span>(<span class="ident">value</span>)) <span class="op">=</span><span class="op">&gt;</span> {
@@ -612,7 +612,7 @@
                             <span class="comment">// dropped. Dropping a tx handle releases memory,</span>
                             <span class="comment">// which ensures that if dropping the tx handle is</span>
                             <span class="comment">// visible, then all messages sent are also visible.</span>
-                            <span class="macro">assert</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">semaphore</span>.<span class="ident">is_idle</span>());
+                            <span class="macro">assert!</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">semaphore</span>.<span class="ident">is_idle</span>());
                             <span class="ident">coop</span>.<span class="ident">made_progress</span>();
                             <span class="kw">return</span> <span class="ident">Ready</span>(<span class="prelude-val">None</span>);
                         }
@@ -621,14 +621,14 @@
                 };
             }
 
-            <span class="macro">try_recv</span><span class="macro">!</span>();
+            <span class="macro">try_recv!</span>();
 
             <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">rx_waker</span>.<span class="ident">register_by_ref</span>(<span class="ident">cx</span>.<span class="ident">waker</span>());
 
             <span class="comment">// It is possible that a value was pushed between attempting to read</span>
             <span class="comment">// and registering the task, so we have to check the channel a</span>
             <span class="comment">// second time here.</span>
-            <span class="macro">try_recv</span><span class="macro">!</span>();
+            <span class="macro">try_recv!</span>();
 
             <span class="kw">if</span> <span class="ident">rx_fields</span>.<span class="ident">rx_closed</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">semaphore</span>.<span class="ident">is_idle</span>() {
                 <span class="ident">coop</span>.<span class="ident">made_progress</span>();
@@ -640,7 +640,7 @@
     }
 }
 
-<span class="macro">feature</span><span class="macro">!</span> {
+<span class="macro">feature!</span> {
     <span class="attribute">#![<span class="ident">all</span>(<span class="ident">unix</span>, <span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;signal&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;process&quot;</span>))]</span>
 
     <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">sync</span>::<span class="ident">mpsc</span>::<span class="ident">error</span>::<span class="ident">TryRecvError</span>;

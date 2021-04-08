@@ -475,7 +475,7 @@
         <span class="comment">//</span>
         <span class="comment">// In other words, it is always safe to read the field and it is safe to</span>
         <span class="comment">// write to the field when it is `None`.</span>
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="op">!</span><span class="self">self</span>.<span class="ident">is_bound</span>());
+        <span class="macro">debug_assert!</span>(<span class="op">!</span><span class="self">self</span>.<span class="ident">is_bound</span>());
 
         <span class="comment">// Bind the task to the scheduler</span>
         <span class="kw">let</span> <span class="ident">scheduler</span> <span class="op">=</span> <span class="ident">S</span>::<span class="ident">bind</span>(<span class="ident">task</span>);
@@ -499,7 +499,7 @@
             <span class="comment">// only time the field is mutated.</span>
             <span class="kw">match</span> <span class="kw">unsafe</span> { <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">ptr</span> } {
                 <span class="prelude-val">Some</span>(<span class="ident">scheduler</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">scheduler</span>.<span class="ident">schedule</span>(<span class="ident">task</span>),
-                <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;no scheduler set&quot;</span>),
+                <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(<span class="string">&quot;no scheduler set&quot;</span>),
             }
         });
     }
@@ -512,7 +512,7 @@
             <span class="comment">// only time the field is mutated.</span>
             <span class="kw">match</span> <span class="kw">unsafe</span> { <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">ptr</span> } {
                 <span class="prelude-val">Some</span>(<span class="ident">scheduler</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">scheduler</span>.<span class="ident">yield_now</span>(<span class="ident">task</span>),
-                <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;no scheduler set&quot;</span>),
+                <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(<span class="string">&quot;no scheduler set&quot;</span>),
             }
         });
     }
@@ -563,7 +563,7 @@
                 <span class="comment">// Safety: The caller ensures mutual exclusion to the field.</span>
                 <span class="kw">let</span> <span class="ident">future</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw">unsafe</span> { <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">ptr</span> } {
                     <span class="ident">Stage</span>::<span class="ident">Running</span>(<span class="ident">future</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">future</span>,
-                    <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(<span class="string">&quot;unexpected stage&quot;</span>),
+                    <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable!</span>(<span class="string">&quot;unexpected stage&quot;</span>),
                 };
 
                 <span class="comment">// Safety: The caller ensures the future is pinned.</span>
@@ -616,7 +616,7 @@
             <span class="comment">// Safety:: the caller ensures mutal exclusion to the field.</span>
             <span class="kw">match</span> <span class="ident">mem</span>::<span class="ident">replace</span>(<span class="kw">unsafe</span> { <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">ptr</span> }, <span class="ident">Stage</span>::<span class="ident">Consumed</span>) {
                 <span class="ident">Stage</span>::<span class="ident">Finished</span>(<span class="ident">output</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">output</span>,
-                <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;unexpected task state&quot;</span>),
+                <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(<span class="string">&quot;unexpected task state&quot;</span>),
             }
         })
     }
@@ -626,7 +626,7 @@
     }
 }
 
-<span class="macro">cfg_rt_multi_thread</span><span class="macro">!</span> {
+<span class="macro">cfg_rt_multi_thread!</span> {
     <span class="kw">impl</span> <span class="ident">Header</span> {
         <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">shutdown</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
             <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">runtime</span>::<span class="ident">task</span>::<span class="ident">RawTask</span>;
@@ -656,7 +656,7 @@
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">wake_join</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
         <span class="self">self</span>.<span class="ident">waker</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">ptr</span><span class="op">|</span> <span class="kw">match</span> <span class="kw">unsafe</span> { <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">ptr</span> } {
             <span class="prelude-val">Some</span>(<span class="ident">waker</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">waker</span>.<span class="ident">wake_by_ref</span>(),
-            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;waker missing&quot;</span>),
+            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(<span class="string">&quot;waker missing&quot;</span>),
         });
     }
 }
@@ -666,7 +666,7 @@
 <span class="kw">fn</span> <span class="ident">header_lte_cache_line</span>() {
     <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">size_of</span>;
 
-    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">Header</span><span class="op">&gt;</span>() <span class="op">&lt;</span><span class="op">=</span> <span class="number">8</span> <span class="op">*</span> <span class="ident">size_of</span>::<span class="op">&lt;</span><span class="kw-2">*</span><span class="kw">const</span> ()<span class="op">&gt;</span>());
+    <span class="macro">assert!</span>(<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">Header</span><span class="op">&gt;</span>() <span class="op">&lt;</span><span class="op">=</span> <span class="number">8</span> <span class="op">*</span> <span class="ident">size_of</span>::<span class="op">&lt;</span><span class="kw-2">*</span><span class="kw">const</span> ()<span class="op">&gt;</span>());
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="tokio" data-search-js="../../../../search-index.js"></div>

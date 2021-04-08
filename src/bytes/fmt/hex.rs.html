@@ -47,7 +47,7 @@
 <span class="kw">impl</span> <span class="ident">LowerHex</span> <span class="kw">for</span> <span class="ident">BytesRef</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span> {
         <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="ident">b</span> <span class="kw">in</span> <span class="self">self</span>.<span class="number">0</span> {
-            <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;{:02x}&quot;</span>, <span class="ident">b</span>)<span class="question-mark">?</span>;
+            <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;{:02x}&quot;</span>, <span class="ident">b</span>)<span class="question-mark">?</span>;
         }
         <span class="prelude-val">Ok</span>(())
     }
@@ -56,13 +56,13 @@
 <span class="kw">impl</span> <span class="ident">UpperHex</span> <span class="kw">for</span> <span class="ident">BytesRef</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span> {
         <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="ident">b</span> <span class="kw">in</span> <span class="self">self</span>.<span class="number">0</span> {
-            <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;{:02X}&quot;</span>, <span class="ident">b</span>)<span class="question-mark">?</span>;
+            <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;{:02X}&quot;</span>, <span class="ident">b</span>)<span class="question-mark">?</span>;
         }
         <span class="prelude-val">Ok</span>(())
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">hex_impl</span> {
+<span class="macro">macro_rules!</span> <span class="ident">hex_impl</span> {
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">tr</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty</span>:<span class="ident">ty</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="kw">impl</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">tr</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty</span> {
             <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span> {
@@ -72,10 +72,10 @@
     };
 }
 
-<span class="macro">hex_impl</span><span class="macro">!</span>(<span class="ident">LowerHex</span>, <span class="ident">Bytes</span>);
-<span class="macro">hex_impl</span><span class="macro">!</span>(<span class="ident">LowerHex</span>, <span class="ident">BytesMut</span>);
-<span class="macro">hex_impl</span><span class="macro">!</span>(<span class="ident">UpperHex</span>, <span class="ident">Bytes</span>);
-<span class="macro">hex_impl</span><span class="macro">!</span>(<span class="ident">UpperHex</span>, <span class="ident">BytesMut</span>);
+<span class="macro">hex_impl!</span>(<span class="ident">LowerHex</span>, <span class="ident">Bytes</span>);
+<span class="macro">hex_impl!</span>(<span class="ident">LowerHex</span>, <span class="ident">BytesMut</span>);
+<span class="macro">hex_impl!</span>(<span class="ident">UpperHex</span>, <span class="ident">Bytes</span>);
+<span class="macro">hex_impl!</span>(<span class="ident">UpperHex</span>, <span class="ident">BytesMut</span>);
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="bytes" data-search-js="../../../search-index.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

@@ -199,12 +199,12 @@
 
     <span class="comment">// Gives a warning for platforms without SOCK_NONBLOCK.</span>
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">let_and_return</span>)]</span>
-    <span class="kw">let</span> <span class="ident">socket</span> <span class="op">=</span> <span class="macro">syscall</span><span class="macro">!</span>(<span class="ident">socket</span>(<span class="ident">domain</span>, <span class="ident">socket_type</span>, <span class="number">0</span>));
+    <span class="kw">let</span> <span class="ident">socket</span> <span class="op">=</span> <span class="macro">syscall!</span>(<span class="ident">socket</span>(<span class="ident">domain</span>, <span class="ident">socket_type</span>, <span class="number">0</span>));
 
     <span class="comment">// Mimick `libstd` and set `SO_NOSIGPIPE` on apple systems.</span>
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_vendor</span> <span class="op">=</span> <span class="string">&quot;apple&quot;</span>)]</span>
     <span class="kw">let</span> <span class="ident">socket</span> <span class="op">=</span> <span class="ident">socket</span>.<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">socket</span><span class="op">|</span> {
-        <span class="macro">syscall</span><span class="macro">!</span>(<span class="ident">setsockopt</span>(
+        <span class="macro">syscall!</span>(<span class="ident">setsockopt</span>(
             <span class="ident">socket</span>,
             <span class="ident">libc</span>::<span class="ident">SOL_SOCKET</span>,
             <span class="ident">libc</span>::<span class="ident">SO_NOSIGPIPE</span>,
@@ -220,12 +220,12 @@
     <span class="kw">let</span> <span class="ident">socket</span> <span class="op">=</span> <span class="ident">socket</span>.<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">socket</span><span class="op">|</span> {
         <span class="comment">// For platforms that don&#39;t support flags in socket, we need to</span>
         <span class="comment">// set the flags ourselves.</span>
-        <span class="macro">syscall</span><span class="macro">!</span>(<span class="ident">fcntl</span>(<span class="ident">socket</span>, <span class="ident">libc</span>::<span class="ident">F_SETFL</span>, <span class="ident">libc</span>::<span class="ident">O_NONBLOCK</span>))
-            .<span class="ident">and_then</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="macro">syscall</span><span class="macro">!</span>(<span class="ident">fcntl</span>(<span class="ident">socket</span>, <span class="ident">libc</span>::<span class="ident">F_SETFD</span>, <span class="ident">libc</span>::<span class="ident">FD_CLOEXEC</span>)).<span class="ident">map</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="ident">socket</span>))
+        <span class="macro">syscall!</span>(<span class="ident">fcntl</span>(<span class="ident">socket</span>, <span class="ident">libc</span>::<span class="ident">F_SETFL</span>, <span class="ident">libc</span>::<span class="ident">O_NONBLOCK</span>))
+            .<span class="ident">and_then</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="macro">syscall!</span>(<span class="ident">fcntl</span>(<span class="ident">socket</span>, <span class="ident">libc</span>::<span class="ident">F_SETFD</span>, <span class="ident">libc</span>::<span class="ident">FD_CLOEXEC</span>)).<span class="ident">map</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="ident">socket</span>))
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> {
                 <span class="comment">// If either of the `fcntl` calls failed, ensure the socket is</span>
                 <span class="comment">// closed and return the error.</span>
-                <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="macro">syscall</span><span class="macro">!</span>(<span class="ident">close</span>(<span class="ident">socket</span>));
+                <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="macro">syscall!</span>(<span class="ident">close</span>(<span class="ident">socket</span>));
                 <span class="ident">e</span>
             })
     });

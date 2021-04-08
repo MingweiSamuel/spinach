@@ -18,14 +18,14 @@
 <span class="doccomment">//! Shows a user-friendly compiler error on incompatible selected features.</span>
 
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">unused_macros</span>)]</span>
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">hide_from_rustfmt</span> {
+<span class="macro">macro_rules!</span> <span class="ident">hide_from_rustfmt</span> {
     (<span class="macro-nonterminal">$</span><span class="kw">mod</span>:<span class="macro-nonterminal">item</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="macro-nonterminal">$</span><span class="kw">mod</span>
     };
 }
 
 <span class="attribute">#[<span class="macro-nonterminal">cfg</span>(<span class="ident">not</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)))]</span>
-<span class="macro">hide_from_rustfmt</span><span class="macro">!</span> {
+<span class="macro">hide_from_rustfmt!</span> {
     <span class="kw">mod</span> <span class="ident">error</span>;
 }
 </pre></div>

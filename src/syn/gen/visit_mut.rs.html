@@ -3794,18 +3794,18 @@
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">proc_macro2</span>::<span class="ident">Span</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;full&quot;</span>)]</span>
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">full</span> {
+<span class="macro">macro_rules!</span> <span class="ident">full</span> {
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>
     };
 }
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;derive&quot;</span>, <span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;full&quot;</span>)))]</span>
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">full</span> {
+<span class="macro">macro_rules!</span> <span class="ident">full</span> {
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="macro">unreachable</span><span class="macro">!</span>()
+        <span class="macro">unreachable!</span>()
     };
 }
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">skip</span> {
+<span class="macro">macro_rules!</span> <span class="ident">skip</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">tt</span>:<span class="ident">tt</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {};
 }
 <span class="doccomment">/// Syntax tree traversal to mutate an exclusive borrow of a syntax tree in</span>
@@ -4628,7 +4628,7 @@
     <span class="ident">v</span>.<span class="ident">visit_attr_style_mut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">node</span>.<span class="ident">style</span>);
     <span class="ident">tokens_helper</span>(<span class="ident">v</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">node</span>.<span class="ident">bracket_token</span>.<span class="ident">span</span>);
     <span class="ident">v</span>.<span class="ident">visit_path_mut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">node</span>.<span class="ident">path</span>);
-    <span class="macro">skip</span><span class="macro">!</span>(<span class="ident">node</span>.<span class="ident">tokens</span>);
+    <span class="macro">skip!</span>(<span class="ident">node</span>.<span class="ident">tokens</span>);
 }
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;derive&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;full&quot;</span>))]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">visit_bare_fn_arg_mut</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="ident">v</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">V</span>, <span class="ident">node</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">BareFnArg</span>)
@@ -4876,31 +4876,31 @@
 {
     <span class="kw">match</span> <span class="ident">node</span> {
         <span class="ident">Expr</span>::<span class="ident">Array</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_array_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_array_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">Assign</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_assign_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_assign_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">AssignOp</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_assign_op_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_assign_op_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">Async</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_async_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_async_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">Await</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_await_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_await_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">Binary</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
             <span class="ident">v</span>.<span class="ident">visit_expr_binary_mut</span>(<span class="ident">_binding_0</span>);
         }
         <span class="ident">Expr</span>::<span class="ident">Block</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_block_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_block_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">Box</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_box_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_box_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">Break</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_break_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_break_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">Call</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
             <span class="ident">v</span>.<span class="ident">visit_expr_call_mut</span>(<span class="ident">_binding_0</span>);
@@ -4909,43 +4909,43 @@
             <span class="ident">v</span>.<span class="ident">visit_expr_cast_mut</span>(<span class="ident">_binding_0</span>);
         }
         <span class="ident">Expr</span>::<span class="ident">Closure</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_closure_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_closure_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">Continue</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_continue_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_continue_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">Field</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
             <span class="ident">v</span>.<span class="ident">visit_expr_field_mut</span>(<span class="ident">_binding_0</span>);
         }
         <span class="ident">Expr</span>::<span class="ident">ForLoop</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_for_loop_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_for_loop_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">Group</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_group_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_group_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">If</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_if_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_if_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">Index</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
             <span class="ident">v</span>.<span class="ident">visit_expr_index_mut</span>(<span class="ident">_binding_0</span>);
         }
         <span class="ident">Expr</span>::<span class="ident">Let</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_let_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_let_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">Lit</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
             <span class="ident">v</span>.<span class="ident">visit_expr_lit_mut</span>(<span class="ident">_binding_0</span>);
         }
         <span class="ident">Expr</span>::<span class="ident">Loop</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_loop_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_loop_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">Macro</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_macro_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_macro_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">Match</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_match_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_match_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">MethodCall</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_method_call_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_method_call_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">Paren</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
             <span class="ident">v</span>.<span class="ident">visit_expr_paren_mut</span>(<span class="ident">_binding_0</span>);
@@ -4954,48 +4954,48 @@
             <span class="ident">v</span>.<span class="ident">visit_expr_path_mut</span>(<span class="ident">_binding_0</span>);
         }
         <span class="ident">Expr</span>::<span class="ident">Range</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_range_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_range_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">Reference</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_reference_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_reference_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">Repeat</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_repeat_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_repeat_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">Return</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_return_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_return_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">Struct</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_struct_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_struct_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">Try</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_try_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_try_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">TryBlock</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_try_block_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_try_block_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">Tuple</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_tuple_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_tuple_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">Type</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_type_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_type_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">Unary</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
             <span class="ident">v</span>.<span class="ident">visit_expr_unary_mut</span>(<span class="ident">_binding_0</span>);
         }
         <span class="ident">Expr</span>::<span class="ident">Unsafe</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_unsafe_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_unsafe_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">Verbatim</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">skip</span><span class="macro">!</span>(<span class="ident">_binding_0</span>);
+            <span class="macro">skip!</span>(<span class="ident">_binding_0</span>);
         }
         <span class="ident">Expr</span>::<span class="ident">While</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_while_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_while_mut</span>(<span class="ident">_binding_0</span>));
         }
         <span class="ident">Expr</span>::<span class="ident">Yield</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">full</span><span class="macro">!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_yield_mut</span>(<span class="ident">_binding_0</span>));
+            <span class="macro">full!</span>(<span class="ident">v</span>.<span class="ident">visit_expr_yield_mut</span>(<span class="ident">_binding_0</span>));
         }
-        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable!</span>(),
     }
 }
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;full&quot;</span>)]</span>
@@ -5640,7 +5640,7 @@
 <span class="kw">where</span>
     <span class="ident">V</span>: <span class="ident">VisitMut</span> <span class="op">+</span> <span class="question-mark">?</span><span class="ident">Sized</span>,
 {
-    <span class="macro">skip</span><span class="macro">!</span>(<span class="ident">node</span>.<span class="ident">shebang</span>);
+    <span class="macro">skip!</span>(<span class="ident">node</span>.<span class="ident">shebang</span>);
     <span class="kw">for</span> <span class="ident">it</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">node</span>.<span class="ident">attrs</span> {
         <span class="ident">v</span>.<span class="ident">visit_attribute_mut</span>(<span class="ident">it</span>)
     }
@@ -5681,9 +5681,9 @@
             <span class="ident">v</span>.<span class="ident">visit_foreign_item_macro_mut</span>(<span class="ident">_binding_0</span>);
         }
         <span class="ident">ForeignItem</span>::<span class="ident">Verbatim</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">skip</span><span class="macro">!</span>(<span class="ident">_binding_0</span>);
+            <span class="macro">skip!</span>(<span class="ident">_binding_0</span>);
         }
-        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable!</span>(),
     }
 }
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;full&quot;</span>)]</span>
@@ -5845,9 +5845,9 @@
             <span class="ident">v</span>.<span class="ident">visit_impl_item_macro_mut</span>(<span class="ident">_binding_0</span>);
         }
         <span class="ident">ImplItem</span>::<span class="ident">Verbatim</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">skip</span><span class="macro">!</span>(<span class="ident">_binding_0</span>);
+            <span class="macro">skip!</span>(<span class="ident">_binding_0</span>);
         }
-        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable!</span>(),
     }
 }
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;full&quot;</span>)]</span>
@@ -5922,7 +5922,7 @@
 <span class="kw">where</span>
     <span class="ident">V</span>: <span class="ident">VisitMut</span> <span class="op">+</span> <span class="question-mark">?</span><span class="ident">Sized</span>,
 {
-    <span class="macro">skip</span><span class="macro">!</span>(<span class="ident">node</span>.<span class="ident">index</span>);
+    <span class="macro">skip!</span>(<span class="ident">node</span>.<span class="ident">index</span>);
     <span class="ident">v</span>.<span class="ident">visit_span_mut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">node</span>.<span class="ident">span</span>);
 }
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;full&quot;</span>)]</span>
@@ -5980,9 +5980,9 @@
             <span class="ident">v</span>.<span class="ident">visit_item_use_mut</span>(<span class="ident">_binding_0</span>);
         }
         <span class="ident">Item</span>::<span class="ident">Verbatim</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">skip</span><span class="macro">!</span>(<span class="ident">_binding_0</span>);
+            <span class="macro">skip!</span>(<span class="ident">_binding_0</span>);
         }
-        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable!</span>(),
     }
 }
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;full&quot;</span>)]</span>
@@ -6123,7 +6123,7 @@
     <span class="ident">v</span>.<span class="ident">visit_visibility_mut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">node</span>.<span class="ident">vis</span>);
     <span class="ident">tokens_helper</span>(<span class="ident">v</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">node</span>.<span class="ident">macro_token</span>.<span class="ident">span</span>);
     <span class="ident">v</span>.<span class="ident">visit_ident_mut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">node</span>.<span class="ident">ident</span>);
-    <span class="macro">skip</span><span class="macro">!</span>(<span class="ident">node</span>.<span class="ident">rules</span>);
+    <span class="macro">skip!</span>(<span class="ident">node</span>.<span class="ident">rules</span>);
 }
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;full&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">visit_item_mod_mut</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="ident">v</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">V</span>, <span class="ident">node</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ItemMod</span>)
@@ -6346,7 +6346,7 @@
             <span class="ident">v</span>.<span class="ident">visit_lit_bool_mut</span>(<span class="ident">_binding_0</span>);
         }
         <span class="ident">Lit</span>::<span class="ident">Verbatim</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">skip</span><span class="macro">!</span>(<span class="ident">_binding_0</span>);
+            <span class="macro">skip!</span>(<span class="ident">_binding_0</span>);
         }
     }
 }
@@ -6354,7 +6354,7 @@
 <span class="kw">where</span>
     <span class="ident">V</span>: <span class="ident">VisitMut</span> <span class="op">+</span> <span class="question-mark">?</span><span class="ident">Sized</span>,
 {
-    <span class="macro">skip</span><span class="macro">!</span>(<span class="ident">node</span>.<span class="ident">value</span>);
+    <span class="macro">skip!</span>(<span class="ident">node</span>.<span class="ident">value</span>);
     <span class="ident">v</span>.<span class="ident">visit_span_mut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">node</span>.<span class="ident">span</span>);
 }
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">visit_lit_byte_mut</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="ident">v</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">V</span>, <span class="ident">node</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">LitByte</span>)
@@ -6411,7 +6411,7 @@
     <span class="ident">v</span>.<span class="ident">visit_path_mut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">node</span>.<span class="ident">path</span>);
     <span class="ident">tokens_helper</span>(<span class="ident">v</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">node</span>.<span class="ident">bang_token</span>.<span class="ident">spans</span>);
     <span class="ident">v</span>.<span class="ident">visit_macro_delimiter_mut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">node</span>.<span class="ident">delimiter</span>);
-    <span class="macro">skip</span><span class="macro">!</span>(<span class="ident">node</span>.<span class="ident">tokens</span>);
+    <span class="macro">skip!</span>(<span class="ident">node</span>.<span class="ident">tokens</span>);
 }
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;derive&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;full&quot;</span>))]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">visit_macro_delimiter_mut</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="ident">v</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">V</span>, <span class="ident">node</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">MacroDelimiter</span>)
@@ -6581,12 +6581,12 @@
             <span class="ident">v</span>.<span class="ident">visit_pat_type_mut</span>(<span class="ident">_binding_0</span>);
         }
         <span class="ident">Pat</span>::<span class="ident">Verbatim</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">skip</span><span class="macro">!</span>(<span class="ident">_binding_0</span>);
+            <span class="macro">skip!</span>(<span class="ident">_binding_0</span>);
         }
         <span class="ident">Pat</span>::<span class="ident">Wild</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
             <span class="ident">v</span>.<span class="ident">visit_pat_wild_mut</span>(<span class="ident">_binding_0</span>);
         }
-        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable!</span>(),
     }
 }
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;full&quot;</span>)]</span>
@@ -6884,7 +6884,7 @@
 {
     <span class="ident">tokens_helper</span>(<span class="ident">v</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">node</span>.<span class="ident">lt_token</span>.<span class="ident">spans</span>);
     <span class="ident">v</span>.<span class="ident">visit_type_mut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">node</span>.<span class="ident">ty</span>);
-    <span class="macro">skip</span><span class="macro">!</span>(<span class="ident">node</span>.<span class="ident">position</span>);
+    <span class="macro">skip!</span>(<span class="ident">node</span>.<span class="ident">position</span>);
     <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">it</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">node</span>.<span class="ident">as_token</span> {
         <span class="ident">tokens_helper</span>(<span class="ident">v</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">it</span>.<span class="ident">span</span>)
     };
@@ -7040,9 +7040,9 @@
             <span class="ident">v</span>.<span class="ident">visit_trait_item_macro_mut</span>(<span class="ident">_binding_0</span>);
         }
         <span class="ident">TraitItem</span>::<span class="ident">Verbatim</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">skip</span><span class="macro">!</span>(<span class="ident">_binding_0</span>);
+            <span class="macro">skip!</span>(<span class="ident">_binding_0</span>);
         }
-        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable!</span>(),
     }
 }
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;full&quot;</span>)]</span>
@@ -7168,9 +7168,9 @@
             <span class="ident">v</span>.<span class="ident">visit_type_tuple_mut</span>(<span class="ident">_binding_0</span>);
         }
         <span class="ident">Type</span>::<span class="ident">Verbatim</span>(<span class="ident">_binding_0</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">skip</span><span class="macro">!</span>(<span class="ident">_binding_0</span>);
+            <span class="macro">skip!</span>(<span class="ident">_binding_0</span>);
         }
-        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable!</span>(),
     }
 }
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;derive&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;full&quot;</span>))]</span>

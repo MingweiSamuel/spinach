@@ -415,7 +415,7 @@
                 <span class="comment">// but we&#39;re trying to acquire the lock and there&#39;s only one</span>
                 <span class="comment">// other reference of the lock, so it should be impossible for</span>
                 <span class="comment">// that task to ever block itself.</span>
-                <span class="prelude-val">Err</span>(<span class="ident">n</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;invalid state: {}&quot;</span>, <span class="ident">n</span>),
+                <span class="prelude-val">Err</span>(<span class="ident">n</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(<span class="string">&quot;invalid state: {}&quot;</span>, <span class="ident">n</span>),
             }
         }
     }
@@ -459,7 +459,7 @@
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">arc</span>.<span class="ident">state</span>.<span class="ident">swap</span>(<span class="number">0</span>, <span class="ident">SeqCst</span>) {
             <span class="comment">// we&#39;ve locked the lock, shouldn&#39;t be possible for us to see an</span>
             <span class="comment">// unlocked lock.</span>
-            <span class="number">0</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;invalid unlocked state&quot;</span>),
+            <span class="number">0</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(<span class="string">&quot;invalid unlocked state&quot;</span>),
 
             <span class="comment">// Ok, no one else tried to get the lock, we&#39;re done.</span>
             <span class="number">1</span> <span class="op">=</span><span class="op">&gt;</span> {}
@@ -481,7 +481,7 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">Inner</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>), <span class="number">0</span>);
+        <span class="macro">assert_eq!</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>), <span class="number">0</span>);
     }
 }
 
@@ -500,7 +500,7 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">ReuniteError</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-        <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;tried to reunite two BiLocks that don&#39;t form a pair&quot;</span>)
+        <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;tried to reunite two BiLocks that don&#39;t form a pair&quot;</span>)
     }
 }
 

@@ -78,7 +78,7 @@
 <span class="attribute">#![<span class="ident">allow</span>(<span class="ident">unused_macros</span>)]</span>
 
 <span class="doccomment">/// The `os-poll` feature is enabled.</span>
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_os_poll</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_os_poll</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;os-poll&quot;</span>)]</span>
@@ -89,7 +89,7 @@
 }
 
 <span class="doccomment">/// The `os-poll` feature is disabled.</span>
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_not_os_poll</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_not_os_poll</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;os-poll&quot;</span>))]</span>
@@ -99,7 +99,7 @@
 }
 
 <span class="doccomment">/// The `os-ext` feature is enabled.</span>
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_os_ext</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_os_ext</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;os-ext&quot;</span>)]</span>
@@ -110,7 +110,7 @@
 }
 
 <span class="doccomment">/// The `net` feature is enabled.</span>
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_net</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_net</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;net&quot;</span>)]</span>
@@ -122,7 +122,7 @@
 
 <span class="doccomment">/// One of the features enabled that needs `IoSource`. That is `net` or `os-ext`</span>
 <span class="doccomment">/// on Unix (for `pipe`).</span>
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_io_source</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_io_source</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;net&quot;</span>, <span class="ident">all</span>(<span class="ident">unix</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;os-ext&quot;</span>)))]</span>
@@ -133,7 +133,7 @@
 }
 
 <span class="doccomment">/// The `os-ext` feature is enabled, or one of the features that need `os-ext`.</span>
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_any_os_ext</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_any_os_ext</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;os-ext&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;net&quot;</span>))]</span>

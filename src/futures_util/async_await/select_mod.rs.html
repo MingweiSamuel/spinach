@@ -347,7 +347,7 @@
 
 <span class="kw">use</span> <span class="ident">proc_macro_hack</span>::<span class="ident">proc_macro_hack</span>;
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">document_select_macro</span> {
+<span class="macro">macro_rules!</span> <span class="ident">document_select_macro</span> {
     <span class="comment">// This branch is required for `futures 0.3.1`, from before select_biased was introduced</span>
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">select</span>:<span class="ident">item</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="doccomment">/// Polls multiple futures and streams simultaneously, executing the branch</span>
@@ -501,7 +501,7 @@
     };
 
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">select</span>:<span class="ident">item</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">select_biased</span>:<span class="ident">item</span>) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="macro">document_select_macro</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">select</span>);
+        <span class="macro">document_select_macro!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">select</span>);
 
         <span class="doccomment">/// Polls multiple futures and streams simultaneously, executing the branch</span>
         <span class="doccomment">/// for the future that finishes first. Unlike [`select!`], if multiple futures are ready,</span>
@@ -662,23 +662,23 @@
 <span class="attribute">#[<span class="ident">proc_macro_hack</span>(<span class="ident">support_nested</span>, <span class="ident">only_hack_old_rustc</span>)]</span>
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_macro</span>::<span class="ident">select_biased_internal</span>;
 
-<span class="macro">document_select_macro</span><span class="macro">!</span> {
+<span class="macro">document_select_macro!</span> {
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
     <span class="attribute">#[<span class="ident">macro_export</span>]</span>
-    <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">select</span> {
+    <span class="macro">macro_rules!</span> <span class="ident">select</span> {
         ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">tokens</span>:<span class="ident">tt</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {{
             <span class="kw">use</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">__private</span> <span class="kw">as</span> <span class="ident">__futures_crate</span>;
-            <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">select_internal</span><span class="macro">!</span> {
+            <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">select_internal!</span> {
                 $( <span class="macro-nonterminal">$</span><span class="macro-nonterminal">tokens</span> )<span class="op">*</span>
             }
         }}
     }
 
     <span class="attribute">#[<span class="ident">macro_export</span>]</span>
-    <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">select_biased</span> {
+    <span class="macro">macro_rules!</span> <span class="ident">select_biased</span> {
         ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">tokens</span>:<span class="ident">tt</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {{
             <span class="kw">use</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">__private</span> <span class="kw">as</span> <span class="ident">__futures_crate</span>;
-            <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">select_biased_internal</span><span class="macro">!</span> {
+            <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">select_biased_internal!</span> {
                 $( <span class="macro-nonterminal">$</span><span class="macro-nonterminal">tokens</span> )<span class="op">*</span>
             }
         }}

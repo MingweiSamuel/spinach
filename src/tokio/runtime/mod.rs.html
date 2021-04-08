@@ -748,7 +748,7 @@
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod</span> <span class="ident">task</span>;
 
-<span class="macro">cfg_rt</span><span class="macro">!</span> {
+<span class="macro">cfg_rt!</span> {
     <span class="kw">mod</span> <span class="ident">basic_scheduler</span>;
     <span class="kw">use</span> <span class="ident">basic_scheduler</span>::<span class="ident">BasicScheduler</span>;
 
@@ -771,19 +771,19 @@
     <span class="kw">use</span> <span class="self">self</span>::<span class="ident">spawner</span>::<span class="ident">Spawner</span>;
 }
 
-<span class="macro">cfg_rt_multi_thread</span><span class="macro">!</span> {
+<span class="macro">cfg_rt_multi_thread!</span> {
     <span class="kw">mod</span> <span class="ident">park</span>;
     <span class="kw">use</span> <span class="ident">park</span>::<span class="ident">Parker</span>;
 }
 
-<span class="macro">cfg_rt_multi_thread</span><span class="macro">!</span> {
+<span class="macro">cfg_rt_multi_thread!</span> {
     <span class="kw">mod</span> <span class="ident">queue</span>;
 
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod</span> <span class="ident">thread_pool</span>;
     <span class="kw">use</span> <span class="self">self</span>::<span class="ident">thread_pool</span>::<span class="ident">ThreadPool</span>;
 }
 
-<span class="macro">cfg_rt</span><span class="macro">!</span> {
+<span class="macro">cfg_rt!</span> {
     <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">task</span>::<span class="ident">JoinHandle</span>;
 
     <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">future</span>::<span class="ident">Future</span>;

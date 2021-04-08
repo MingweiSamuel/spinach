@@ -19,12 +19,12 @@
 
     <span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">DoublePanic</span> {
         <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
-            <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;panicking twice to abort the program&quot;</span>);
+            <span class="macro">panic!</span>(<span class="string">&quot;panicking twice to abort the program&quot;</span>);
         }
     }
 
     <span class="kw">let</span> <span class="ident">_bomb</span> <span class="op">=</span> <span class="ident">DoublePanic</span>;
-    <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">s</span>);
+    <span class="macro">panic!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">s</span>);
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="futures_util" data-search-js="../../../../search-index.js"></div>

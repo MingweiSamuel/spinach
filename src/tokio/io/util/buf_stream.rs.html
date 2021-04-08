@@ -173,7 +173,7 @@
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">pin</span>::<span class="ident">Pin</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 
-<span class="macro">pin_project</span><span class="macro">!</span> {
+<span class="macro">pin_project!</span> {
     <span class="doccomment">/// Wraps a type that is [`AsyncWrite`] and [`AsyncRead`], and buffers its input and output.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// It can be excessively inefficient to work directly with something that implements [`AsyncWrite`]</span>

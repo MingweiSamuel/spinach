@@ -304,7 +304,7 @@
     <span class="ident">sleep_until</span>(<span class="ident">Instant</span>::<span class="ident">now</span>() <span class="op">+</span> <span class="ident">duration</span>)
 }
 
-<span class="macro">pin_project</span><span class="macro">!</span> {
+<span class="macro">pin_project!</span> {
     <span class="doccomment">/// Future returned by [`sleep`](sleep) and [`sleep_until`](sleep_until).</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This type does not implement the `Unpin` trait, which means that if you</span>
@@ -460,7 +460,7 @@
         <span class="kw">let</span> <span class="ident">me</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">project</span>();
 
         <span class="comment">// Keep track of task budget</span>
-        <span class="kw">let</span> <span class="ident">coop</span> <span class="op">=</span> <span class="macro">ready</span><span class="macro">!</span>(<span class="kw">crate</span>::<span class="ident">coop</span>::<span class="ident">poll_proceed</span>(<span class="ident">cx</span>));
+        <span class="kw">let</span> <span class="ident">coop</span> <span class="op">=</span> <span class="macro">ready!</span>(<span class="kw">crate</span>::<span class="ident">coop</span>::<span class="ident">poll_proceed</span>(<span class="ident">cx</span>));
 
         <span class="ident">me</span>.<span class="ident">entry</span>.<span class="ident">poll_elapsed</span>(<span class="ident">cx</span>).<span class="ident">map</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">r</span><span class="op">|</span> {
             <span class="ident">coop</span>.<span class="ident">made_progress</span>();
@@ -482,9 +482,9 @@
         <span class="comment">// Both cases are extremely rare, and pretty accurately fit into</span>
         <span class="comment">// &quot;logic errors&quot;, so we just panic in this case. A user couldn&#39;t</span>
         <span class="comment">// really do much better if we passed the error onwards.</span>
-        <span class="kw">match</span> <span class="macro">ready</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">as_mut</span>().<span class="ident">poll_elapsed</span>(<span class="ident">cx</span>)) {
+        <span class="kw">match</span> <span class="macro">ready!</span>(<span class="self">self</span>.<span class="ident">as_mut</span>().<span class="ident">poll_elapsed</span>(<span class="ident">cx</span>)) {
             <span class="prelude-val">Ok</span>(()) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Poll</span>::<span class="ident">Ready</span>(()),
-            <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;timer error: {}&quot;</span>, <span class="ident">e</span>),
+            <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(<span class="string">&quot;timer error: {}&quot;</span>, <span class="ident">e</span>),
         }
     }
 }

@@ -708,11 +708,11 @@
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">pin</span>::<span class="ident">Pin</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 
-<span class="macro">cfg_io_util</span><span class="macro">!</span> {
+<span class="macro">cfg_io_util!</span> {
     <span class="kw">use</span> <span class="ident">bytes</span>::<span class="ident">BufMut</span>;
 }
 
-<span class="macro">cfg_net_unix</span><span class="macro">!</span> {
+<span class="macro">cfg_net_unix!</span> {
     <span class="doccomment">/// A structure representing a connected Unix socket.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This socket can be connected directly with `UnixStream::connect` or accepted</span>
@@ -964,7 +964,7 @@
             .<span class="ident">try_io</span>(<span class="ident">Interest</span>::<span class="ident">READABLE</span>, <span class="op">|</span><span class="op">|</span> (<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="self">self</span>.<span class="ident">io</span>).<span class="ident">read</span>(<span class="ident">buf</span>))
     }
 
-    <span class="macro">cfg_io_util</span><span class="macro">!</span> {
+    <span class="macro">cfg_io_util!</span> {
         <span class="doccomment">/// Try to read data from the stream into the provided buffer, advancing the</span>
         <span class="doccomment">/// buffer&#39;s internal cursor, returning how many bytes were read.</span>
         <span class="doccomment">///</span>

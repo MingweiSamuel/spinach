@@ -143,7 +143,7 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">SendError</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-        <span class="macro">write</span><span class="macro">!</span>(<span class="ident">fmt</span>, <span class="string">&quot;channel closed&quot;</span>)
+        <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;channel closed&quot;</span>)
     }
 }
 
@@ -168,7 +168,7 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">TrySendError</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-        <span class="macro">write</span><span class="macro">!</span>(
+        <span class="macro">write!</span>(
             <span class="ident">fmt</span>,
             <span class="string">&quot;{}&quot;</span>,
             <span class="kw">match</span> <span class="self">self</span> {
@@ -193,7 +193,7 @@
 
 <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">RecvError</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-        <span class="macro">write</span><span class="macro">!</span>(<span class="ident">fmt</span>, <span class="string">&quot;channel closed&quot;</span>)
+        <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;channel closed&quot;</span>)
     }
 }
 
@@ -201,7 +201,7 @@
 
 <span class="comment">// ===== TryRecvError =====</span>
 
-<span class="macro">feature</span><span class="macro">!</span> {
+<span class="macro">feature!</span> {
     <span class="attribute">#![<span class="ident">all</span>(<span class="ident">unix</span>, <span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;signal&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;process&quot;</span>))]</span>
 
     <span class="doccomment">/// This enumeration is the list of the possible reasons that try_recv</span>
@@ -218,7 +218,7 @@
 
     <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">TryRecvError</span> {
         <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-            <span class="macro">write</span><span class="macro">!</span>(
+            <span class="macro">write!</span>(
                 <span class="ident">fmt</span>,
                 <span class="string">&quot;{}&quot;</span>,
                 <span class="kw">match</span> <span class="self">self</span> {
@@ -232,7 +232,7 @@
     <span class="kw">impl</span> <span class="ident">Error</span> <span class="kw">for</span> <span class="ident">TryRecvError</span> {}
 }
 
-<span class="macro">cfg_time</span><span class="macro">!</span> {
+<span class="macro">cfg_time!</span> {
     <span class="comment">// ===== SendTimeoutError =====</span>
 
     <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
@@ -251,7 +251,7 @@
 
     <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">SendTimeoutError</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
         <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-            <span class="macro">write</span><span class="macro">!</span>(
+            <span class="macro">write!</span>(
                 <span class="ident">fmt</span>,
                 <span class="string">&quot;{}&quot;</span>,
                 <span class="kw">match</span> <span class="self">self</span> {

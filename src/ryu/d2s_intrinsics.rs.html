@@ -230,8 +230,8 @@
 <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;no-panic&quot;</span>, <span class="ident">inline</span>)]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">shiftright128</span>(<span class="ident">lo</span>: <span class="ident">u64</span>, <span class="ident">hi</span>: <span class="ident">u64</span>, <span class="ident">dist</span>: <span class="ident">u32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
     <span class="comment">// We don&#39;t need to handle the case dist &gt;= 64 here (see above).</span>
-    <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">dist</span> <span class="op">&gt;</span> <span class="number">0</span>);
-    <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">dist</span> <span class="op">&lt;</span> <span class="number">64</span>);
+    <span class="macro">debug_assert!</span>(<span class="ident">dist</span> <span class="op">&gt;</span> <span class="number">0</span>);
+    <span class="macro">debug_assert!</span>(<span class="ident">dist</span> <span class="op">&lt;</span> <span class="number">64</span>);
     (<span class="ident">hi</span> <span class="op">&lt;</span><span class="op">&lt;</span> (<span class="number">64</span> <span class="op">-</span> <span class="ident">dist</span>)) <span class="op">|</span> (<span class="ident">lo</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">dist</span>)
 }
 
@@ -254,7 +254,7 @@
 <span class="kw">fn</span> <span class="ident">pow5_factor</span>(<span class="kw-2">mut</span> <span class="ident">value</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">count</span> <span class="op">=</span> <span class="number">0u32</span>;
     <span class="kw">loop</span> {
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">value</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span>);
+        <span class="macro">debug_assert!</span>(<span class="ident">value</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span>);
         <span class="kw">let</span> <span class="ident">q</span> <span class="op">=</span> <span class="ident">div5</span>(<span class="ident">value</span>);
         <span class="kw">let</span> <span class="ident">r</span> <span class="op">=</span> (<span class="ident">value</span> <span class="kw">as</span> <span class="ident">u32</span>).<span class="ident">wrapping_sub</span>(<span class="number">5u32</span>.<span class="ident">wrapping_mul</span>(<span class="ident">q</span> <span class="kw">as</span> <span class="ident">u32</span>));
         <span class="kw">if</span> <span class="ident">r</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
@@ -276,8 +276,8 @@
 <span class="comment">// Returns true if value is divisible by 2^p.</span>
 <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;no-panic&quot;</span>, <span class="ident">inline</span>)]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">multiple_of_power_of_2</span>(<span class="ident">value</span>: <span class="ident">u64</span>, <span class="ident">p</span>: <span class="ident">u32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
-    <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">value</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span>);
-    <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">p</span> <span class="op">&lt;</span> <span class="number">64</span>);
+    <span class="macro">debug_assert!</span>(<span class="ident">value</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span>);
+    <span class="macro">debug_assert!</span>(<span class="ident">p</span> <span class="op">&lt;</span> <span class="number">64</span>);
     <span class="comment">// __builtin_ctzll doesn&#39;t appear to be faster here.</span>
     (<span class="ident">value</span> <span class="op">&amp;</span> ((<span class="number">1u64</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="ident">p</span>) <span class="op">-</span> <span class="number">1</span>)) <span class="op">=</span><span class="op">=</span> <span class="number">0</span>
 }

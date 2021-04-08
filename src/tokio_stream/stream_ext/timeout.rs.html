@@ -109,7 +109,7 @@
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">time</span>::<span class="ident">Duration</span>;
 
-<span class="macro">pin_project</span><span class="macro">!</span> {
+<span class="macro">pin_project!</span> {
     <span class="doccomment">/// Stream returned by the [`timeout`](super::StreamExt::timeout) method.</span>
     <span class="attribute">#[<span class="ident">must_use</span> <span class="op">=</span> <span class="string">&quot;streams do nothing unless polled&quot;</span>]</span>
     <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
@@ -160,7 +160,7 @@
         };
 
         <span class="kw">if</span> <span class="kw-2">*</span><span class="ident">me</span>.<span class="ident">poll_deadline</span> {
-            <span class="macro">ready</span><span class="macro">!</span>(<span class="ident">me</span>.<span class="ident">deadline</span>.<span class="ident">poll</span>(<span class="ident">cx</span>));
+            <span class="macro">ready!</span>(<span class="ident">me</span>.<span class="ident">deadline</span>.<span class="ident">poll</span>(<span class="ident">cx</span>));
             <span class="kw-2">*</span><span class="ident">me</span>.<span class="ident">poll_deadline</span> <span class="op">=</span> <span class="bool-val">false</span>;
             <span class="kw">return</span> <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(<span class="ident">Elapsed</span>::<span class="ident">new</span>())));
         }

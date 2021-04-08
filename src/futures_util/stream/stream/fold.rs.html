@@ -161,11 +161,11 @@
         <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="kw">loop</span> {
             <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">fut</span>) <span class="op">=</span> <span class="ident">this</span>.<span class="ident">future</span>.<span class="ident">as_mut</span>().<span class="ident">as_pin_mut</span>() {
                 <span class="comment">// we&#39;re currently processing a future to produce a new accum value</span>
-                <span class="kw-2">*</span><span class="ident">this</span>.<span class="ident">accum</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="macro">ready</span><span class="macro">!</span>(<span class="ident">fut</span>.<span class="ident">poll</span>(<span class="ident">cx</span>)));
+                <span class="kw-2">*</span><span class="ident">this</span>.<span class="ident">accum</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="macro">ready!</span>(<span class="ident">fut</span>.<span class="ident">poll</span>(<span class="ident">cx</span>)));
                 <span class="ident">this</span>.<span class="ident">future</span>.<span class="ident">set</span>(<span class="prelude-val">None</span>);
             } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">this</span>.<span class="ident">accum</span>.<span class="ident">is_some</span>() {
                 <span class="comment">// we&#39;re waiting on a new item from the stream</span>
-                <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="macro">ready</span><span class="macro">!</span>(<span class="ident">this</span>.<span class="ident">stream</span>.<span class="ident">as_mut</span>().<span class="ident">poll_next</span>(<span class="ident">cx</span>));
+                <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="macro">ready!</span>(<span class="ident">this</span>.<span class="ident">stream</span>.<span class="ident">as_mut</span>().<span class="ident">poll_next</span>(<span class="ident">cx</span>));
                 <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="ident">this</span>.<span class="ident">accum</span>.<span class="ident">take</span>().<span class="ident">unwrap</span>();
                 <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">item</span>) <span class="op">=</span> <span class="ident">res</span> {
                     <span class="ident">this</span>.<span class="ident">future</span>.<span class="ident">set</span>(<span class="prelude-val">Some</span>((<span class="ident">this</span>.<span class="ident">f</span>)(<span class="ident">a</span>, <span class="ident">item</span>)));
@@ -173,7 +173,7 @@
                     <span class="kw">break</span> <span class="ident">a</span>;
                 }
             } <span class="kw">else</span> {
-                <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Fold polled after completion&quot;</span>)
+                <span class="macro">panic!</span>(<span class="string">&quot;Fold polled after completion&quot;</span>)
             }
         })
     }

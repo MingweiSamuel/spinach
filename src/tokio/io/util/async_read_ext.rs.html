@@ -1134,9 +1134,9 @@
 
 <span class="kw">use</span> <span class="ident">bytes</span>::<span class="ident">BufMut</span>;
 
-<span class="macro">cfg_io_util</span><span class="macro">!</span> {
+<span class="macro">cfg_io_util!</span> {
     <span class="doccomment">/// Defines numeric reader</span>
-    <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">read_impl</span> {
+    <span class="macro">macro_rules!</span> <span class="ident">read_impl</span> {
         (
             $(
                 $(<span class="attribute">#[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">outer</span>:<span class="ident">meta</span>]</span>)<span class="op">*</span>
@@ -1400,7 +1400,7 @@
             <span class="ident">read_exact</span>(<span class="self">self</span>, <span class="ident">buf</span>)
         }
 
-        <span class="macro">read_impl</span><span class="macro">!</span> {
+        <span class="macro">read_impl!</span> {
             <span class="doccomment">/// Reads an unsigned 8 bit integer from the underlying reader.</span>
             <span class="doccomment">///</span>
             <span class="doccomment">/// Equivalent to:</span>

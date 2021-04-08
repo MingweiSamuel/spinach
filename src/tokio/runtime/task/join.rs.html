@@ -270,7 +270,7 @@
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">pin</span>::<span class="ident">Pin</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 
-<span class="macro">cfg_rt</span><span class="macro">!</span> {
+<span class="macro">cfg_rt!</span> {
     <span class="doccomment">/// An owned permission to join on a task (await its termination).</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This can be thought of as the equivalent of [`std::thread::JoinHandle`] for</span>
@@ -470,7 +470,7 @@
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ret</span> <span class="op">=</span> <span class="ident">Poll</span>::<span class="ident">Pending</span>;
 
         <span class="comment">// Keep track of task budget</span>
-        <span class="kw">let</span> <span class="ident">coop</span> <span class="op">=</span> <span class="macro">ready</span><span class="macro">!</span>(<span class="kw">crate</span>::<span class="ident">coop</span>::<span class="ident">poll_proceed</span>(<span class="ident">cx</span>));
+        <span class="kw">let</span> <span class="ident">coop</span> <span class="op">=</span> <span class="macro">ready!</span>(<span class="kw">crate</span>::<span class="ident">coop</span>::<span class="ident">poll_proceed</span>(<span class="ident">cx</span>));
 
         <span class="comment">// Raw should always be set. If it is not, this is due to polling after</span>
         <span class="comment">// completion</span>

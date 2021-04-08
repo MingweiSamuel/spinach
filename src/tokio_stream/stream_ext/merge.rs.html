@@ -99,7 +99,7 @@
 <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 <span class="kw">use</span> <span class="ident">pin_project_lite</span>::<span class="ident">pin_project</span>;
 
-<span class="macro">pin_project</span><span class="macro">!</span> {
+<span class="macro">pin_project!</span> {
     <span class="doccomment">/// Stream returned by the [`merge`](super::StreamExt::merge) method.</span>
     <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Merge</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
         <span class="attribute">#[<span class="ident">pin</span>]</span>

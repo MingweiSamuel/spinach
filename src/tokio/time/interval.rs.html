@@ -248,7 +248,7 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// [`sleep`]: crate::time::sleep()</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">interval</span>(<span class="ident">period</span>: <span class="ident">Duration</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Interval</span> {
-    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">period</span> <span class="op">&gt;</span> <span class="ident">Duration</span>::<span class="ident">new</span>(<span class="number">0</span>, <span class="number">0</span>), <span class="string">&quot;`period` must be non-zero.&quot;</span>);
+    <span class="macro">assert!</span>(<span class="ident">period</span> <span class="op">&gt;</span> <span class="ident">Duration</span>::<span class="ident">new</span>(<span class="number">0</span>, <span class="number">0</span>), <span class="string">&quot;`period` must be non-zero.&quot;</span>);
 
     <span class="ident">interval_at</span>(<span class="ident">Instant</span>::<span class="ident">now</span>(), <span class="ident">period</span>)
 }
@@ -281,7 +281,7 @@
 <span class="doccomment">/// }</span>
 <span class="doccomment">/// ```</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">interval_at</span>(<span class="ident">start</span>: <span class="ident">Instant</span>, <span class="ident">period</span>: <span class="ident">Duration</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Interval</span> {
-    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">period</span> <span class="op">&gt;</span> <span class="ident">Duration</span>::<span class="ident">new</span>(<span class="number">0</span>, <span class="number">0</span>), <span class="string">&quot;`period` must be non-zero.&quot;</span>);
+    <span class="macro">assert!</span>(<span class="ident">period</span> <span class="op">&gt;</span> <span class="ident">Duration</span>::<span class="ident">new</span>(<span class="number">0</span>, <span class="number">0</span>), <span class="string">&quot;`period` must be non-zero.&quot;</span>);
 
     <span class="ident">Interval</span> {
         <span class="ident">delay</span>: <span class="ident">Box</span>::<span class="ident">pin</span>(<span class="ident">sleep_until</span>(<span class="ident">start</span>)),
@@ -346,7 +346,7 @@
     <span class="doccomment">/// most recent call is scheduled to receive a wakeup.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">poll_tick</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">Instant</span><span class="op">&gt;</span> {
         <span class="comment">// Wait for the delay to be done</span>
-        <span class="macro">ready</span><span class="macro">!</span>(<span class="ident">Pin</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">delay</span>).<span class="ident">poll</span>(<span class="ident">cx</span>));
+        <span class="macro">ready!</span>(<span class="ident">Pin</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">delay</span>).<span class="ident">poll</span>(<span class="ident">cx</span>));
 
         <span class="comment">// Get the `now` by looking at the `delay` deadline</span>
         <span class="kw">let</span> <span class="ident">now</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">delay</span>.<span class="ident">deadline</span>();

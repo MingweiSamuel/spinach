@@ -1498,9 +1498,9 @@
 <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">SendError</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">is_full</span>() {
-            <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;send failed because channel is full&quot;</span>)
+            <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;send failed because channel is full&quot;</span>)
         } <span class="kw">else</span> {
-            <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;send failed because receiver is gone&quot;</span>)
+            <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;send failed because receiver is gone&quot;</span>)
         }
     }
 }
@@ -1536,9 +1536,9 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">TrySendError</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">is_full</span>() {
-            <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;send failed because channel is full&quot;</span>)
+            <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;send failed because channel is full&quot;</span>)
         } <span class="kw">else</span> {
-            <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;send failed because receiver is gone&quot;</span>)
+            <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;send failed because receiver is gone&quot;</span>)
         }
     }
 }
@@ -1576,7 +1576,7 @@
 
 <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">TryRecvError</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-        <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;receiver channel is empty&quot;</span>)
+        <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;receiver channel is empty&quot;</span>)
     }
 }
 
@@ -1682,7 +1682,7 @@
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">channel</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">buffer</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">Sender</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">Receiver</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) {
     <span class="comment">// Check that the requested buffer size does not exceed the maximum buffer</span>
     <span class="comment">// size permitted by the system.</span>
-    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">buffer</span> <span class="op">&lt;</span> <span class="ident">MAX_BUFFER</span>, <span class="string">&quot;requested buffer size too large&quot;</span>);
+    <span class="macro">assert!</span>(<span class="ident">buffer</span> <span class="op">&lt;</span> <span class="ident">MAX_BUFFER</span>, <span class="string">&quot;requested buffer size too large&quot;</span>);
 
     <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">BoundedInner</span> {
         <span class="ident">buffer</span>,
@@ -1780,7 +1780,7 @@
             <span class="comment">// This probably is never hit? Odds are the process will run out of</span>
             <span class="comment">// memory first. It may be worth to return something else in this</span>
             <span class="comment">// case?</span>
-            <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">state</span>.<span class="ident">num_messages</span> <span class="op">&lt;</span> <span class="ident">MAX_CAPACITY</span>, <span class="string">&quot;buffer space \
+            <span class="macro">assert!</span>(<span class="ident">state</span>.<span class="ident">num_messages</span> <span class="op">&lt;</span> <span class="ident">MAX_CAPACITY</span>, <span class="string">&quot;buffer space \
                     exhausted; sending this messages would overflow the state&quot;</span>);
 
             <span class="ident">state</span>.<span class="ident">num_messages</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
@@ -1854,7 +1854,7 @@
     {
         <span class="comment">// Anyone callig do_send *should* make sure there is room first,</span>
         <span class="comment">// but assert here for tests as a sanity check.</span>
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">poll_unparked</span>(<span class="prelude-val">None</span>).<span class="ident">is_ready</span>());
+        <span class="macro">debug_assert!</span>(<span class="self">self</span>.<span class="ident">poll_unparked</span>(<span class="prelude-val">None</span>).<span class="ident">is_ready</span>());
 
         <span class="comment">// First, increment the number of messages contained by the channel.</span>
         <span class="comment">// This operation will also atomically determine if the sender task</span>
@@ -1918,7 +1918,7 @@
             <span class="comment">// This probably is never hit? Odds are the process will run out of</span>
             <span class="comment">// memory first. It may be worth to return something else in this</span>
             <span class="comment">// case?</span>
-            <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">state</span>.<span class="ident">num_messages</span> <span class="op">&lt;</span> <span class="ident">MAX_CAPACITY</span>, <span class="string">&quot;buffer space \
+            <span class="macro">assert!</span>(<span class="ident">state</span>.<span class="ident">num_messages</span> <span class="op">&lt;</span> <span class="ident">MAX_CAPACITY</span>, <span class="string">&quot;buffer space \
                     exhausted; sending this messages would overflow the state&quot;</span>);
 
             <span class="ident">state</span>.<span class="ident">num_messages</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
@@ -2236,10 +2236,10 @@
         <span class="kw">loop</span> {
             <span class="comment">// If the maximum number of senders has been reached, then fail</span>
             <span class="kw">if</span> <span class="ident">curr</span> <span class="op">=</span><span class="op">=</span> <span class="ident">MAX_BUFFER</span> {
-                <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;cannot clone `Sender` -- too many outstanding senders&quot;</span>);
+                <span class="macro">panic!</span>(<span class="string">&quot;cannot clone `Sender` -- too many outstanding senders&quot;</span>);
             }
 
-            <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">curr</span> <span class="op">&lt;</span> <span class="ident">MAX_BUFFER</span>);
+            <span class="macro">debug_assert!</span>(<span class="ident">curr</span> <span class="op">&lt;</span> <span class="ident">MAX_BUFFER</span>);
 
             <span class="kw">let</span> <span class="ident">next</span> <span class="op">=</span> <span class="ident">curr</span> <span class="op">+</span> <span class="number">1</span>;
             <span class="kw">let</span> <span class="ident">actual</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">num_senders</span>.<span class="ident">compare_and_swap</span>(<span class="ident">curr</span>, <span class="ident">next</span>, <span class="ident">SeqCst</span>);
@@ -2267,10 +2267,10 @@
         <span class="kw">loop</span> {
             <span class="comment">// If the maximum number of senders has been reached, then fail</span>
             <span class="kw">if</span> <span class="ident">curr</span> <span class="op">=</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">max_senders</span>() {
-                <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;cannot clone `Sender` -- too many outstanding senders&quot;</span>);
+                <span class="macro">panic!</span>(<span class="string">&quot;cannot clone `Sender` -- too many outstanding senders&quot;</span>);
             }
 
-            <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">curr</span> <span class="op">&lt;</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">max_senders</span>());
+            <span class="macro">debug_assert!</span>(<span class="ident">curr</span> <span class="op">&lt;</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">max_senders</span>());
 
             <span class="kw">let</span> <span class="ident">next</span> <span class="op">=</span> <span class="ident">curr</span> <span class="op">+</span> <span class="number">1</span>;
             <span class="kw">let</span> <span class="ident">actual</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">num_senders</span>.<span class="ident">compare_and_swap</span>(<span class="ident">curr</span>, <span class="ident">next</span>, <span class="ident">SeqCst</span>);

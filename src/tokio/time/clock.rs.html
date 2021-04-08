@@ -222,7 +222,7 @@
 <span class="doccomment">//! `test-util` feature flag is enabled, the values returned for `now()` are</span>
 <span class="doccomment">//! configurable.</span>
 
-<span class="macro">cfg_not_test_util</span><span class="macro">!</span> {
+<span class="macro">cfg_not_test_util!</span> {
     <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">time</span>::{<span class="ident">Duration</span>, <span class="ident">Instant</span>};
 
     <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
@@ -246,22 +246,22 @@
         }
 
         <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">advance</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">_dur</span>: <span class="ident">Duration</span>) {
-            <span class="macro">unreachable</span><span class="macro">!</span>();
+            <span class="macro">unreachable!</span>();
         }
     }
 }
 
-<span class="macro">cfg_test_util</span><span class="macro">!</span> {
+<span class="macro">cfg_test_util!</span> {
     <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">time</span>::{<span class="ident">Duration</span>, <span class="ident">Instant</span>};
     <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::{<span class="ident">Arc</span>, <span class="ident">Mutex</span>};
 
-    <span class="macro">cfg_rt</span><span class="macro">!</span> {
+    <span class="macro">cfg_rt!</span> {
         <span class="kw">fn</span> <span class="ident">clock</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Clock</span><span class="op">&gt;</span> {
             <span class="kw">crate</span>::<span class="ident">runtime</span>::<span class="ident">context</span>::<span class="ident">clock</span>()
         }
     }
 
-    <span class="macro">cfg_not_rt</span><span class="macro">!</span> {
+    <span class="macro">cfg_not_rt!</span> {
         <span class="kw">fn</span> <span class="ident">clock</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Clock</span><span class="op">&gt;</span> {
             <span class="prelude-val">None</span>
         }
@@ -320,7 +320,7 @@
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">clock</span>.<span class="ident">inner</span>.<span class="ident">lock</span>().<span class="ident">unwrap</span>();
 
         <span class="kw">if</span> <span class="ident">inner</span>.<span class="ident">unfrozen</span>.<span class="ident">is_some</span>() {
-            <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;time is not frozen&quot;</span>);
+            <span class="macro">panic!</span>(<span class="string">&quot;time is not frozen&quot;</span>);
         }
 
         <span class="ident">inner</span>.<span class="ident">unfrozen</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">std</span>::<span class="ident">time</span>::<span class="ident">Instant</span>::<span class="ident">now</span>());
@@ -389,7 +389,7 @@
 
             <span class="kw">if</span> <span class="op">!</span><span class="ident">inner</span>.<span class="ident">enable_pausing</span> {
                 <span class="ident">drop</span>(<span class="ident">inner</span>); <span class="comment">// avoid poisoning the lock</span>
-                <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;`time::pause()` requires the `current_thread` Tokio runtime. \
+                <span class="macro">panic!</span>(<span class="string">&quot;`time::pause()` requires the `current_thread` Tokio runtime. \
                         This is the default Runtime used by `#[tokio::test].&quot;</span>);
             }
 
@@ -407,7 +407,7 @@
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">inner</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">lock</span>().<span class="ident">unwrap</span>();
 
             <span class="kw">if</span> <span class="ident">inner</span>.<span class="ident">unfrozen</span>.<span class="ident">is_some</span>() {
-                <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;time is not frozen&quot;</span>);
+                <span class="macro">panic!</span>(<span class="string">&quot;time is not frozen&quot;</span>);
             }
 
             <span class="ident">inner</span>.<span class="ident">base</span> <span class="op">+</span><span class="op">=</span> <span class="ident">duration</span>;

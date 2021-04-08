@@ -156,7 +156,7 @@
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">partialeq_numeric</span> {
+<span class="macro">macro_rules!</span> <span class="ident">partialeq_numeric</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">eq</span>:<span class="ident">ident</span> [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty</span>:<span class="ident">ty</span>)<span class="kw-2">*</span>])<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $($(
             <span class="kw">impl</span> <span class="ident">PartialEq</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Value</span> {
@@ -186,7 +186,7 @@
     }
 }
 
-<span class="macro">partialeq_numeric</span><span class="macro">!</span> {
+<span class="macro">partialeq_numeric!</span> {
     <span class="ident">eq_i64</span>[<span class="ident">i8</span> <span class="ident">i16</span> <span class="ident">i32</span> <span class="ident">i64</span> <span class="ident">isize</span>]
     <span class="ident">eq_u64</span>[<span class="ident">u8</span> <span class="ident">u16</span> <span class="ident">u32</span> <span class="ident">u64</span> <span class="ident">usize</span>]
     <span class="ident">eq_f64</span>[<span class="ident">f32</span> <span class="ident">f64</span>]

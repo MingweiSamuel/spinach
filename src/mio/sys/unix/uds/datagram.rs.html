@@ -72,7 +72,7 @@
     <span class="kw">let</span> <span class="ident">socket</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">net</span>::<span class="ident">UnixDatagram</span>::<span class="ident">from_raw_fd</span>(<span class="ident">fd</span>) };
     <span class="kw">let</span> (<span class="ident">sockaddr</span>, <span class="ident">socklen</span>) <span class="op">=</span> <span class="ident">socket_addr</span>(<span class="ident">path</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> <span class="ident">sockaddr</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">sockaddr</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">libc</span>::<span class="ident">sockaddr_un</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="kw">_</span>;
-    <span class="macro">syscall</span><span class="macro">!</span>(<span class="ident">bind</span>(<span class="ident">fd</span>, <span class="ident">sockaddr</span>, <span class="ident">socklen</span>))<span class="question-mark">?</span>;
+    <span class="macro">syscall!</span>(<span class="ident">bind</span>(<span class="ident">fd</span>, <span class="ident">sockaddr</span>, <span class="ident">socklen</span>))<span class="question-mark">?</span>;
     <span class="prelude-val">Ok</span>(<span class="ident">socket</span>)
 }
 
@@ -99,7 +99,7 @@
 ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">usize</span>, <span class="ident">SocketAddr</span>)<span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">count</span> <span class="op">=</span> <span class="number">0</span>;
     <span class="kw">let</span> <span class="ident">socketaddr</span> <span class="op">=</span> <span class="ident">SocketAddr</span>::<span class="ident">new</span>(<span class="op">|</span><span class="ident">sockaddr</span>, <span class="ident">socklen</span><span class="op">|</span> {
-        <span class="macro">syscall</span><span class="macro">!</span>(<span class="ident">recvfrom</span>(
+        <span class="macro">syscall!</span>(<span class="ident">recvfrom</span>(
             <span class="ident">socket</span>.<span class="ident">as_raw_fd</span>(),
             <span class="ident">dst</span>.<span class="ident">as_mut_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span>,
             <span class="ident">dst</span>.<span class="ident">len</span>(),

@@ -36,17 +36,17 @@
 <span class="kw">mod</span> <span class="ident">poll_fn</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">poll_fn</span>::<span class="ident">poll_fn</span>;
 
-<span class="macro">cfg_not_loom</span><span class="macro">!</span> {
+<span class="macro">cfg_not_loom!</span> {
     <span class="kw">mod</span> <span class="ident">ready</span>;
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="ident">ready</span>::{<span class="ident">ok</span>, <span class="ident">Ready</span>};
 }
 
-<span class="macro">cfg_process</span><span class="macro">!</span> {
+<span class="macro">cfg_process!</span> {
     <span class="kw">mod</span> <span class="ident">try_join</span>;
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="ident">try_join</span>::<span class="ident">try_join3</span>;
 }
 
-<span class="macro">cfg_sync</span><span class="macro">!</span> {
+<span class="macro">cfg_sync!</span> {
     <span class="kw">mod</span> <span class="ident">block_on</span>;
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="ident">block_on</span>::<span class="ident">block_on</span>;
 }

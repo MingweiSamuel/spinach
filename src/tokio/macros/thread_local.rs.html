@@ -7,8 +7,8 @@
 <span id="4">4</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">loom</span>, <span class="ident">test</span>))]</span>
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">thread_local</span> {
-    ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">tts</span>:<span class="ident">tt</span>)<span class="op">+</span>) <span class="op">=</span><span class="op">&gt;</span> { <span class="ident">loom</span>::<span class="macro">thread_local</span><span class="macro">!</span>{ $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">tts</span>)<span class="op">+</span> } }
+<span class="macro">macro_rules!</span> <span class="ident">thread_local</span> {
+    ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">tts</span>:<span class="ident">tt</span>)<span class="op">+</span>) <span class="op">=</span><span class="op">&gt;</span> { <span class="ident">loom</span>::<span class="macro">thread_local!</span>{ $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">tts</span>)<span class="op">+</span> } }
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-js="../../../search-index.js"></div>

@@ -835,7 +835,7 @@
 <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">macros</span>;
 
-<span class="macro">cfg_fs</span><span class="macro">!</span> {
+<span class="macro">cfg_fs!</span> {
     <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">fs</span>;
 }
 
@@ -847,43 +847,43 @@
 <span class="kw">mod</span> <span class="ident">loom</span>;
 <span class="kw">mod</span> <span class="ident">park</span>;
 
-<span class="macro">cfg_process</span><span class="macro">!</span> {
+<span class="macro">cfg_process!</span> {
     <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">process</span>;
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;net&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;fs&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;io-std&quot;</span>))]</span>
 <span class="kw">mod</span> <span class="ident">blocking</span>;
 
-<span class="macro">cfg_rt</span><span class="macro">!</span> {
+<span class="macro">cfg_rt!</span> {
     <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">runtime</span>;
 }
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod</span> <span class="ident">coop</span>;
 
-<span class="macro">cfg_signal</span><span class="macro">!</span> {
+<span class="macro">cfg_signal!</span> {
     <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">signal</span>;
 }
 
-<span class="macro">cfg_signal_internal</span><span class="macro">!</span> {
+<span class="macro">cfg_signal_internal!</span> {
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;signal&quot;</span>))]</span>
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">unreachable_pub</span>)]</span>
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod</span> <span class="ident">signal</span>;
 }
 
-<span class="macro">cfg_sync</span><span class="macro">!</span> {
+<span class="macro">cfg_sync!</span> {
     <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">sync</span>;
 }
-<span class="macro">cfg_not_sync</span><span class="macro">!</span> {
+<span class="macro">cfg_not_sync!</span> {
     <span class="kw">mod</span> <span class="ident">sync</span>;
 }
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">task</span>;
-<span class="macro">cfg_rt</span><span class="macro">!</span> {
+<span class="macro">cfg_rt!</span> {
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">task</span>::<span class="ident">spawn</span>;
 }
 
-<span class="macro">cfg_time</span><span class="macro">!</span> {
+<span class="macro">cfg_time!</span> {
     <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">time</span>;
 }
 
@@ -928,14 +928,14 @@
 <span class="doccomment">/// ```</span>
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">stream</span> {}
 
-<span class="macro">cfg_macros</span><span class="macro">!</span> {
+<span class="macro">cfg_macros!</span> {
     <span class="doccomment">/// Implementation detail of the `select!` macro. This macro is **not**</span>
     <span class="doccomment">/// intended to be used as part of the public API and is permitted to</span>
     <span class="doccomment">/// change.</span>
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">tokio_macros</span>::<span class="ident">select_priv_declare_output_enum</span>;
 
-    <span class="macro">cfg_rt</span><span class="macro">!</span> {
+    <span class="macro">cfg_rt!</span> {
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;rt-multi-thread&quot;</span>)]</span>
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">test</span>))]</span> <span class="comment">// Work around for rust-lang/rust#62127</span>
         <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">docsrs</span>, <span class="ident">doc</span>(<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;macros&quot;</span>)))]</span>
@@ -945,7 +945,7 @@
         <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">docsrs</span>, <span class="ident">doc</span>(<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;macros&quot;</span>)))]</span>
         <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">tokio_macros</span>::<span class="ident">test</span>;
 
-        <span class="macro">cfg_not_rt_multi_thread</span><span class="macro">!</span> {
+        <span class="macro">cfg_not_rt_multi_thread!</span> {
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">test</span>))]</span> <span class="comment">// Work around for rust-lang/rust#62127</span>
             <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">tokio_macros</span>::<span class="ident">main_rt</span> <span class="kw">as</span> <span class="ident">main</span>;
             <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">tokio_macros</span>::<span class="ident">test_rt</span> <span class="kw">as</span> <span class="ident">test</span>;
@@ -953,7 +953,7 @@
     }
 
     <span class="comment">// Always fail if rt is not enabled.</span>
-    <span class="macro">cfg_not_rt</span><span class="macro">!</span> {
+    <span class="macro">cfg_not_rt!</span> {
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">test</span>))]</span>
         <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">tokio_macros</span>::<span class="ident">main_fail</span> <span class="kw">as</span> <span class="ident">main</span>;
         <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">tokio_macros</span>::<span class="ident">test_fail</span> <span class="kw">as</span> <span class="ident">test</span>;

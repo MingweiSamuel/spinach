@@ -123,7 +123,7 @@
     }
 }
 
-<span class="macro">pin_project</span><span class="macro">!</span> {
+<span class="macro">pin_project!</span> {
     <span class="doccomment">/// Stream for the [`throttle`](throttle) function.</span>
     <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
     <span class="attribute">#[<span class="ident">must_use</span> <span class="op">=</span> <span class="string">&quot;streams do nothing unless polled&quot;</span>]</span>
@@ -175,11 +175,11 @@
         <span class="kw">let</span> <span class="ident">dur</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">me</span>.<span class="ident">duration</span>;
 
         <span class="kw">if</span> <span class="op">!</span><span class="kw-2">*</span><span class="ident">me</span>.<span class="ident">has_delayed</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">is_zero</span>(<span class="ident">dur</span>) {
-            <span class="macro">ready</span><span class="macro">!</span>(<span class="ident">me</span>.<span class="ident">delay</span>.<span class="ident">as_mut</span>().<span class="ident">poll</span>(<span class="ident">cx</span>));
+            <span class="macro">ready!</span>(<span class="ident">me</span>.<span class="ident">delay</span>.<span class="ident">as_mut</span>().<span class="ident">poll</span>(<span class="ident">cx</span>));
             <span class="kw-2">*</span><span class="ident">me</span>.<span class="ident">has_delayed</span> <span class="op">=</span> <span class="bool-val">true</span>;
         }
 
-        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="macro">ready</span><span class="macro">!</span>(<span class="ident">me</span>.<span class="ident">stream</span>.<span class="ident">poll_next</span>(<span class="ident">cx</span>));
+        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="macro">ready!</span>(<span class="ident">me</span>.<span class="ident">stream</span>.<span class="ident">poll_next</span>(<span class="ident">cx</span>));
 
         <span class="kw">if</span> <span class="ident">value</span>.<span class="ident">is_some</span>() {
             <span class="kw">if</span> <span class="op">!</span><span class="ident">is_zero</span>(<span class="ident">dur</span>) {

@@ -222,18 +222,18 @@
 
 <span class="kw">impl</span> <span class="ident">EnterContext</span> {
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">is_entered</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
-        <span class="macro">matches</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">EnterContext</span>::<span class="ident">Entered</span> { .. })
+        <span class="macro">matches!</span>(<span class="self">self</span>, <span class="ident">EnterContext</span>::<span class="ident">Entered</span> { .. })
     }
 }
 
-<span class="macro">thread_local</span><span class="macro">!</span>(<span class="kw">static</span> <span class="ident">ENTERED</span>: <span class="ident">Cell</span><span class="op">&lt;</span><span class="ident">EnterContext</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Cell</span>::<span class="ident">new</span>(<span class="ident">EnterContext</span>::<span class="ident">NotEntered</span>));
+<span class="macro">thread_local!</span>(<span class="kw">static</span> <span class="ident">ENTERED</span>: <span class="ident">Cell</span><span class="op">&lt;</span><span class="ident">EnterContext</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Cell</span>::<span class="ident">new</span>(<span class="ident">EnterContext</span>::<span class="ident">NotEntered</span>));
 
 <span class="doccomment">/// Represents an executor context.</span>
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">Enter</span> {
     <span class="ident">_p</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">RefCell</span><span class="op">&lt;</span>()<span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
-<span class="macro">cfg_rt</span><span class="macro">!</span> {
+<span class="macro">cfg_rt!</span> {
     <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">park</span>::<span class="ident">thread</span>::<span class="ident">ParkError</span>;
 
     <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">time</span>::<span class="ident">Duration</span>;
@@ -245,7 +245,7 @@
             <span class="kw">return</span> <span class="ident">enter</span>;
         }
 
-        <span class="macro">panic</span><span class="macro">!</span>(
+        <span class="macro">panic!</span>(
             <span class="string">&quot;Cannot start a runtime from within a runtime. This happens \
             because a function (like `block_on`) attempted to block the \
             current thread while the thread is being used to drive \
@@ -274,14 +274,14 @@
 <span class="comment">//</span>
 <span class="comment">// This is hidden for a reason. Do not use without fully understanding</span>
 <span class="comment">// executors. Misuing can easily cause your program to deadlock.</span>
-<span class="macro">cfg_rt_multi_thread</span><span class="macro">!</span> {
+<span class="macro">cfg_rt_multi_thread!</span> {
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">exit</span><span class="op">&lt;</span><span class="ident">F</span>: <span class="ident">FnOnce</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">R</span>, <span class="ident">R</span><span class="op">&gt;</span>(<span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">R</span> {
         <span class="comment">// Reset in case the closure panics</span>
         <span class="kw">struct</span> <span class="ident">Reset</span>(<span class="ident">EnterContext</span>);
         <span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">Reset</span> {
             <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
                 <span class="ident">ENTERED</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> {
-                    <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">c</span>.<span class="ident">get</span>().<span class="ident">is_entered</span>(), <span class="string">&quot;closure claimed permanent executor&quot;</span>);
+                    <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">c</span>.<span class="ident">get</span>().<span class="ident">is_entered</span>(), <span class="string">&quot;closure claimed permanent executor&quot;</span>);
                     <span class="ident">c</span>.<span class="ident">set</span>(<span class="self">self</span>.<span class="number">0</span>);
                 });
             }
@@ -289,7 +289,7 @@
 
         <span class="kw">let</span> <span class="ident">was</span> <span class="op">=</span> <span class="ident">ENTERED</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> {
             <span class="kw">let</span> <span class="ident">e</span> <span class="op">=</span> <span class="ident">c</span>.<span class="ident">get</span>();
-            <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">e</span>.<span class="ident">is_entered</span>(), <span class="string">&quot;asked to exit when not entered&quot;</span>);
+            <span class="macro">assert!</span>(<span class="ident">e</span>.<span class="ident">is_entered</span>(), <span class="string">&quot;asked to exit when not entered&quot;</span>);
             <span class="ident">c</span>.<span class="ident">set</span>(<span class="ident">EnterContext</span>::<span class="ident">NotEntered</span>);
             <span class="ident">e</span>
         });
@@ -300,7 +300,7 @@
     }
 }
 
-<span class="macro">cfg_rt</span><span class="macro">!</span> {
+<span class="macro">cfg_rt!</span> {
     <span class="doccomment">/// Disallow blocking in the current runtime context until the guard is dropped.</span>
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">disallow_blocking</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DisallowBlockingGuard</span> {
         <span class="kw">let</span> <span class="ident">reset</span> <span class="op">=</span> <span class="ident">ENTERED</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> {
@@ -339,14 +339,14 @@
     }
 }
 
-<span class="macro">cfg_rt_multi_thread</span><span class="macro">!</span> {
+<span class="macro">cfg_rt_multi_thread!</span> {
     <span class="doccomment">/// Returns true if in a runtime context.</span>
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">context</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EnterContext</span> {
         <span class="ident">ENTERED</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> <span class="ident">c</span>.<span class="ident">get</span>())
     }
 }
 
-<span class="macro">cfg_rt</span><span class="macro">!</span> {
+<span class="macro">cfg_rt!</span> {
     <span class="kw">impl</span> <span class="ident">Enter</span> {
         <span class="doccomment">/// Blocks the thread on the specified future, returning the value with</span>
         <span class="doccomment">/// which that future completes.</span>
@@ -378,7 +378,7 @@
             <span class="kw">let</span> <span class="ident">waker</span> <span class="op">=</span> <span class="ident">park</span>.<span class="ident">get_unpark</span>()<span class="question-mark">?</span>.<span class="ident">into_waker</span>();
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">cx</span> <span class="op">=</span> <span class="ident">Context</span>::<span class="ident">from_waker</span>(<span class="kw-2">&amp;</span><span class="ident">waker</span>);
 
-            <span class="macro">pin</span><span class="macro">!</span>(<span class="ident">f</span>);
+            <span class="macro">pin!</span>(<span class="ident">f</span>);
             <span class="kw">let</span> <span class="ident">when</span> <span class="op">=</span> <span class="ident">Instant</span>::<span class="ident">now</span>() <span class="op">+</span> <span class="ident">timeout</span>;
 
             <span class="kw">loop</span> {
@@ -407,7 +407,7 @@
 <span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">Enter</span> {
     <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
         <span class="ident">ENTERED</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> {
-            <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">c</span>.<span class="ident">get</span>().<span class="ident">is_entered</span>());
+            <span class="macro">assert!</span>(<span class="ident">c</span>.<span class="ident">get</span>().<span class="ident">is_entered</span>());
             <span class="ident">c</span>.<span class="ident">set</span>(<span class="ident">EnterContext</span>::<span class="ident">NotEntered</span>);
         });
     }

@@ -199,15 +199,15 @@
         <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="kw">loop</span> {
             <span class="kw">match</span> <span class="self">self</span>.<span class="ident">as_mut</span>().<span class="ident">project</span>() {
                 <span class="ident">FlattenProj</span>::<span class="ident">First</span>(<span class="ident">f</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="kw">let</span> <span class="ident">f</span> <span class="op">=</span> <span class="macro">ready</span><span class="macro">!</span>(<span class="ident">f</span>.<span class="ident">poll</span>(<span class="ident">cx</span>));
+                    <span class="kw">let</span> <span class="ident">f</span> <span class="op">=</span> <span class="macro">ready!</span>(<span class="ident">f</span>.<span class="ident">poll</span>(<span class="ident">cx</span>));
                     <span class="self">self</span>.<span class="ident">set</span>(<span class="self">Self</span>::<span class="ident">Second</span>(<span class="ident">f</span>));
                 },
                 <span class="ident">FlattenProj</span>::<span class="ident">Second</span>(<span class="ident">f</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="kw">let</span> <span class="ident">output</span> <span class="op">=</span> <span class="macro">ready</span><span class="macro">!</span>(<span class="ident">f</span>.<span class="ident">poll</span>(<span class="ident">cx</span>));
+                    <span class="kw">let</span> <span class="ident">output</span> <span class="op">=</span> <span class="macro">ready!</span>(<span class="ident">f</span>.<span class="ident">poll</span>(<span class="ident">cx</span>));
                     <span class="self">self</span>.<span class="ident">set</span>(<span class="self">Self</span>::<span class="ident">Empty</span>);
                     <span class="kw">break</span> <span class="ident">output</span>;
                 },
-                <span class="ident">FlattenProj</span>::<span class="ident">Empty</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Flatten polled after completion&quot;</span>),
+                <span class="ident">FlattenProj</span>::<span class="ident">Empty</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(<span class="string">&quot;Flatten polled after completion&quot;</span>),
             }
         })
     }
@@ -235,11 +235,11 @@
         <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="kw">loop</span> {
             <span class="kw">match</span> <span class="self">self</span>.<span class="ident">as_mut</span>().<span class="ident">project</span>() {
                 <span class="ident">FlattenProj</span>::<span class="ident">First</span>(<span class="ident">f</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="kw">let</span> <span class="ident">f</span> <span class="op">=</span> <span class="macro">ready</span><span class="macro">!</span>(<span class="ident">f</span>.<span class="ident">poll</span>(<span class="ident">cx</span>));
+                    <span class="kw">let</span> <span class="ident">f</span> <span class="op">=</span> <span class="macro">ready!</span>(<span class="ident">f</span>.<span class="ident">poll</span>(<span class="ident">cx</span>));
                     <span class="self">self</span>.<span class="ident">set</span>(<span class="self">Self</span>::<span class="ident">Second</span>(<span class="ident">f</span>));
                 },
                 <span class="ident">FlattenProj</span>::<span class="ident">Second</span>(<span class="ident">f</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="kw">let</span> <span class="ident">output</span> <span class="op">=</span> <span class="macro">ready</span><span class="macro">!</span>(<span class="ident">f</span>.<span class="ident">poll_next</span>(<span class="ident">cx</span>));
+                    <span class="kw">let</span> <span class="ident">output</span> <span class="op">=</span> <span class="macro">ready!</span>(<span class="ident">f</span>.<span class="ident">poll_next</span>(<span class="ident">cx</span>));
                     <span class="kw">if</span> <span class="ident">output</span>.<span class="ident">is_none</span>() {
                         <span class="self">self</span>.<span class="ident">set</span>(<span class="self">Self</span>::<span class="ident">Empty</span>);
                     }
@@ -267,22 +267,22 @@
         <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="kw">loop</span> {
             <span class="kw">match</span> <span class="self">self</span>.<span class="ident">as_mut</span>().<span class="ident">project</span>() {
                 <span class="ident">FlattenProj</span>::<span class="ident">First</span>(<span class="ident">f</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="kw">let</span> <span class="ident">f</span> <span class="op">=</span> <span class="macro">ready</span><span class="macro">!</span>(<span class="ident">f</span>.<span class="ident">poll</span>(<span class="ident">cx</span>));
+                    <span class="kw">let</span> <span class="ident">f</span> <span class="op">=</span> <span class="macro">ready!</span>(<span class="ident">f</span>.<span class="ident">poll</span>(<span class="ident">cx</span>));
                     <span class="self">self</span>.<span class="ident">set</span>(<span class="self">Self</span>::<span class="ident">Second</span>(<span class="ident">f</span>));
                 },
                 <span class="ident">FlattenProj</span>::<span class="ident">Second</span>(<span class="ident">f</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="kw">break</span> <span class="macro">ready</span><span class="macro">!</span>(<span class="ident">f</span>.<span class="ident">poll_ready</span>(<span class="ident">cx</span>));
+                    <span class="kw">break</span> <span class="macro">ready!</span>(<span class="ident">f</span>.<span class="ident">poll_ready</span>(<span class="ident">cx</span>));
                 },
-                <span class="ident">FlattenProj</span>::<span class="ident">Empty</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;poll_ready called after eof&quot;</span>),
+                <span class="ident">FlattenProj</span>::<span class="ident">Empty</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(<span class="string">&quot;poll_ready called after eof&quot;</span>),
             }
         })
     }
 
     <span class="kw">fn</span> <span class="ident">start_send</span>(<span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">item</span>: <span class="ident">Item</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="self">Self</span>::<span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">project</span>() {
-            <span class="ident">FlattenProj</span>::<span class="ident">First</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;poll_ready not called first&quot;</span>),
+            <span class="ident">FlattenProj</span>::<span class="ident">First</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(<span class="string">&quot;poll_ready not called first&quot;</span>),
             <span class="ident">FlattenProj</span>::<span class="ident">Second</span>(<span class="ident">f</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>.<span class="ident">start_send</span>(<span class="ident">item</span>),
-            <span class="ident">FlattenProj</span>::<span class="ident">Empty</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;start_send called after eof&quot;</span>),
+            <span class="ident">FlattenProj</span>::<span class="ident">Empty</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(<span class="string">&quot;start_send called after eof&quot;</span>),
         }
     }
 
@@ -290,7 +290,7 @@
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">project</span>() {
             <span class="ident">FlattenProj</span>::<span class="ident">First</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Ok</span>(())),
             <span class="ident">FlattenProj</span>::<span class="ident">Second</span>(<span class="ident">f</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>.<span class="ident">poll_flush</span>(<span class="ident">cx</span>),
-            <span class="ident">FlattenProj</span>::<span class="ident">Empty</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;poll_flush called after eof&quot;</span>),
+            <span class="ident">FlattenProj</span>::<span class="ident">Empty</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(<span class="string">&quot;poll_flush called after eof&quot;</span>),
         }
     }
 

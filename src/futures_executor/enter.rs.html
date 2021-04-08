@@ -85,7 +85,7 @@
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">cell</span>::<span class="ident">Cell</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
 
-<span class="macro">thread_local</span><span class="macro">!</span>(<span class="kw">static</span> <span class="ident">ENTERED</span>: <span class="ident">Cell</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Cell</span>::<span class="ident">new</span>(<span class="bool-val">false</span>));
+<span class="macro">thread_local!</span>(<span class="kw">static</span> <span class="ident">ENTERED</span>: <span class="ident">Cell</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Cell</span>::<span class="ident">new</span>(<span class="bool-val">false</span>));
 
 <span class="doccomment">/// Represents an executor context.</span>
 <span class="doccomment">///</span>
@@ -108,7 +108,7 @@
 
 <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">EnterError</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-        <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;an execution scope has already been entered&quot;</span>)
+        <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;an execution scope has already been entered&quot;</span>)
     }
 }
 
@@ -157,7 +157,7 @@
 <span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">Enter</span> {
     <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
         <span class="ident">ENTERED</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> {
-            <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">c</span>.<span class="ident">get</span>());
+            <span class="macro">assert!</span>(<span class="ident">c</span>.<span class="ident">get</span>());
             <span class="ident">c</span>.<span class="ident">set</span>(<span class="bool-val">false</span>);
         });
     }

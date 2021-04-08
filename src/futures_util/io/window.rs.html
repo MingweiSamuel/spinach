@@ -197,8 +197,8 @@
             <span class="ident">Bound</span>::<span class="ident">Unbounded</span> <span class="op">=</span><span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">as_ref</span>().<span class="ident">len</span>(),
         };
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">end</span> <span class="op">&lt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">as_ref</span>().<span class="ident">len</span>());
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">start</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">end</span>);
+        <span class="macro">assert!</span>(<span class="ident">end</span> <span class="op">&lt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">as_ref</span>().<span class="ident">len</span>());
+        <span class="macro">assert!</span>(<span class="ident">start</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">end</span>);
 
         <span class="self">self</span>.<span class="ident">range</span>.<span class="ident">start</span> <span class="op">=</span> <span class="ident">start</span>;
         <span class="self">self</span>.<span class="ident">range</span>.<span class="ident">end</span> <span class="op">=</span> <span class="ident">end</span>;

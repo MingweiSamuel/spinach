@@ -1038,7 +1038,7 @@
             <span class="ident">prev_len</span> <span class="op">+</span><span class="op">=</span> <span class="ident">page</span>.<span class="ident">len</span>;
 
             <span class="comment">// Ensure we don&#39;t exceed the max address space.</span>
-            <span class="macro">debug_assert</span><span class="macro">!</span>(
+            <span class="macro">debug_assert!</span>(
                 <span class="ident">page</span>.<span class="ident">len</span> <span class="op">-</span> <span class="number">1</span> <span class="op">+</span> <span class="ident">page</span>.<span class="ident">prev_len</span> <span class="op">&lt;</span> (<span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">24</span>),
                 <span class="string">&quot;max = {:b}&quot;</span>,
                 <span class="ident">page</span>.<span class="ident">len</span> <span class="op">-</span> <span class="number">1</span> <span class="op">+</span> <span class="ident">page</span>.<span class="ident">prev_len</span>
@@ -1141,13 +1141,13 @@
 
             <span class="comment">// Remove the slots vector from the page. This is done so that the</span>
             <span class="comment">// freeing process is done outside of the lock&#39;s critical section.</span>
-            <span class="kw">let</span> <span class="ident">vec</span> <span class="op">=</span> <span class="ident">mem</span>::<span class="ident">replace</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">slots</span>.<span class="ident">slots</span>, <span class="macro">vec</span><span class="macro">!</span>[]);
+            <span class="kw">let</span> <span class="ident">vec</span> <span class="op">=</span> <span class="ident">mem</span>::<span class="ident">replace</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">slots</span>.<span class="ident">slots</span>, <span class="macro">vec!</span>[]);
             <span class="ident">slots</span>.<span class="ident">head</span> <span class="op">=</span> <span class="number">0</span>;
 
             <span class="comment">// Drop the lock so we can drop the vector outside the lock below.</span>
             <span class="ident">drop</span>(<span class="ident">slots</span>);
 
-            <span class="macro">debug_assert</span><span class="macro">!</span>(
+            <span class="macro">debug_assert!</span>(
                 <span class="self">self</span>.<span class="ident">cached</span>[<span class="ident">idx</span>].<span class="ident">slots</span>.<span class="ident">is_null</span>() <span class="op">|</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">cached</span>[<span class="ident">idx</span>].<span class="ident">slots</span> <span class="op">=</span><span class="op">=</span> <span class="ident">vec</span>.<span class="ident">as_ptr</span>(),
                 <span class="string">&quot;cached = {:?}; actual = {:?}&quot;</span>,
                 <span class="self">self</span>.<span class="ident">cached</span>[<span class="ident">idx</span>].<span class="ident">slots</span>,
@@ -1286,7 +1286,7 @@
             <span class="ident">me</span>.<span class="ident">used</span>.<span class="ident">store</span>(<span class="ident">locked</span>.<span class="ident">used</span>, <span class="ident">Relaxed</span>);
             <span class="ident">me</span>.<span class="ident">allocated</span>.<span class="ident">store</span>(<span class="bool-val">true</span>, <span class="ident">Relaxed</span>);
 
-            <span class="macro">debug_assert_eq</span><span class="macro">!</span>(<span class="ident">locked</span>.<span class="ident">slots</span>.<span class="ident">len</span>(), <span class="ident">locked</span>.<span class="ident">head</span>);
+            <span class="macro">debug_assert_eq!</span>(<span class="ident">locked</span>.<span class="ident">slots</span>.<span class="ident">len</span>(), <span class="ident">locked</span>.<span class="ident">head</span>);
 
             <span class="prelude-val">Some</span>((<span class="ident">me</span>.<span class="ident">addr</span>(<span class="ident">idx</span>), <span class="ident">locked</span>.<span class="ident">slots</span>[<span class="ident">idx</span>].<span class="ident">gen_ref</span>(<span class="ident">me</span>)))
         }
@@ -1349,7 +1349,7 @@
 
     <span class="comment">// Get a value by index</span>
     <span class="kw">fn</span> <span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">idx</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">T</span> {
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">idx</span> <span class="op">&lt;</span> <span class="self">self</span>.<span class="ident">init</span>);
+        <span class="macro">assert!</span>(<span class="ident">idx</span> <span class="op">&lt;</span> <span class="self">self</span>.<span class="ident">init</span>);
 
         <span class="comment">// Safety: Pages are allocated concurrently, but are only ever</span>
         <span class="comment">// **deallocated** by `Slab`. `Slab` will always have a more</span>
@@ -1391,15 +1391,15 @@
 
         <span class="kw">let</span> <span class="ident">base</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">slots</span>[<span class="number">0</span>] <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="kw">_</span> <span class="kw">as</span> <span class="ident">usize</span>;
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">base</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span>, <span class="string">&quot;page is unallocated&quot;</span>);
+        <span class="macro">assert!</span>(<span class="ident">base</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span>, <span class="string">&quot;page is unallocated&quot;</span>);
 
         <span class="kw">let</span> <span class="ident">slot</span> <span class="op">=</span> <span class="ident">slot</span> <span class="kw">as</span> <span class="ident">usize</span>;
         <span class="kw">let</span> <span class="ident">width</span> <span class="op">=</span> <span class="ident">mem</span>::<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">Slot</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>();
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">slot</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">base</span>, <span class="string">&quot;unexpected pointer&quot;</span>);
+        <span class="macro">assert!</span>(<span class="ident">slot</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">base</span>, <span class="string">&quot;unexpected pointer&quot;</span>);
 
         <span class="kw">let</span> <span class="ident">idx</span> <span class="op">=</span> (<span class="ident">slot</span> <span class="op">-</span> <span class="ident">base</span>) <span class="op">/</span> <span class="ident">width</span>;
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">idx</span> <span class="op">&lt;</span> <span class="self">self</span>.<span class="ident">slots</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">usize</span>);
+        <span class="macro">assert!</span>(<span class="ident">idx</span> <span class="op">&lt;</span> <span class="self">self</span>.<span class="ident">slots</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">usize</span>);
 
         <span class="ident">idx</span>
     }
@@ -1504,24 +1504,24 @@
 
         <span class="kw">let</span> (<span class="ident">addr1</span>, <span class="ident">foo1</span>) <span class="op">=</span> <span class="ident">alloc</span>.<span class="ident">allocate</span>().<span class="ident">unwrap</span>();
         <span class="ident">foo1</span>.<span class="ident">id</span>.<span class="ident">store</span>(<span class="number">1</span>, <span class="ident">SeqCst</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">0</span>, <span class="ident">foo1</span>.<span class="ident">cnt</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
+        <span class="macro">assert_eq!</span>(<span class="number">0</span>, <span class="ident">foo1</span>.<span class="ident">cnt</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
 
         <span class="kw">let</span> (<span class="ident">addr2</span>, <span class="ident">foo2</span>) <span class="op">=</span> <span class="ident">alloc</span>.<span class="ident">allocate</span>().<span class="ident">unwrap</span>();
         <span class="ident">foo2</span>.<span class="ident">id</span>.<span class="ident">store</span>(<span class="number">2</span>, <span class="ident">SeqCst</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">0</span>, <span class="ident">foo2</span>.<span class="ident">cnt</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
+        <span class="macro">assert_eq!</span>(<span class="number">0</span>, <span class="ident">foo2</span>.<span class="ident">cnt</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
 
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">1</span>, <span class="ident">slab</span>.<span class="ident">get</span>(<span class="ident">addr1</span>).<span class="ident">unwrap</span>().<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">2</span>, <span class="ident">slab</span>.<span class="ident">get</span>(<span class="ident">addr2</span>).<span class="ident">unwrap</span>().<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
+        <span class="macro">assert_eq!</span>(<span class="number">1</span>, <span class="ident">slab</span>.<span class="ident">get</span>(<span class="ident">addr1</span>).<span class="ident">unwrap</span>().<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
+        <span class="macro">assert_eq!</span>(<span class="number">2</span>, <span class="ident">slab</span>.<span class="ident">get</span>(<span class="ident">addr2</span>).<span class="ident">unwrap</span>().<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
 
         <span class="ident">drop</span>(<span class="ident">foo1</span>);
 
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">1</span>, <span class="ident">slab</span>.<span class="ident">get</span>(<span class="ident">addr1</span>).<span class="ident">unwrap</span>().<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
+        <span class="macro">assert_eq!</span>(<span class="number">1</span>, <span class="ident">slab</span>.<span class="ident">get</span>(<span class="ident">addr1</span>).<span class="ident">unwrap</span>().<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
 
         <span class="kw">let</span> (<span class="ident">addr3</span>, <span class="ident">foo3</span>) <span class="op">=</span> <span class="ident">alloc</span>.<span class="ident">allocate</span>().<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">addr3</span>, <span class="ident">addr1</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">1</span>, <span class="ident">foo3</span>.<span class="ident">cnt</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
+        <span class="macro">assert_eq!</span>(<span class="ident">addr3</span>, <span class="ident">addr1</span>);
+        <span class="macro">assert_eq!</span>(<span class="number">1</span>, <span class="ident">foo3</span>.<span class="ident">cnt</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
         <span class="ident">foo3</span>.<span class="ident">id</span>.<span class="ident">store</span>(<span class="number">3</span>, <span class="ident">SeqCst</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">slab</span>.<span class="ident">get</span>(<span class="ident">addr3</span>).<span class="ident">unwrap</span>().<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
+        <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">slab</span>.<span class="ident">get</span>(<span class="ident">addr3</span>).<span class="ident">unwrap</span>().<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
 
         <span class="ident">drop</span>(<span class="ident">foo2</span>);
         <span class="ident">drop</span>(<span class="ident">foo3</span>);
@@ -1529,16 +1529,16 @@
         <span class="ident">slab</span>.<span class="ident">compact</span>();
 
         <span class="comment">// The first page is never released</span>
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">slab</span>.<span class="ident">get</span>(<span class="ident">addr1</span>).<span class="ident">is_some</span>());
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">slab</span>.<span class="ident">get</span>(<span class="ident">addr2</span>).<span class="ident">is_some</span>());
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">slab</span>.<span class="ident">get</span>(<span class="ident">addr3</span>).<span class="ident">is_some</span>());
+        <span class="macro">assert!</span>(<span class="ident">slab</span>.<span class="ident">get</span>(<span class="ident">addr1</span>).<span class="ident">is_some</span>());
+        <span class="macro">assert!</span>(<span class="ident">slab</span>.<span class="ident">get</span>(<span class="ident">addr2</span>).<span class="ident">is_some</span>());
+        <span class="macro">assert!</span>(<span class="ident">slab</span>.<span class="ident">get</span>(<span class="ident">addr3</span>).<span class="ident">is_some</span>());
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">insert_many</span>() {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">slab</span> <span class="op">=</span> <span class="ident">Slab</span>::<span class="op">&lt;</span><span class="ident">Foo</span><span class="op">&gt;</span>::<span class="ident">new</span>();
         <span class="kw">let</span> <span class="ident">alloc</span> <span class="op">=</span> <span class="ident">slab</span>.<span class="ident">allocator</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">entries</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[];
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">entries</span> <span class="op">=</span> <span class="macro">vec!</span>[];
 
         <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="number">10_000</span> {
             <span class="kw">let</span> (<span class="ident">addr</span>, <span class="ident">val</span>) <span class="op">=</span> <span class="ident">alloc</span>.<span class="ident">allocate</span>().<span class="ident">unwrap</span>();
@@ -1547,8 +1547,8 @@
         }
 
         <span class="kw">for</span> (<span class="ident">i</span>, (<span class="ident">addr</span>, <span class="ident">v</span>)) <span class="kw">in</span> <span class="ident">entries</span>.<span class="ident">iter</span>().<span class="ident">enumerate</span>() {
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">i</span>, <span class="ident">v</span>.<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">i</span>, <span class="ident">slab</span>.<span class="ident">get</span>(<span class="kw-2">*</span><span class="ident">addr</span>).<span class="ident">unwrap</span>().<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
+            <span class="macro">assert_eq!</span>(<span class="ident">i</span>, <span class="ident">v</span>.<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
+            <span class="macro">assert_eq!</span>(<span class="ident">i</span>, <span class="ident">slab</span>.<span class="ident">get</span>(<span class="kw-2">*</span><span class="ident">addr</span>).<span class="ident">unwrap</span>().<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
         }
 
         <span class="ident">entries</span>.<span class="ident">clear</span>();
@@ -1560,8 +1560,8 @@
         }
 
         <span class="kw">for</span> (<span class="ident">i</span>, (<span class="ident">addr</span>, <span class="ident">v</span>)) <span class="kw">in</span> <span class="ident">entries</span>.<span class="ident">iter</span>().<span class="ident">enumerate</span>() {
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">10_000</span> <span class="op">-</span> <span class="ident">i</span>, <span class="ident">v</span>.<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">10_000</span> <span class="op">-</span> <span class="ident">i</span>, <span class="ident">slab</span>.<span class="ident">get</span>(<span class="kw-2">*</span><span class="ident">addr</span>).<span class="ident">unwrap</span>().<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
+            <span class="macro">assert_eq!</span>(<span class="number">10_000</span> <span class="op">-</span> <span class="ident">i</span>, <span class="ident">v</span>.<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
+            <span class="macro">assert_eq!</span>(<span class="number">10_000</span> <span class="op">-</span> <span class="ident">i</span>, <span class="ident">slab</span>.<span class="ident">get</span>(<span class="kw-2">*</span><span class="ident">addr</span>).<span class="ident">unwrap</span>().<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
         }
     }
 
@@ -1569,7 +1569,7 @@
     <span class="kw">fn</span> <span class="ident">insert_drop_reverse</span>() {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">slab</span> <span class="op">=</span> <span class="ident">Slab</span>::<span class="op">&lt;</span><span class="ident">Foo</span><span class="op">&gt;</span>::<span class="ident">new</span>();
         <span class="kw">let</span> <span class="ident">alloc</span> <span class="op">=</span> <span class="ident">slab</span>.<span class="ident">allocator</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">entries</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[];
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">entries</span> <span class="op">=</span> <span class="macro">vec!</span>[];
 
         <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="number">10_000</span> {
             <span class="kw">let</span> (<span class="ident">addr</span>, <span class="ident">val</span>) <span class="op">=</span> <span class="ident">alloc</span>.<span class="ident">allocate</span>().<span class="ident">unwrap</span>();
@@ -1585,8 +1585,8 @@
 
             <span class="comment">// Check remaining</span>
             <span class="kw">for</span> (<span class="ident">i</span>, (<span class="ident">addr</span>, <span class="ident">v</span>)) <span class="kw">in</span> <span class="ident">entries</span>.<span class="ident">iter</span>().<span class="ident">enumerate</span>() {
-                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">i</span>, <span class="ident">v</span>.<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
-                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">i</span>, <span class="ident">slab</span>.<span class="ident">get</span>(<span class="kw-2">*</span><span class="ident">addr</span>).<span class="ident">unwrap</span>().<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
+                <span class="macro">assert_eq!</span>(<span class="ident">i</span>, <span class="ident">v</span>.<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
+                <span class="macro">assert_eq!</span>(<span class="ident">i</span>, <span class="ident">slab</span>.<span class="ident">get</span>(<span class="kw-2">*</span><span class="ident">addr</span>).<span class="ident">unwrap</span>().<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
             }
         }
     }
@@ -1595,8 +1595,8 @@
     <span class="kw">fn</span> <span class="ident">no_compaction_if_page_still_in_use</span>() {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">slab</span> <span class="op">=</span> <span class="ident">Slab</span>::<span class="op">&lt;</span><span class="ident">Foo</span><span class="op">&gt;</span>::<span class="ident">new</span>();
         <span class="kw">let</span> <span class="ident">alloc</span> <span class="op">=</span> <span class="ident">slab</span>.<span class="ident">allocator</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">entries1</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[];
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">entries2</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[];
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">entries1</span> <span class="op">=</span> <span class="macro">vec!</span>[];
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">entries2</span> <span class="op">=</span> <span class="macro">vec!</span>[];
 
         <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="number">10_000</span> {
             <span class="kw">let</span> (<span class="ident">addr</span>, <span class="ident">val</span>) <span class="op">=</span> <span class="ident">alloc</span>.<span class="ident">allocate</span>().<span class="ident">unwrap</span>();
@@ -1612,7 +1612,7 @@
         <span class="ident">drop</span>(<span class="ident">entries2</span>);
 
         <span class="kw">for</span> (<span class="ident">addr</span>, <span class="kw">_</span>, <span class="ident">i</span>) <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">entries1</span> {
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="kw-2">*</span><span class="ident">i</span>, <span class="ident">slab</span>.<span class="ident">get</span>(<span class="kw-2">*</span><span class="ident">addr</span>).<span class="ident">unwrap</span>().<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
+            <span class="macro">assert_eq!</span>(<span class="kw-2">*</span><span class="ident">i</span>, <span class="ident">slab</span>.<span class="ident">get</span>(<span class="kw-2">*</span><span class="ident">addr</span>).<span class="ident">unwrap</span>().<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
         }
     }
 
@@ -1620,7 +1620,7 @@
     <span class="kw">fn</span> <span class="ident">compact_all</span>() {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">slab</span> <span class="op">=</span> <span class="ident">Slab</span>::<span class="op">&lt;</span><span class="ident">Foo</span><span class="op">&gt;</span>::<span class="ident">new</span>();
         <span class="kw">let</span> <span class="ident">alloc</span> <span class="op">=</span> <span class="ident">slab</span>.<span class="ident">allocator</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">entries</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[];
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">entries</span> <span class="op">=</span> <span class="macro">vec!</span>[];
 
         <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="number">2</span> {
             <span class="ident">entries</span>.<span class="ident">clear</span>();
@@ -1632,7 +1632,7 @@
                 <span class="ident">entries</span>.<span class="ident">push</span>((<span class="ident">addr</span>, <span class="ident">val</span>));
             }
 
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">addrs</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[];
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">addrs</span> <span class="op">=</span> <span class="macro">vec!</span>[];
 
             <span class="kw">for</span> (<span class="ident">addr</span>, <span class="kw">_</span>) <span class="kw">in</span> <span class="ident">entries</span>.<span class="ident">drain</span>(..) {
                 <span class="ident">addrs</span>.<span class="ident">push</span>(<span class="ident">addr</span>);
@@ -1642,7 +1642,7 @@
 
             <span class="comment">// The first page is never freed</span>
             <span class="kw">for</span> <span class="ident">addr</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">addrs</span>[<span class="ident">PAGE_INITIAL_SIZE</span>..] {
-                <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">slab</span>.<span class="ident">get</span>(<span class="kw-2">*</span><span class="ident">addr</span>).<span class="ident">is_none</span>());
+                <span class="macro">assert!</span>(<span class="ident">slab</span>.<span class="ident">get</span>(<span class="kw-2">*</span><span class="ident">addr</span>).<span class="ident">is_none</span>());
             }
         }
     }
@@ -1651,7 +1651,7 @@
     <span class="kw">fn</span> <span class="ident">issue_3014</span>() {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">slab</span> <span class="op">=</span> <span class="ident">Slab</span>::<span class="op">&lt;</span><span class="ident">Foo</span><span class="op">&gt;</span>::<span class="ident">new</span>();
         <span class="kw">let</span> <span class="ident">alloc</span> <span class="op">=</span> <span class="ident">slab</span>.<span class="ident">allocator</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">entries</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[];
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">entries</span> <span class="op">=</span> <span class="macro">vec!</span>[];
 
         <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="number">5</span> {
             <span class="ident">entries</span>.<span class="ident">clear</span>();
@@ -1665,8 +1665,8 @@
             }
 
             <span class="kw">for</span> (<span class="ident">addr</span>, <span class="ident">val</span>, <span class="ident">i</span>) <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">entries</span> {
-                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="kw-2">*</span><span class="ident">i</span>, <span class="ident">val</span>.<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
-                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="kw-2">*</span><span class="ident">i</span>, <span class="ident">slab</span>.<span class="ident">get</span>(<span class="kw-2">*</span><span class="ident">addr</span>).<span class="ident">unwrap</span>().<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
+                <span class="macro">assert_eq!</span>(<span class="kw-2">*</span><span class="ident">i</span>, <span class="ident">val</span>.<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
+                <span class="macro">assert_eq!</span>(<span class="kw-2">*</span><span class="ident">i</span>, <span class="ident">slab</span>.<span class="ident">get</span>(<span class="kw-2">*</span><span class="ident">addr</span>).<span class="ident">unwrap</span>().<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
             }
 
             <span class="comment">// Release the last entry</span>
@@ -1678,8 +1678,8 @@
             <span class="comment">// Check all the addresses</span>
 
             <span class="kw">for</span> (<span class="ident">addr</span>, <span class="ident">val</span>, <span class="ident">i</span>) <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">entries</span> {
-                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="kw-2">*</span><span class="ident">i</span>, <span class="ident">val</span>.<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
-                <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="kw-2">*</span><span class="ident">i</span>, <span class="ident">slab</span>.<span class="ident">get</span>(<span class="kw-2">*</span><span class="ident">addr</span>).<span class="ident">unwrap</span>().<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
+                <span class="macro">assert_eq!</span>(<span class="kw-2">*</span><span class="ident">i</span>, <span class="ident">val</span>.<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
+                <span class="macro">assert_eq!</span>(<span class="kw-2">*</span><span class="ident">i</span>, <span class="ident">slab</span>.<span class="ident">get</span>(<span class="kw-2">*</span><span class="ident">addr</span>).<span class="ident">unwrap</span>().<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">SeqCst</span>));
             }
         }
     }

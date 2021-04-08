@@ -654,13 +654,13 @@
 <span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">docsrs</span>, <span class="ident">feature</span>(<span class="ident">doc_cfg</span>))]</span>
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;cfg-target-has-atomic&quot;</span>, <span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;unstable&quot;</span>)))]</span>
-<span class="macro">compile_error</span><span class="macro">!</span>(<span class="string">&quot;The `cfg-target-has-atomic` feature requires the `unstable` feature as an explicit opt-in to unstable features&quot;</span>);
+<span class="macro">compile_error!</span>(<span class="string">&quot;The `cfg-target-has-atomic` feature requires the `unstable` feature as an explicit opt-in to unstable features&quot;</span>);
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;bilock&quot;</span>, <span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;unstable&quot;</span>)))]</span>
-<span class="macro">compile_error</span><span class="macro">!</span>(<span class="string">&quot;The `bilock` feature requires the `unstable` feature as an explicit opt-in to unstable features&quot;</span>);
+<span class="macro">compile_error!</span>(<span class="string">&quot;The `bilock` feature requires the `unstable` feature as an explicit opt-in to unstable features&quot;</span>);
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;read-initializer&quot;</span>, <span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;unstable&quot;</span>)))]</span>
-<span class="macro">compile_error</span><span class="macro">!</span>(<span class="string">&quot;The `read-initializer` feature requires the `unstable` feature as an explicit opt-in to unstable features&quot;</span>);
+<span class="macro">compile_error!</span>(<span class="string">&quot;The `read-initializer` feature requires the `unstable` feature as an explicit opt-in to unstable features&quot;</span>);
 
 <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span> <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_core</span>::<span class="ident">future</span>::{<span class="ident">Future</span>, <span class="ident">TryFuture</span>};
 <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span> <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">future</span>::{<span class="ident">FutureExt</span>, <span class="ident">TryFutureExt</span>};

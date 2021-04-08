@@ -363,7 +363,7 @@
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="attribute">#![<span class="ident">allow</span>(<span class="ident">unused_macros</span>)]</span>
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">feature</span> {
+<span class="macro">macro_rules!</span> <span class="ident">feature</span> {
     (
         <span class="attribute">#![<span class="macro-nonterminal">$</span><span class="macro-nonterminal">meta</span>:<span class="ident">meta</span>]</span>
         $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="op">*</span>
@@ -377,7 +377,7 @@
 }
 
 <span class="doccomment">/// Enables enter::block_on</span>
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_block_on</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_block_on</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(
@@ -392,7 +392,7 @@
 }
 
 <span class="doccomment">/// Enables internal `AtomicWaker` impl</span>
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_atomic_waker_impl</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_atomic_waker_impl</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(
@@ -408,7 +408,7 @@
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_fs</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_fs</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;fs&quot;</span>)]</span>
@@ -418,13 +418,13 @@
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_io_blocking</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_io_blocking</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $( <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;io-std&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;fs&quot;</span>))]</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span> )<span class="op">*</span>
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_io_driver</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_io_driver</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(
@@ -442,7 +442,7 @@
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_io_driver_impl</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_io_driver_impl</span> {
     ( $( <span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span> )<span class="op">*</span> ) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(
@@ -455,7 +455,7 @@
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_not_io_driver</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_not_io_driver</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">any</span>(
@@ -468,7 +468,7 @@
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_io_readiness</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_io_readiness</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;net&quot;</span>)]</span>
@@ -477,7 +477,7 @@
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_io_std</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_io_std</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;io-std&quot;</span>)]</span>
@@ -487,7 +487,7 @@
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_io_util</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_io_util</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;io-util&quot;</span>)]</span>
@@ -497,25 +497,25 @@
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_not_io_util</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_not_io_util</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $( <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;io-util&quot;</span>))]</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span> )<span class="op">*</span>
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_loom</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_loom</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $( <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">loom</span>)]</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span> )<span class="op">*</span>
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_not_loom</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_not_loom</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $( <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">loom</span>))]</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span> )<span class="op">*</span>
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_macros</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_macros</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;macros&quot;</span>)]</span>
@@ -526,7 +526,7 @@
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_net</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_net</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;net&quot;</span>)]</span>
@@ -536,7 +536,7 @@
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_net_unix</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_net_unix</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">unix</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;net&quot;</span>))]</span>
@@ -546,7 +546,7 @@
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_process</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_process</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;process&quot;</span>)]</span>
@@ -557,15 +557,15 @@
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_process_driver</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_process_driver</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">loom</span>))]</span>
-        <span class="macro">cfg_process</span><span class="macro">!</span> { $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>)<span class="op">*</span> }
+        <span class="macro">cfg_process!</span> { $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>)<span class="op">*</span> }
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_not_process_driver</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_not_process_driver</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">all</span>(<span class="ident">unix</span>, <span class="ident">not</span>(<span class="ident">loom</span>), <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;process&quot;</span>)))]</span>
@@ -574,7 +574,7 @@
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_signal</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_signal</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;signal&quot;</span>)]</span>
@@ -585,7 +585,7 @@
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_signal_internal</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_signal_internal</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;signal&quot;</span>, <span class="ident">all</span>(<span class="ident">unix</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;process&quot;</span>)))]</span>
@@ -595,7 +595,7 @@
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_not_signal_internal</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_not_signal_internal</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">loom</span>, <span class="ident">not</span>(<span class="ident">unix</span>), <span class="ident">not</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;signal&quot;</span>, <span class="ident">all</span>(<span class="ident">unix</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;process&quot;</span>)))))]</span>
@@ -604,7 +604,7 @@
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_sync</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_sync</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;sync&quot;</span>)]</span>
@@ -614,13 +614,13 @@
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_not_sync</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_not_sync</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $( <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;sync&quot;</span>))]</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span> )<span class="op">*</span>
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_rt</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_rt</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;rt&quot;</span>)]</span>
@@ -630,13 +630,13 @@
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_not_rt</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_not_rt</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $( <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;rt&quot;</span>))]</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span> )<span class="op">*</span>
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_rt_multi_thread</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_rt_multi_thread</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;rt-multi-thread&quot;</span>)]</span>
@@ -646,13 +646,13 @@
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_not_rt_multi_thread</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_not_rt_multi_thread</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $( <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;rt-multi-thread&quot;</span>))]</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span> )<span class="op">*</span>
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_test_util</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_test_util</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;test-util&quot;</span>)]</span>
@@ -662,13 +662,13 @@
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_not_test_util</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_not_test_util</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $( <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;test-util&quot;</span>))]</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span> )<span class="op">*</span>
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_time</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_time</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;time&quot;</span>)]</span>
@@ -678,13 +678,13 @@
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_not_time</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_not_time</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $( <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;time&quot;</span>))]</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span> )<span class="op">*</span>
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_trace</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_trace</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">tokio_unstable</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;tracing&quot;</span>))]</span>
@@ -694,7 +694,7 @@
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_not_trace</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_not_trace</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">not</span>(<span class="ident">tokio_unstable</span>), <span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;tracing&quot;</span>)))]</span>
@@ -703,7 +703,7 @@
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cfg_coop</span> {
+<span class="macro">macro_rules!</span> <span class="ident">cfg_coop</span> {
     ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">item</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(

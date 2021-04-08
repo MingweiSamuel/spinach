@@ -576,7 +576,7 @@
                     <span class="prelude-val">None</span>
                 } <span class="kw">else</span> {
                     <span class="ident">shared</span>.<span class="ident">num_th</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
-                    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">shared</span>.<span class="ident">shutdown_tx</span>.<span class="ident">is_some</span>());
+                    <span class="macro">assert!</span>(<span class="ident">shared</span>.<span class="ident">shutdown_tx</span>.<span class="ident">is_some</span>());
                     <span class="ident">shared</span>.<span class="ident">shutdown_tx</span>.<span class="ident">clone</span>()
                 }
             } <span class="kw">else</span> {

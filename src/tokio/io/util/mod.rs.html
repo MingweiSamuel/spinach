@@ -95,7 +95,7 @@
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="attribute">#![<span class="ident">allow</span>(<span class="ident">unreachable_pub</span>)]</span> <span class="comment">// https://github.com/rust-lang/rust/issues/57411</span>
 
-<span class="macro">cfg_io_util</span><span class="macro">!</span> {
+<span class="macro">cfg_io_util!</span> {
     <span class="kw">mod</span> <span class="ident">async_buf_read_ext</span>;
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">async_buf_read_ext</span>::<span class="ident">AsyncBufReadExt</span>;
 
@@ -144,7 +144,7 @@
 
     <span class="kw">mod</span> <span class="ident">read_to_end</span>;
     <span class="kw">mod</span> <span class="ident">vec_with_initialized</span>;
-    <span class="macro">cfg_process</span><span class="macro">!</span> {
+    <span class="macro">cfg_process!</span> {
         <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="ident">read_to_end</span>::<span class="ident">read_to_end</span>;
     }
 
@@ -176,8 +176,8 @@
     <span class="kw">const</span> <span class="ident">DEFAULT_BUF_SIZE</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">8</span> <span class="op">*</span> <span class="number">1024</span>;
 }
 
-<span class="macro">cfg_not_io_util</span><span class="macro">!</span> {
-    <span class="macro">cfg_process</span><span class="macro">!</span> {
+<span class="macro">cfg_not_io_util!</span> {
+    <span class="macro">cfg_process!</span> {
         <span class="kw">mod</span> <span class="ident">vec_with_initialized</span>;
         <span class="kw">mod</span> <span class="ident">read_to_end</span>;
         <span class="comment">// Used by process</span>

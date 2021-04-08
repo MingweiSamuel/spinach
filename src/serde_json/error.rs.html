@@ -603,7 +603,7 @@
             <span class="ident">err</span>
         } <span class="kw">else</span> {
             <span class="kw">match</span> <span class="ident">j</span>.<span class="ident">classify</span>() {
-                <span class="ident">Category</span>::<span class="ident">Io</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+                <span class="ident">Category</span>::<span class="ident">Io</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable!</span>(),
                 <span class="ident">Category</span>::<span class="ident">Syntax</span> <span class="op">|</span> <span class="ident">Category</span>::<span class="ident">Data</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">InvalidData</span>, <span class="ident">j</span>),
                 <span class="ident">Category</span>::<span class="ident">Eof</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">UnexpectedEof</span>, <span class="ident">j</span>),
             }
@@ -775,7 +775,7 @@
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">line</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
             <span class="ident">Display</span>::<span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">code</span>, <span class="ident">f</span>)
         } <span class="kw">else</span> {
-            <span class="macro">write</span><span class="macro">!</span>(
+            <span class="macro">write!</span>(
                 <span class="ident">f</span>,
                 <span class="string">&quot;{} at line {} column {}&quot;</span>,
                 <span class="self">self</span>.<span class="ident">code</span>, <span class="self">self</span>.<span class="ident">line</span>, <span class="self">self</span>.<span class="ident">column</span>
@@ -788,7 +788,7 @@
 <span class="comment">// end up seeing this representation because it is what unwrap() shows.</span>
 <span class="kw">impl</span> <span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Error</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-        <span class="macro">write</span><span class="macro">!</span>(
+        <span class="macro">write!</span>(
             <span class="ident">f</span>,
             <span class="string">&quot;Error({:?}, line: {}, column: {})&quot;</span>,
             <span class="self">self</span>.<span class="ident">err</span>.<span class="ident">code</span>.<span class="ident">to_string</span>(),
@@ -807,9 +807,9 @@
     <span class="attribute">#[<span class="ident">cold</span>]</span>
     <span class="kw">fn</span> <span class="ident">invalid_type</span>(<span class="ident">unexp</span>: <span class="ident">de</span>::<span class="ident">Unexpected</span>, <span class="ident">exp</span>: <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">de</span>::<span class="ident">Expected</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="ident">de</span>::<span class="ident">Unexpected</span>::<span class="ident">Unit</span> <span class="op">=</span> <span class="ident">unexp</span> {
-            <span class="ident">Error</span>::<span class="ident">custom</span>(<span class="macro">format_args</span><span class="macro">!</span>(<span class="string">&quot;invalid type: null, expected {}&quot;</span>, <span class="ident">exp</span>))
+            <span class="ident">Error</span>::<span class="ident">custom</span>(<span class="macro">format_args!</span>(<span class="string">&quot;invalid type: null, expected {}&quot;</span>, <span class="ident">exp</span>))
         } <span class="kw">else</span> {
-            <span class="ident">Error</span>::<span class="ident">custom</span>(<span class="macro">format_args</span><span class="macro">!</span>(<span class="string">&quot;invalid type: {}, expected {}&quot;</span>, <span class="ident">unexp</span>, <span class="ident">exp</span>))
+            <span class="ident">Error</span>::<span class="ident">custom</span>(<span class="macro">format_args!</span>(<span class="string">&quot;invalid type: {}, expected {}&quot;</span>, <span class="ident">unexp</span>, <span class="ident">exp</span>))
         }
     }
 }

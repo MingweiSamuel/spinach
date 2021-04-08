@@ -97,7 +97,7 @@
     }
 }
 
-<span class="macro">pin_project</span><span class="macro">!</span> {
+<span class="macro">pin_project!</span> {
     <span class="doccomment">/// Creates a future which will read exactly enough bytes to fill `buf`,</span>
     <span class="doccomment">/// returning an error if EOF is hit sooner.</span>
     <span class="doccomment">///</span>
@@ -130,7 +130,7 @@
             <span class="comment">// if our buffer is empty, then we need to read some data to continue.</span>
             <span class="kw">let</span> <span class="ident">rem</span> <span class="op">=</span> <span class="ident">me</span>.<span class="ident">buf</span>.<span class="ident">remaining</span>();
             <span class="kw">if</span> <span class="ident">rem</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
-                <span class="macro">ready</span><span class="macro">!</span>(<span class="ident">Pin</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">me</span>.<span class="ident">reader</span>).<span class="ident">poll_read</span>(<span class="ident">cx</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">me</span>.<span class="ident">buf</span>))<span class="question-mark">?</span>;
+                <span class="macro">ready!</span>(<span class="ident">Pin</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">me</span>.<span class="ident">reader</span>).<span class="ident">poll_read</span>(<span class="ident">cx</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">me</span>.<span class="ident">buf</span>))<span class="question-mark">?</span>;
                 <span class="kw">if</span> <span class="ident">me</span>.<span class="ident">buf</span>.<span class="ident">remaining</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">rem</span> {
                     <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">eof</span>()).<span class="ident">into</span>();
                 }

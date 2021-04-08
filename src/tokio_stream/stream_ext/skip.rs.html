@@ -72,7 +72,7 @@
 <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 <span class="kw">use</span> <span class="ident">pin_project_lite</span>::<span class="ident">pin_project</span>;
 
-<span class="macro">pin_project</span><span class="macro">!</span> {
+<span class="macro">pin_project!</span> {
     <span class="doccomment">/// Stream for the [`skip`](super::StreamExt::skip) method.</span>
     <span class="attribute">#[<span class="ident">must_use</span> <span class="op">=</span> <span class="string">&quot;streams do nothing unless polled&quot;</span>]</span>
     <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Skip</span><span class="op">&lt;</span><span class="ident">St</span><span class="op">&gt;</span> {
@@ -107,7 +107,7 @@
 
     <span class="kw">fn</span> <span class="ident">poll_next</span>(<span class="kw-2">mut</span> <span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Item</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">loop</span> {
-            <span class="kw">match</span> <span class="macro">ready</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">as_mut</span>().<span class="ident">project</span>().<span class="ident">stream</span>.<span class="ident">poll_next</span>(<span class="ident">cx</span>)) {
+            <span class="kw">match</span> <span class="macro">ready!</span>(<span class="self">self</span>.<span class="ident">as_mut</span>().<span class="ident">project</span>().<span class="ident">stream</span>.<span class="ident">poll_next</span>(<span class="ident">cx</span>)) {
                 <span class="prelude-val">Some</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="kw">if</span> <span class="self">self</span>.<span class="ident">remaining</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
                         <span class="kw">return</span> <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">e</span>));

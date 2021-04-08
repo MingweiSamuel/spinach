@@ -403,15 +403,15 @@
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">tokio_track_caller</span>)]</span>
             <span class="kw">let</span> <span class="ident">location</span> <span class="op">=</span> <span class="ident">std</span>::<span class="ident">panic</span>::<span class="ident">Location</span>::<span class="ident">caller</span>();
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">tokio_track_caller</span>)]</span>
-            <span class="kw">let</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">tracing</span>::<span class="macro">trace_span</span><span class="macro">!</span>(
+            <span class="kw">let</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">tracing</span>::<span class="macro">trace_span!</span>(
                 <span class="ident">target</span>: <span class="string">&quot;tokio::task&quot;</span>,
                 <span class="string">&quot;task&quot;</span>,
                 <span class="ident">kind</span> <span class="op">=</span> <span class="op">%</span><span class="string">&quot;blocking&quot;</span>,
                 <span class="ident">function</span> <span class="op">=</span> <span class="op">%</span><span class="ident">std</span>::<span class="ident">any</span>::<span class="ident">type_name</span>::<span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(),
-                <span class="ident">spawn</span>.<span class="ident">location</span> <span class="op">=</span> <span class="op">%</span><span class="macro">format_args</span><span class="macro">!</span>(<span class="string">&quot;{}:{}:{}&quot;</span>, <span class="ident">location</span>.<span class="ident">file</span>(), <span class="ident">location</span>.<span class="ident">line</span>(), <span class="ident">location</span>.<span class="ident">column</span>()),
+                <span class="ident">spawn</span>.<span class="ident">location</span> <span class="op">=</span> <span class="op">%</span><span class="macro">format_args!</span>(<span class="string">&quot;{}:{}:{}&quot;</span>, <span class="ident">location</span>.<span class="ident">file</span>(), <span class="ident">location</span>.<span class="ident">line</span>(), <span class="ident">location</span>.<span class="ident">column</span>()),
             );
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">tokio_track_caller</span>))]</span>
-            <span class="kw">let</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">tracing</span>::<span class="macro">trace_span</span><span class="macro">!</span>(
+            <span class="kw">let</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">tracing</span>::<span class="macro">trace_span!</span>(
                 <span class="ident">target</span>: <span class="string">&quot;tokio::task&quot;</span>,
                 <span class="string">&quot;task&quot;</span>,
                 <span class="ident">kind</span> <span class="op">=</span> <span class="op">%</span><span class="string">&quot;blocking&quot;</span>,

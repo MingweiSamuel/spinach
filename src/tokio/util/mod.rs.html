@@ -48,7 +48,7 @@
 <span id="45">45</span>
 <span id="46">46</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="macro">cfg_io_driver</span><span class="macro">!</span> {
+<span class="macro">cfg_io_driver!</span> {
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod</span> <span class="ident">bit</span>;
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod</span> <span class="ident">slab</span>;
 }
@@ -67,13 +67,13 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;rt-multi-thread&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;macros&quot;</span>))]</span>
 <span class="kw">mod</span> <span class="ident">rand</span>;
 
-<span class="macro">cfg_rt</span><span class="macro">!</span> {
+<span class="macro">cfg_rt!</span> {
     <span class="kw">mod</span> <span class="ident">wake</span>;
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="ident">wake</span>::<span class="ident">WakerRef</span>;
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="ident">wake</span>::{<span class="ident">waker_ref</span>, <span class="ident">Wake</span>};
 }
 
-<span class="macro">cfg_rt_multi_thread</span><span class="macro">!</span> {
+<span class="macro">cfg_rt_multi_thread!</span> {
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="self">self</span>::<span class="ident">rand</span>::<span class="ident">FastRand</span>;
 
     <span class="kw">mod</span> <span class="ident">try_lock</span>;

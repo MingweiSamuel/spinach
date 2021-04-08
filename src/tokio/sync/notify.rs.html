@@ -1163,7 +1163,7 @@
                         <span class="comment">// Safety: `waiters` lock is still held.</span>
                         <span class="kw">let</span> <span class="ident">waiter</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">waiter</span>.<span class="ident">as_mut</span>() };
 
-                        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">waiter</span>.<span class="ident">notified</span>.<span class="ident">is_none</span>());
+                        <span class="macro">assert!</span>(<span class="ident">waiter</span>.<span class="ident">notified</span>.<span class="ident">is_none</span>());
 
                         <span class="ident">waiter</span>.<span class="ident">notified</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">NotificationType</span>::<span class="ident">AllWaiters</span>);
 
@@ -1221,7 +1221,7 @@
                     <span class="prelude-val">Ok</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">None</span>,
                     <span class="prelude-val">Err</span>(<span class="ident">actual</span>) <span class="op">=</span><span class="op">&gt;</span> {
                         <span class="kw">let</span> <span class="ident">actual_state</span> <span class="op">=</span> <span class="ident">get_state</span>(<span class="ident">actual</span>);
-                        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">actual_state</span> <span class="op">=</span><span class="op">=</span> <span class="ident">EMPTY</span> <span class="op">|</span><span class="op">|</span> <span class="ident">actual_state</span> <span class="op">=</span><span class="op">=</span> <span class="ident">NOTIFIED</span>);
+                        <span class="macro">assert!</span>(<span class="ident">actual_state</span> <span class="op">=</span><span class="op">=</span> <span class="ident">EMPTY</span> <span class="op">|</span><span class="op">|</span> <span class="ident">actual_state</span> <span class="op">=</span><span class="op">=</span> <span class="ident">NOTIFIED</span>);
                         <span class="ident">state</span>.<span class="ident">store</span>(<span class="ident">set_state</span>(<span class="ident">actual</span>, <span class="ident">NOTIFIED</span>), <span class="ident">SeqCst</span>);
                         <span class="kw">return</span> <span class="prelude-val">None</span>;
                     }
@@ -1238,7 +1238,7 @@
                 <span class="comment">// Safety: `waiters` lock is still held.</span>
                 <span class="kw">let</span> <span class="ident">waiter</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">waiter</span>.<span class="ident">as_mut</span>() };
 
-                <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">waiter</span>.<span class="ident">notified</span>.<span class="ident">is_none</span>());
+                <span class="macro">assert!</span>(<span class="ident">waiter</span>.<span class="ident">notified</span>.<span class="ident">is_none</span>());
 
                 <span class="ident">waiter</span>.<span class="ident">notified</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">NotificationType</span>::<span class="ident">OneWaiter</span>);
                 <span class="kw">let</span> <span class="ident">waker</span> <span class="op">=</span> <span class="ident">waiter</span>.<span class="ident">waker</span>.<span class="ident">take</span>();
@@ -1253,7 +1253,7 @@
 
                 <span class="kw">return</span> <span class="ident">waker</span>;
             }
-            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable!</span>(),
         }
     }
 }
@@ -1330,7 +1330,7 @@
                                 );
 
                                 <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">actual</span>) <span class="op">=</span> <span class="ident">res</span> {
-                                    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">get_state</span>(<span class="ident">actual</span>), <span class="ident">NOTIFIED</span>);
+                                    <span class="macro">assert_eq!</span>(<span class="ident">get_state</span>(<span class="ident">actual</span>), <span class="ident">NOTIFIED</span>);
                                     <span class="ident">curr</span> <span class="op">=</span> <span class="ident">actual</span>;
                                 } <span class="kw">else</span> {
                                     <span class="kw">break</span>;
@@ -1353,12 +1353,12 @@
                                         <span class="kw">return</span> <span class="ident">Poll</span>::<span class="ident">Ready</span>(());
                                     }
                                     <span class="prelude-val">Err</span>(<span class="ident">actual</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                                        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">get_state</span>(<span class="ident">actual</span>), <span class="ident">EMPTY</span>);
+                                        <span class="macro">assert_eq!</span>(<span class="ident">get_state</span>(<span class="ident">actual</span>), <span class="ident">EMPTY</span>);
                                         <span class="ident">curr</span> <span class="op">=</span> <span class="ident">actual</span>;
                                     }
                                 }
                             }
-                            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+                            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable!</span>(),
                         }
                     }
 

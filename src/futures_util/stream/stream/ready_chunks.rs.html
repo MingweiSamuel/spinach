@@ -135,7 +135,7 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">St</span>: <span class="ident">Stream</span><span class="op">&gt;</span> <span class="ident">ReadyChunks</span><span class="op">&lt;</span><span class="ident">St</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="ident">St</span>: <span class="ident">Stream</span> {
     <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">stream</span>: <span class="ident">St</span>, <span class="ident">capacity</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">capacity</span> <span class="op">&gt;</span> <span class="number">0</span>);
+        <span class="macro">assert!</span>(<span class="ident">capacity</span> <span class="op">&gt;</span> <span class="number">0</span>);
 
         <span class="self">Self</span> {
             <span class="ident">stream</span>: <span class="kw">super</span>::<span class="ident">Fuse</span>::<span class="ident">new</span>(<span class="ident">stream</span>),
@@ -144,7 +144,7 @@
         }
     }
 
-    <span class="macro">delegate_access_inner</span><span class="macro">!</span>(<span class="ident">stream</span>, <span class="ident">St</span>, (.));
+    <span class="macro">delegate_access_inner!</span>(<span class="ident">stream</span>, <span class="ident">St</span>, (.));
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">St</span>: <span class="ident">Stream</span><span class="op">&gt;</span> <span class="ident">Stream</span> <span class="kw">for</span> <span class="ident">ReadyChunks</span><span class="op">&lt;</span><span class="ident">St</span><span class="op">&gt;</span> {
@@ -220,7 +220,7 @@
 {
     <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">S</span>::<span class="ident">Error</span>;
 
-    <span class="macro">delegate_sink</span><span class="macro">!</span>(<span class="ident">stream</span>, <span class="ident">Item</span>);
+    <span class="macro">delegate_sink!</span>(<span class="ident">stream</span>, <span class="ident">Item</span>);
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="futures_util" data-search-js="../../../../search-index.js"></div>

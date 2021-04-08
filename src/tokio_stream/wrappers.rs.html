@@ -56,7 +56,7 @@
 
 <span class="doccomment">/// Error types for the wrappers.</span>
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">errors</span> {
-    <span class="macro">cfg_sync</span><span class="macro">!</span> {
+    <span class="macro">cfg_sync!</span> {
         <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">wrappers</span>::<span class="ident">broadcast</span>::<span class="ident">BroadcastStreamRecvError</span>;
     }
 }
@@ -67,7 +67,7 @@
 <span class="kw">mod</span> <span class="ident">mpsc_unbounded</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">mpsc_unbounded</span>::<span class="ident">UnboundedReceiverStream</span>;
 
-<span class="macro">cfg_sync</span><span class="macro">!</span> {
+<span class="macro">cfg_sync!</span> {
     <span class="kw">mod</span> <span class="ident">broadcast</span>;
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">broadcast</span>::<span class="ident">BroadcastStream</span>;
 
@@ -75,12 +75,12 @@
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">watch</span>::<span class="ident">WatchStream</span>;
 }
 
-<span class="macro">cfg_time</span><span class="macro">!</span> {
+<span class="macro">cfg_time!</span> {
     <span class="kw">mod</span> <span class="ident">interval</span>;
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">interval</span>::<span class="ident">IntervalStream</span>;
 }
 
-<span class="macro">cfg_net</span><span class="macro">!</span> {
+<span class="macro">cfg_net!</span> {
     <span class="kw">mod</span> <span class="ident">tcp_listener</span>;
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">tcp_listener</span>::<span class="ident">TcpListenerStream</span>;
 
@@ -90,7 +90,7 @@
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">unix_listener</span>::<span class="ident">UnixListenerStream</span>;
 }
 
-<span class="macro">cfg_io_util</span><span class="macro">!</span> {
+<span class="macro">cfg_io_util!</span> {
     <span class="kw">mod</span> <span class="ident">split</span>;
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">split</span>::<span class="ident">SplitStream</span>;
 
@@ -98,7 +98,7 @@
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">lines</span>::<span class="ident">LinesStream</span>;
 }
 
-<span class="macro">cfg_fs</span><span class="macro">!</span> {
+<span class="macro">cfg_fs!</span> {
     <span class="kw">mod</span> <span class="ident">read_dir</span>;
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">read_dir</span>::<span class="ident">ReadDirStream</span>;
 }

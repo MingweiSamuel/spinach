@@ -601,13 +601,13 @@
 
 <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Driver</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-        <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;Driver&quot;</span>)
+        <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;Driver&quot;</span>)
     }
 }
 
 <span class="comment">// ===== impl Handle =====</span>
 
-<span class="macro">cfg_rt</span><span class="macro">!</span> {
+<span class="macro">cfg_rt!</span> {
     <span class="kw">impl</span> <span class="ident">Handle</span> {
         <span class="doccomment">/// Returns a handle to the current reactor</span>
         <span class="doccomment">///</span>
@@ -621,7 +621,7 @@
     }
 }
 
-<span class="macro">cfg_not_rt</span><span class="macro">!</span> {
+<span class="macro">cfg_not_rt!</span> {
     <span class="kw">impl</span> <span class="ident">Handle</span> {
         <span class="doccomment">/// Returns a handle to the current reactor</span>
         <span class="doccomment">///</span>
@@ -630,7 +630,7 @@
         <span class="doccomment">/// This function panics if there is no current reactor set, or if the `rt`</span>
         <span class="doccomment">/// feature flag is not enabled.</span>
         <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn</span> <span class="ident">current</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-            <span class="macro">panic</span><span class="macro">!</span>(<span class="kw">crate</span>::<span class="ident">util</span>::<span class="ident">error</span>::<span class="ident">CONTEXT_MISSING_ERROR</span>)
+            <span class="macro">panic!</span>(<span class="kw">crate</span>::<span class="ident">util</span>::<span class="ident">error</span>::<span class="ident">CONTEXT_MISSING_ERROR</span>)
         }
     }
 }
@@ -664,7 +664,7 @@
 
 <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Handle</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-        <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;Handle&quot;</span>)
+        <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;Handle&quot;</span>)
     }
 }
 

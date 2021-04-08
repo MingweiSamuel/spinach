@@ -904,7 +904,7 @@
     <span class="doccomment">/// let map: StreamMap&lt;&amp;str, Pending&lt;()&gt;&gt; = StreamMap::new();</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">StreamMap</span><span class="op">&lt;</span><span class="ident">K</span>, <span class="ident">V</span><span class="op">&gt;</span> {
-        <span class="ident">StreamMap</span> { <span class="ident">entries</span>: <span class="macro">vec</span><span class="macro">!</span>[] }
+        <span class="ident">StreamMap</span> { <span class="ident">entries</span>: <span class="macro">vec!</span>[] }
     }
 
     <span class="doccomment">/// Creates an empty `StreamMap` with the specified capacity.</span>
@@ -1209,7 +1209,7 @@
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> (<span class="ident">K</span>, <span class="ident">V</span>::<span class="ident">Item</span>);
 
     <span class="kw">fn</span> <span class="ident">poll_next</span>(<span class="kw-2">mut</span> <span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Item</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">idx</span>, <span class="ident">val</span>)) <span class="op">=</span> <span class="macro">ready</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">poll_next_entry</span>(<span class="ident">cx</span>)) {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">idx</span>, <span class="ident">val</span>)) <span class="op">=</span> <span class="macro">ready!</span>(<span class="self">self</span>.<span class="ident">poll_next_entry</span>(<span class="ident">cx</span>)) {
             <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">entries</span>[<span class="ident">idx</span>].<span class="number">0</span>.<span class="ident">clone</span>();
             <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Some</span>((<span class="ident">key</span>, <span class="ident">val</span>)))
         } <span class="kw">else</span> {
@@ -1323,7 +1323,7 @@
 
     <span class="comment">// Used by `StreamMap`</span>
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">thread_rng_n</span>(<span class="ident">n</span>: <span class="ident">u32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
-        <span class="macro">thread_local</span><span class="macro">!</span> {
+        <span class="macro">thread_local!</span> {
             <span class="kw">static</span> <span class="ident">THREAD_RNG</span>: <span class="ident">FastRand</span> <span class="op">=</span> <span class="ident">FastRand</span>::<span class="ident">new</span>(<span class="ident">loom</span>::<span class="ident">rand</span>::<span class="ident">seed</span>());
         }
 

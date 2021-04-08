@@ -10,7 +10,7 @@
 <span id="7">7</span>
 <span id="8">8</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">ready</span> {
+<span class="macro">macro_rules!</span> <span class="ident">ready</span> {
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>:<span class="ident">expr</span> $(,)<span class="question-mark">?</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span> {
             <span class="ident">std</span>::<span class="ident">task</span>::<span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="ident">t</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">t</span>,

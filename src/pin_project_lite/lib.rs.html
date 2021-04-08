@@ -2045,7 +2045,7 @@
 <span class="doccomment">/// [`Pin`]: core::pin::Pin</span>
 <span class="doccomment">/// [pin-project]: https://github.com/taiki-e/pin-project</span>
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">pin_project</span> {
+<span class="macro">macro_rules!</span> <span class="ident">pin_project</span> {
     <span class="comment">// Parses options</span>
     (
         $(<span class="attribute">#[<span class="ident">doc</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">doc</span>:<span class="ident">tt</span>)<span class="kw-2">*</span>]</span>)<span class="op">*</span>
@@ -2054,7 +2054,7 @@
         <span class="attribute">#[<span class="ident">project_replace</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_replace_ident</span>:<span class="ident">ident</span>]</span>
         $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">tt</span>:<span class="ident">tt</span>)<span class="op">*</span>
     ) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> {
+        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> {
             [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_mut_ident</span>][<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_ref_ident</span>][<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_replace_ident</span>]
             $(<span class="attribute">#[<span class="ident">doc</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">doc</span>)<span class="kw-2">*</span>]</span>)<span class="op">*</span>
             $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">tt</span>)<span class="op">*</span>
@@ -2066,7 +2066,7 @@
         <span class="attribute">#[<span class="ident">project_ref</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_ref_ident</span>:<span class="ident">ident</span>]</span>
         $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">tt</span>:<span class="ident">tt</span>)<span class="op">*</span>
     ) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> {
+        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> {
             [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_mut_ident</span>][<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_ref_ident</span>][]
             $(<span class="attribute">#[<span class="ident">doc</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">doc</span>)<span class="kw-2">*</span>]</span>)<span class="op">*</span>
             $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">tt</span>)<span class="op">*</span>
@@ -2078,7 +2078,7 @@
         <span class="attribute">#[<span class="ident">project_replace</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_replace_ident</span>:<span class="ident">ident</span>]</span>
         $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">tt</span>:<span class="ident">tt</span>)<span class="op">*</span>
     ) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> {
+        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> {
             [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_mut_ident</span>][][<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_replace_ident</span>]
             $(<span class="attribute">#[<span class="ident">doc</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">doc</span>)<span class="kw-2">*</span>]</span>)<span class="op">*</span>
             $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">tt</span>)<span class="op">*</span>
@@ -2090,7 +2090,7 @@
         <span class="attribute">#[<span class="ident">project_replace</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_replace_ident</span>:<span class="ident">ident</span>]</span>
         $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">tt</span>:<span class="ident">tt</span>)<span class="op">*</span>
     ) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> {
+        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> {
             [][<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_ref_ident</span>][<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_replace_ident</span>]
             $(<span class="attribute">#[<span class="ident">doc</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">doc</span>)<span class="kw-2">*</span>]</span>)<span class="op">*</span>
             $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">tt</span>)<span class="op">*</span>
@@ -2101,7 +2101,7 @@
         <span class="attribute">#[<span class="ident">project</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_mut_ident</span>:<span class="ident">ident</span>]</span>
         $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">tt</span>:<span class="ident">tt</span>)<span class="op">*</span>
     ) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> {
+        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> {
             [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_mut_ident</span>][][]
             $(<span class="attribute">#[<span class="ident">doc</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">doc</span>)<span class="kw-2">*</span>]</span>)<span class="op">*</span>
             $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">tt</span>)<span class="op">*</span>
@@ -2112,7 +2112,7 @@
         <span class="attribute">#[<span class="ident">project_ref</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_ref_ident</span>:<span class="ident">ident</span>]</span>
         $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">tt</span>:<span class="ident">tt</span>)<span class="op">*</span>
     ) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> {
+        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> {
             [][<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_ref_ident</span>][]
             $(<span class="attribute">#[<span class="ident">doc</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">doc</span>)<span class="kw-2">*</span>]</span>)<span class="op">*</span>
             $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">tt</span>)<span class="op">*</span>
@@ -2123,7 +2123,7 @@
         <span class="attribute">#[<span class="ident">project_replace</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_replace_ident</span>:<span class="ident">ident</span>]</span>
         $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">tt</span>:<span class="ident">tt</span>)<span class="op">*</span>
     ) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> {
+        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> {
             [][][<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_replace_ident</span>]
             $(<span class="attribute">#[<span class="ident">doc</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">doc</span>)<span class="kw-2">*</span>]</span>)<span class="op">*</span>
             $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">tt</span>)<span class="op">*</span>
@@ -2132,7 +2132,7 @@
     (
         $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">tt</span>:<span class="ident">tt</span>)<span class="op">*</span>
     ) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> {
+        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> {
             [][][]
             $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">tt</span>)<span class="op">*</span>
         }
@@ -2151,7 +2151,7 @@
 <span class="comment">// Not public API.</span>
 <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">__pin_project_internal</span> {
+<span class="macro">macro_rules!</span> <span class="ident">__pin_project_internal</span> {
     <span class="comment">// =============================================================================================</span>
     <span class="comment">// struct:main</span>
     (@<span class="kw">struct</span><span class="op">=</span><span class="op">&gt;</span><span class="ident">internal</span>;
@@ -2179,7 +2179,7 @@
             ),<span class="op">+</span>
         }
 
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> { @<span class="kw">struct</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_ty</span><span class="op">=</span><span class="op">&gt;</span><span class="ident">named</span>;
+        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> { @<span class="kw">struct</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_ty</span><span class="op">=</span><span class="op">&gt;</span><span class="ident">named</span>;
             [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_vis</span>]
             [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_mut_ident</span>)<span class="question-mark">?</span>]
             [<span class="ident">make_proj_field_mut</span>]
@@ -2192,7 +2192,7 @@
                 ),<span class="op">+</span>
             }
         }
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> { @<span class="kw">struct</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_ty</span><span class="op">=</span><span class="op">&gt;</span><span class="ident">named</span>;
+        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> { @<span class="kw">struct</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_ty</span><span class="op">=</span><span class="op">&gt;</span><span class="ident">named</span>;
             [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_vis</span>]
             [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_ref_ident</span>)<span class="question-mark">?</span>]
             [<span class="ident">make_proj_field_ref</span>]
@@ -2205,7 +2205,7 @@
                 ),<span class="op">+</span>
             }
         }
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> { @<span class="kw">struct</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_replace_ty</span><span class="op">=</span><span class="op">&gt;</span><span class="ident">named</span>;
+        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> { @<span class="kw">struct</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_replace_ty</span><span class="op">=</span><span class="op">&gt;</span><span class="ident">named</span>;
             [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_vis</span>]
             [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_replace_ident</span>)<span class="question-mark">?</span>]
             [<span class="ident">make_proj_field_replace</span>]
@@ -2227,7 +2227,7 @@
         <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">redundant_pub_crate</span>)]</span> <span class="comment">// This lint warns `pub(crate)` field in private struct.</span>
         <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">used_underscore_binding</span>)]</span>
         <span class="kw">const</span> <span class="kw">_</span>: () <span class="op">=</span> {
-            <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> { @<span class="kw">struct</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_ty</span><span class="op">=</span><span class="op">&gt;</span><span class="ident">unnamed</span>;
+            <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> { @<span class="kw">struct</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_ty</span><span class="op">=</span><span class="op">&gt;</span><span class="ident">unnamed</span>;
                 [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_vis</span>]
                 [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_mut_ident</span>)<span class="question-mark">?</span>][<span class="ident">Projection</span>]
                 [<span class="ident">make_proj_field_mut</span>]
@@ -2240,7 +2240,7 @@
                     ),<span class="op">+</span>
                 }
             }
-            <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> { @<span class="kw">struct</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_ty</span><span class="op">=</span><span class="op">&gt;</span><span class="ident">unnamed</span>;
+            <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> { @<span class="kw">struct</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_ty</span><span class="op">=</span><span class="op">&gt;</span><span class="ident">unnamed</span>;
                 [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_vis</span>]
                 [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_ref_ident</span>)<span class="question-mark">?</span>][<span class="ident">ProjectionRef</span>]
                 [<span class="ident">make_proj_field_ref</span>]
@@ -2253,7 +2253,7 @@
                     ),<span class="op">+</span>
                 }
             }
-            <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> { @<span class="kw">struct</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_replace_ty</span><span class="op">=</span><span class="op">&gt;</span><span class="ident">unnamed</span>;
+            <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> { @<span class="kw">struct</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_replace_ty</span><span class="op">=</span><span class="op">&gt;</span><span class="ident">unnamed</span>;
                 [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_vis</span>]
                 [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_replace_ident</span>)<span class="question-mark">?</span>][<span class="ident">ProjectionReplace</span>]
                 [<span class="ident">make_proj_field_replace</span>]
@@ -2271,7 +2271,7 @@
             $(<span class="kw">where</span>
                 $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">where_clause</span>)<span class="kw-2">*</span>)<span class="question-mark">?</span>
             {
-                <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> { @<span class="kw">struct</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_method</span>;
+                <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> { @<span class="kw">struct</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_method</span>;
                     [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_vis</span>]
                     [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_mut_ident</span>)<span class="question-mark">?</span>][<span class="ident">Projection</span>]
                     [<span class="ident">project</span> <span class="ident">get_unchecked_mut</span> <span class="kw-2">mut</span>]
@@ -2283,7 +2283,7 @@
                         ),<span class="op">+</span>
                     }
                 }
-                <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> { @<span class="kw">struct</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_method</span>;
+                <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> { @<span class="kw">struct</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_method</span>;
                     [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_vis</span>]
                     [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_ref_ident</span>)<span class="question-mark">?</span>][<span class="ident">ProjectionRef</span>]
                     [<span class="ident">project_ref</span> <span class="ident">get_ref</span>]
@@ -2295,7 +2295,7 @@
                         ),<span class="op">+</span>
                     }
                 }
-                <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> { @<span class="kw">struct</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_replace_method</span>;
+                <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> { @<span class="kw">struct</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_replace_method</span>;
                     [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_vis</span>]
                     [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_replace_ident</span>)<span class="question-mark">?</span>][<span class="ident">ProjectionReplace</span>]
                     [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty_generics</span>)<span class="kw-2">*</span>]
@@ -2308,17 +2308,17 @@
                 }
             }
 
-            <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> { @<span class="macro-nonterminal">make_unpin_impl</span>;
+            <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> { @<span class="macro-nonterminal">make_unpin_impl</span>;
                 [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">vis</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ident</span>]
                 [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">impl_generics</span>)<span class="kw-2">*</span>] [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty_generics</span>)<span class="kw-2">*</span>] [$(<span class="kw">where</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">where_clause</span>)<span class="kw-2">*</span>)<span class="question-mark">?</span>]
                 $(
-                    <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>: <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span>(@<span class="macro-nonterminal">make_unpin_bound</span>;
+                    <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>: <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span>(@<span class="macro-nonterminal">make_unpin_bound</span>;
                         $(<span class="attribute">#[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">pin</span>]</span>)<span class="question-mark">?</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field_ty</span>
                     )
                 ),<span class="op">+</span>
             }
 
-            <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> { @<span class="macro-nonterminal">make_drop_impl</span>;
+            <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> { @<span class="macro-nonterminal">make_drop_impl</span>;
                 [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">ident</span>]
                 [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">impl_generics</span>)<span class="kw-2">*</span>] [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty_generics</span>)<span class="kw-2">*</span>] [$(<span class="kw">where</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">where_clause</span>)<span class="kw-2">*</span>)<span class="question-mark">?</span>]
             }
@@ -2384,7 +2384,7 @@
             ),<span class="op">+</span>
         }
 
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> { @<span class="kw">enum</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_ty</span>;
+        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> { @<span class="kw">enum</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_ty</span>;
             [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_vis</span>]
             [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_mut_ident</span>)<span class="question-mark">?</span>]
             [<span class="ident">make_proj_field_mut</span>]
@@ -2401,7 +2401,7 @@
                 ),<span class="op">+</span>
             }
         }
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> { @<span class="kw">enum</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_ty</span>;
+        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> { @<span class="kw">enum</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_ty</span>;
             [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_vis</span>]
             [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_ref_ident</span>)<span class="question-mark">?</span>]
             [<span class="ident">make_proj_field_ref</span>]
@@ -2418,7 +2418,7 @@
                 ),<span class="op">+</span>
             }
         }
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> { @<span class="kw">enum</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_replace_ty</span>;
+        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> { @<span class="kw">enum</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_replace_ty</span>;
             [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_vis</span>]
             [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_replace_ident</span>)<span class="question-mark">?</span>]
             [<span class="ident">make_proj_field_replace</span>]
@@ -2446,7 +2446,7 @@
             $(<span class="kw">where</span>
                 $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">where_clause</span>)<span class="kw-2">*</span>)<span class="question-mark">?</span>
             {
-                <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> { @<span class="kw">enum</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_method</span>;
+                <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> { @<span class="kw">enum</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_method</span>;
                     [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_vis</span>]
                     [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_mut_ident</span>)<span class="question-mark">?</span>]
                     [<span class="ident">project</span> <span class="ident">get_unchecked_mut</span> <span class="kw-2">mut</span>]
@@ -2462,7 +2462,7 @@
                         ),<span class="op">+</span>
                     }
                 }
-                <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> { @<span class="kw">enum</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_method</span>;
+                <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> { @<span class="kw">enum</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_method</span>;
                     [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_vis</span>]
                     [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_ref_ident</span>)<span class="question-mark">?</span>]
                     [<span class="ident">project_ref</span> <span class="ident">get_ref</span>]
@@ -2478,7 +2478,7 @@
                         ),<span class="op">+</span>
                     }
                 }
-                <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> { @<span class="kw">enum</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_replace_method</span>;
+                <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> { @<span class="kw">enum</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_replace_method</span>;
                     [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_vis</span>]
                     [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_replace_ident</span>)<span class="question-mark">?</span>]
                     [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty_generics</span>)<span class="kw-2">*</span>]
@@ -2495,13 +2495,13 @@
                 }
             }
 
-            <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> { @<span class="macro-nonterminal">make_unpin_impl</span>;
+            <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> { @<span class="macro-nonterminal">make_unpin_impl</span>;
                 [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">vis</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ident</span>]
                 [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">impl_generics</span>)<span class="kw-2">*</span>] [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty_generics</span>)<span class="kw-2">*</span>] [$(<span class="kw">where</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">where_clause</span>)<span class="kw-2">*</span>)<span class="question-mark">?</span>]
                 $(
                     <span class="macro-nonterminal">$</span><span class="macro-nonterminal">variant</span>: ($(
                         $(
-                            <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span>(@<span class="macro-nonterminal">make_unpin_bound</span>;
+                            <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span>(@<span class="macro-nonterminal">make_unpin_bound</span>;
                                 $(<span class="attribute">#[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">pin</span>]</span>)<span class="question-mark">?</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field_ty</span>
                             )
                         ),<span class="op">+</span>
@@ -2509,7 +2509,7 @@
                 ),<span class="op">+</span>
             }
 
-            <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> { @<span class="macro-nonterminal">make_drop_impl</span>;
+            <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> { @<span class="macro-nonterminal">make_drop_impl</span>;
                 [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">ident</span>]
                 [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">impl_generics</span>)<span class="kw-2">*</span>] [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty_generics</span>)<span class="kw-2">*</span>] [$(<span class="kw">where</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">where_clause</span>)<span class="kw-2">*</span>)<span class="question-mark">?</span>]
             }
@@ -2537,7 +2537,7 @@
         [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">impl_generics</span>:<span class="ident">tt</span>)<span class="kw-2">*</span>] [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty_generics</span>:<span class="ident">tt</span>)<span class="kw-2">*</span>] [$(<span class="kw">where</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">where_clause</span>:<span class="ident">tt</span>)<span class="op">*</span> )<span class="question-mark">?</span>]
         $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>:<span class="ident">tt</span>)<span class="op">*</span>
     ) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> { @<span class="kw">struct</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_ty</span><span class="op">=</span><span class="op">&gt;</span><span class="ident">named</span>;
+        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> { @<span class="kw">struct</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_ty</span><span class="op">=</span><span class="op">&gt;</span><span class="ident">named</span>;
             [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_vis</span>]
             [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_ty_ident</span>]
             [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">make_proj_field</span>]
@@ -2574,7 +2574,7 @@
             $(, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">where_clause</span>)<span class="kw-2">*</span>)<span class="question-mark">?</span>
         {
             $(
-                <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field_vis</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>: <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span>(@<span class="macro-nonterminal">$</span><span class="macro-nonterminal">make_proj_field</span>;
+                <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field_vis</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>: <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span>(@<span class="macro-nonterminal">$</span><span class="macro-nonterminal">make_proj_field</span>;
                     $(<span class="attribute">#[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">pin</span>]</span>)<span class="question-mark">?</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field_ty</span>
                 )
             ),<span class="op">+</span>
@@ -2629,7 +2629,7 @@
             $($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">where_clause</span>)<span class="kw-2">*</span>)<span class="question-mark">?</span>
         {
             $(
-                <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field_vis</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>: <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span>(@<span class="macro-nonterminal">$</span><span class="macro-nonterminal">make_proj_field</span>;
+                <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field_vis</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>: <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span>(@<span class="macro-nonterminal">$</span><span class="macro-nonterminal">make_proj_field</span>;
                     $(<span class="attribute">#[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">pin</span>]</span>)<span class="question-mark">?</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field_ty</span>
                 )
             ),<span class="op">+</span>
@@ -2679,7 +2679,7 @@
             $(
                 <span class="macro-nonterminal">$</span><span class="macro-nonterminal">variant</span> $({
                     $(
-                        <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>: <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span>(@<span class="macro-nonterminal">$</span><span class="macro-nonterminal">make_proj_field</span>;
+                        <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>: <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span>(@<span class="macro-nonterminal">$</span><span class="macro-nonterminal">make_proj_field</span>;
                             $(<span class="attribute">#[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">pin</span>]</span>)<span class="question-mark">?</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field_ty</span>
                         )
                     ),<span class="op">+</span>
@@ -2725,7 +2725,7 @@
             $(
                 <span class="macro-nonterminal">$</span><span class="macro-nonterminal">variant</span> $({
                     $(
-                        <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>: <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span>(@<span class="macro-nonterminal">$</span><span class="macro-nonterminal">make_proj_field</span>;
+                        <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>: <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span>(@<span class="macro-nonterminal">$</span><span class="macro-nonterminal">make_proj_field</span>;
                             $(<span class="attribute">#[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">pin</span>]</span>)<span class="question-mark">?</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field_ty</span>
                         )
                     ),<span class="op">+</span>
@@ -2754,7 +2754,7 @@
     ) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_path</span>)<span class="op">*</span> {
             $(
-                <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>: <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span>(@<span class="macro-nonterminal">make_replace_field_proj</span>;
+                <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>: <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span>(@<span class="macro-nonterminal">make_replace_field_proj</span>;
                     $(<span class="attribute">#[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">pin</span>]</span>)<span class="question-mark">?</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>
                 )
             ),<span class="op">+</span>
@@ -2762,7 +2762,7 @@
 
         {
             ( $(
-                <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span>(@<span class="macro-nonterminal">make_unsafe_drop_in_place_guard</span>;
+                <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span>(@<span class="macro-nonterminal">make_unsafe_drop_in_place_guard</span>;
                     $(<span class="attribute">#[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">pin</span>]</span>)<span class="question-mark">?</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>
                 ),
             )<span class="op">*</span> );
@@ -2797,7 +2797,7 @@
                 <span class="kw">let</span> <span class="self">Self</span> { $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>),<span class="op">*</span> } <span class="op">=</span> <span class="self">self</span>.<span class="macro-nonterminal">$</span><span class="macro-nonterminal">get_method</span>();
                 <span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_ty_ident</span> {
                     $(
-                        <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>: <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span>(@<span class="macro-nonterminal">make_unsafe_field_proj</span>;
+                        <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>: <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span>(@<span class="macro-nonterminal">make_unsafe_field_proj</span>;
                             $(<span class="attribute">#[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">pin</span>]</span>)<span class="question-mark">?</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>
                         )
                     ),<span class="op">+</span>
@@ -2812,7 +2812,7 @@
         [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty_generics</span>:<span class="ident">tt</span>)<span class="kw-2">*</span>]
         $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">variant</span>:<span class="ident">tt</span>)<span class="op">*</span>
     ) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> { @<span class="kw">struct</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_method</span>;
+        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> { @<span class="kw">struct</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">make_proj_method</span>;
             [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_vis</span>]
             [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_ty_ident</span>][<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_ty_ident</span>]
             [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">method_ident</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">get_method</span> $(<span class="macro-nonterminal">$</span><span class="kw-2">mut</span>)<span class="question-mark">?</span>]
@@ -2848,7 +2848,7 @@
 
                 <span class="kw">let</span> <span class="self">Self</span> { $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>),<span class="op">*</span> } <span class="op">=</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">__self_ptr</span>;
 
-                <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span>{@<span class="macro-nonterminal">make_proj_replace_block</span>;
+                <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span>{@<span class="macro-nonterminal">make_proj_replace_block</span>;
                     [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_ty_ident</span>]
                     {
                         $(
@@ -2897,7 +2897,7 @@
                         })<span class="question-mark">?</span> <span class="op">=</span><span class="op">&gt;</span> {
                             <span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_ty_ident</span>::<span class="macro-nonterminal">$</span><span class="macro-nonterminal">variant</span> $({
                                 $(
-                                    <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>: <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span>(
+                                    <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>: <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span>(
                                         @<span class="macro-nonterminal">make_unsafe_field_proj</span>;
                                         $(<span class="attribute">#[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">pin</span>]</span>)<span class="question-mark">?</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>
                                     )
@@ -2951,7 +2951,7 @@
                         <span class="self">Self</span>::<span class="macro-nonterminal">$</span><span class="macro-nonterminal">variant</span> $({
                             $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">field</span>),<span class="op">+</span>
                         })<span class="question-mark">?</span> <span class="op">=</span><span class="op">&gt;</span> {
-                            <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span>{@<span class="macro-nonterminal">make_proj_replace_block</span>;
+                            <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span>{@<span class="macro-nonterminal">make_proj_replace_block</span>;
                                 [<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_ty_ident</span> :: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">variant</span>]
                                 $({
                                     $(
@@ -3172,7 +3172,7 @@
             ),<span class="op">+</span> $(,)<span class="question-mark">?</span>
         }
     ) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> { @<span class="kw">struct</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">internal</span>;
+        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> { @<span class="kw">struct</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">internal</span>;
             [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_mut_ident</span>)<span class="question-mark">?</span>]
             [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_ref_ident</span>)<span class="question-mark">?</span>]
             [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_replace_ident</span>)<span class="question-mark">?</span>]
@@ -3238,7 +3238,7 @@
             ),<span class="op">+</span> $(,)<span class="question-mark">?</span>
         }
     ) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> { @<span class="kw">struct</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">internal</span>;
+        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> { @<span class="kw">struct</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">internal</span>;
             [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_mut_ident</span>)<span class="question-mark">?</span>]
             [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_ref_ident</span>)<span class="question-mark">?</span>]
             [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_replace_ident</span>)<span class="question-mark">?</span>]
@@ -3310,7 +3310,7 @@
             ),<span class="op">+</span> $(,)<span class="question-mark">?</span>
         }
     ) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> { @<span class="kw">enum</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">internal</span>;
+        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> { @<span class="kw">enum</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">internal</span>;
             [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_mut_ident</span>)<span class="question-mark">?</span>]
             [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_ref_ident</span>)<span class="question-mark">?</span>]
             [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_replace_ident</span>)<span class="question-mark">?</span>]
@@ -3386,7 +3386,7 @@
             ),<span class="op">+</span> $(,)<span class="question-mark">?</span>
         }
     ) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal</span><span class="macro">!</span> { @<span class="kw">enum</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">internal</span>;
+        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">__pin_project_internal!</span> { @<span class="kw">enum</span><span class="op">=</span><span class="op">&gt;</span><span class="macro-nonterminal">internal</span>;
             [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_mut_ident</span>)<span class="question-mark">?</span>]
             [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_ref_ident</span>)<span class="question-mark">?</span>]
             [$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">proj_replace_ident</span>)<span class="question-mark">?</span>]

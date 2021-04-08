@@ -707,7 +707,7 @@
                             <span class="comment">// concurrent thread called `wake`. In this</span>
                             <span class="comment">// case, `actual` **must** be `REGISTERING |</span>
                             <span class="comment">// `WAKING`.</span>
-                            <span class="macro">debug_assert_eq</span><span class="macro">!</span>(<span class="ident">actual</span>, <span class="ident">REGISTERING</span> <span class="op">|</span> <span class="ident">WAKING</span>);
+                            <span class="macro">debug_assert_eq!</span>(<span class="ident">actual</span>, <span class="ident">REGISTERING</span> <span class="op">|</span> <span class="ident">WAKING</span>);
 
                             <span class="comment">// Take the waker to wake once the atomic operation has</span>
                             <span class="comment">// completed.</span>
@@ -756,7 +756,7 @@
                 <span class="comment">//</span>
                 <span class="comment">// We just want to maintain memory safety. It is ok to drop the</span>
                 <span class="comment">// call to `register`.</span>
-                <span class="macro">debug_assert</span><span class="macro">!</span>(
+                <span class="macro">debug_assert!</span>(
                     <span class="ident">state</span> <span class="op">=</span><span class="op">=</span> <span class="ident">REGISTERING</span> <span class="op">|</span><span class="op">|</span>
                     <span class="ident">state</span> <span class="op">=</span><span class="op">=</span> <span class="ident">REGISTERING</span> <span class="op">|</span> <span class="ident">WAKING</span>);
             }
@@ -802,7 +802,7 @@
                 <span class="comment">// doesn&#39;t matter if there are concurrent registering threads or</span>
                 <span class="comment">// not.</span>
                 <span class="comment">//</span>
-                <span class="macro">debug_assert</span><span class="macro">!</span>(
+                <span class="macro">debug_assert!</span>(
                     <span class="ident">state</span> <span class="op">=</span><span class="op">=</span> <span class="ident">REGISTERING</span> <span class="op">|</span><span class="op">|</span>
                     <span class="ident">state</span> <span class="op">=</span><span class="op">=</span> <span class="ident">REGISTERING</span> <span class="op">|</span> <span class="ident">WAKING</span> <span class="op">|</span><span class="op">|</span>
                     <span class="ident">state</span> <span class="op">=</span><span class="op">=</span> <span class="ident">WAKING</span>);
@@ -820,7 +820,7 @@
 
 <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">AtomicWaker</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-        <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;AtomicWaker&quot;</span>)
+        <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;AtomicWaker&quot;</span>)
     }
 }
 

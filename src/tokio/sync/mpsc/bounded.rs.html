@@ -794,7 +794,7 @@
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">sync</span>::<span class="ident">mpsc</span>::<span class="ident">error</span>::<span class="ident">TryRecvError</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">sync</span>::<span class="ident">mpsc</span>::<span class="ident">error</span>::{<span class="ident">SendError</span>, <span class="ident">TrySendError</span>};
 
-<span class="macro">cfg_time</span><span class="macro">!</span> {
+<span class="macro">cfg_time!</span> {
     <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">sync</span>::<span class="ident">mpsc</span>::<span class="ident">error</span>::<span class="ident">SendTimeoutError</span>;
     <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">time</span>::<span class="ident">Duration</span>;
 }
@@ -877,7 +877,7 @@
 <span class="doccomment">/// }</span>
 <span class="doccomment">/// ```</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">channel</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">buffer</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">Sender</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">Receiver</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) {
-    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">buffer</span> <span class="op">&gt;</span> <span class="number">0</span>, <span class="string">&quot;mpsc bounded channel requires buffer &gt; 0&quot;</span>);
+    <span class="macro">assert!</span>(<span class="ident">buffer</span> <span class="op">&gt;</span> <span class="number">0</span>, <span class="string">&quot;mpsc bounded channel requires buffer &gt; 0&quot;</span>);
     <span class="kw">let</span> <span class="ident">semaphore</span> <span class="op">=</span> (<span class="ident">semaphore</span>::<span class="ident">Semaphore</span>::<span class="ident">new</span>(<span class="ident">buffer</span>), <span class="ident">buffer</span>);
     <span class="kw">let</span> (<span class="ident">tx</span>, <span class="ident">rx</span>) <span class="op">=</span> <span class="ident">chan</span>::<span class="ident">channel</span>(<span class="ident">semaphore</span>);
 

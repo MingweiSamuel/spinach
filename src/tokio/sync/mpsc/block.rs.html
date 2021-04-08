@@ -483,7 +483,7 @@
 
     <span class="doccomment">/// Returns `true` if the block matches the given index</span>
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">is_at_index</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">index</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">offset</span>(<span class="ident">index</span>) <span class="op">=</span><span class="op">=</span> <span class="number">0</span>);
+        <span class="macro">debug_assert!</span>(<span class="ident">offset</span>(<span class="ident">index</span>) <span class="op">=</span><span class="op">=</span> <span class="number">0</span>);
         <span class="self">self</span>.<span class="ident">start_index</span> <span class="op">=</span><span class="op">=</span> <span class="ident">index</span>
     }
 
@@ -492,7 +492,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// `start_index` must represent a block *after* `self`.</span>
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">distance</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other_index</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">offset</span>(<span class="ident">other_index</span>) <span class="op">=</span><span class="op">=</span> <span class="number">0</span>);
+        <span class="macro">debug_assert!</span>(<span class="ident">offset</span>(<span class="ident">other_index</span>) <span class="op">=</span><span class="op">=</span> <span class="number">0</span>);
         <span class="ident">other_index</span>.<span class="ident">wrapping_sub</span>(<span class="self">self</span>.<span class="ident">start_index</span>) <span class="op">/</span> <span class="ident">BLOCK_CAP</span>
     }
 
@@ -622,7 +622,7 @@
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">load_next</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">ordering</span>: <span class="ident">Ordering</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">NonNull</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="ident">NonNull</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">next</span>.<span class="ident">load</span>(<span class="ident">ordering</span>));
 
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="kw">unsafe</span> {
+        <span class="macro">debug_assert!</span>(<span class="kw">unsafe</span> {
             <span class="ident">ret</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">block</span><span class="op">|</span> <span class="ident">block</span>.<span class="ident">as_ref</span>().<span class="ident">start_index</span> <span class="op">=</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">start_index</span>.<span class="ident">wrapping_add</span>(<span class="ident">BLOCK_CAP</span>))
                 .<span class="ident">unwrap_or</span>(<span class="bool-val">true</span>)
         });
@@ -757,7 +757,7 @@
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">vals</span> <span class="op">=</span> <span class="ident">MaybeUninit</span>::<span class="ident">uninit</span>();
 
         <span class="comment">// When fuzzing, `UnsafeCell` needs to be initialized.</span>
-        <span class="macro">if_loom</span><span class="macro">!</span> {
+        <span class="macro">if_loom!</span> {
             <span class="kw">let</span> <span class="ident">p</span> <span class="op">=</span> <span class="ident">vals</span>.<span class="ident">as_mut_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">UnsafeCell</span><span class="op">&lt;</span><span class="ident">MaybeUninit</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>;
             <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">BLOCK_CAP</span> {
                 <span class="ident">p</span>.<span class="ident">add</span>(<span class="ident">i</span>)

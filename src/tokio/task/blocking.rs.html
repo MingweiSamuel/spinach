@@ -120,7 +120,7 @@
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">task</span>::<span class="ident">JoinHandle</span>;
 
-<span class="macro">cfg_rt_multi_thread</span><span class="macro">!</span> {
+<span class="macro">cfg_rt_multi_thread!</span> {
     <span class="doccomment">/// Runs the provided blocking function on the current thread without</span>
     <span class="doccomment">/// blocking the executor.</span>
     <span class="doccomment">///</span>
@@ -171,7 +171,7 @@
     }
 }
 
-<span class="macro">cfg_rt</span><span class="macro">!</span> {
+<span class="macro">cfg_rt!</span> {
     <span class="doccomment">/// Runs the provided closure on a thread where blocking is acceptable.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// In general, issuing a blocking call or performing a lot of compute in a</span>

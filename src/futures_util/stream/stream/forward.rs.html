@@ -139,7 +139,7 @@
             <span class="comment">// If we&#39;ve got an item buffered already, we need to write it to the</span>
             <span class="comment">// sink before we can do anything else</span>
             <span class="kw">if</span> <span class="ident">buffered_item</span>.<span class="ident">is_some</span>() {
-                <span class="macro">ready</span><span class="macro">!</span>(<span class="ident">si</span>.<span class="ident">as_mut</span>().<span class="ident">poll_ready</span>(<span class="ident">cx</span>))<span class="question-mark">?</span>;
+                <span class="macro">ready!</span>(<span class="ident">si</span>.<span class="ident">as_mut</span>().<span class="ident">poll_ready</span>(<span class="ident">cx</span>))<span class="question-mark">?</span>;
                 <span class="ident">si</span>.<span class="ident">as_mut</span>().<span class="ident">start_send</span>(<span class="ident">buffered_item</span>.<span class="ident">take</span>().<span class="ident">unwrap</span>())<span class="question-mark">?</span>;
             }
 
@@ -148,12 +148,12 @@
                     <span class="kw-2">*</span><span class="ident">buffered_item</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">item</span>);
                 }
                 <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">None</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="macro">ready</span><span class="macro">!</span>(<span class="ident">si</span>.<span class="ident">poll_close</span>(<span class="ident">cx</span>))<span class="question-mark">?</span>;
+                    <span class="macro">ready!</span>(<span class="ident">si</span>.<span class="ident">poll_close</span>(<span class="ident">cx</span>))<span class="question-mark">?</span>;
                     <span class="ident">sink</span>.<span class="ident">set</span>(<span class="prelude-val">None</span>);
                     <span class="kw">return</span> <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Ok</span>(()))
                 }
                 <span class="ident">Poll</span>::<span class="ident">Pending</span> <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="macro">ready</span><span class="macro">!</span>(<span class="ident">si</span>.<span class="ident">poll_flush</span>(<span class="ident">cx</span>))<span class="question-mark">?</span>;
+                    <span class="macro">ready!</span>(<span class="ident">si</span>.<span class="ident">poll_flush</span>(<span class="ident">cx</span>))<span class="question-mark">?</span>;
                     <span class="kw">return</span> <span class="ident">Poll</span>::<span class="ident">Pending</span>
                 }
             }

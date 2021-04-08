@@ -89,7 +89,7 @@
         <span class="self">Self</span> { <span class="ident">stream</span>, <span class="ident">caught_unwind</span>: <span class="bool-val">false</span> }
     }
 
-    <span class="macro">delegate_access_inner</span><span class="macro">!</span>(<span class="ident">stream</span>, <span class="ident">St</span>, ());
+    <span class="macro">delegate_access_inner!</span>(<span class="ident">stream</span>, <span class="ident">St</span>, ());
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">St</span>: <span class="ident">Stream</span> <span class="op">+</span> <span class="ident">UnwindSafe</span><span class="op">&gt;</span> <span class="ident">Stream</span> <span class="kw">for</span> <span class="ident">CatchUnwind</span><span class="op">&lt;</span><span class="ident">St</span><span class="op">&gt;</span> {

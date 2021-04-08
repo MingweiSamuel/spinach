@@ -715,7 +715,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// Maximum number of permits on 32-bit platforms is `1&lt;&lt;29`.</span>
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">permits</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="macro">assert</span><span class="macro">!</span>(
+        <span class="macro">assert!</span>(
             <span class="ident">permits</span> <span class="op">&lt;</span><span class="op">=</span> <span class="self">Self</span>::<span class="ident">MAX_PERMITS</span>,
             <span class="string">&quot;a semaphore may not have more than MAX_PERMITS permits ({})&quot;</span>,
             <span class="self">Self</span>::<span class="ident">MAX_PERMITS</span>
@@ -794,7 +794,7 @@
     }
 
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">try_acquire</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">num_permits</span>: <span class="ident">u32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TryAcquireError</span><span class="op">&gt;</span> {
-        <span class="macro">assert</span><span class="macro">!</span>(
+        <span class="macro">assert!</span>(
             <span class="ident">num_permits</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">&lt;</span><span class="op">=</span> <span class="self">Self</span>::<span class="ident">MAX_PERMITS</span>,
             <span class="string">&quot;a semaphore may not have more than MAX_PERMITS permits ({})&quot;</span>,
             <span class="self">Self</span>::<span class="ident">MAX_PERMITS</span>
@@ -857,13 +857,13 @@
 
             <span class="kw">if</span> <span class="ident">rem</span> <span class="op">&gt;</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> <span class="ident">is_empty</span> {
                 <span class="kw">let</span> <span class="ident">permits</span> <span class="op">=</span> <span class="ident">rem</span>;
-                <span class="macro">assert</span><span class="macro">!</span>(
+                <span class="macro">assert!</span>(
                     <span class="ident">permits</span> <span class="op">&lt;</span><span class="op">=</span> <span class="self">Self</span>::<span class="ident">MAX_PERMITS</span>,
                     <span class="string">&quot;cannot add more than MAX_PERMITS permits ({})&quot;</span>,
                     <span class="self">Self</span>::<span class="ident">MAX_PERMITS</span>
                 );
                 <span class="kw">let</span> <span class="ident">prev</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">permits</span>.<span class="ident">fetch_add</span>(<span class="ident">rem</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="self">Self</span>::<span class="ident">PERMIT_SHIFT</span>, <span class="ident">Release</span>);
-                <span class="macro">assert</span><span class="macro">!</span>(
+                <span class="macro">assert!</span>(
                     <span class="ident">prev</span> <span class="op">+</span> <span class="ident">permits</span> <span class="op">&lt;</span><span class="op">=</span> <span class="self">Self</span>::<span class="ident">MAX_PERMITS</span>,
                     <span class="string">&quot;number of added permits ({}) would overflow MAX_PERMITS ({})&quot;</span>,
                     <span class="ident">rem</span>,
@@ -880,7 +880,7 @@
                 .<span class="ident">for_each</span>(<span class="ident">Waker</span>::<span class="ident">wake</span>);
         }
 
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">rem</span>, <span class="number">0</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">rem</span>, <span class="number">0</span>);
     }
 
     <span class="kw">fn</span> <span class="ident">poll_acquire</span>(
@@ -956,7 +956,7 @@
             <span class="kw">return</span> <span class="ident">Ready</span>(<span class="prelude-val">Ok</span>(()));
         }
 
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">acquired</span>, <span class="number">0</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">acquired</span>, <span class="number">0</span>);
 
         <span class="comment">// Otherwise, register the waker &amp; enqueue the node.</span>
         <span class="ident">node</span>.<span class="ident">waker</span>.<span class="ident">with_mut</span>(<span class="op">|</span><span class="ident">waker</span><span class="op">|</span> {
@@ -1028,7 +1028,7 @@
 
     <span class="kw">fn</span> <span class="ident">poll</span>(<span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Output</span><span class="op">&gt;</span> {
         <span class="comment">// First, ensure the current task has enough budget to proceed.</span>
-        <span class="kw">let</span> <span class="ident">coop</span> <span class="op">=</span> <span class="macro">ready</span><span class="macro">!</span>(<span class="kw">crate</span>::<span class="ident">coop</span>::<span class="ident">poll_proceed</span>(<span class="ident">cx</span>));
+        <span class="kw">let</span> <span class="ident">coop</span> <span class="op">=</span> <span class="macro">ready!</span>(<span class="kw">crate</span>::<span class="ident">coop</span>::<span class="ident">poll_proceed</span>(<span class="ident">cx</span>));
 
         <span class="kw">let</span> (<span class="ident">node</span>, <span class="ident">semaphore</span>, <span class="ident">needed</span>, <span class="ident">queued</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">project</span>();
 
@@ -1119,7 +1119,7 @@
 
 <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">AcquireError</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-        <span class="macro">write</span><span class="macro">!</span>(<span class="ident">fmt</span>, <span class="string">&quot;semaphore closed&quot;</span>)
+        <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;semaphore closed&quot;</span>)
     }
 }
 
@@ -1131,22 +1131,22 @@
     <span class="doccomment">/// Returns `true` if the error was caused by a closed semaphore.</span>
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span> <span class="comment">// may be used later!</span>
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">is_closed</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
-        <span class="macro">matches</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">TryAcquireError</span>::<span class="ident">Closed</span>)
+        <span class="macro">matches!</span>(<span class="self">self</span>, <span class="ident">TryAcquireError</span>::<span class="ident">Closed</span>)
     }
 
     <span class="doccomment">/// Returns `true` if the error was caused by calling `try_acquire` on a</span>
     <span class="doccomment">/// semaphore with no available permits.</span>
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span> <span class="comment">// may be used later!</span>
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">is_no_permits</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
-        <span class="macro">matches</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">TryAcquireError</span>::<span class="ident">NoPermits</span>)
+        <span class="macro">matches!</span>(<span class="self">self</span>, <span class="ident">TryAcquireError</span>::<span class="ident">NoPermits</span>)
     }
 }
 
 <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">TryAcquireError</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">TryAcquireError</span>::<span class="ident">Closed</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">fmt</span>, <span class="string">&quot;semaphore closed&quot;</span>),
-            <span class="ident">TryAcquireError</span>::<span class="ident">NoPermits</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">fmt</span>, <span class="string">&quot;no permits available&quot;</span>),
+            <span class="ident">TryAcquireError</span>::<span class="ident">Closed</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;semaphore closed&quot;</span>),
+            <span class="ident">TryAcquireError</span>::<span class="ident">NoPermits</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;no permits available&quot;</span>),
         }
     }
 }

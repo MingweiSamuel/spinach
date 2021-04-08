@@ -630,7 +630,7 @@
 
     <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">fmt</span>::<span class="ident">Debug</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">SendError</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
         <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-            <span class="macro">write</span><span class="macro">!</span>(<span class="ident">fmt</span>, <span class="string">&quot;channel closed&quot;</span>)
+            <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;channel closed&quot;</span>)
         }
     }
 
@@ -644,7 +644,7 @@
 
     <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">RecvError</span> {
         <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-            <span class="macro">write</span><span class="macro">!</span>(<span class="ident">fmt</span>, <span class="string">&quot;channel closed&quot;</span>)
+            <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;channel closed&quot;</span>)
         }
     }
 
@@ -895,7 +895,7 @@
         }
 
         <span class="ident">notified</span>.<span class="kw">await</span>;
-        <span class="macro">debug_assert_eq</span><span class="macro">!</span>(<span class="number">0</span>, <span class="self">self</span>.<span class="ident">shared</span>.<span class="ident">ref_count_rx</span>.<span class="ident">load</span>(<span class="ident">Relaxed</span>));
+        <span class="macro">debug_assert_eq!</span>(<span class="number">0</span>, <span class="self">self</span>.<span class="ident">shared</span>.<span class="ident">ref_count_rx</span>.<span class="ident">load</span>(<span class="ident">Relaxed</span>));
     }
 }
 
@@ -961,11 +961,11 @@
         <span class="ident">loom</span>::<span class="ident">model</span>(<span class="op">|</span><span class="op">|</span> {
             <span class="kw">let</span> (<span class="ident">send</span>, <span class="kw-2">mut</span> <span class="ident">recv</span>) <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">sync</span>::<span class="ident">watch</span>::<span class="ident">channel</span>(<span class="number">0i32</span>);
 
-            <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">send</span>.<span class="ident">borrow</span>().<span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="number">0</span>));
-            <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">recv</span>.<span class="ident">borrow</span>().<span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="number">0</span>));
+            <span class="macro">assert!</span>(<span class="ident">send</span>.<span class="ident">borrow</span>().<span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="number">0</span>));
+            <span class="macro">assert!</span>(<span class="ident">recv</span>.<span class="ident">borrow</span>().<span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="number">0</span>));
 
             <span class="ident">send</span>.<span class="ident">send</span>(<span class="number">1</span>).<span class="ident">unwrap</span>();
-            <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">send</span>.<span class="ident">borrow</span>().<span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="number">1</span>));
+            <span class="macro">assert!</span>(<span class="ident">send</span>.<span class="ident">borrow</span>().<span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="number">1</span>));
 
             <span class="kw">let</span> <span class="ident">send_thread</span> <span class="op">=</span> <span class="ident">thread</span>::<span class="ident">spawn</span>(<span class="kw">move</span> <span class="op">|</span><span class="op">|</span> {
                 <span class="ident">send</span>.<span class="ident">send</span>(<span class="number">2</span>).<span class="ident">unwrap</span>();
@@ -984,15 +984,15 @@
             <span class="ident">send</span>.<span class="ident">send</span>(<span class="number">3</span>).<span class="ident">unwrap</span>();
 
             <span class="kw">let</span> <span class="ident">recv</span> <span class="op">=</span> <span class="ident">recv_thread</span>.<span class="ident">join</span>().<span class="ident">unwrap</span>();
-            <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">recv</span>.<span class="ident">borrow</span>().<span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="number">3</span>));
-            <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">send</span>.<span class="ident">borrow</span>().<span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="number">3</span>));
+            <span class="macro">assert!</span>(<span class="ident">recv</span>.<span class="ident">borrow</span>().<span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="number">3</span>));
+            <span class="macro">assert!</span>(<span class="ident">send</span>.<span class="ident">borrow</span>().<span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="number">3</span>));
 
             <span class="ident">send</span>.<span class="ident">send</span>(<span class="number">2</span>).<span class="ident">unwrap</span>();
 
             <span class="ident">thread</span>::<span class="ident">spawn</span>(<span class="kw">move</span> <span class="op">|</span><span class="op">|</span> {
-                <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">recv</span>.<span class="ident">borrow</span>().<span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="number">2</span>));
+                <span class="macro">assert!</span>(<span class="ident">recv</span>.<span class="ident">borrow</span>().<span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="number">2</span>));
             });
-            <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">send</span>.<span class="ident">borrow</span>().<span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="number">2</span>));
+            <span class="macro">assert!</span>(<span class="ident">send</span>.<span class="ident">borrow</span>().<span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="number">2</span>));
         });
     }
 }

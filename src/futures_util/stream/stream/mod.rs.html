@@ -1476,7 +1476,7 @@
 
 <span class="kw">mod</span> <span class="ident">flatten</span>;
 
-<span class="macro">delegate_all</span><span class="macro">!</span>(
+<span class="macro">delegate_all!</span>(
     <span class="doccomment">/// Stream for the [`flatten`](StreamExt::flatten) method.</span>
     <span class="ident">Flatten</span><span class="op">&lt;</span><span class="ident">St</span><span class="op">&gt;</span>(
         <span class="ident">flatten</span>::<span class="ident">Flatten</span><span class="op">&lt;</span><span class="ident">St</span>, <span class="ident">St</span>::<span class="ident">Item</span><span class="op">&gt;</span>
@@ -1492,7 +1492,7 @@
 <span class="kw">mod</span> <span class="ident">forward</span>;
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;sink&quot;</span>)]</span>
-<span class="macro">delegate_all</span><span class="macro">!</span>(
+<span class="macro">delegate_all!</span>(
     <span class="doccomment">/// Future for the [`forward`](super::StreamExt::forward) method.</span>
     <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">docsrs</span>, <span class="ident">doc</span>(<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;sink&quot;</span>)))]</span>
     <span class="ident">Forward</span><span class="op">&lt;</span><span class="ident">St</span>, <span class="ident">Si</span><span class="op">&gt;</span>(
@@ -1513,7 +1513,7 @@
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">unreachable_pub</span>)]</span> <span class="comment">// https://github.com/rust-lang/rust/issues/57411</span>
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">into_future</span>::<span class="ident">StreamFuture</span>;
 
-<span class="macro">delegate_all</span><span class="macro">!</span>(
+<span class="macro">delegate_all!</span>(
     <span class="doccomment">/// Stream for the [`inspect`](StreamExt::inspect) method.</span>
     <span class="ident">Inspect</span><span class="op">&lt;</span><span class="ident">St</span>, <span class="ident">F</span><span class="op">&gt;</span>(
         <span class="ident">map</span>::<span class="ident">Map</span><span class="op">&lt;</span><span class="ident">St</span>, <span class="ident">InspectFn</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span><span class="op">&gt;</span>
@@ -1524,7 +1524,7 @@
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">unreachable_pub</span>)]</span> <span class="comment">// https://github.com/rust-lang/rust/issues/57411</span>
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">map</span>::<span class="ident">Map</span>;
 
-<span class="macro">delegate_all</span><span class="macro">!</span>(
+<span class="macro">delegate_all!</span>(
     <span class="doccomment">/// Stream for the [`flat_map`](StreamExt::flat_map) method.</span>
     <span class="ident">FlatMap</span><span class="op">&lt;</span><span class="ident">St</span>, <span class="ident">U</span>, <span class="ident">F</span><span class="op">&gt;</span>(
         <span class="ident">flatten</span>::<span class="ident">Flatten</span><span class="op">&lt;</span><span class="ident">Map</span><span class="op">&lt;</span><span class="ident">St</span>, <span class="ident">F</span><span class="op">&gt;</span>, <span class="ident">U</span><span class="op">&gt;</span>
@@ -1587,7 +1587,7 @@
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">unreachable_pub</span>)]</span> <span class="comment">// https://github.com/rust-lang/rust/issues/57411</span>
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">scan</span>::<span class="ident">Scan</span>;
 
-<span class="macro">cfg_target_has_atomic</span><span class="macro">!</span> {
+<span class="macro">cfg_target_has_atomic!</span> {
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
     <span class="kw">mod</span> <span class="ident">buffer_unordered</span>;
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>

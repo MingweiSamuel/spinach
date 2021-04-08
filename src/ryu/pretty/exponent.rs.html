@@ -62,7 +62,7 @@
         <span class="ident">k</span> <span class="op">=</span> <span class="op">-</span><span class="ident">k</span>;
     }
 
-    <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">k</span> <span class="op">&lt;</span> <span class="number">1000</span>);
+    <span class="macro">debug_assert!</span>(<span class="ident">k</span> <span class="op">&lt;</span> <span class="number">1000</span>);
     <span class="kw">if</span> <span class="ident">k</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">100</span> {
         <span class="kw-2">*</span><span class="ident">result</span> <span class="op">=</span> <span class="string">b&#39;0&#39;</span> <span class="op">+</span> (<span class="ident">k</span> <span class="op">/</span> <span class="number">100</span>) <span class="kw">as</span> <span class="ident">u8</span>;
         <span class="ident">k</span> <span class="op">%</span><span class="op">=</span> <span class="number">100</span>;
@@ -88,7 +88,7 @@
         <span class="ident">k</span> <span class="op">=</span> <span class="op">-</span><span class="ident">k</span>;
     }
 
-    <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">k</span> <span class="op">&lt;</span> <span class="number">100</span>);
+    <span class="macro">debug_assert!</span>(<span class="ident">k</span> <span class="op">&lt;</span> <span class="number">100</span>);
     <span class="kw">if</span> <span class="ident">k</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">10</span> {
         <span class="kw">let</span> <span class="ident">d</span> <span class="op">=</span> <span class="ident">DIGIT_TABLE</span>.<span class="ident">get_unchecked</span>(<span class="ident">k</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">*</span> <span class="number">2</span>);
         <span class="ident">ptr</span>::<span class="ident">copy_nonoverlapping</span>(<span class="ident">d</span>, <span class="ident">result</span>, <span class="number">2</span>);

@@ -55,7 +55,7 @@
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">tokens</span>: <span class="ident">TokenStream</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">IterImpl</span> {
     <span class="ident">IterImpl</span> {
-        <span class="ident">stack</span>: <span class="macro">vec</span><span class="macro">!</span>[<span class="ident">tokens</span>.<span class="ident">into_iter</span>()],
+        <span class="ident">stack</span>: <span class="macro">vec!</span>[<span class="ident">tokens</span>.<span class="ident">into_iter</span>()],
         <span class="ident">peeked</span>: <span class="prelude-val">None</span>,
     }
 }

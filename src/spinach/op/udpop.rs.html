@@ -136,7 +136,7 @@
                 <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">buffer</span>[..<span class="ident">len</span>]))
             }
             <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Err</span>(<span class="ident">err</span>)) <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">err</span>);
+                <span class="macro">println!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">err</span>);
                 <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">None</span>) <span class="comment">// ERR =&gt; EOS</span>
             }
             <span class="ident">Poll</span>::<span class="ident">Pending</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Poll</span>::<span class="ident">Pending</span>,
@@ -165,7 +165,7 @@
     <span class="kw">fn</span> <span class="ident">push</span><span class="op">&lt;</span><span class="lifetime">&#39;p</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">item</span>: <span class="self">Self</span>::<span class="ident">Indomain</span><span class="op">&lt;</span><span class="lifetime">&#39;p</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Feedback</span> {
         <span class="kw">let</span> <span class="ident">slice</span> <span class="op">=</span> <span class="ident">item</span>.<span class="ident">as_ref</span>();
         <span class="kw">if</span> <span class="ident">slice</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="ident">UDP_BUFFER</span> {
-            <span class="macro">panic</span><span class="macro">!</span>(
+            <span class="macro">panic!</span>(
                 <span class="string">&quot;Message length {} longer than limit, {}.&quot;</span>,
                 <span class="ident">slice</span>.<span class="ident">len</span>(),
                 <span class="ident">UDP_BUFFER</span>

@@ -1295,7 +1295,7 @@
 
     <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">SendError</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
         <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-            <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;channel closed&quot;</span>)
+            <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;channel closed&quot;</span>)
         }
     }
 
@@ -1321,8 +1321,8 @@
     <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">RecvError</span> {
         <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
             <span class="kw">match</span> <span class="self">self</span> {
-                <span class="ident">RecvError</span>::<span class="ident">Closed</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;channel closed&quot;</span>),
-                <span class="ident">RecvError</span>::<span class="ident">Lagged</span>(<span class="ident">amt</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;channel lagged by {}&quot;</span>, <span class="ident">amt</span>),
+                <span class="ident">RecvError</span>::<span class="ident">Closed</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;channel closed&quot;</span>),
+                <span class="ident">RecvError</span>::<span class="ident">Lagged</span>(<span class="ident">amt</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;channel lagged by {}&quot;</span>, <span class="ident">amt</span>),
             }
         }
     }
@@ -1356,9 +1356,9 @@
     <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">TryRecvError</span> {
         <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
             <span class="kw">match</span> <span class="self">self</span> {
-                <span class="ident">TryRecvError</span>::<span class="ident">Empty</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;channel empty&quot;</span>),
-                <span class="ident">TryRecvError</span>::<span class="ident">Closed</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;channel closed&quot;</span>),
-                <span class="ident">TryRecvError</span>::<span class="ident">Lagged</span>(<span class="ident">amt</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;channel lagged by {}&quot;</span>, <span class="ident">amt</span>),
+                <span class="ident">TryRecvError</span>::<span class="ident">Empty</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;channel empty&quot;</span>),
+                <span class="ident">TryRecvError</span>::<span class="ident">Closed</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;channel closed&quot;</span>),
+                <span class="ident">TryRecvError</span>::<span class="ident">Lagged</span>(<span class="ident">amt</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;channel lagged by {}&quot;</span>, <span class="ident">amt</span>),
             }
         }
     }
@@ -1501,8 +1501,8 @@
 <span class="doccomment">/// }</span>
 <span class="doccomment">/// ```</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">channel</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Clone</span><span class="op">&gt;</span>(<span class="kw-2">mut</span> <span class="ident">capacity</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">Sender</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">Receiver</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) {
-    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">capacity</span> <span class="op">&gt;</span> <span class="number">0</span>, <span class="string">&quot;capacity is empty&quot;</span>);
-    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">capacity</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">usize</span>::<span class="ident">MAX</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">1</span>, <span class="string">&quot;requested capacity too large&quot;</span>);
+    <span class="macro">assert!</span>(<span class="ident">capacity</span> <span class="op">&gt;</span> <span class="number">0</span>, <span class="string">&quot;capacity is empty&quot;</span>);
+    <span class="macro">assert!</span>(<span class="ident">capacity</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">usize</span>::<span class="ident">MAX</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">1</span>, <span class="string">&quot;requested capacity too large&quot;</span>);
 
     <span class="comment">// Round to a power of two</span>
     <span class="ident">capacity</span> <span class="op">=</span> <span class="ident">capacity</span>.<span class="ident">next_power_of_two</span>();
@@ -1721,7 +1721,7 @@
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tail</span> <span class="op">=</span> <span class="ident">shared</span>.<span class="ident">tail</span>.<span class="ident">lock</span>();
 
     <span class="kw">if</span> <span class="ident">tail</span>.<span class="ident">rx_cnt</span> <span class="op">=</span><span class="op">=</span> <span class="ident">MAX_RECEIVERS</span> {
-        <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;max receivers&quot;</span>);
+        <span class="macro">panic!</span>(<span class="string">&quot;max receivers&quot;</span>);
     }
 
     <span class="ident">tail</span>.<span class="ident">rx_cnt</span> <span class="op">=</span> <span class="ident">tail</span>.<span class="ident">rx_cnt</span>.<span class="ident">checked_add</span>(<span class="number">1</span>).<span class="ident">expect</span>(<span class="string">&quot;overflow&quot;</span>);
@@ -1739,7 +1739,7 @@
             <span class="comment">// Safety: `waiters` lock is still held.</span>
             <span class="kw">let</span> <span class="ident">waiter</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">waiter</span>.<span class="ident">as_mut</span>() };
 
-            <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">waiter</span>.<span class="ident">queued</span>);
+            <span class="macro">assert!</span>(<span class="ident">waiter</span>.<span class="ident">queued</span>);
             <span class="ident">waiter</span>.<span class="ident">queued</span> <span class="op">=</span> <span class="bool-val">false</span>;
 
             <span class="kw">let</span> <span class="ident">waker</span> <span class="op">=</span> <span class="ident">waiter</span>.<span class="ident">waker</span>.<span class="ident">take</span>().<span class="ident">unwrap</span>();
@@ -2017,7 +2017,7 @@
                 <span class="comment">// Ignore lagging, we will catch up</span>
                 <span class="prelude-val">Err</span>(<span class="ident">TryRecvError</span>::<span class="ident">Lagged</span>(..)) <span class="op">=</span><span class="op">&gt;</span> {}
                 <span class="comment">// Can&#39;t be empty</span>
-                <span class="prelude-val">Err</span>(<span class="ident">TryRecvError</span>::<span class="ident">Empty</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;unexpected empty broadcast channel&quot;</span>),
+                <span class="prelude-val">Err</span>(<span class="ident">TryRecvError</span>::<span class="ident">Empty</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(<span class="string">&quot;unexpected empty broadcast channel&quot;</span>),
             }
         }
     }
@@ -2114,13 +2114,13 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Sender</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-        <span class="macro">write</span><span class="macro">!</span>(<span class="ident">fmt</span>, <span class="string">&quot;broadcast::Sender&quot;</span>)
+        <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;broadcast::Sender&quot;</span>)
     }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Receiver</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-        <span class="macro">write</span><span class="macro">!</span>(<span class="ident">fmt</span>, <span class="string">&quot;broadcast::Receiver&quot;</span>)
+        <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;broadcast::Receiver&quot;</span>)
     }
 }
 

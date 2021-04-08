@@ -405,7 +405,7 @@
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">trivial_fn_impls</span> {
+<span class="macro">macro_rules!</span> <span class="ident">trivial_fn_impls</span> {
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>:<span class="ident">ident</span> <span class="op">&lt;</span>$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">arg</span>:<span class="ident">ident</span>),<span class="kw-2">*</span><span class="op">&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>:<span class="ident">ty</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">debug</span>:<span class="ident">literal</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="kw">impl</span><span class="op">&lt;</span>$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">arg</span>),<span class="kw-2">*</span><span class="op">&gt;</span> <span class="ident">Copy</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span> {}
         <span class="kw">impl</span><span class="op">&lt;</span>$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">arg</span>),<span class="kw-2">*</span><span class="op">&gt;</span> <span class="ident">Clone</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span> {
@@ -447,7 +447,7 @@
     }
 }
 
-<span class="macro">trivial_fn_impls</span><span class="macro">!</span>(<span class="ident">ok_fn</span> <span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">OkFn</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="string">&quot;Ok&quot;</span>);
+<span class="macro">trivial_fn_impls!</span>(<span class="ident">ok_fn</span> <span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">OkFn</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="string">&quot;Ok&quot;</span>);
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Copy</span>, <span class="ident">Clone</span>, <span class="ident">Default</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ChainFn</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">G</span><span class="op">&gt;</span>(<span class="ident">F</span>, <span class="ident">G</span>);
@@ -496,7 +496,7 @@
         }
     }
 }
-<span class="macro">trivial_fn_impls</span><span class="macro">!</span>(<span class="ident">merge_result_fn</span> <span class="op">&lt;</span><span class="op">&gt;</span> <span class="ident">MergeResultFn</span> <span class="op">=</span> <span class="string">&quot;merge_result&quot;</span>);
+<span class="macro">trivial_fn_impls!</span>(<span class="ident">merge_result_fn</span> <span class="op">&lt;</span><span class="op">&gt;</span> <span class="ident">MergeResultFn</span> <span class="op">=</span> <span class="string">&quot;merge_result&quot;</span>);
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Copy</span>, <span class="ident">Clone</span>, <span class="ident">Default</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">InspectFn</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="ident">F</span>);
@@ -715,7 +715,7 @@
     }
 }
 
-<span class="macro">trivial_fn_impls</span><span class="macro">!</span>(<span class="ident">into_fn</span> <span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">IntoFn</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="string">&quot;Into::into&quot;</span>);
+<span class="macro">trivial_fn_impls!</span>(<span class="ident">into_fn</span> <span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">IntoFn</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="string">&quot;Into::into&quot;</span>);
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="futures_util" data-search-js="../../search-index.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>

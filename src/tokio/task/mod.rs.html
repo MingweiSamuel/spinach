@@ -458,7 +458,7 @@
 <span class="doccomment">//! [`task::yield_now`]: crate::task::yield_now()</span>
 <span class="doccomment">//! [`thread::yield_now`]: std::thread::yield_now</span>
 
-<span class="macro">cfg_rt</span><span class="macro">!</span> {
+<span class="macro">cfg_rt!</span> {
     <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">runtime</span>::<span class="ident">task</span>::{<span class="ident">JoinError</span>, <span class="ident">JoinHandle</span>};
 
     <span class="kw">mod</span> <span class="ident">blocking</span>;
@@ -467,7 +467,7 @@
     <span class="kw">mod</span> <span class="ident">spawn</span>;
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">spawn</span>::<span class="ident">spawn</span>;
 
-    <span class="macro">cfg_rt_multi_thread</span><span class="macro">!</span> {
+    <span class="macro">cfg_rt_multi_thread!</span> {
         <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">blocking</span>::<span class="ident">block_in_place</span>;
     }
 
