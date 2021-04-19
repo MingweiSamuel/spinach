@@ -76,28 +76,28 @@
 
 <span class="kw">mod</span> <span class="ident">addr</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;net&quot;</span>)]</span>
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="ident">addr</span>::<span class="ident">to_socket_addrs</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">addr</span>::<span class="ident">ToSocketAddrs</span>;
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="ident">addr::to_socket_addrs</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">addr::ToSocketAddrs</span>;
 
 <span class="macro">cfg_net!</span> {
     <span class="kw">mod</span> <span class="ident">lookup_host</span>;
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">lookup_host</span>::<span class="ident">lookup_host</span>;
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">lookup_host::lookup_host</span>;
 
     <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">tcp</span>;
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">tcp</span>::<span class="ident">listener</span>::<span class="ident">TcpListener</span>;
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">tcp</span>::<span class="ident">socket</span>::<span class="ident">TcpSocket</span>;
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">tcp</span>::<span class="ident">stream</span>::<span class="ident">TcpStream</span>;
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">tcp::listener::TcpListener</span>;
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">tcp::socket::TcpSocket</span>;
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">tcp::stream::TcpStream</span>;
 
     <span class="kw">mod</span> <span class="ident">udp</span>;
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">udp</span>::<span class="ident">UdpSocket</span>;
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">udp::UdpSocket</span>;
 }
 
 <span class="macro">cfg_net_unix!</span> {
     <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">unix</span>;
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">unix</span>::<span class="ident">datagram</span>::<span class="ident">socket</span>::<span class="ident">UnixDatagram</span>;
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">unix</span>::<span class="ident">listener</span>::<span class="ident">UnixListener</span>;
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">unix</span>::<span class="ident">stream</span>::<span class="ident">UnixStream</span>;
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">unix::datagram::socket::UnixDatagram</span>;
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">unix::listener::UnixListener</span>;
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">unix::stream::UnixStream</span>;
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-js="../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

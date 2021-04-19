@@ -261,15 +261,15 @@
 <span id="258">258</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">proc_macro2</span>::{<span class="ident">Span</span>, <span class="ident">TokenStream</span>};
-<span class="kw">use</span> <span class="ident">quote</span>::<span class="ident">quote</span>;
+<span class="kw">use</span> <span class="ident">quote::quote</span>;
 <span class="kw">use</span> <span class="ident">syn</span>::{
     <span class="ident">parse</span>::{<span class="ident">Parse</span>, <span class="ident">ParseStream</span>},
-    <span class="ident">spanned</span>::<span class="ident">Spanned</span>,
+    <span class="ident">spanned::Spanned</span>,
     <span class="ident">Attribute</span>, <span class="ident">Error</span>, <span class="ident">Ident</span>, <span class="prelude-ty">Result</span>, <span class="ident">Token</span>,
 };
 
-<span class="kw">use</span> <span class="kw">super</span>::<span class="ident">PIN</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">utils</span>::{<span class="ident">ParseBufferExt</span>, <span class="ident">SliceExt</span>};
+<span class="kw">use</span> <span class="kw">super</span><span class="ident">::PIN</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::utils</span>::{<span class="ident">ParseBufferExt</span>, <span class="ident">SliceExt</span>};
 
 <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn</span> <span class="ident">parse_args</span>(<span class="ident">attrs</span>: <span class="kw-2">&amp;</span>[<span class="ident">Attribute</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Args</span><span class="op">&gt;</span> {
     <span class="comment">// `(__private(&lt;args&gt;))` -&gt; `&lt;args&gt;`</span>
@@ -296,10 +296,10 @@
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">attrs</span> <span class="op">=</span> <span class="ident">attrs</span>.<span class="ident">iter</span>().<span class="ident">filter</span>(<span class="op">|</span><span class="ident">attr</span><span class="op">|</span> <span class="ident">attr</span>.<span class="ident">path</span>.<span class="ident">is_ident</span>(<span class="ident">PIN</span>));
 
     <span class="kw">let</span> <span class="ident">prev</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">attr</span>) <span class="op">=</span> <span class="ident">attrs</span>.<span class="ident">next</span>() {
-        (<span class="ident">attr</span>, <span class="ident">syn</span>::<span class="ident">parse2</span>::<span class="op">&lt;</span><span class="ident">Input</span><span class="op">&gt;</span>(<span class="ident">attr</span>.<span class="ident">tokens</span>.<span class="ident">clone</span>()).<span class="ident">unwrap</span>().<span class="number">0</span>)
+        (<span class="ident">attr</span>, <span class="ident">syn::parse2</span>::<span class="op">&lt;</span><span class="ident">Input</span><span class="op">&gt;</span>(<span class="ident">attr</span>.<span class="ident">tokens</span>.<span class="ident">clone</span>()).<span class="ident">unwrap</span>().<span class="number">0</span>)
     } <span class="kw">else</span> {
         <span class="comment">// This only fails if another macro removes `#[pin]`.</span>
-        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">error!</span>(<span class="ident">TokenStream</span>::<span class="ident">new</span>(), <span class="string">&quot;#[pin_project] attribute has been removed&quot;</span>));
+        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">error!</span>(<span class="ident">TokenStream::new</span>(), <span class="string">&quot;#[pin_project] attribute has been removed&quot;</span>));
     };
 
     <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">attr</span>) <span class="op">=</span> <span class="ident">attrs</span>.<span class="ident">next</span>() {
@@ -308,7 +308,7 @@
         <span class="comment">// has the same span as `#[pin_project]`, it is possible</span>
         <span class="comment">// that a useless error message will be generated.</span>
         <span class="comment">// So, use the span of `prev_attr` if it is not a valid attribute.</span>
-        <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="ident">syn</span>::<span class="ident">parse2</span>::<span class="op">&lt;</span><span class="ident">Input</span><span class="op">&gt;</span>(<span class="ident">attr</span>.<span class="ident">tokens</span>.<span class="ident">clone</span>()).<span class="ident">unwrap</span>().<span class="number">0</span>;
+        <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="ident">syn::parse2</span>::<span class="op">&lt;</span><span class="ident">Input</span><span class="op">&gt;</span>(<span class="ident">attr</span>.<span class="ident">tokens</span>.<span class="ident">clone</span>()).<span class="ident">unwrap</span>().<span class="number">0</span>;
         <span class="kw">let</span> <span class="ident">span</span> <span class="op">=</span> <span class="kw">match</span> (<span class="ident">prev_res</span>, <span class="ident">res</span>) {
             (<span class="prelude-val">Some</span>(<span class="kw">_</span>), <span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">attr</span>,
             (<span class="prelude-val">None</span>, <span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">prev_attr</span>,
@@ -316,7 +316,7 @@
         <span class="prelude-val">Err</span>(<span class="macro">error!</span>(<span class="ident">span</span>, <span class="string">&quot;duplicate #[pin] attribute&quot;</span>))
     } <span class="kw">else</span> {
         <span class="comment">// This `unwrap` only fails if another macro removes `#[pin]` and inserts own `#[pin]`.</span>
-        <span class="ident">syn</span>::<span class="ident">parse2</span>(<span class="ident">prev</span>.<span class="number">1</span>.<span class="ident">unwrap</span>())
+        <span class="ident">syn::parse2</span>(<span class="ident">prev</span>.<span class="number">1</span>.<span class="ident">unwrap</span>())
     }
 }
 
@@ -336,7 +336,7 @@
 <span class="kw">impl</span> <span class="ident">Parse</span> <span class="kw">for</span> <span class="ident">Args</span> {
     <span class="kw">fn</span> <span class="ident">parse</span>(<span class="ident">input</span>: <span class="ident">ParseStream</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
         <span class="kw">mod</span> <span class="ident">kw</span> {
-            <span class="ident">syn</span>::<span class="macro">custom_keyword!</span>(<span class="ident">Unpin</span>);
+            <span class="macro">syn::custom_keyword!</span>(<span class="ident">Unpin</span>);
         }
 
         <span class="doccomment">/// Parses `= &lt;value&gt;` in `&lt;name&gt; = &lt;value&gt;` and returns value and span of name-value pair.</span>
@@ -376,7 +376,7 @@
                 <span class="kw">if</span> <span class="ident">input</span>.<span class="ident">is_empty</span>() {
                     <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">error!</span>(<span class="ident">bang</span>, <span class="string">&quot;expected `!Unpin`, found `!`&quot;</span>));
                 }
-                <span class="kw">let</span> <span class="ident">unpin</span>: <span class="ident">kw</span>::<span class="ident">Unpin</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>()<span class="question-mark">?</span>;
+                <span class="kw">let</span> <span class="ident">unpin</span>: <span class="ident">kw::Unpin</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>()<span class="question-mark">?</span>;
                 <span class="kw">let</span> <span class="ident">span</span> <span class="op">=</span> <span class="macro">quote!</span>(#<span class="ident">bang</span> #<span class="ident">unpin</span>);
                 <span class="kw">if</span> <span class="ident">not_unpin</span>.<span class="ident">replace</span>(<span class="ident">span</span>.<span class="ident">span</span>()).<span class="ident">is_some</span>() {
                     <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">error!</span>(<span class="ident">span</span>, <span class="string">&quot;duplicate `!Unpin` argument&quot;</span>));
@@ -453,23 +453,23 @@
 
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">span</span>) <span class="op">=</span> <span class="ident">pinned_drop</span> {
             <span class="kw">if</span> <span class="ident">project_replace_span</span>.<span class="ident">is_some</span>() {
-                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(
+                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(
                     <span class="ident">span</span>,
                     <span class="string">&quot;arguments `PinnedDrop` and `project_replace` are mutually exclusive&quot;</span>,
                 ));
             }
         }
         <span class="kw">let</span> <span class="ident">project_replace</span> <span class="op">=</span> <span class="kw">match</span> (<span class="ident">project_replace_span</span>, <span class="ident">project_replace_value</span>) {
-            (<span class="prelude-val">None</span>, <span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjReplace</span>::<span class="prelude-val">None</span>,
-            (<span class="prelude-val">Some</span>(<span class="ident">span</span>), <span class="prelude-val">Some</span>(<span class="ident">ident</span>)) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjReplace</span>::<span class="ident">Named</span> { <span class="ident">ident</span>, <span class="ident">span</span> },
-            (<span class="prelude-val">Some</span>(<span class="ident">span</span>), <span class="prelude-val">None</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjReplace</span>::<span class="ident">Unnamed</span> { <span class="ident">span</span> },
+            (<span class="prelude-val">None</span>, <span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjReplace::None</span>,
+            (<span class="prelude-val">Some</span>(<span class="ident">span</span>), <span class="prelude-val">Some</span>(<span class="ident">ident</span>)) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjReplace::Named</span> { <span class="ident">ident</span>, <span class="ident">span</span> },
+            (<span class="prelude-val">Some</span>(<span class="ident">span</span>), <span class="prelude-val">None</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjReplace::Unnamed</span> { <span class="ident">span</span> },
         };
         <span class="kw">let</span> <span class="ident">unpin_impl</span> <span class="op">=</span> <span class="kw">match</span> (<span class="ident">unsafe_unpin</span>, <span class="ident">not_unpin</span>) {
-            (<span class="prelude-val">None</span>, <span class="prelude-val">None</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">UnpinImpl</span>::<span class="ident">Default</span>,
-            (<span class="prelude-val">Some</span>(<span class="ident">span</span>), <span class="prelude-val">None</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">UnpinImpl</span>::<span class="ident">Unsafe</span>(<span class="ident">span</span>),
-            (<span class="prelude-val">None</span>, <span class="prelude-val">Some</span>(<span class="ident">span</span>)) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">UnpinImpl</span>::<span class="ident">Negative</span>(<span class="ident">span</span>),
+            (<span class="prelude-val">None</span>, <span class="prelude-val">None</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">UnpinImpl::Default</span>,
+            (<span class="prelude-val">Some</span>(<span class="ident">span</span>), <span class="prelude-val">None</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">UnpinImpl::Unsafe</span>(<span class="ident">span</span>),
+            (<span class="prelude-val">None</span>, <span class="prelude-val">Some</span>(<span class="ident">span</span>)) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">UnpinImpl::Negative</span>(<span class="ident">span</span>),
             (<span class="prelude-val">Some</span>(<span class="ident">span</span>), <span class="prelude-val">Some</span>(<span class="kw">_</span>)) <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new</span>(
+                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(
                     <span class="ident">span</span>,
                     <span class="string">&quot;arguments `UnsafeUnpin` and `!Unpin` are mutually exclusive&quot;</span>,
                 ));
@@ -509,15 +509,15 @@
     <span class="doccomment">/// Return the span of this argument.</span>
     <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn</span> <span class="ident">span</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Span</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="self">Self</span>::<span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,
-            <span class="self">Self</span>::<span class="ident">Named</span> { <span class="ident">span</span>, .. } <span class="op">|</span> <span class="self">Self</span>::<span class="ident">Unnamed</span> { <span class="ident">span</span>, .. } <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="kw-2">*</span><span class="ident">span</span>),
+            <span class="self">Self</span><span class="ident">::None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,
+            <span class="self">Self</span><span class="ident">::Named</span> { <span class="ident">span</span>, .. } <span class="op">|</span> <span class="self">Self</span><span class="ident">::Unnamed</span> { <span class="ident">span</span>, .. } <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="kw-2">*</span><span class="ident">span</span>),
         }
     }
 
     <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn</span> <span class="ident">ident</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Ident</span><span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="self">Self</span>::<span class="ident">Named</span> { <span class="ident">ident</span>, .. } <span class="op">=</span> <span class="self">self</span> { <span class="prelude-val">Some</span>(<span class="ident">ident</span>) } <span class="kw">else</span> { <span class="prelude-val">None</span> }
+        <span class="kw">if</span> <span class="kw">let</span> <span class="self">Self</span><span class="ident">::Named</span> { <span class="ident">ident</span>, .. } <span class="op">=</span> <span class="self">self</span> { <span class="prelude-val">Some</span>(<span class="ident">ident</span>) } <span class="kw">else</span> { <span class="prelude-val">None</span> }
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="pin_project_internal" data-search-js="../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="pin_project_internal" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

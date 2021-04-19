@@ -77,11 +77,11 @@
 <span id="74">74</span>
 <span id="75">75</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="ident">core</span>::<span class="ident">pin</span>::<span class="ident">Pin</span>;
-<span class="kw">use</span> <span class="ident">futures_core</span>::<span class="ident">stream</span>::{<span class="ident">Stream</span>, <span class="ident">FusedStream</span>};
-<span class="kw">use</span> <span class="ident">futures_core</span>::<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
+<span class="kw">use</span> <span class="ident">core::pin::Pin</span>;
+<span class="kw">use</span> <span class="ident">futures_core::stream</span>::{<span class="ident">Stream</span>, <span class="ident">FusedStream</span>};
+<span class="kw">use</span> <span class="ident">futures_core::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 <span class="kw">use</span> <span class="ident">futures_sink</span>::{<span class="ident">Sink</span>};
-<span class="kw">use</span> <span class="ident">pin_project</span>::<span class="ident">pin_project</span>;
+<span class="kw">use</span> <span class="ident">pin_project::pin_project</span>;
 
 <span class="doccomment">/// Sink for the [`sink_map_err`](super::SinkExt::sink_map_err) method.</span>
 <span class="attribute">#[<span class="ident">pin_project</span>]</span>
@@ -107,42 +107,42 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Si</span>, <span class="ident">F</span>, <span class="ident">E</span>, <span class="ident">Item</span><span class="op">&gt;</span> <span class="ident">Sink</span><span class="op">&lt;</span><span class="ident">Item</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">SinkMapErr</span><span class="op">&lt;</span><span class="ident">Si</span>, <span class="ident">F</span><span class="op">&gt;</span>
     <span class="kw">where</span> <span class="ident">Si</span>: <span class="ident">Sink</span><span class="op">&lt;</span><span class="ident">Item</span><span class="op">&gt;</span>,
-          <span class="ident">F</span>: <span class="ident">FnOnce</span>(<span class="ident">Si</span>::<span class="ident">Error</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">E</span>,
+          <span class="ident">F</span>: <span class="ident">FnOnce</span>(<span class="ident">Si::Error</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">E</span>,
 {
     <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">E</span>;
 
     <span class="kw">fn</span> <span class="ident">poll_ready</span>(
         <span class="kw-2">mut</span> <span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>,
         <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="self">Self</span>::<span class="ident">Error</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="self">Self</span><span class="ident">::Error</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">as_mut</span>().<span class="ident">project</span>().<span class="ident">sink</span>.<span class="ident">poll_ready</span>(<span class="ident">cx</span>).<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">as_mut</span>().<span class="ident">take_f</span>()(<span class="ident">e</span>))
     }
 
     <span class="kw">fn</span> <span class="ident">start_send</span>(
         <span class="kw-2">mut</span> <span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>,
         <span class="ident">item</span>: <span class="ident">Item</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="self">Self</span>::<span class="ident">Error</span><span class="op">&gt;</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="self">Self</span><span class="ident">::Error</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">as_mut</span>().<span class="ident">project</span>().<span class="ident">sink</span>.<span class="ident">start_send</span>(<span class="ident">item</span>).<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">as_mut</span>().<span class="ident">take_f</span>()(<span class="ident">e</span>))
     }
 
     <span class="kw">fn</span> <span class="ident">poll_flush</span>(
         <span class="kw-2">mut</span> <span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>,
         <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="self">Self</span>::<span class="ident">Error</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="self">Self</span><span class="ident">::Error</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">as_mut</span>().<span class="ident">project</span>().<span class="ident">sink</span>.<span class="ident">poll_flush</span>(<span class="ident">cx</span>).<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">as_mut</span>().<span class="ident">take_f</span>()(<span class="ident">e</span>))
     }
 
     <span class="kw">fn</span> <span class="ident">poll_close</span>(
         <span class="kw-2">mut</span> <span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>,
         <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="self">Self</span>::<span class="ident">Error</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="self">Self</span><span class="ident">::Error</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">as_mut</span>().<span class="ident">project</span>().<span class="ident">sink</span>.<span class="ident">poll_close</span>(<span class="ident">cx</span>).<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">as_mut</span>().<span class="ident">take_f</span>()(<span class="ident">e</span>))
     }
 }
 
 <span class="comment">// Forwarding impl of Stream from the underlying sink</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">Stream</span>, <span class="ident">F</span><span class="op">&gt;</span> <span class="ident">Stream</span> <span class="kw">for</span> <span class="ident">SinkMapErr</span><span class="op">&lt;</span><span class="ident">S</span>, <span class="ident">F</span><span class="op">&gt;</span> {
-    <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">S</span>::<span class="ident">Item</span>;
+    <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">S::Item</span>;
 
     <span class="macro">delegate_stream!</span>(<span class="ident">sink</span>);
 }
@@ -153,5 +153,5 @@
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="futures_util" data-search-js="../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="futures_util" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

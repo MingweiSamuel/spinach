@@ -73,12 +73,12 @@
 <span id="70">70</span>
 <span id="71">71</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
+<span class="kw">use</span> <span class="ident">std::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 
-<span class="kw">use</span> <span class="ident">ref_cast</span>::<span class="ident">RefCast</span>;
+<span class="kw">use</span> <span class="ident">ref_cast::RefCast</span>;
 
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">flow</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">lattice</span>::{<span class="ident">Hide</span>, <span class="ident">Lattice</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::flow</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::lattice</span>::{<span class="ident">Hide</span>, <span class="ident">Lattice</span>};
 
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
@@ -88,23 +88,23 @@
 <span class="doccomment">/// output is reference `&amp;F::Domain` values as [`Rx`] reactive.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LatticeOp</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">Op</span>, <span class="ident">F</span>: <span class="lifetime">&#39;static</span> <span class="op">+</span> <span class="ident">Lattice</span><span class="op">&gt;</span> {
     <span class="ident">op</span>: <span class="ident">O</span>,
-    <span class="ident">state</span>: <span class="ident">F</span>::<span class="ident">Domain</span>,
+    <span class="ident">state</span>: <span class="ident">F::Domain</span>,
 }
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">Op</span>, <span class="ident">F</span>: <span class="lifetime">&#39;static</span> <span class="op">+</span> <span class="ident">Lattice</span><span class="op">&gt;</span> <span class="ident">LatticeOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Create a LatticeOp with the given BOTTOM value.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">op</span>: <span class="ident">O</span>, <span class="ident">bottom</span>: <span class="ident">F</span>::<span class="ident">Domain</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">op</span>: <span class="ident">O</span>, <span class="ident">bottom</span>: <span class="ident">F::Domain</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> { <span class="ident">op</span>, <span class="ident">state</span>: <span class="ident">bottom</span> }
     }
 }
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">Op</span>, <span class="ident">F</span>: <span class="lifetime">&#39;static</span> <span class="op">+</span> <span class="ident">Lattice</span><span class="op">&gt;</span> <span class="ident">LatticeOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">F</span>::<span class="ident">Domain</span>: <span class="ident">Default</span>,
+    <span class="ident">F::Domain</span>: <span class="ident">Default</span>,
 {
     <span class="doccomment">/// Create a LatticeOp using the default value as bottom.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_default</span>(<span class="ident">op</span>: <span class="ident">O</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> {
             <span class="ident">op</span>,
-            <span class="ident">state</span>: <span class="ident">Default</span>::<span class="ident">default</span>(),
+            <span class="ident">state</span>: <span class="ident">Default::default</span>(),
         }
     }
 }
@@ -113,19 +113,19 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span>: <span class="lifetime">&#39;static</span> <span class="op">+</span> <span class="ident">Lattice</span><span class="op">&gt;</span> <span class="ident">PullOp</span> <span class="kw">for</span> <span class="ident">LatticeOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="kw">for</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Outdomain</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">F</span>::<span class="ident">Domain</span><span class="op">&gt;</span>,
+    <span class="kw">for</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">O</span>: <span class="ident">PullOp</span><span class="op">&lt;</span><span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Df</span>, <span class="ident">Outdomain</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">F::Domain</span><span class="op">&gt;</span>,
 {
     <span class="kw">type</span> <span class="ident">Outflow</span> <span class="op">=</span> <span class="ident">Rx</span>;
     <span class="kw">type</span> <span class="ident">Outdomain</span><span class="op">&lt;</span><span class="lifetime">&#39;p</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;p</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>;
 
-    <span class="kw">fn</span> <span class="ident">poll_next</span><span class="op">&lt;</span><span class="lifetime">&#39;p</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;p</span> <span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Outdomain</span><span class="op">&lt;</span><span class="lifetime">&#39;p</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">item</span>)) <span class="op">=</span> <span class="self">self</span>.<span class="ident">op</span>.<span class="ident">poll_next</span>(<span class="ident">ctx</span>) {
-            <span class="ident">F</span>::<span class="ident">merge_in</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">state</span>, <span class="ident">item</span>);
+    <span class="kw">fn</span> <span class="ident">poll_next</span><span class="op">&lt;</span><span class="lifetime">&#39;p</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;p</span> <span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="ident">::Outdomain</span><span class="op">&lt;</span><span class="lifetime">&#39;p</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="ident">Poll::Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">item</span>)) <span class="op">=</span> <span class="self">self</span>.<span class="ident">op</span>.<span class="ident">poll_next</span>(<span class="ident">ctx</span>) {
+            <span class="ident">F::merge_in</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">state</span>, <span class="ident">item</span>);
         }
 
         <span class="comment">// Note: even if upstream is closed, this remains open.</span>
-        <span class="kw">let</span> <span class="ident">hide</span> <span class="op">=</span> <span class="ident">Hide</span>::<span class="ident">ref_cast</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">state</span>);
-        <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">hide</span>))
+        <span class="kw">let</span> <span class="ident">hide</span> <span class="op">=</span> <span class="ident">Hide::ref_cast</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">state</span>);
+        <span class="ident">Poll::Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">hide</span>))
     }
 }
 
@@ -134,16 +134,16 @@
     <span class="kw">for</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">O</span>: <span class="ident">PushOp</span><span class="op">&lt;</span><span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">Rx</span>, <span class="ident">Indomain</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 {
     <span class="kw">type</span> <span class="ident">Inflow</span> <span class="op">=</span> <span class="ident">Df</span>;
-    <span class="kw">type</span> <span class="ident">Indomain</span><span class="op">&lt;</span><span class="lifetime">&#39;p</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">F</span>::<span class="ident">Domain</span>;
+    <span class="kw">type</span> <span class="ident">Indomain</span><span class="op">&lt;</span><span class="lifetime">&#39;p</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">F::Domain</span>;
 
-    <span class="kw">type</span> <span class="ident">Feedback</span> <span class="op">=</span> <span class="ident">O</span>::<span class="ident">Feedback</span>;
+    <span class="kw">type</span> <span class="ident">Feedback</span> <span class="op">=</span> <span class="ident">O::Feedback</span>;
 
-    <span class="kw">fn</span> <span class="ident">push</span><span class="op">&lt;</span><span class="lifetime">&#39;p</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">item</span>: <span class="self">Self</span>::<span class="ident">Indomain</span><span class="op">&lt;</span><span class="lifetime">&#39;p</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Feedback</span> {
-        <span class="ident">F</span>::<span class="ident">merge_in</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">state</span>, <span class="ident">item</span>);
-        <span class="kw">let</span> <span class="ident">hide</span> <span class="op">=</span> <span class="ident">Hide</span>::<span class="ident">ref_cast</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">state</span>);
+    <span class="kw">fn</span> <span class="ident">push</span><span class="op">&lt;</span><span class="lifetime">&#39;p</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">item</span>: <span class="self">Self</span><span class="ident">::Indomain</span><span class="op">&lt;</span><span class="lifetime">&#39;p</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span><span class="ident">::Feedback</span> {
+        <span class="ident">F::merge_in</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">state</span>, <span class="ident">item</span>);
+        <span class="kw">let</span> <span class="ident">hide</span> <span class="op">=</span> <span class="ident">Hide::ref_cast</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">state</span>);
         <span class="self">self</span>.<span class="ident">op</span>.<span class="ident">push</span>(<span class="ident">hide</span>)
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="spinach" data-search-js="../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="spinach" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

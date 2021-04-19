@@ -120,44 +120,44 @@
 <span class="doccomment">//! methods to `Stream` types</span>
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_core</span>::<span class="ident">stream</span>::{<span class="ident">BoxStream</span>, <span class="ident">LocalBoxStream</span>};
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_core</span>::<span class="ident">stream</span>::{<span class="ident">FusedStream</span>, <span class="ident">Stream</span>, <span class="ident">TryStream</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_core::stream</span>::{<span class="ident">BoxStream</span>, <span class="ident">LocalBoxStream</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_core::stream</span>::{<span class="ident">FusedStream</span>, <span class="ident">Stream</span>, <span class="ident">TryStream</span>};
 
 <span class="comment">// Extension traits and combinators</span>
 
-<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">module_inception</span>)]</span>
+<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy::module_inception</span>)]</span>
 <span class="kw">mod</span> <span class="ident">stream</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">stream</span>::{
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::stream</span>::{
     <span class="ident">Chain</span>, <span class="ident">Collect</span>, <span class="ident">Concat</span>, <span class="ident">Cycle</span>, <span class="ident">Enumerate</span>, <span class="ident">Filter</span>, <span class="ident">FilterMap</span>, <span class="ident">FlatMap</span>, <span class="ident">Flatten</span>, <span class="ident">Fold</span>, <span class="ident">ForEach</span>,
     <span class="ident">Fuse</span>, <span class="ident">Inspect</span>, <span class="ident">Map</span>, <span class="ident">Next</span>, <span class="ident">Peek</span>, <span class="ident">Peekable</span>, <span class="ident">Scan</span>, <span class="ident">SelectNextSome</span>, <span class="ident">Skip</span>, <span class="ident">SkipWhile</span>, <span class="ident">StreamExt</span>,
     <span class="ident">StreamFuture</span>, <span class="ident">Take</span>, <span class="ident">TakeWhile</span>, <span class="ident">TakeUntil</span>, <span class="ident">Then</span>, <span class="ident">Zip</span>,
 };
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">stream</span>::<span class="ident">CatchUnwind</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::stream::CatchUnwind</span>;
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">stream</span>::<span class="ident">Chunks</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::stream::Chunks</span>;
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">stream</span>::<span class="ident">ReadyChunks</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::stream::ReadyChunks</span>;
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;sink&quot;</span>)]</span>
 <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">docsrs</span>, <span class="ident">doc</span>(<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;sink&quot;</span>)))]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">stream</span>::<span class="ident">Forward</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::stream::Forward</span>;
 
 <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;cfg-target-has-atomic&quot;</span>, <span class="ident">cfg</span>(<span class="ident">target_has_atomic</span> <span class="op">=</span> <span class="string">&quot;ptr&quot;</span>))]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">stream</span>::{<span class="ident">BufferUnordered</span>, <span class="ident">Buffered</span>, <span class="ident">ForEachConcurrent</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::stream</span>::{<span class="ident">BufferUnordered</span>, <span class="ident">Buffered</span>, <span class="ident">ForEachConcurrent</span>};
 
 <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;cfg-target-has-atomic&quot;</span>, <span class="ident">cfg</span>(<span class="ident">target_has_atomic</span> <span class="op">=</span> <span class="string">&quot;ptr&quot;</span>))]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;sink&quot;</span>)]</span>
 <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">docsrs</span>, <span class="ident">doc</span>(<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;sink&quot;</span>)))]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">stream</span>::{<span class="ident">ReuniteError</span>, <span class="ident">SplitSink</span>, <span class="ident">SplitStream</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::stream</span>::{<span class="ident">ReuniteError</span>, <span class="ident">SplitSink</span>, <span class="ident">SplitStream</span>};
 
 <span class="kw">mod</span> <span class="ident">try_stream</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">try_stream</span>::{
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::try_stream</span>::{
     <span class="ident">try_unfold</span>, <span class="ident">AndThen</span>, <span class="ident">ErrInto</span>, <span class="ident">InspectErr</span>, <span class="ident">InspectOk</span>, <span class="ident">IntoStream</span>, <span class="ident">MapErr</span>, <span class="ident">MapOk</span>, <span class="ident">OrElse</span>,
     <span class="ident">TryCollect</span>, <span class="ident">TryConcat</span>, <span class="ident">TryFilter</span>, <span class="ident">TryFilterMap</span>, <span class="ident">TryFlatten</span>, <span class="ident">TryFold</span>, <span class="ident">TryForEach</span>, <span class="ident">TryNext</span>,
     <span class="ident">TrySkipWhile</span>, <span class="ident">TryStreamExt</span>, <span class="ident">TryTakeWhile</span>, <span class="ident">TryUnfold</span>,
@@ -166,54 +166,54 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;io&quot;</span>)]</span>
 <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">docsrs</span>, <span class="ident">doc</span>(<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;io&quot;</span>)))]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">try_stream</span>::<span class="ident">IntoAsyncRead</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::try_stream::IntoAsyncRead</span>;
 
 <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;cfg-target-has-atomic&quot;</span>, <span class="ident">cfg</span>(<span class="ident">target_has_atomic</span> <span class="op">=</span> <span class="string">&quot;ptr&quot;</span>))]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">try_stream</span>::{<span class="ident">TryBufferUnordered</span>, <span class="ident">TryBuffered</span>, <span class="ident">TryForEachConcurrent</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::try_stream</span>::{<span class="ident">TryBufferUnordered</span>, <span class="ident">TryBuffered</span>, <span class="ident">TryForEachConcurrent</span>};
 
 <span class="comment">// Primitive streams</span>
 
 <span class="kw">mod</span> <span class="ident">iter</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">iter</span>::{<span class="ident">iter</span>, <span class="ident">Iter</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::iter</span>::{<span class="ident">iter</span>, <span class="ident">Iter</span>};
 
 <span class="kw">mod</span> <span class="ident">repeat</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">repeat</span>::{<span class="ident">repeat</span>, <span class="ident">Repeat</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::repeat</span>::{<span class="ident">repeat</span>, <span class="ident">Repeat</span>};
 
 <span class="kw">mod</span> <span class="ident">empty</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">empty</span>::{<span class="ident">empty</span>, <span class="ident">Empty</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::empty</span>::{<span class="ident">empty</span>, <span class="ident">Empty</span>};
 
 <span class="kw">mod</span> <span class="ident">once</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">once</span>::{<span class="ident">once</span>, <span class="ident">Once</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::once</span>::{<span class="ident">once</span>, <span class="ident">Once</span>};
 
 <span class="kw">mod</span> <span class="ident">pending</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">pending</span>::{<span class="ident">pending</span>, <span class="ident">Pending</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::pending</span>::{<span class="ident">pending</span>, <span class="ident">Pending</span>};
 
 <span class="kw">mod</span> <span class="ident">poll_fn</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">poll_fn</span>::{<span class="ident">poll_fn</span>, <span class="ident">PollFn</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::poll_fn</span>::{<span class="ident">poll_fn</span>, <span class="ident">PollFn</span>};
 
 <span class="kw">mod</span> <span class="ident">select</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">select</span>::{<span class="ident">select</span>, <span class="ident">Select</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::select</span>::{<span class="ident">select</span>, <span class="ident">Select</span>};
 
 <span class="kw">mod</span> <span class="ident">unfold</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">unfold</span>::{<span class="ident">unfold</span>, <span class="ident">Unfold</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::unfold</span>::{<span class="ident">unfold</span>, <span class="ident">Unfold</span>};
 
 <span class="macro">cfg_target_has_atomic!</span> {
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
     <span class="kw">mod</span> <span class="ident">futures_ordered</span>;
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">futures_ordered</span>::<span class="ident">FuturesOrdered</span>;
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::futures_ordered::FuturesOrdered</span>;
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
     <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">futures_unordered</span>;
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">inline</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">futures_unordered</span>::<span class="ident">FuturesUnordered</span>;
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::futures_unordered::FuturesUnordered</span>;
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
     <span class="kw">mod</span> <span class="ident">select_all</span>;
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">select_all</span>::{<span class="ident">select_all</span>, <span class="ident">SelectAll</span>};
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::select_all</span>::{<span class="ident">select_all</span>, <span class="ident">SelectAll</span>};
 }
 
 <span class="comment">// Just a helper function to ensure the futures we&#39;re returning all have the</span>
@@ -225,5 +225,5 @@
     <span class="ident">stream</span>
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="futures_util" data-search-js="../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="futures_util" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

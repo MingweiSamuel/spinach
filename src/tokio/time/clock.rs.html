@@ -223,13 +223,13 @@
 <span class="doccomment">//! configurable.</span>
 
 <span class="macro">cfg_not_test_util!</span> {
-    <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">time</span>::{<span class="ident">Duration</span>, <span class="ident">Instant</span>};
+    <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::time</span>::{<span class="ident">Duration</span>, <span class="ident">Instant</span>};
 
     <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">Clock</span> {}
 
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">now</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Instant</span> {
-        <span class="ident">Instant</span>::<span class="ident">from_std</span>(<span class="ident">std</span>::<span class="ident">time</span>::<span class="ident">Instant</span>::<span class="ident">now</span>())
+        <span class="ident">Instant::from_std</span>(<span class="ident">std::time::Instant::now</span>())
     }
 
     <span class="kw">impl</span> <span class="ident">Clock</span> {
@@ -252,12 +252,12 @@
 }
 
 <span class="macro">cfg_test_util!</span> {
-    <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">time</span>::{<span class="ident">Duration</span>, <span class="ident">Instant</span>};
-    <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::{<span class="ident">Arc</span>, <span class="ident">Mutex</span>};
+    <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::time</span>::{<span class="ident">Duration</span>, <span class="ident">Instant</span>};
+    <span class="kw">use</span> <span class="ident">std::sync</span>::{<span class="ident">Arc</span>, <span class="ident">Mutex</span>};
 
     <span class="macro">cfg_rt!</span> {
         <span class="kw">fn</span> <span class="ident">clock</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Clock</span><span class="op">&gt;</span> {
-            <span class="kw">crate</span>::<span class="ident">runtime</span>::<span class="ident">context</span>::<span class="ident">clock</span>()
+            <span class="kw">crate</span><span class="ident">::runtime::context::clock</span>()
         }
     }
 
@@ -279,10 +279,10 @@
         <span class="ident">enable_pausing</span>: <span class="ident">bool</span>,
 
         <span class="doccomment">/// Instant to use as the clock&#39;s base instant.</span>
-        <span class="ident">base</span>: <span class="ident">std</span>::<span class="ident">time</span>::<span class="ident">Instant</span>,
+        <span class="ident">base</span>: <span class="ident">std::time::Instant</span>,
 
         <span class="doccomment">/// Instant at which the clock was last unfrozen</span>
-        <span class="ident">unfrozen</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">std</span>::<span class="ident">time</span>::<span class="ident">Instant</span><span class="op">&gt;</span>,
+        <span class="ident">unfrozen</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">std::time::Instant</span><span class="op">&gt;</span>,
     }
 
     <span class="doccomment">/// Pause time</span>
@@ -323,7 +323,7 @@
             <span class="macro">panic!</span>(<span class="string">&quot;time is not frozen&quot;</span>);
         }
 
-        <span class="ident">inner</span>.<span class="ident">unfrozen</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">std</span>::<span class="ident">time</span>::<span class="ident">Instant</span>::<span class="ident">now</span>());
+        <span class="ident">inner</span>.<span class="ident">unfrozen</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">std::time::Instant::now</span>());
     }
 
     <span class="doccomment">/// Advance time</span>
@@ -336,8 +336,8 @@
     <span class="doccomment">/// Panics if time is not frozen or if called from outside of the Tokio</span>
     <span class="doccomment">/// runtime.</span>
     <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">advance</span>(<span class="ident">duration</span>: <span class="ident">Duration</span>) {
-        <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">future</span>::<span class="ident">poll_fn</span>;
-        <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">task</span>::<span class="ident">Poll</span>;
+        <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::future::poll_fn</span>;
+        <span class="kw">use</span> <span class="ident">std::task::Poll</span>;
 
         <span class="kw">let</span> <span class="ident">clock</span> <span class="op">=</span> <span class="ident">clock</span>().<span class="ident">expect</span>(<span class="string">&quot;time cannot be frozen from outside the Tokio runtime&quot;</span>);
         <span class="ident">clock</span>.<span class="ident">advance</span>(<span class="ident">duration</span>);
@@ -345,11 +345,11 @@
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">yielded</span> <span class="op">=</span> <span class="bool-val">false</span>;
         <span class="ident">poll_fn</span>(<span class="op">|</span><span class="ident">cx</span><span class="op">|</span> {
             <span class="kw">if</span> <span class="ident">yielded</span> {
-                <span class="ident">Poll</span>::<span class="ident">Ready</span>(())
+                <span class="ident">Poll::Ready</span>(())
             } <span class="kw">else</span> {
                 <span class="ident">yielded</span> <span class="op">=</span> <span class="bool-val">true</span>;
                 <span class="ident">cx</span>.<span class="ident">waker</span>().<span class="ident">wake_by_ref</span>();
-                <span class="ident">Poll</span>::<span class="ident">Pending</span>
+                <span class="ident">Poll::Pending</span>
             }
         }).<span class="kw">await</span>;
     }
@@ -359,7 +359,7 @@
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">clock</span>) <span class="op">=</span> <span class="ident">clock</span>() {
             <span class="ident">clock</span>.<span class="ident">now</span>()
         } <span class="kw">else</span> {
-            <span class="ident">Instant</span>::<span class="ident">from_std</span>(<span class="ident">std</span>::<span class="ident">time</span>::<span class="ident">Instant</span>::<span class="ident">now</span>())
+            <span class="ident">Instant::from_std</span>(<span class="ident">std::time::Instant::now</span>())
         }
     }
 
@@ -367,10 +367,10 @@
         <span class="doccomment">/// Return a new `Clock` instance that uses the current execution context&#39;s</span>
         <span class="doccomment">/// source of time.</span>
         <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">enable_pausing</span>: <span class="ident">bool</span>, <span class="ident">start_paused</span>: <span class="ident">bool</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Clock</span> {
-            <span class="kw">let</span> <span class="ident">now</span> <span class="op">=</span> <span class="ident">std</span>::<span class="ident">time</span>::<span class="ident">Instant</span>::<span class="ident">now</span>();
+            <span class="kw">let</span> <span class="ident">now</span> <span class="op">=</span> <span class="ident">std::time::Instant::now</span>();
 
             <span class="kw">let</span> <span class="ident">clock</span> <span class="op">=</span> <span class="ident">Clock</span> {
-                <span class="ident">inner</span>: <span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">Mutex</span>::<span class="ident">new</span>(<span class="ident">Inner</span> {
+                <span class="ident">inner</span>: <span class="ident">Arc::new</span>(<span class="ident">Mutex::new</span>(<span class="ident">Inner</span> {
                     <span class="ident">enable_pausing</span>,
                     <span class="ident">base</span>: <span class="ident">now</span>,
                     <span class="ident">unfrozen</span>: <span class="prelude-val">Some</span>(<span class="ident">now</span>),
@@ -422,10 +422,10 @@
                 <span class="ident">ret</span> <span class="op">+</span><span class="op">=</span> <span class="ident">unfrozen</span>.<span class="ident">elapsed</span>();
             }
 
-            <span class="ident">Instant</span>::<span class="ident">from_std</span>(<span class="ident">ret</span>)
+            <span class="ident">Instant::from_std</span>(<span class="ident">ret</span>)
         }
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-js="../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

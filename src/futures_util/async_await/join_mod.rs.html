@@ -116,7 +116,7 @@
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! The `join` macro.</span>
 
-<span class="kw">use</span> <span class="ident">proc_macro_hack</span>::<span class="ident">proc_macro_hack</span>;
+<span class="kw">use</span> <span class="ident">proc_macro_hack::proc_macro_hack</span>;
 
 <span class="macro">macro_rules!</span> <span class="ident">document_join_macro</span> {
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">join</span>:<span class="ident">item</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">try_join</span>:<span class="ident">item</span>) <span class="op">=</span><span class="op">&gt;</span> {
@@ -199,18 +199,18 @@
 
 <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
 <span class="attribute">#[<span class="ident">proc_macro_hack</span>(<span class="ident">support_nested</span>, <span class="ident">only_hack_old_rustc</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_macro</span>::<span class="ident">join_internal</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_macro::join_internal</span>;
 
 <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
 <span class="attribute">#[<span class="ident">proc_macro_hack</span>(<span class="ident">support_nested</span>, <span class="ident">only_hack_old_rustc</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_macro</span>::<span class="ident">try_join_internal</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_macro::try_join_internal</span>;
 
 <span class="macro">document_join_macro!</span> {
     <span class="attribute">#[<span class="ident">macro_export</span>]</span>
     <span class="macro">macro_rules!</span> <span class="ident">join</span> {
         ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">tokens</span>:<span class="ident">tt</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {{
-            <span class="kw">use</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">__private</span> <span class="kw">as</span> <span class="ident">__futures_crate</span>;
-            <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">join_internal!</span> {
+            <span class="kw">use</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span><span class="macro-nonterminal">::__private</span> <span class="kw">as</span> <span class="ident">__futures_crate</span>;
+            <span class="macro-nonterminal">$</span><span class="kw">crate</span><span class="macro">::join_internal!</span> {
                 $( <span class="macro-nonterminal">$</span><span class="macro-nonterminal">tokens</span> )<span class="op">*</span>
             }
         }}
@@ -219,13 +219,13 @@
     <span class="attribute">#[<span class="ident">macro_export</span>]</span>
     <span class="macro">macro_rules!</span> <span class="ident">try_join</span> {
         ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">tokens</span>:<span class="ident">tt</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {{
-            <span class="kw">use</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">__private</span> <span class="kw">as</span> <span class="ident">__futures_crate</span>;
-            <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">try_join_internal!</span> {
+            <span class="kw">use</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span><span class="macro-nonterminal">::__private</span> <span class="kw">as</span> <span class="ident">__futures_crate</span>;
+            <span class="macro-nonterminal">$</span><span class="kw">crate</span><span class="macro">::try_join_internal!</span> {
                 $( <span class="macro-nonterminal">$</span><span class="macro-nonterminal">tokens</span> )<span class="op">*</span>
             }
         }}
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="futures_util" data-search-js="../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="futures_util" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

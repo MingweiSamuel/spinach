@@ -37,7 +37,7 @@
 <span class="doccomment">/// Trait for types representing different types of flows, either dataflow or reactive.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// This trait is sealed and cannot be implemented for types outside this crate.</span>
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Flow</span>: <span class="ident">private</span>::<span class="ident">Sealed</span> {}
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Flow</span>: <span class="ident">private::Sealed</span> {}
 
 <span class="doccomment">/// Flow representing a dataflow of distinct `T` values.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Df</span> {
@@ -63,5 +63,5 @@
     <span class="kw">impl</span> <span class="ident">Sealed</span> <span class="kw">for</span> <span class="ident">Rx</span> {}
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="spinach" data-search-js="../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="spinach" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>

@@ -934,7 +934,7 @@
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">mutex</span>::{<span class="ident">Mutex</span>, <span class="ident">MutexGuard</span>, <span class="ident">TryLockError</span>, <span class="ident">OwnedMutexGuard</span>};
 
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod</span> <span class="ident">notify</span>;
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">notify</span>::<span class="ident">Notify</span>;
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">notify::Notify</span>;
 
     <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">oneshot</span>;
 
@@ -948,7 +948,7 @@
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">rwlock</span>::{<span class="ident">RwLock</span>, <span class="ident">RwLockReadGuard</span>, <span class="ident">RwLockWriteGuard</span>};
 
     <span class="kw">mod</span> <span class="ident">task</span>;
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="ident">task</span>::<span class="ident">AtomicWaker</span>;
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="ident">task::AtomicWaker</span>;
 
     <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">watch</span>;
 }
@@ -959,7 +959,7 @@
 
     <span class="macro">cfg_fs!</span> {
         <span class="kw">mod</span> <span class="ident">mutex</span>;
-        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="ident">mutex</span>::<span class="ident">Mutex</span>;
+        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="ident">mutex::Mutex</span>;
     }
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;rt&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;signal&quot;</span>, <span class="ident">all</span>(<span class="ident">unix</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;process&quot;</span>)))]</span>
@@ -967,7 +967,7 @@
 
     <span class="macro">cfg_atomic_waker_impl!</span> {
         <span class="kw">mod</span> <span class="ident">task</span>;
-        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="ident">task</span>::<span class="ident">AtomicWaker</span>;
+        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="ident">task::AtomicWaker</span>;
     }
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(
@@ -985,5 +985,5 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span>;
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-js="../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

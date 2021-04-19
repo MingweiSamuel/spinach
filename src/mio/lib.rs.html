@@ -331,11 +331,11 @@
 }
 
 <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">no_inline</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">event</span>::<span class="ident">Events</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">interest</span>::<span class="ident">Interest</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">event::Events</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">interest::Interest</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">poll</span>::{<span class="ident">Poll</span>, <span class="ident">Registry</span>};
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">token</span>::<span class="ident">Token</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">waker</span>::<span class="ident">Waker</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">token::Token</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">waker::Waker</span>;
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">unix</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;os-ext&quot;</span>))]</span>
 <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">docsrs</span>, <span class="ident">doc</span>(<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">unix</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;os-ext&quot;</span>))))]</span>
@@ -347,10 +347,10 @@
         <span class="doccomment">//!</span>
         <span class="doccomment">//! See the [`new`] function for documentation.</span>
 
-        <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">sys</span>::<span class="ident">pipe</span>::{<span class="ident">new</span>, <span class="ident">Receiver</span>, <span class="ident">Sender</span>};
+        <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::sys::pipe</span>::{<span class="ident">new</span>, <span class="ident">Receiver</span>, <span class="ident">Sender</span>};
     }
 
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">sys</span>::<span class="ident">SourceFd</span>;
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::sys::SourceFd</span>;
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">windows</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;os-ext&quot;</span>))]</span>
@@ -358,7 +358,7 @@
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">windows</span> {
     <span class="doccomment">//! Windows only extensions.</span>
 
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">sys</span>::<span class="ident">named_pipe</span>::<span class="ident">NamedPipe</span>;
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::sys::named_pipe::NamedPipe</span>;
 }
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">features</span> {
@@ -533,5 +533,5 @@
     <span class="doccomment">//! ```</span>
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="mio" data-search-js="../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="mio" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>

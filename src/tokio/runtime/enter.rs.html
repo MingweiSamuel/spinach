@@ -207,9 +207,9 @@
 <span id="204">204</span>
 <span id="205">205</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">cell</span>::{<span class="ident">Cell</span>, <span class="ident">RefCell</span>};
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">marker</span>::<span class="ident">PhantomData</span>;
+<span class="kw">use</span> <span class="ident">std::cell</span>::{<span class="ident">Cell</span>, <span class="ident">RefCell</span>};
+<span class="kw">use</span> <span class="ident">std::fmt</span>;
+<span class="kw">use</span> <span class="ident">std::marker::PhantomData</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">enum</span> <span class="ident">EnterContext</span> {
@@ -222,11 +222,11 @@
 
 <span class="kw">impl</span> <span class="ident">EnterContext</span> {
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">is_entered</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
-        <span class="macro">matches!</span>(<span class="self">self</span>, <span class="ident">EnterContext</span>::<span class="ident">Entered</span> { .. })
+        <span class="macro">matches!</span>(<span class="self">self</span>, <span class="ident">EnterContext::Entered</span> { .. })
     }
 }
 
-<span class="macro">thread_local!</span>(<span class="kw">static</span> <span class="ident">ENTERED</span>: <span class="ident">Cell</span><span class="op">&lt;</span><span class="ident">EnterContext</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Cell</span>::<span class="ident">new</span>(<span class="ident">EnterContext</span>::<span class="ident">NotEntered</span>));
+<span class="macro">thread_local!</span>(<span class="kw">static</span> <span class="ident">ENTERED</span>: <span class="ident">Cell</span><span class="op">&lt;</span><span class="ident">EnterContext</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Cell::new</span>(<span class="ident">EnterContext::NotEntered</span>));
 
 <span class="doccomment">/// Represents an executor context.</span>
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">Enter</span> {
@@ -234,9 +234,9 @@
 }
 
 <span class="macro">cfg_rt!</span> {
-    <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">park</span>::<span class="ident">thread</span>::<span class="ident">ParkError</span>;
+    <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::park::thread::ParkError</span>;
 
-    <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">time</span>::<span class="ident">Duration</span>;
+    <span class="kw">use</span> <span class="ident">std::time::Duration</span>;
 
     <span class="doccomment">/// Marks the current thread as being within the dynamic extent of an</span>
     <span class="doccomment">/// executor.</span>
@@ -260,7 +260,7 @@
             <span class="kw">if</span> <span class="ident">c</span>.<span class="ident">get</span>().<span class="ident">is_entered</span>() {
                 <span class="prelude-val">None</span>
             } <span class="kw">else</span> {
-                <span class="ident">c</span>.<span class="ident">set</span>(<span class="ident">EnterContext</span>::<span class="ident">Entered</span> { <span class="ident">allow_blocking</span> });
+                <span class="ident">c</span>.<span class="ident">set</span>(<span class="ident">EnterContext::Entered</span> { <span class="ident">allow_blocking</span> });
                 <span class="prelude-val">Some</span>(<span class="ident">Enter</span> { <span class="ident">_p</span>: <span class="ident">PhantomData</span> })
             }
         })
@@ -290,7 +290,7 @@
         <span class="kw">let</span> <span class="ident">was</span> <span class="op">=</span> <span class="ident">ENTERED</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> {
             <span class="kw">let</span> <span class="ident">e</span> <span class="op">=</span> <span class="ident">c</span>.<span class="ident">get</span>();
             <span class="macro">assert!</span>(<span class="ident">e</span>.<span class="ident">is_entered</span>(), <span class="string">&quot;asked to exit when not entered&quot;</span>);
-            <span class="ident">c</span>.<span class="ident">set</span>(<span class="ident">EnterContext</span>::<span class="ident">NotEntered</span>);
+            <span class="ident">c</span>.<span class="ident">set</span>(<span class="ident">EnterContext::NotEntered</span>);
             <span class="ident">e</span>
         });
 
@@ -304,11 +304,11 @@
     <span class="doccomment">/// Disallow blocking in the current runtime context until the guard is dropped.</span>
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">disallow_blocking</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DisallowBlockingGuard</span> {
         <span class="kw">let</span> <span class="ident">reset</span> <span class="op">=</span> <span class="ident">ENTERED</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> {
-            <span class="kw">if</span> <span class="kw">let</span> <span class="ident">EnterContext</span>::<span class="ident">Entered</span> {
+            <span class="kw">if</span> <span class="kw">let</span> <span class="ident">EnterContext::Entered</span> {
                 <span class="ident">allow_blocking</span>: <span class="bool-val">true</span>,
             } <span class="op">=</span> <span class="ident">c</span>.<span class="ident">get</span>()
             {
-                <span class="ident">c</span>.<span class="ident">set</span>(<span class="ident">EnterContext</span>::<span class="ident">Entered</span> {
+                <span class="ident">c</span>.<span class="ident">set</span>(<span class="ident">EnterContext::Entered</span> {
                     <span class="ident">allow_blocking</span>: <span class="bool-val">false</span>,
                 });
                 <span class="bool-val">true</span>
@@ -325,11 +325,11 @@
             <span class="kw">if</span> <span class="self">self</span>.<span class="number">0</span> {
                 <span class="comment">// XXX: Do we want some kind of assertion here, or is &quot;best effort&quot; okay?</span>
                 <span class="ident">ENTERED</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> {
-                    <span class="kw">if</span> <span class="kw">let</span> <span class="ident">EnterContext</span>::<span class="ident">Entered</span> {
+                    <span class="kw">if</span> <span class="kw">let</span> <span class="ident">EnterContext::Entered</span> {
                         <span class="ident">allow_blocking</span>: <span class="bool-val">false</span>,
                     } <span class="op">=</span> <span class="ident">c</span>.<span class="ident">get</span>()
                     {
-                        <span class="ident">c</span>.<span class="ident">set</span>(<span class="ident">EnterContext</span>::<span class="ident">Entered</span> {
+                        <span class="ident">c</span>.<span class="ident">set</span>(<span class="ident">EnterContext::Entered</span> {
                             <span class="ident">allow_blocking</span>: <span class="bool-val">true</span>,
                         });
                     }
@@ -350,13 +350,13 @@
     <span class="kw">impl</span> <span class="ident">Enter</span> {
         <span class="doccomment">/// Blocks the thread on the specified future, returning the value with</span>
         <span class="doccomment">/// which that future completes.</span>
-        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">block_on</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">F</span>::<span class="ident">Output</span>, <span class="ident">ParkError</span><span class="op">&gt;</span>
+        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">block_on</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">F::Output</span>, <span class="ident">ParkError</span><span class="op">&gt;</span>
         <span class="kw">where</span>
-            <span class="ident">F</span>: <span class="ident">std</span>::<span class="ident">future</span>::<span class="ident">Future</span>,
+            <span class="ident">F</span>: <span class="ident">std::future::Future</span>,
         {
-            <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">park</span>::<span class="ident">thread</span>::<span class="ident">CachedParkThread</span>;
+            <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::park::thread::CachedParkThread</span>;
 
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">park</span> <span class="op">=</span> <span class="ident">CachedParkThread</span>::<span class="ident">new</span>();
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">park</span> <span class="op">=</span> <span class="ident">CachedParkThread::new</span>();
             <span class="ident">park</span>.<span class="ident">block_on</span>(<span class="ident">f</span>)
         }
 
@@ -364,29 +364,29 @@
         <span class="doccomment">///</span>
         <span class="doccomment">/// If the future completes before `timeout`, the result is returned. If</span>
         <span class="doccomment">/// `timeout` elapses, then `Err` is returned.</span>
-        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">block_on_timeout</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">f</span>: <span class="ident">F</span>, <span class="ident">timeout</span>: <span class="ident">Duration</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">F</span>::<span class="ident">Output</span>, <span class="ident">ParkError</span><span class="op">&gt;</span>
+        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">block_on_timeout</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">f</span>: <span class="ident">F</span>, <span class="ident">timeout</span>: <span class="ident">Duration</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">F::Output</span>, <span class="ident">ParkError</span><span class="op">&gt;</span>
         <span class="kw">where</span>
-            <span class="ident">F</span>: <span class="ident">std</span>::<span class="ident">future</span>::<span class="ident">Future</span>,
+            <span class="ident">F</span>: <span class="ident">std::future::Future</span>,
         {
-            <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">park</span>::<span class="ident">Park</span>;
-            <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">park</span>::<span class="ident">thread</span>::<span class="ident">CachedParkThread</span>;
-            <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">task</span>::<span class="ident">Context</span>;
-            <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">task</span>::<span class="ident">Poll</span>::<span class="ident">Ready</span>;
-            <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">time</span>::<span class="ident">Instant</span>;
+            <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::park::Park</span>;
+            <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::park::thread::CachedParkThread</span>;
+            <span class="kw">use</span> <span class="ident">std::task::Context</span>;
+            <span class="kw">use</span> <span class="ident">std::task::Poll::Ready</span>;
+            <span class="kw">use</span> <span class="ident">std::time::Instant</span>;
 
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">park</span> <span class="op">=</span> <span class="ident">CachedParkThread</span>::<span class="ident">new</span>();
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">park</span> <span class="op">=</span> <span class="ident">CachedParkThread::new</span>();
             <span class="kw">let</span> <span class="ident">waker</span> <span class="op">=</span> <span class="ident">park</span>.<span class="ident">get_unpark</span>()<span class="question-mark">?</span>.<span class="ident">into_waker</span>();
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">cx</span> <span class="op">=</span> <span class="ident">Context</span>::<span class="ident">from_waker</span>(<span class="kw-2">&amp;</span><span class="ident">waker</span>);
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">cx</span> <span class="op">=</span> <span class="ident">Context::from_waker</span>(<span class="kw-2">&amp;</span><span class="ident">waker</span>);
 
             <span class="macro">pin!</span>(<span class="ident">f</span>);
-            <span class="kw">let</span> <span class="ident">when</span> <span class="op">=</span> <span class="ident">Instant</span>::<span class="ident">now</span>() <span class="op">+</span> <span class="ident">timeout</span>;
+            <span class="kw">let</span> <span class="ident">when</span> <span class="op">=</span> <span class="ident">Instant::now</span>() <span class="op">+</span> <span class="ident">timeout</span>;
 
             <span class="kw">loop</span> {
-                <span class="kw">if</span> <span class="kw">let</span> <span class="ident">Ready</span>(<span class="ident">v</span>) <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">coop</span>::<span class="ident">budget</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">f</span>.<span class="ident">as_mut</span>().<span class="ident">poll</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">cx</span>)) {
+                <span class="kw">if</span> <span class="kw">let</span> <span class="ident">Ready</span>(<span class="ident">v</span>) <span class="op">=</span> <span class="kw">crate</span><span class="ident">::coop::budget</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">f</span>.<span class="ident">as_mut</span>().<span class="ident">poll</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">cx</span>)) {
                     <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">v</span>);
                 }
 
-                <span class="kw">let</span> <span class="ident">now</span> <span class="op">=</span> <span class="ident">Instant</span>::<span class="ident">now</span>();
+                <span class="kw">let</span> <span class="ident">now</span> <span class="op">=</span> <span class="ident">Instant::now</span>();
 
                 <span class="kw">if</span> <span class="ident">now</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">when</span> {
                     <span class="kw">return</span> <span class="prelude-val">Err</span>(());
@@ -398,8 +398,8 @@
     }
 }
 
-<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Enter</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">impl</span> <span class="ident">fmt::Debug</span> <span class="kw">for</span> <span class="ident">Enter</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
         <span class="ident">f</span>.<span class="ident">debug_struct</span>(<span class="string">&quot;Enter&quot;</span>).<span class="ident">finish</span>()
     }
 }
@@ -408,10 +408,10 @@
     <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
         <span class="ident">ENTERED</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> {
             <span class="macro">assert!</span>(<span class="ident">c</span>.<span class="ident">get</span>().<span class="ident">is_entered</span>());
-            <span class="ident">c</span>.<span class="ident">set</span>(<span class="ident">EnterContext</span>::<span class="ident">NotEntered</span>);
+            <span class="ident">c</span>.<span class="ident">set</span>(<span class="ident">EnterContext::NotEntered</span>);
         });
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-js="../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

@@ -919,60 +919,60 @@
 <span id="916">916</span>
 <span id="917">917</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="ident">futures_core</span>::<span class="ident">Stream</span>;
+<span class="kw">use</span> <span class="ident">futures_core::Stream</span>;
 
 <span class="kw">mod</span> <span class="ident">all</span>;
-<span class="kw">use</span> <span class="ident">all</span>::<span class="ident">AllFuture</span>;
+<span class="kw">use</span> <span class="ident">all::AllFuture</span>;
 
 <span class="kw">mod</span> <span class="ident">any</span>;
-<span class="kw">use</span> <span class="ident">any</span>::<span class="ident">AnyFuture</span>;
+<span class="kw">use</span> <span class="ident">any::AnyFuture</span>;
 
 <span class="kw">mod</span> <span class="ident">chain</span>;
-<span class="kw">use</span> <span class="ident">chain</span>::<span class="ident">Chain</span>;
+<span class="kw">use</span> <span class="ident">chain::Chain</span>;
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod</span> <span class="ident">collect</span>;
 <span class="kw">use</span> <span class="ident">collect</span>::{<span class="ident">Collect</span>, <span class="ident">FromStream</span>};
 
 <span class="kw">mod</span> <span class="ident">filter</span>;
-<span class="kw">use</span> <span class="ident">filter</span>::<span class="ident">Filter</span>;
+<span class="kw">use</span> <span class="ident">filter::Filter</span>;
 
 <span class="kw">mod</span> <span class="ident">filter_map</span>;
-<span class="kw">use</span> <span class="ident">filter_map</span>::<span class="ident">FilterMap</span>;
+<span class="kw">use</span> <span class="ident">filter_map::FilterMap</span>;
 
 <span class="kw">mod</span> <span class="ident">fold</span>;
-<span class="kw">use</span> <span class="ident">fold</span>::<span class="ident">FoldFuture</span>;
+<span class="kw">use</span> <span class="ident">fold::FoldFuture</span>;
 
 <span class="kw">mod</span> <span class="ident">fuse</span>;
-<span class="kw">use</span> <span class="ident">fuse</span>::<span class="ident">Fuse</span>;
+<span class="kw">use</span> <span class="ident">fuse::Fuse</span>;
 
 <span class="kw">mod</span> <span class="ident">map</span>;
-<span class="kw">use</span> <span class="ident">map</span>::<span class="ident">Map</span>;
+<span class="kw">use</span> <span class="ident">map::Map</span>;
 
 <span class="kw">mod</span> <span class="ident">merge</span>;
-<span class="kw">use</span> <span class="ident">merge</span>::<span class="ident">Merge</span>;
+<span class="kw">use</span> <span class="ident">merge::Merge</span>;
 
 <span class="kw">mod</span> <span class="ident">next</span>;
-<span class="kw">use</span> <span class="ident">next</span>::<span class="ident">Next</span>;
+<span class="kw">use</span> <span class="ident">next::Next</span>;
 
 <span class="kw">mod</span> <span class="ident">skip</span>;
-<span class="kw">use</span> <span class="ident">skip</span>::<span class="ident">Skip</span>;
+<span class="kw">use</span> <span class="ident">skip::Skip</span>;
 
 <span class="kw">mod</span> <span class="ident">skip_while</span>;
-<span class="kw">use</span> <span class="ident">skip_while</span>::<span class="ident">SkipWhile</span>;
+<span class="kw">use</span> <span class="ident">skip_while::SkipWhile</span>;
 
 <span class="kw">mod</span> <span class="ident">try_next</span>;
-<span class="kw">use</span> <span class="ident">try_next</span>::<span class="ident">TryNext</span>;
+<span class="kw">use</span> <span class="ident">try_next::TryNext</span>;
 
 <span class="kw">mod</span> <span class="ident">take</span>;
-<span class="kw">use</span> <span class="ident">take</span>::<span class="ident">Take</span>;
+<span class="kw">use</span> <span class="ident">take::Take</span>;
 
 <span class="kw">mod</span> <span class="ident">take_while</span>;
-<span class="kw">use</span> <span class="ident">take_while</span>::<span class="ident">TakeWhile</span>;
+<span class="kw">use</span> <span class="ident">take_while::TakeWhile</span>;
 
 <span class="macro">cfg_time!</span> {
     <span class="kw">mod</span> <span class="ident">timeout</span>;
-    <span class="kw">use</span> <span class="ident">timeout</span>::<span class="ident">Timeout</span>;
-    <span class="kw">use</span> <span class="ident">tokio</span>::<span class="ident">time</span>::<span class="ident">Duration</span>;
+    <span class="kw">use</span> <span class="ident">timeout::Timeout</span>;
+    <span class="kw">use</span> <span class="ident">tokio::time::Duration</span>;
     <span class="kw">mod</span> <span class="ident">throttle</span>;
     <span class="kw">use</span> <span class="ident">throttle</span>::{<span class="ident">throttle</span>, <span class="ident">Throttle</span>};
 }
@@ -1046,7 +1046,7 @@
     <span class="kw">where</span>
         <span class="self">Self</span>: <span class="ident">Unpin</span>,
     {
-        <span class="ident">Next</span>::<span class="ident">new</span>(<span class="self">self</span>)
+        <span class="ident">Next::new</span>(<span class="self">self</span>)
     }
 
     <span class="doccomment">/// Consumes and returns the next item in the stream. If an error is</span>
@@ -1081,7 +1081,7 @@
     <span class="kw">where</span>
         <span class="self">Self</span>: <span class="ident">Stream</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">E</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Unpin</span>,
     {
-        <span class="ident">TryNext</span>::<span class="ident">new</span>(<span class="self">self</span>)
+        <span class="ident">TryNext::new</span>(<span class="self">self</span>)
     }
 
     <span class="doccomment">/// Maps this stream&#39;s items to a different type, returning a new stream of</span>
@@ -1112,10 +1112,10 @@
     <span class="doccomment">/// ```</span>
     <span class="kw">fn</span> <span class="ident">map</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Map</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">F</span><span class="op">&gt;</span>
     <span class="kw">where</span>
-        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="self">Self</span>::<span class="ident">Item</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">T</span>,
+        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="self">Self</span><span class="ident">::Item</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">T</span>,
         <span class="self">Self</span>: <span class="ident">Sized</span>,
     {
-        <span class="ident">Map</span>::<span class="ident">new</span>(<span class="self">self</span>, <span class="ident">f</span>)
+        <span class="ident">Map::new</span>(<span class="self">self</span>, <span class="ident">f</span>)
     }
 
     <span class="doccomment">/// Combine two streams into one by interleaving the output of both as it</span>
@@ -1204,10 +1204,10 @@
     <span class="doccomment">/// ```</span>
     <span class="kw">fn</span> <span class="ident">merge</span><span class="op">&lt;</span><span class="ident">U</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="ident">U</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Merge</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">U</span><span class="op">&gt;</span>
     <span class="kw">where</span>
-        <span class="ident">U</span>: <span class="ident">Stream</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">Item</span><span class="op">&gt;</span>,
+        <span class="ident">U</span>: <span class="ident">Stream</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="self">Self</span><span class="ident">::Item</span><span class="op">&gt;</span>,
         <span class="self">Self</span>: <span class="ident">Sized</span>,
     {
-        <span class="ident">Merge</span>::<span class="ident">new</span>(<span class="self">self</span>, <span class="ident">other</span>)
+        <span class="ident">Merge::new</span>(<span class="self">self</span>, <span class="ident">other</span>)
     }
 
     <span class="doccomment">/// Filters the values produced by this stream according to the provided</span>
@@ -1242,10 +1242,10 @@
     <span class="doccomment">/// ```</span>
     <span class="kw">fn</span> <span class="ident">filter</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Filter</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">F</span><span class="op">&gt;</span>
     <span class="kw">where</span>
-        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Item</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span>,
+        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="self">Self</span><span class="ident">::Item</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span>,
         <span class="self">Self</span>: <span class="ident">Sized</span>,
     {
-        <span class="ident">Filter</span>::<span class="ident">new</span>(<span class="self">self</span>, <span class="ident">f</span>)
+        <span class="ident">Filter::new</span>(<span class="self">self</span>, <span class="ident">f</span>)
     }
 
     <span class="doccomment">/// Filters the values produced by this stream while simultaneously mapping</span>
@@ -1280,10 +1280,10 @@
     <span class="doccomment">/// ```</span>
     <span class="kw">fn</span> <span class="ident">filter_map</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">FilterMap</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">F</span><span class="op">&gt;</span>
     <span class="kw">where</span>
-        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="self">Self</span>::<span class="ident">Item</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
+        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="self">Self</span><span class="ident">::Item</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
         <span class="self">Self</span>: <span class="ident">Sized</span>,
     {
-        <span class="ident">FilterMap</span>::<span class="ident">new</span>(<span class="self">self</span>, <span class="ident">f</span>)
+        <span class="ident">FilterMap::new</span>(<span class="self">self</span>, <span class="ident">f</span>)
     }
 
     <span class="doccomment">/// Creates a stream which ends after the first `None`.</span>
@@ -1348,7 +1348,7 @@
     <span class="kw">where</span>
         <span class="self">Self</span>: <span class="ident">Sized</span>,
     {
-        <span class="ident">Fuse</span>::<span class="ident">new</span>(<span class="self">self</span>)
+        <span class="ident">Fuse::new</span>(<span class="self">self</span>)
     }
 
     <span class="doccomment">/// Creates a new stream of at most `n` items of the underlying stream.</span>
@@ -1375,7 +1375,7 @@
     <span class="kw">where</span>
         <span class="self">Self</span>: <span class="ident">Sized</span>,
     {
-        <span class="ident">Take</span>::<span class="ident">new</span>(<span class="self">self</span>, <span class="ident">n</span>)
+        <span class="ident">Take::new</span>(<span class="self">self</span>, <span class="ident">n</span>)
     }
 
     <span class="doccomment">/// Take elements from this stream while the provided predicate</span>
@@ -1402,10 +1402,10 @@
     <span class="doccomment">/// ```</span>
     <span class="kw">fn</span> <span class="ident">take_while</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TakeWhile</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">F</span><span class="op">&gt;</span>
     <span class="kw">where</span>
-        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Item</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span>,
+        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="self">Self</span><span class="ident">::Item</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span>,
         <span class="self">Self</span>: <span class="ident">Sized</span>,
     {
-        <span class="ident">TakeWhile</span>::<span class="ident">new</span>(<span class="self">self</span>, <span class="ident">f</span>)
+        <span class="ident">TakeWhile::new</span>(<span class="self">self</span>, <span class="ident">f</span>)
     }
 
     <span class="doccomment">/// Creates a new stream that will skip the `n` first items of the</span>
@@ -1430,7 +1430,7 @@
     <span class="kw">where</span>
         <span class="self">Self</span>: <span class="ident">Sized</span>,
     {
-        <span class="ident">Skip</span>::<span class="ident">new</span>(<span class="self">self</span>, <span class="ident">n</span>)
+        <span class="ident">Skip::new</span>(<span class="self">self</span>, <span class="ident">n</span>)
     }
 
     <span class="doccomment">/// Skip elements from the underlying stream while the provided predicate</span>
@@ -1458,10 +1458,10 @@
     <span class="doccomment">/// ```</span>
     <span class="kw">fn</span> <span class="ident">skip_while</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">SkipWhile</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">F</span><span class="op">&gt;</span>
     <span class="kw">where</span>
-        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Item</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span>,
+        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="self">Self</span><span class="ident">::Item</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span>,
         <span class="self">Self</span>: <span class="ident">Sized</span>,
     {
-        <span class="ident">SkipWhile</span>::<span class="ident">new</span>(<span class="self">self</span>, <span class="ident">f</span>)
+        <span class="ident">SkipWhile::new</span>(<span class="self">self</span>, <span class="ident">f</span>)
     }
 
     <span class="doccomment">/// Tests if every element of the stream matches a predicate.</span>
@@ -1520,9 +1520,9 @@
     <span class="kw">fn</span> <span class="ident">all</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">AllFuture</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="self">Self</span>, <span class="ident">F</span><span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="self">Self</span>: <span class="ident">Unpin</span>,
-        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="self">Self</span>::<span class="ident">Item</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span>,
+        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="self">Self</span><span class="ident">::Item</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span>,
     {
-        <span class="ident">AllFuture</span>::<span class="ident">new</span>(<span class="self">self</span>, <span class="ident">f</span>)
+        <span class="ident">AllFuture::new</span>(<span class="self">self</span>, <span class="ident">f</span>)
     }
 
     <span class="doccomment">/// Tests if any element of the stream matches a predicate.</span>
@@ -1579,9 +1579,9 @@
     <span class="kw">fn</span> <span class="ident">any</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">AnyFuture</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="self">Self</span>, <span class="ident">F</span><span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="self">Self</span>: <span class="ident">Unpin</span>,
-        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="self">Self</span>::<span class="ident">Item</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span>,
+        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="self">Self</span><span class="ident">::Item</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span>,
     {
-        <span class="ident">AnyFuture</span>::<span class="ident">new</span>(<span class="self">self</span>, <span class="ident">f</span>)
+        <span class="ident">AnyFuture::new</span>(<span class="self">self</span>, <span class="ident">f</span>)
     }
 
     <span class="doccomment">/// Combine two streams into one by first returning all values from the</span>
@@ -1613,10 +1613,10 @@
     <span class="doccomment">/// ```</span>
     <span class="kw">fn</span> <span class="ident">chain</span><span class="op">&lt;</span><span class="ident">U</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="ident">U</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Chain</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">U</span><span class="op">&gt;</span>
     <span class="kw">where</span>
-        <span class="ident">U</span>: <span class="ident">Stream</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">Item</span><span class="op">&gt;</span>,
+        <span class="ident">U</span>: <span class="ident">Stream</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="self">Self</span><span class="ident">::Item</span><span class="op">&gt;</span>,
         <span class="self">Self</span>: <span class="ident">Sized</span>,
     {
-        <span class="ident">Chain</span>::<span class="ident">new</span>(<span class="self">self</span>, <span class="ident">other</span>)
+        <span class="ident">Chain::new</span>(<span class="self">self</span>, <span class="ident">other</span>)
     }
 
     <span class="doccomment">/// A combinator that applies a function to every element in a stream</span>
@@ -1644,9 +1644,9 @@
     <span class="kw">fn</span> <span class="ident">fold</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">F</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">init</span>: <span class="ident">B</span>, <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">FoldFuture</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">B</span>, <span class="ident">F</span><span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="self">Self</span>: <span class="ident">Sized</span>,
-        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="ident">B</span>, <span class="self">Self</span>::<span class="ident">Item</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">B</span>,
+        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="ident">B</span>, <span class="self">Self</span><span class="ident">::Item</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">B</span>,
     {
-        <span class="ident">FoldFuture</span>::<span class="ident">new</span>(<span class="self">self</span>, <span class="ident">init</span>, <span class="ident">f</span>)
+        <span class="ident">FoldFuture::new</span>(<span class="self">self</span>, <span class="ident">init</span>, <span class="ident">f</span>)
     }
 
     <span class="doccomment">/// Drain stream pushing all emitted values into a collection.</span>
@@ -1723,10 +1723,10 @@
     <span class="doccomment">/// ```</span>
     <span class="kw">fn</span> <span class="ident">collect</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Collect</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">T</span><span class="op">&gt;</span>
     <span class="kw">where</span>
-        <span class="ident">T</span>: <span class="ident">FromStream</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Item</span><span class="op">&gt;</span>,
+        <span class="ident">T</span>: <span class="ident">FromStream</span><span class="op">&lt;</span><span class="self">Self</span><span class="ident">::Item</span><span class="op">&gt;</span>,
         <span class="self">Self</span>: <span class="ident">Sized</span>,
     {
-        <span class="ident">Collect</span>::<span class="ident">new</span>(<span class="self">self</span>)
+        <span class="ident">Collect::new</span>(<span class="self">self</span>)
     }
 
     <span class="doccomment">/// Applies a per-item timeout to the passed stream.</span>
@@ -1790,7 +1790,7 @@
     <span class="kw">where</span>
         <span class="self">Self</span>: <span class="ident">Sized</span>,
     {
-        <span class="ident">Timeout</span>::<span class="ident">new</span>(<span class="self">self</span>, <span class="ident">duration</span>)
+        <span class="ident">Timeout::new</span>(<span class="self">self</span>, <span class="ident">duration</span>)
     }
 
     <span class="doccomment">/// Slows down a stream by enforcing a delay between items.</span>
@@ -1837,5 +1837,5 @@
     (<span class="ident">low</span>, <span class="ident">high</span>)
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="tokio_stream" data-search-js="../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="tokio_stream" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>

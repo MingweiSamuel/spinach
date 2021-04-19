@@ -1117,22 +1117,22 @@
 <span id="1114">1114</span>
 <span id="1115">1115</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">io</span>::<span class="ident">util</span>::<span class="ident">chain</span>::{<span class="ident">chain</span>, <span class="ident">Chain</span>};
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">io</span>::<span class="ident">util</span>::<span class="ident">read</span>::{<span class="ident">read</span>, <span class="ident">Read</span>};
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">io</span>::<span class="ident">util</span>::<span class="ident">read_buf</span>::{<span class="ident">read_buf</span>, <span class="ident">ReadBuf</span>};
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">io</span>::<span class="ident">util</span>::<span class="ident">read_exact</span>::{<span class="ident">read_exact</span>, <span class="ident">ReadExact</span>};
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">io</span>::<span class="ident">util</span>::<span class="ident">read_int</span>::{
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::io::util::chain</span>::{<span class="ident">chain</span>, <span class="ident">Chain</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::io::util::read</span>::{<span class="ident">read</span>, <span class="ident">Read</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::io::util::read_buf</span>::{<span class="ident">read_buf</span>, <span class="ident">ReadBuf</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::io::util::read_exact</span>::{<span class="ident">read_exact</span>, <span class="ident">ReadExact</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::io::util::read_int</span>::{
     <span class="ident">ReadI128</span>, <span class="ident">ReadI128Le</span>, <span class="ident">ReadI16</span>, <span class="ident">ReadI16Le</span>, <span class="ident">ReadI32</span>, <span class="ident">ReadI32Le</span>, <span class="ident">ReadI64</span>, <span class="ident">ReadI64Le</span>, <span class="ident">ReadI8</span>,
 };
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">io</span>::<span class="ident">util</span>::<span class="ident">read_int</span>::{
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::io::util::read_int</span>::{
     <span class="ident">ReadU128</span>, <span class="ident">ReadU128Le</span>, <span class="ident">ReadU16</span>, <span class="ident">ReadU16Le</span>, <span class="ident">ReadU32</span>, <span class="ident">ReadU32Le</span>, <span class="ident">ReadU64</span>, <span class="ident">ReadU64Le</span>, <span class="ident">ReadU8</span>,
 };
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">io</span>::<span class="ident">util</span>::<span class="ident">read_to_end</span>::{<span class="ident">read_to_end</span>, <span class="ident">ReadToEnd</span>};
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">io</span>::<span class="ident">util</span>::<span class="ident">read_to_string</span>::{<span class="ident">read_to_string</span>, <span class="ident">ReadToString</span>};
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">io</span>::<span class="ident">util</span>::<span class="ident">take</span>::{<span class="ident">take</span>, <span class="ident">Take</span>};
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">io</span>::<span class="ident">AsyncRead</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::io::util::read_to_end</span>::{<span class="ident">read_to_end</span>, <span class="ident">ReadToEnd</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::io::util::read_to_string</span>::{<span class="ident">read_to_string</span>, <span class="ident">ReadToString</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::io::util::take</span>::{<span class="ident">take</span>, <span class="ident">Take</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::io::AsyncRead</span>;
 
-<span class="kw">use</span> <span class="ident">bytes</span>::<span class="ident">BufMut</span>;
+<span class="kw">use</span> <span class="ident">bytes::BufMut</span>;
 
 <span class="macro">cfg_io_util!</span> {
     <span class="doccomment">/// Defines numeric reader</span>
@@ -1146,7 +1146,7 @@
             $(
                 $(<span class="attribute">#[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">outer</span>]</span>)<span class="op">*</span>
                 <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">fut</span>)<span class="kw-2">*</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Unpin</span> {
-                    $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">fut</span>)<span class="kw-2">*</span>::<span class="ident">new</span>(<span class="self">self</span>)
+                    $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">fut</span>)<span class="kw-2">*</span><span class="ident">::new</span>(<span class="self">self</span>)
                 }
             )<span class="op">*</span>
         }
@@ -2233,5 +2233,5 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">AsyncRead</span> <span class="op">+</span> <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span> <span class="ident">AsyncReadExt</span> <span class="kw">for</span> <span class="ident">R</span> {}
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="tokio" data-search-js="../../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="tokio" data-search-index-js="../../../../search-index.js" data-search-js="../../../../search.js"></div>
     <script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script></body></html>

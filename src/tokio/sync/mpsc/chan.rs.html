@@ -378,26 +378,26 @@
 <span id="375">375</span>
 <span id="376">376</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">loom</span>::<span class="ident">cell</span>::<span class="ident">UnsafeCell</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">loom</span>::<span class="ident">future</span>::<span class="ident">AtomicWaker</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">loom</span>::<span class="ident">sync</span>::<span class="ident">atomic</span>::<span class="ident">AtomicUsize</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">loom</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">sync</span>::<span class="ident">mpsc</span>::<span class="ident">list</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">sync</span>::<span class="ident">notify</span>::<span class="ident">Notify</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::loom::cell::UnsafeCell</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::loom::future::AtomicWaker</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::loom::sync::atomic::AtomicUsize</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::loom::sync::Arc</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::sync::mpsc::list</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::sync::notify::Notify</span>;
 
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">process</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">atomic</span>::<span class="ident">Ordering</span>::{<span class="ident">AcqRel</span>, <span class="ident">Relaxed</span>};
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">task</span>::<span class="ident">Poll</span>::{<span class="ident">Pending</span>, <span class="ident">Ready</span>};
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
+<span class="kw">use</span> <span class="ident">std::fmt</span>;
+<span class="kw">use</span> <span class="ident">std::process</span>;
+<span class="kw">use</span> <span class="ident">std::sync::atomic::Ordering</span>::{<span class="ident">AcqRel</span>, <span class="ident">Relaxed</span>};
+<span class="kw">use</span> <span class="ident">std::task::Poll</span>::{<span class="ident">Pending</span>, <span class="ident">Ready</span>};
+<span class="kw">use</span> <span class="ident">std::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 
 <span class="doccomment">/// Channel sender</span>
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">Tx</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">S</span><span class="op">&gt;</span> {
     <span class="ident">inner</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Chan</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">S</span>: <span class="ident">fmt</span>::<span class="ident">Debug</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Tx</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">S</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">S</span>: <span class="ident">fmt::Debug</span><span class="op">&gt;</span> <span class="ident">fmt::Debug</span> <span class="kw">for</span> <span class="ident">Tx</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
         <span class="ident">fmt</span>.<span class="ident">debug_struct</span>(<span class="string">&quot;Tx&quot;</span>).<span class="ident">field</span>(<span class="string">&quot;inner&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inner</span>).<span class="ident">finish</span>()
     }
 }
@@ -407,8 +407,8 @@
     <span class="ident">inner</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Chan</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">S</span>: <span class="ident">Semaphore</span> <span class="op">+</span> <span class="ident">fmt</span>::<span class="ident">Debug</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Rx</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">S</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">S</span>: <span class="ident">Semaphore</span> <span class="op">+</span> <span class="ident">fmt::Debug</span><span class="op">&gt;</span> <span class="ident">fmt::Debug</span> <span class="kw">for</span> <span class="ident">Rx</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
         <span class="ident">fmt</span>.<span class="ident">debug_struct</span>(<span class="string">&quot;Rx&quot;</span>).<span class="ident">field</span>(<span class="string">&quot;inner&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inner</span>).<span class="ident">finish</span>()
     }
 }
@@ -428,7 +428,7 @@
     <span class="ident">notify_rx_closed</span>: <span class="ident">Notify</span>,
 
     <span class="doccomment">/// Handle to the push half of the lock-free list.</span>
-    <span class="ident">tx</span>: <span class="ident">list</span>::<span class="ident">Tx</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
+    <span class="ident">tx</span>: <span class="ident">list::Tx</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
 
     <span class="doccomment">/// Coordinates access to channel&#39;s capacity.</span>
     <span class="ident">semaphore</span>: <span class="ident">S</span>,
@@ -445,11 +445,11 @@
     <span class="ident">rx_fields</span>: <span class="ident">UnsafeCell</span><span class="op">&lt;</span><span class="ident">RxFields</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">S</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Chan</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">S</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">S</span><span class="op">&gt;</span> <span class="ident">fmt::Debug</span> <span class="kw">for</span> <span class="ident">Chan</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">S</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">S</span>: <span class="ident">fmt</span>::<span class="ident">Debug</span>,
+    <span class="ident">S</span>: <span class="ident">fmt::Debug</span>,
 {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
         <span class="ident">fmt</span>.<span class="ident">debug_struct</span>(<span class="string">&quot;Chan&quot;</span>)
             .<span class="ident">field</span>(<span class="string">&quot;tx&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">tx</span>)
             .<span class="ident">field</span>(<span class="string">&quot;semaphore&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">semaphore</span>)
@@ -463,14 +463,14 @@
 <span class="doccomment">/// Fields only accessed by `Rx` handle.</span>
 <span class="kw">struct</span> <span class="ident">RxFields</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Channel receiver. This field is only accessed by the `Receiver` type.</span>
-    <span class="ident">list</span>: <span class="ident">list</span>::<span class="ident">Rx</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
+    <span class="ident">list</span>: <span class="ident">list::Rx</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
 
     <span class="doccomment">/// `true` if `Rx::close` is called.</span>
     <span class="ident">rx_closed</span>: <span class="ident">bool</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">RxFields</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">fmt::Debug</span> <span class="kw">for</span> <span class="ident">RxFields</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
         <span class="ident">fmt</span>.<span class="ident">debug_struct</span>(<span class="string">&quot;RxFields&quot;</span>)
             .<span class="ident">field</span>(<span class="string">&quot;list&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">list</span>)
             .<span class="ident">field</span>(<span class="string">&quot;rx_closed&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">rx_closed</span>)
@@ -482,21 +482,21 @@
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Send</span>, <span class="ident">S</span>: <span class="ident">Sync</span><span class="op">&gt;</span> <span class="ident">Sync</span> <span class="kw">for</span> <span class="ident">Chan</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">S</span><span class="op">&gt;</span> {}
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">channel</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">S</span>: <span class="ident">Semaphore</span><span class="op">&gt;</span>(<span class="ident">semaphore</span>: <span class="ident">S</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">Tx</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">S</span><span class="op">&gt;</span>, <span class="ident">Rx</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">S</span><span class="op">&gt;</span>) {
-    <span class="kw">let</span> (<span class="ident">tx</span>, <span class="ident">rx</span>) <span class="op">=</span> <span class="ident">list</span>::<span class="ident">channel</span>();
+    <span class="kw">let</span> (<span class="ident">tx</span>, <span class="ident">rx</span>) <span class="op">=</span> <span class="ident">list::channel</span>();
 
-    <span class="kw">let</span> <span class="ident">chan</span> <span class="op">=</span> <span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">Chan</span> {
-        <span class="ident">notify_rx_closed</span>: <span class="ident">Notify</span>::<span class="ident">new</span>(),
+    <span class="kw">let</span> <span class="ident">chan</span> <span class="op">=</span> <span class="ident">Arc::new</span>(<span class="ident">Chan</span> {
+        <span class="ident">notify_rx_closed</span>: <span class="ident">Notify::new</span>(),
         <span class="ident">tx</span>,
         <span class="ident">semaphore</span>,
-        <span class="ident">rx_waker</span>: <span class="ident">AtomicWaker</span>::<span class="ident">new</span>(),
-        <span class="ident">tx_count</span>: <span class="ident">AtomicUsize</span>::<span class="ident">new</span>(<span class="number">1</span>),
-        <span class="ident">rx_fields</span>: <span class="ident">UnsafeCell</span>::<span class="ident">new</span>(<span class="ident">RxFields</span> {
+        <span class="ident">rx_waker</span>: <span class="ident">AtomicWaker::new</span>(),
+        <span class="ident">tx_count</span>: <span class="ident">AtomicUsize::new</span>(<span class="number">1</span>),
+        <span class="ident">rx_fields</span>: <span class="ident">UnsafeCell::new</span>(<span class="ident">RxFields</span> {
             <span class="ident">list</span>: <span class="ident">rx</span>,
             <span class="ident">rx_closed</span>: <span class="bool-val">false</span>,
         }),
     });
 
-    (<span class="ident">Tx</span>::<span class="ident">new</span>(<span class="ident">chan</span>.<span class="ident">clone</span>()), <span class="ident">Rx</span>::<span class="ident">new</span>(<span class="ident">chan</span>))
+    (<span class="ident">Tx::new</span>(<span class="ident">chan</span>.<span class="ident">clone</span>()), <span class="ident">Rx::new</span>(<span class="ident">chan</span>))
 }
 
 <span class="comment">// ===== impl Tx =====</span>
@@ -589,10 +589,10 @@
 
     <span class="doccomment">/// Receive the next value</span>
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">recv</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-        <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">block</span>::<span class="ident">Read</span>::<span class="kw-2">*</span>;
+        <span class="kw">use</span> <span class="kw">super</span><span class="ident">::block::Read</span>::<span class="kw-2">*</span>;
 
         <span class="comment">// Keep track of task budget</span>
-        <span class="kw">let</span> <span class="ident">coop</span> <span class="op">=</span> <span class="macro">ready!</span>(<span class="kw">crate</span>::<span class="ident">coop</span>::<span class="ident">poll_proceed</span>(<span class="ident">cx</span>));
+        <span class="kw">let</span> <span class="ident">coop</span> <span class="op">=</span> <span class="macro">ready!</span>(<span class="kw">crate</span><span class="ident">::coop::poll_proceed</span>(<span class="ident">cx</span>));
 
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">rx_fields</span>.<span class="ident">with_mut</span>(<span class="op">|</span><span class="ident">rx_fields_ptr</span><span class="op">|</span> {
             <span class="kw">let</span> <span class="ident">rx_fields</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">rx_fields_ptr</span> };
@@ -643,12 +643,12 @@
 <span class="macro">feature!</span> {
     <span class="attribute">#![<span class="ident">all</span>(<span class="ident">unix</span>, <span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;signal&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;process&quot;</span>))]</span>
 
-    <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">sync</span>::<span class="ident">mpsc</span>::<span class="ident">error</span>::<span class="ident">TryRecvError</span>;
+    <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::sync::mpsc::error::TryRecvError</span>;
 
     <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">S</span>: <span class="ident">Semaphore</span><span class="op">&gt;</span> <span class="ident">Rx</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">S</span><span class="op">&gt;</span> {
         <span class="doccomment">/// Receives the next value without blocking</span>
         <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">try_recv</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">TryRecvError</span><span class="op">&gt;</span> {
-            <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">block</span>::<span class="ident">Read</span>::<span class="kw-2">*</span>;
+            <span class="kw">use</span> <span class="kw">super</span><span class="ident">::block::Read</span>::<span class="kw-2">*</span>;
             <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">rx_fields</span>.<span class="ident">with_mut</span>(<span class="op">|</span><span class="ident">rx_fields_ptr</span><span class="op">|</span> {
                 <span class="kw">let</span> <span class="ident">rx_fields</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">rx_fields_ptr</span> };
                 <span class="kw">match</span> <span class="ident">rx_fields</span>.<span class="ident">list</span>.<span class="ident">pop</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">tx</span>) {
@@ -656,8 +656,8 @@
                         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">semaphore</span>.<span class="ident">add_permit</span>();
                         <span class="prelude-val">Ok</span>(<span class="ident">value</span>)
                     }
-                    <span class="prelude-val">Some</span>(<span class="ident">Closed</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">TryRecvError</span>::<span class="ident">Closed</span>),
-                    <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">TryRecvError</span>::<span class="ident">Empty</span>),
+                    <span class="prelude-val">Some</span>(<span class="ident">Closed</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">TryRecvError::Closed</span>),
+                    <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">TryRecvError::Empty</span>),
                 }
             })
         }
@@ -666,7 +666,7 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">S</span>: <span class="ident">Semaphore</span><span class="op">&gt;</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">Rx</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">S</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
-        <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">block</span>::<span class="ident">Read</span>::<span class="ident">Value</span>;
+        <span class="kw">use</span> <span class="kw">super</span><span class="ident">::block::Read::Value</span>;
 
         <span class="self">self</span>.<span class="ident">close</span>();
 
@@ -694,7 +694,7 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">S</span><span class="op">&gt;</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">Chan</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">S</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
-        <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">block</span>::<span class="ident">Read</span>::<span class="ident">Value</span>;
+        <span class="kw">use</span> <span class="kw">super</span><span class="ident">::block::Read::Value</span>;
 
         <span class="comment">// Safety: the only owner of the rx fields is Chan, and eing</span>
         <span class="comment">// inside its own Drop means we&#39;re the last ones to touch it.</span>
@@ -709,7 +709,7 @@
 
 <span class="comment">// ===== impl Semaphore for (::Semaphore, capacity) =====</span>
 
-<span class="kw">impl</span> <span class="ident">Semaphore</span> <span class="kw">for</span> (<span class="kw">crate</span>::<span class="ident">sync</span>::<span class="ident">batch_semaphore</span>::<span class="ident">Semaphore</span>, <span class="ident">usize</span>) {
+<span class="kw">impl</span> <span class="ident">Semaphore</span> <span class="kw">for</span> (<span class="kw">crate</span><span class="ident">::sync::batch_semaphore::Semaphore</span>, <span class="ident">usize</span>) {
     <span class="kw">fn</span> <span class="ident">add_permit</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
         <span class="self">self</span>.<span class="number">0</span>.<span class="ident">release</span>(<span class="number">1</span>)
     }
@@ -729,8 +729,8 @@
 
 <span class="comment">// ===== impl Semaphore for AtomicUsize =====</span>
 
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">atomic</span>::<span class="ident">Ordering</span>::{<span class="ident">Acquire</span>, <span class="ident">Release</span>};
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">usize</span>;
+<span class="kw">use</span> <span class="ident">std::sync::atomic::Ordering</span>::{<span class="ident">Acquire</span>, <span class="ident">Release</span>};
+<span class="kw">use</span> <span class="ident">std::usize</span>;
 
 <span class="kw">impl</span> <span class="ident">Semaphore</span> <span class="kw">for</span> <span class="ident">AtomicUsize</span> {
     <span class="kw">fn</span> <span class="ident">add_permit</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
@@ -738,7 +738,7 @@
 
         <span class="kw">if</span> <span class="ident">prev</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">1</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
             <span class="comment">// Something went wrong</span>
-            <span class="ident">process</span>::<span class="ident">abort</span>();
+            <span class="ident">process::abort</span>();
         }
     }
 
@@ -755,5 +755,5 @@
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="tokio" data-search-js="../../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="tokio" data-search-index-js="../../../../search-index.js" data-search-js="../../../../search.js"></div>
     <script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script></body></html>

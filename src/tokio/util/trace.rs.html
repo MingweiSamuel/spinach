@@ -41,23 +41,23 @@
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="macro">cfg_trace!</span> {
     <span class="macro">cfg_rt!</span> {
-        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="ident">tracing</span>::<span class="ident">instrument</span>::<span class="ident">Instrumented</span>;
+        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="ident">tracing::instrument::Instrumented</span>;
 
         <span class="attribute">#[<span class="ident">inline</span>]</span>
         <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">tokio_track_caller</span>, <span class="ident">track_caller</span>)]</span>
         <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">task</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="ident">task</span>: <span class="ident">F</span>, <span class="ident">kind</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Instrumented</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span> {
-            <span class="kw">use</span> <span class="ident">tracing</span>::<span class="ident">instrument</span>::<span class="ident">Instrument</span>;
+            <span class="kw">use</span> <span class="ident">tracing::instrument::Instrument</span>;
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">tokio_track_caller</span>)]</span>
-            <span class="kw">let</span> <span class="ident">location</span> <span class="op">=</span> <span class="ident">std</span>::<span class="ident">panic</span>::<span class="ident">Location</span>::<span class="ident">caller</span>();
+            <span class="kw">let</span> <span class="ident">location</span> <span class="op">=</span> <span class="ident">std::panic::Location::caller</span>();
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">tokio_track_caller</span>)]</span>
-            <span class="kw">let</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">tracing</span>::<span class="macro">trace_span!</span>(
+            <span class="kw">let</span> <span class="ident">span</span> <span class="op">=</span> <span class="macro">tracing::trace_span!</span>(
                 <span class="ident">target</span>: <span class="string">&quot;tokio::task&quot;</span>,
                 <span class="string">&quot;task&quot;</span>,
                 <span class="op">%</span><span class="ident">kind</span>,
                 <span class="ident">spawn</span>.<span class="ident">location</span> <span class="op">=</span> <span class="op">%</span><span class="macro">format_args!</span>(<span class="string">&quot;{}:{}:{}&quot;</span>, <span class="ident">location</span>.<span class="ident">file</span>(), <span class="ident">location</span>.<span class="ident">line</span>(), <span class="ident">location</span>.<span class="ident">column</span>()),
             );
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">tokio_track_caller</span>))]</span>
-            <span class="kw">let</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">tracing</span>::<span class="macro">trace_span!</span>(
+            <span class="kw">let</span> <span class="ident">span</span> <span class="op">=</span> <span class="macro">tracing::trace_span!</span>(
                 <span class="ident">target</span>: <span class="string">&quot;tokio::task&quot;</span>,
                 <span class="string">&quot;task&quot;</span>,
                 <span class="op">%</span><span class="ident">kind</span>,
@@ -77,5 +77,5 @@
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-js="../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

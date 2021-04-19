@@ -14,12 +14,12 @@ follows.</p>
 <div class="example-wrap"><pre class="rust rust-example-rendered">
 <span class="comment">// Before</span>
 <span class="attribute">#[<span class="ident">proc_macro_hack</span>]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">demo_hack_impl</span>::<span class="ident">add_one</span>;</pre></div>
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">demo_hack_impl::add_one</span>;</pre></div>
 
 <div class="example-wrap"><pre class="rust rust-example-rendered">
 <span class="comment">// After</span>
 <span class="attribute">#[<span class="ident">proc_macro_hack</span>(<span class="ident">support_nested</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">demo_hack_impl</span>::<span class="ident">add_one</span>;</pre></div>
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">demo_hack_impl::add_one</span>;</pre></div>
 <p>No change is required within your definition crate, only to the re-export in
 the declaration crate.</p>
 <h1 id="limitations" class="section-header"><a href="#limitations">Limitations</a></h1>
@@ -33,5 +33,5 @@ lengthy macro invocations.</p>
 <p>Only up to 64 nested invocations are supported.</p>
 </li>
 </ul>
-</div></section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../" data-current-crate="proc_macro_nested" data-search-js="../search-index.js"></div>
+</div></section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../" data-current-crate="proc_macro_nested" data-search-index-js="../search-index.js" data-search-js="../search.js"></div>
     <script src="../main.js"></script></body></html>

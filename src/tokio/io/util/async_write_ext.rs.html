@@ -1006,22 +1006,22 @@
 <span id="1003">1003</span>
 <span id="1004">1004</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">io</span>::<span class="ident">util</span>::<span class="ident">flush</span>::{<span class="ident">flush</span>, <span class="ident">Flush</span>};
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">io</span>::<span class="ident">util</span>::<span class="ident">shutdown</span>::{<span class="ident">shutdown</span>, <span class="ident">Shutdown</span>};
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">io</span>::<span class="ident">util</span>::<span class="ident">write</span>::{<span class="ident">write</span>, <span class="ident">Write</span>};
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">io</span>::<span class="ident">util</span>::<span class="ident">write_all</span>::{<span class="ident">write_all</span>, <span class="ident">WriteAll</span>};
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">io</span>::<span class="ident">util</span>::<span class="ident">write_buf</span>::{<span class="ident">write_buf</span>, <span class="ident">WriteBuf</span>};
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">io</span>::<span class="ident">util</span>::<span class="ident">write_int</span>::{
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::io::util::flush</span>::{<span class="ident">flush</span>, <span class="ident">Flush</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::io::util::shutdown</span>::{<span class="ident">shutdown</span>, <span class="ident">Shutdown</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::io::util::write</span>::{<span class="ident">write</span>, <span class="ident">Write</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::io::util::write_all</span>::{<span class="ident">write_all</span>, <span class="ident">WriteAll</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::io::util::write_buf</span>::{<span class="ident">write_buf</span>, <span class="ident">WriteBuf</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::io::util::write_int</span>::{
     <span class="ident">WriteI128</span>, <span class="ident">WriteI128Le</span>, <span class="ident">WriteI16</span>, <span class="ident">WriteI16Le</span>, <span class="ident">WriteI32</span>, <span class="ident">WriteI32Le</span>, <span class="ident">WriteI64</span>, <span class="ident">WriteI64Le</span>,
     <span class="ident">WriteI8</span>,
 };
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">io</span>::<span class="ident">util</span>::<span class="ident">write_int</span>::{
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::io::util::write_int</span>::{
     <span class="ident">WriteU128</span>, <span class="ident">WriteU128Le</span>, <span class="ident">WriteU16</span>, <span class="ident">WriteU16Le</span>, <span class="ident">WriteU32</span>, <span class="ident">WriteU32Le</span>, <span class="ident">WriteU64</span>, <span class="ident">WriteU64Le</span>,
     <span class="ident">WriteU8</span>,
 };
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">io</span>::<span class="ident">AsyncWrite</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::io::AsyncWrite</span>;
 
-<span class="kw">use</span> <span class="ident">bytes</span>::<span class="ident">Buf</span>;
+<span class="kw">use</span> <span class="ident">bytes::Buf</span>;
 
 <span class="macro">cfg_io_util!</span> {
     <span class="doccomment">/// Defines numeric writer</span>
@@ -1035,7 +1035,7 @@
             $(
                 $(<span class="attribute">#[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">outer</span>]</span>)<span class="op">*</span>
                 <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">n</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty</span>) <span class="op">-</span><span class="op">&gt;</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">fut</span>)<span class="kw-2">*</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Unpin</span> {
-                    $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">fut</span>)<span class="kw-2">*</span>::<span class="ident">new</span>(<span class="self">self</span>, <span class="ident">n</span>)
+                    $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">fut</span>)<span class="kw-2">*</span><span class="ident">::new</span>(<span class="self">self</span>, <span class="ident">n</span>)
                 }
             )<span class="op">*</span>
         }
@@ -2011,5 +2011,5 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">AsyncWrite</span> <span class="op">+</span> <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span> <span class="ident">AsyncWriteExt</span> <span class="kw">for</span> <span class="ident">W</span> {}
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="tokio" data-search-js="../../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="tokio" data-search-index-js="../../../../search-index.js" data-search-js="../../../../search.js"></div>
     <script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script></body></html>

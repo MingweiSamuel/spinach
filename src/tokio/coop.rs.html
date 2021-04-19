@@ -355,10 +355,10 @@
 
 <span class="comment">// NOTE: The doctests in this module are ignored since the whole module is (currently) private.</span>
 
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">cell</span>::<span class="ident">Cell</span>;
+<span class="kw">use</span> <span class="ident">std::cell::Cell</span>;
 
 <span class="macro">thread_local!</span> {
-    <span class="kw">static</span> <span class="ident">CURRENT</span>: <span class="ident">Cell</span><span class="op">&lt;</span><span class="ident">Budget</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Cell</span>::<span class="ident">new</span>(<span class="ident">Budget</span>::<span class="ident">unconstrained</span>());
+    <span class="kw">static</span> <span class="ident">CURRENT</span>: <span class="ident">Cell</span><span class="op">&lt;</span><span class="ident">Budget</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Cell::new</span>(<span class="ident">Budget::unconstrained</span>());
 }
 
 <span class="doccomment">/// Opaque type tracking the amount of &quot;work&quot; a task may still do before</span>
@@ -399,7 +399,7 @@
 <span class="doccomment">/// returns, the budget is reset to the value prior to calling the function.</span>
 <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">budget</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span>(<span class="ident">f</span>: <span class="kw">impl</span> <span class="ident">FnOnce</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">R</span> {
-    <span class="ident">with_budget</span>(<span class="ident">Budget</span>::<span class="ident">initial</span>(), <span class="ident">f</span>)
+    <span class="ident">with_budget</span>(<span class="ident">Budget::initial</span>(), <span class="ident">f</span>)
 }
 
 <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
@@ -445,21 +445,21 @@
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">stop</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Budget</span> {
         <span class="ident">CURRENT</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">cell</span><span class="op">|</span> {
             <span class="kw">let</span> <span class="ident">prev</span> <span class="op">=</span> <span class="ident">cell</span>.<span class="ident">get</span>();
-            <span class="ident">cell</span>.<span class="ident">set</span>(<span class="ident">Budget</span>::<span class="ident">unconstrained</span>());
+            <span class="ident">cell</span>.<span class="ident">set</span>(<span class="ident">Budget::unconstrained</span>());
             <span class="ident">prev</span>
         })
     }
 }
 
 <span class="macro">cfg_coop!</span> {
-    <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
+    <span class="kw">use</span> <span class="ident">std::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">RestoreOnPending</span>(<span class="ident">Cell</span><span class="op">&lt;</span><span class="ident">Budget</span><span class="op">&gt;</span>);
 
     <span class="kw">impl</span> <span class="ident">RestoreOnPending</span> {
         <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">made_progress</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
-            <span class="self">self</span>.<span class="number">0</span>.<span class="ident">set</span>(<span class="ident">Budget</span>::<span class="ident">unconstrained</span>());
+            <span class="self">self</span>.<span class="number">0</span>.<span class="ident">set</span>(<span class="ident">Budget::unconstrained</span>());
         }
     }
 
@@ -494,12 +494,12 @@
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">budget</span> <span class="op">=</span> <span class="ident">cell</span>.<span class="ident">get</span>();
 
             <span class="kw">if</span> <span class="ident">budget</span>.<span class="ident">decrement</span>() {
-                <span class="kw">let</span> <span class="ident">restore</span> <span class="op">=</span> <span class="ident">RestoreOnPending</span>(<span class="ident">Cell</span>::<span class="ident">new</span>(<span class="ident">cell</span>.<span class="ident">get</span>()));
+                <span class="kw">let</span> <span class="ident">restore</span> <span class="op">=</span> <span class="ident">RestoreOnPending</span>(<span class="ident">Cell::new</span>(<span class="ident">cell</span>.<span class="ident">get</span>()));
                 <span class="ident">cell</span>.<span class="ident">set</span>(<span class="ident">budget</span>);
-                <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="ident">restore</span>)
+                <span class="ident">Poll::Ready</span>(<span class="ident">restore</span>)
             } <span class="kw">else</span> {
                 <span class="ident">cx</span>.<span class="ident">waker</span>().<span class="ident">wake_by_ref</span>();
-                <span class="ident">Poll</span>::<span class="ident">Pending</span>
+                <span class="ident">Poll::Pending</span>
             }
         })
     }
@@ -536,50 +536,50 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">bugeting</span>() {
-        <span class="kw">use</span> <span class="ident">futures</span>::<span class="ident">future</span>::<span class="ident">poll_fn</span>;
+        <span class="kw">use</span> <span class="ident">futures::future::poll_fn</span>;
         <span class="kw">use</span> <span class="ident">tokio_test</span>::<span class="kw-2">*</span>;
 
         <span class="macro">assert!</span>(<span class="ident">get</span>().<span class="number">0</span>.<span class="ident">is_none</span>());
 
-        <span class="kw">let</span> <span class="ident">coop</span> <span class="op">=</span> <span class="macro">assert_ready!</span>(<span class="ident">task</span>::<span class="ident">spawn</span>(()).<span class="ident">enter</span>(<span class="op">|</span><span class="ident">cx</span>, <span class="kw">_</span><span class="op">|</span> <span class="ident">poll_proceed</span>(<span class="ident">cx</span>)));
+        <span class="kw">let</span> <span class="ident">coop</span> <span class="op">=</span> <span class="macro">assert_ready!</span>(<span class="ident">task::spawn</span>(()).<span class="ident">enter</span>(<span class="op">|</span><span class="ident">cx</span>, <span class="kw">_</span><span class="op">|</span> <span class="ident">poll_proceed</span>(<span class="ident">cx</span>)));
 
         <span class="macro">assert!</span>(<span class="ident">get</span>().<span class="number">0</span>.<span class="ident">is_none</span>());
         <span class="ident">drop</span>(<span class="ident">coop</span>);
         <span class="macro">assert!</span>(<span class="ident">get</span>().<span class="number">0</span>.<span class="ident">is_none</span>());
 
         <span class="ident">budget</span>(<span class="op">|</span><span class="op">|</span> {
-            <span class="macro">assert_eq!</span>(<span class="ident">get</span>().<span class="number">0</span>, <span class="ident">Budget</span>::<span class="ident">initial</span>().<span class="number">0</span>);
+            <span class="macro">assert_eq!</span>(<span class="ident">get</span>().<span class="number">0</span>, <span class="ident">Budget::initial</span>().<span class="number">0</span>);
 
-            <span class="kw">let</span> <span class="ident">coop</span> <span class="op">=</span> <span class="macro">assert_ready!</span>(<span class="ident">task</span>::<span class="ident">spawn</span>(()).<span class="ident">enter</span>(<span class="op">|</span><span class="ident">cx</span>, <span class="kw">_</span><span class="op">|</span> <span class="ident">poll_proceed</span>(<span class="ident">cx</span>)));
-            <span class="macro">assert_eq!</span>(<span class="ident">get</span>().<span class="number">0</span>.<span class="ident">unwrap</span>(), <span class="ident">Budget</span>::<span class="ident">initial</span>().<span class="number">0</span>.<span class="ident">unwrap</span>() <span class="op">-</span> <span class="number">1</span>);
+            <span class="kw">let</span> <span class="ident">coop</span> <span class="op">=</span> <span class="macro">assert_ready!</span>(<span class="ident">task::spawn</span>(()).<span class="ident">enter</span>(<span class="op">|</span><span class="ident">cx</span>, <span class="kw">_</span><span class="op">|</span> <span class="ident">poll_proceed</span>(<span class="ident">cx</span>)));
+            <span class="macro">assert_eq!</span>(<span class="ident">get</span>().<span class="number">0</span>.<span class="ident">unwrap</span>(), <span class="ident">Budget::initial</span>().<span class="number">0</span>.<span class="ident">unwrap</span>() <span class="op">-</span> <span class="number">1</span>);
             <span class="ident">drop</span>(<span class="ident">coop</span>);
             <span class="comment">// we didn&#39;t make progress</span>
-            <span class="macro">assert_eq!</span>(<span class="ident">get</span>().<span class="number">0</span>, <span class="ident">Budget</span>::<span class="ident">initial</span>().<span class="number">0</span>);
+            <span class="macro">assert_eq!</span>(<span class="ident">get</span>().<span class="number">0</span>, <span class="ident">Budget::initial</span>().<span class="number">0</span>);
 
-            <span class="kw">let</span> <span class="ident">coop</span> <span class="op">=</span> <span class="macro">assert_ready!</span>(<span class="ident">task</span>::<span class="ident">spawn</span>(()).<span class="ident">enter</span>(<span class="op">|</span><span class="ident">cx</span>, <span class="kw">_</span><span class="op">|</span> <span class="ident">poll_proceed</span>(<span class="ident">cx</span>)));
-            <span class="macro">assert_eq!</span>(<span class="ident">get</span>().<span class="number">0</span>.<span class="ident">unwrap</span>(), <span class="ident">Budget</span>::<span class="ident">initial</span>().<span class="number">0</span>.<span class="ident">unwrap</span>() <span class="op">-</span> <span class="number">1</span>);
+            <span class="kw">let</span> <span class="ident">coop</span> <span class="op">=</span> <span class="macro">assert_ready!</span>(<span class="ident">task::spawn</span>(()).<span class="ident">enter</span>(<span class="op">|</span><span class="ident">cx</span>, <span class="kw">_</span><span class="op">|</span> <span class="ident">poll_proceed</span>(<span class="ident">cx</span>)));
+            <span class="macro">assert_eq!</span>(<span class="ident">get</span>().<span class="number">0</span>.<span class="ident">unwrap</span>(), <span class="ident">Budget::initial</span>().<span class="number">0</span>.<span class="ident">unwrap</span>() <span class="op">-</span> <span class="number">1</span>);
             <span class="ident">coop</span>.<span class="ident">made_progress</span>();
             <span class="ident">drop</span>(<span class="ident">coop</span>);
             <span class="comment">// we _did_ make progress</span>
-            <span class="macro">assert_eq!</span>(<span class="ident">get</span>().<span class="number">0</span>.<span class="ident">unwrap</span>(), <span class="ident">Budget</span>::<span class="ident">initial</span>().<span class="number">0</span>.<span class="ident">unwrap</span>() <span class="op">-</span> <span class="number">1</span>);
+            <span class="macro">assert_eq!</span>(<span class="ident">get</span>().<span class="number">0</span>.<span class="ident">unwrap</span>(), <span class="ident">Budget::initial</span>().<span class="number">0</span>.<span class="ident">unwrap</span>() <span class="op">-</span> <span class="number">1</span>);
 
-            <span class="kw">let</span> <span class="ident">coop</span> <span class="op">=</span> <span class="macro">assert_ready!</span>(<span class="ident">task</span>::<span class="ident">spawn</span>(()).<span class="ident">enter</span>(<span class="op">|</span><span class="ident">cx</span>, <span class="kw">_</span><span class="op">|</span> <span class="ident">poll_proceed</span>(<span class="ident">cx</span>)));
-            <span class="macro">assert_eq!</span>(<span class="ident">get</span>().<span class="number">0</span>.<span class="ident">unwrap</span>(), <span class="ident">Budget</span>::<span class="ident">initial</span>().<span class="number">0</span>.<span class="ident">unwrap</span>() <span class="op">-</span> <span class="number">2</span>);
+            <span class="kw">let</span> <span class="ident">coop</span> <span class="op">=</span> <span class="macro">assert_ready!</span>(<span class="ident">task::spawn</span>(()).<span class="ident">enter</span>(<span class="op">|</span><span class="ident">cx</span>, <span class="kw">_</span><span class="op">|</span> <span class="ident">poll_proceed</span>(<span class="ident">cx</span>)));
+            <span class="macro">assert_eq!</span>(<span class="ident">get</span>().<span class="number">0</span>.<span class="ident">unwrap</span>(), <span class="ident">Budget::initial</span>().<span class="number">0</span>.<span class="ident">unwrap</span>() <span class="op">-</span> <span class="number">2</span>);
             <span class="ident">coop</span>.<span class="ident">made_progress</span>();
             <span class="ident">drop</span>(<span class="ident">coop</span>);
-            <span class="macro">assert_eq!</span>(<span class="ident">get</span>().<span class="number">0</span>.<span class="ident">unwrap</span>(), <span class="ident">Budget</span>::<span class="ident">initial</span>().<span class="number">0</span>.<span class="ident">unwrap</span>() <span class="op">-</span> <span class="number">2</span>);
+            <span class="macro">assert_eq!</span>(<span class="ident">get</span>().<span class="number">0</span>.<span class="ident">unwrap</span>(), <span class="ident">Budget::initial</span>().<span class="number">0</span>.<span class="ident">unwrap</span>() <span class="op">-</span> <span class="number">2</span>);
 
             <span class="ident">budget</span>(<span class="op">|</span><span class="op">|</span> {
-                <span class="macro">assert_eq!</span>(<span class="ident">get</span>().<span class="number">0</span>, <span class="ident">Budget</span>::<span class="ident">initial</span>().<span class="number">0</span>);
+                <span class="macro">assert_eq!</span>(<span class="ident">get</span>().<span class="number">0</span>, <span class="ident">Budget::initial</span>().<span class="number">0</span>);
 
-                <span class="kw">let</span> <span class="ident">coop</span> <span class="op">=</span> <span class="macro">assert_ready!</span>(<span class="ident">task</span>::<span class="ident">spawn</span>(()).<span class="ident">enter</span>(<span class="op">|</span><span class="ident">cx</span>, <span class="kw">_</span><span class="op">|</span> <span class="ident">poll_proceed</span>(<span class="ident">cx</span>)));
-                <span class="macro">assert_eq!</span>(<span class="ident">get</span>().<span class="number">0</span>.<span class="ident">unwrap</span>(), <span class="ident">Budget</span>::<span class="ident">initial</span>().<span class="number">0</span>.<span class="ident">unwrap</span>() <span class="op">-</span> <span class="number">1</span>);
+                <span class="kw">let</span> <span class="ident">coop</span> <span class="op">=</span> <span class="macro">assert_ready!</span>(<span class="ident">task::spawn</span>(()).<span class="ident">enter</span>(<span class="op">|</span><span class="ident">cx</span>, <span class="kw">_</span><span class="op">|</span> <span class="ident">poll_proceed</span>(<span class="ident">cx</span>)));
+                <span class="macro">assert_eq!</span>(<span class="ident">get</span>().<span class="number">0</span>.<span class="ident">unwrap</span>(), <span class="ident">Budget::initial</span>().<span class="number">0</span>.<span class="ident">unwrap</span>() <span class="op">-</span> <span class="number">1</span>);
                 <span class="ident">coop</span>.<span class="ident">made_progress</span>();
                 <span class="ident">drop</span>(<span class="ident">coop</span>);
-                <span class="macro">assert_eq!</span>(<span class="ident">get</span>().<span class="number">0</span>.<span class="ident">unwrap</span>(), <span class="ident">Budget</span>::<span class="ident">initial</span>().<span class="number">0</span>.<span class="ident">unwrap</span>() <span class="op">-</span> <span class="number">1</span>);
+                <span class="macro">assert_eq!</span>(<span class="ident">get</span>().<span class="number">0</span>.<span class="ident">unwrap</span>(), <span class="ident">Budget::initial</span>().<span class="number">0</span>.<span class="ident">unwrap</span>() <span class="op">-</span> <span class="number">1</span>);
             });
 
-            <span class="macro">assert_eq!</span>(<span class="ident">get</span>().<span class="number">0</span>.<span class="ident">unwrap</span>(), <span class="ident">Budget</span>::<span class="ident">initial</span>().<span class="number">0</span>.<span class="ident">unwrap</span>() <span class="op">-</span> <span class="number">2</span>);
+            <span class="macro">assert_eq!</span>(<span class="ident">get</span>().<span class="number">0</span>.<span class="ident">unwrap</span>(), <span class="ident">Budget::initial</span>().<span class="number">0</span>.<span class="ident">unwrap</span>() <span class="op">-</span> <span class="number">2</span>);
         });
 
         <span class="macro">assert!</span>(<span class="ident">get</span>().<span class="number">0</span>.<span class="ident">is_none</span>());
@@ -588,14 +588,14 @@
             <span class="kw">let</span> <span class="ident">n</span> <span class="op">=</span> <span class="ident">get</span>().<span class="number">0</span>.<span class="ident">unwrap</span>();
 
             <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">n</span> {
-                <span class="kw">let</span> <span class="ident">coop</span> <span class="op">=</span> <span class="macro">assert_ready!</span>(<span class="ident">task</span>::<span class="ident">spawn</span>(()).<span class="ident">enter</span>(<span class="op">|</span><span class="ident">cx</span>, <span class="kw">_</span><span class="op">|</span> <span class="ident">poll_proceed</span>(<span class="ident">cx</span>)));
+                <span class="kw">let</span> <span class="ident">coop</span> <span class="op">=</span> <span class="macro">assert_ready!</span>(<span class="ident">task::spawn</span>(()).<span class="ident">enter</span>(<span class="op">|</span><span class="ident">cx</span>, <span class="kw">_</span><span class="op">|</span> <span class="ident">poll_proceed</span>(<span class="ident">cx</span>)));
                 <span class="ident">coop</span>.<span class="ident">made_progress</span>();
             }
 
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">task</span> <span class="op">=</span> <span class="ident">task</span>::<span class="ident">spawn</span>(<span class="ident">poll_fn</span>(<span class="op">|</span><span class="ident">cx</span><span class="op">|</span> {
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">task</span> <span class="op">=</span> <span class="ident">task::spawn</span>(<span class="ident">poll_fn</span>(<span class="op">|</span><span class="ident">cx</span><span class="op">|</span> {
                 <span class="kw">let</span> <span class="ident">coop</span> <span class="op">=</span> <span class="macro">ready!</span>(<span class="ident">poll_proceed</span>(<span class="ident">cx</span>));
                 <span class="ident">coop</span>.<span class="ident">made_progress</span>();
-                <span class="ident">Poll</span>::<span class="ident">Ready</span>(())
+                <span class="ident">Poll::Ready</span>(())
             }));
 
             <span class="macro">assert_pending!</span>(<span class="ident">task</span>.<span class="ident">poll</span>());
@@ -603,5 +603,5 @@
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="tokio" data-search-js="../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="tokio" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>

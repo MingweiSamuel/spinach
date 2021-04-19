@@ -31,17 +31,17 @@
 <span class="doccomment">//! `std::io::Error`, which may contain internally a heap-allocated `Box&lt;Error&gt;`</span>
 <span class="doccomment">//! and/or now relying on OS-specific `std::backtrace::Backtrace`.</span>
 
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">imp</span>::{<span class="ident">Error</span>, <span class="ident">ErrorKind</span>, <span class="prelude-ty">Result</span>, <span class="ident">Write</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::imp</span>::{<span class="ident">Error</span>, <span class="ident">ErrorKind</span>, <span class="prelude-ty">Result</span>, <span class="ident">Write</span>};
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>))]</span>
 <span class="attribute">#[<span class="ident">path</span> <span class="op">=</span> <span class="string">&quot;core.rs&quot;</span>]</span>
 <span class="kw">mod</span> <span class="ident">imp</span>;
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span> <span class="kw">as</span> <span class="ident">imp</span>;
+<span class="kw">use</span> <span class="ident">std::io</span> <span class="kw">as</span> <span class="ident">imp</span>;
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>::{<span class="ident">Bytes</span>, <span class="ident">Read</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">std::io</span>::{<span class="ident">Bytes</span>, <span class="ident">Read</span>};
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="serde_json" data-search-js="../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="serde_json" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

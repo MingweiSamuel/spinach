@@ -60,12 +60,12 @@
 <span id="57">57</span>
 <span id="58">58</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="ident">core</span>::<span class="ident">pin</span>::<span class="ident">Pin</span>;
-<span class="kw">use</span> <span class="ident">futures_core</span>::<span class="ident">future</span>::{<span class="ident">FusedFuture</span>, <span class="ident">Future</span>};
-<span class="kw">use</span> <span class="ident">futures_core</span>::<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
-<span class="kw">use</span> <span class="ident">pin_project</span>::<span class="ident">pin_project</span>;
+<span class="kw">use</span> <span class="ident">core::pin::Pin</span>;
+<span class="kw">use</span> <span class="ident">futures_core::future</span>::{<span class="ident">FusedFuture</span>, <span class="ident">Future</span>};
+<span class="kw">use</span> <span class="ident">futures_core::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
+<span class="kw">use</span> <span class="ident">pin_project::pin_project</span>;
 
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">fns</span>::<span class="ident">FnOnce1</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::fns::FnOnce1</span>;
 
 <span class="doccomment">/// Internal Map future</span>
 <span class="attribute">#[<span class="ident">pin_project</span>(<span class="ident">project</span> <span class="op">=</span> <span class="ident">MapProj</span>, <span class="ident">project_replace</span> <span class="op">=</span> <span class="ident">MapProjOwn</span>)]</span>
@@ -83,41 +83,41 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Fut</span>, <span class="ident">F</span><span class="op">&gt;</span> <span class="ident">Map</span><span class="op">&lt;</span><span class="ident">Fut</span>, <span class="ident">F</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Creates a new Map.</span>
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">future</span>: <span class="ident">Fut</span>, <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="self">Self</span>::<span class="ident">Incomplete</span> { <span class="ident">future</span>, <span class="ident">f</span> }
+        <span class="self">Self</span><span class="ident">::Incomplete</span> { <span class="ident">future</span>, <span class="ident">f</span> }
     }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Fut</span>, <span class="ident">F</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">FusedFuture</span> <span class="kw">for</span> <span class="ident">Map</span><span class="op">&lt;</span><span class="ident">Fut</span>, <span class="ident">F</span><span class="op">&gt;</span>
     <span class="kw">where</span> <span class="ident">Fut</span>: <span class="ident">Future</span>,
-          <span class="ident">F</span>: <span class="ident">FnOnce1</span><span class="op">&lt;</span><span class="ident">Fut</span>::<span class="ident">Output</span>, <span class="ident">Output</span><span class="op">=</span><span class="ident">T</span><span class="op">&gt;</span>,
+          <span class="ident">F</span>: <span class="ident">FnOnce1</span><span class="op">&lt;</span><span class="ident">Fut::Output</span>, <span class="ident">Output</span><span class="op">=</span><span class="ident">T</span><span class="op">&gt;</span>,
 {
     <span class="kw">fn</span> <span class="ident">is_terminated</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="self">Self</span>::<span class="ident">Incomplete</span> { .. } <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">false</span>,
-            <span class="self">Self</span>::<span class="ident">Complete</span> <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">true</span>,
+            <span class="self">Self</span><span class="ident">::Incomplete</span> { .. } <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">false</span>,
+            <span class="self">Self</span><span class="ident">::Complete</span> <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">true</span>,
         }
     }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Fut</span>, <span class="ident">F</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Future</span> <span class="kw">for</span> <span class="ident">Map</span><span class="op">&lt;</span><span class="ident">Fut</span>, <span class="ident">F</span><span class="op">&gt;</span>
     <span class="kw">where</span> <span class="ident">Fut</span>: <span class="ident">Future</span>,
-          <span class="ident">F</span>: <span class="ident">FnOnce1</span><span class="op">&lt;</span><span class="ident">Fut</span>::<span class="ident">Output</span>, <span class="ident">Output</span><span class="op">=</span><span class="ident">T</span><span class="op">&gt;</span>,
+          <span class="ident">F</span>: <span class="ident">FnOnce1</span><span class="op">&lt;</span><span class="ident">Fut::Output</span>, <span class="ident">Output</span><span class="op">=</span><span class="ident">T</span><span class="op">&gt;</span>,
 {
     <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">T</span>;
 
     <span class="kw">fn</span> <span class="ident">poll</span>(<span class="kw-2">mut</span> <span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">as_mut</span>().<span class="ident">project</span>() {
-            <span class="ident">MapProj</span>::<span class="ident">Incomplete</span> { <span class="ident">future</span>, .. } <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">MapProj::Incomplete</span> { <span class="ident">future</span>, .. } <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">let</span> <span class="ident">output</span> <span class="op">=</span> <span class="macro">ready!</span>(<span class="ident">future</span>.<span class="ident">poll</span>(<span class="ident">cx</span>));
-                <span class="kw">match</span> <span class="self">self</span>.<span class="ident">project_replace</span>(<span class="self">Self</span>::<span class="ident">Complete</span>) {
-                    <span class="ident">MapProjOwn</span>::<span class="ident">Incomplete</span> { <span class="ident">f</span>, .. } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="ident">f</span>.<span class="ident">call_once</span>(<span class="ident">output</span>)),
-                    <span class="ident">MapProjOwn</span>::<span class="ident">Complete</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable!</span>(),
+                <span class="kw">match</span> <span class="self">self</span>.<span class="ident">project_replace</span>(<span class="self">Self</span><span class="ident">::Complete</span>) {
+                    <span class="ident">MapProjOwn::Incomplete</span> { <span class="ident">f</span>, .. } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Poll::Ready</span>(<span class="ident">f</span>.<span class="ident">call_once</span>(<span class="ident">output</span>)),
+                    <span class="ident">MapProjOwn::Complete</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable!</span>(),
                 }
             },
-            <span class="ident">MapProj</span>::<span class="ident">Complete</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(<span class="string">&quot;Map must not be polled after it returned `Poll::Ready`&quot;</span>),
+            <span class="ident">MapProj::Complete</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(<span class="string">&quot;Map must not be polled after it returned `Poll::Ready`&quot;</span>),
         }
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="futures_util" data-search-js="../../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="futures_util" data-search-index-js="../../../../search-index.js" data-search-js="../../../../search.js"></div>
     <script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script></body></html>

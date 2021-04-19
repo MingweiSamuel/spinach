@@ -66,7 +66,7 @@
 <span id="63">63</span>
 <span id="64">64</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">cell</span>::<span class="ident">Cell</span>;
+<span class="kw">use</span> <span class="ident">std::cell::Cell</span>;
 
 <span class="doccomment">/// Fast random number generate</span>
 <span class="doccomment">///</span>
@@ -93,8 +93,8 @@
         }
 
         <span class="ident">FastRand</span> {
-            <span class="ident">one</span>: <span class="ident">Cell</span>::<span class="ident">new</span>(<span class="ident">one</span>),
-            <span class="ident">two</span>: <span class="ident">Cell</span>::<span class="ident">new</span>(<span class="ident">two</span>),
+            <span class="ident">one</span>: <span class="ident">Cell::new</span>(<span class="ident">one</span>),
+            <span class="ident">two</span>: <span class="ident">Cell::new</span>(<span class="ident">two</span>),
         }
     }
 
@@ -125,11 +125,11 @@
 <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;macros&quot;</span>), <span class="ident">allow</span>(<span class="ident">unreachable_pub</span>))]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">thread_rng_n</span>(<span class="ident">n</span>: <span class="ident">u32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
     <span class="macro">thread_local!</span> {
-        <span class="kw">static</span> <span class="ident">THREAD_RNG</span>: <span class="ident">FastRand</span> <span class="op">=</span> <span class="ident">FastRand</span>::<span class="ident">new</span>(<span class="kw">crate</span>::<span class="ident">loom</span>::<span class="ident">rand</span>::<span class="ident">seed</span>());
+        <span class="kw">static</span> <span class="ident">THREAD_RNG</span>: <span class="ident">FastRand</span> <span class="op">=</span> <span class="ident">FastRand::new</span>(<span class="kw">crate</span><span class="ident">::loom::rand::seed</span>());
     }
 
     <span class="ident">THREAD_RNG</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">rng</span><span class="op">|</span> <span class="ident">rng</span>.<span class="ident">fastrand_n</span>(<span class="ident">n</span>))
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-js="../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

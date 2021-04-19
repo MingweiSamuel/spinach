@@ -456,24 +456,24 @@
 }
 
 <span class="kw">mod</span> <span class="ident">async_buf_read</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">async_buf_read</span>::<span class="ident">AsyncBufRead</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::async_buf_read::AsyncBufRead</span>;
 
 <span class="kw">mod</span> <span class="ident">async_read</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">async_read</span>::<span class="ident">AsyncRead</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::async_read::AsyncRead</span>;
 
 <span class="kw">mod</span> <span class="ident">async_seek</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">async_seek</span>::<span class="ident">AsyncSeek</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::async_seek::AsyncSeek</span>;
 
 <span class="kw">mod</span> <span class="ident">async_write</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">async_write</span>::<span class="ident">AsyncWrite</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::async_write::AsyncWrite</span>;
 
 <span class="kw">mod</span> <span class="ident">read_buf</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">read_buf</span>::<span class="ident">ReadBuf</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::read_buf::ReadBuf</span>;
 
 <span class="comment">// Re-export some types from `std::io` so that users don&#39;t have to deal</span>
 <span class="comment">// with conflicts when `use`ing `tokio::io` and `std::io`.</span>
 <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">no_inline</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>::{<span class="ident">Error</span>, <span class="ident">ErrorKind</span>, <span class="prelude-ty">Result</span>, <span class="ident">SeekFrom</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">std::io</span>::{<span class="ident">Error</span>, <span class="ident">ErrorKind</span>, <span class="prelude-ty">Result</span>, <span class="ident">SeekFrom</span>};
 
 <span class="macro">cfg_io_driver_impl!</span> {
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod</span> <span class="ident">driver</span>;
@@ -485,7 +485,7 @@
     <span class="kw">mod</span> <span class="ident">poll_evented</span>;
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">loom</span>))]</span>
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="ident">poll_evented</span>::<span class="ident">PollEvented</span>;
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="ident">poll_evented::PollEvented</span>;
 }
 
 <span class="macro">cfg_net_unix!</span> {
@@ -493,7 +493,7 @@
 
     <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">unix</span> {
         <span class="doccomment">//! Asynchronous IO structures specific to Unix-like operating systems.</span>
-        <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">async_fd</span>::{<span class="ident">AsyncFd</span>, <span class="ident">AsyncFdReadyGuard</span>, <span class="ident">AsyncFdReadyMutGuard</span>, <span class="ident">TryIoError</span>};
+        <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">super</span><span class="ident">::async_fd</span>::{<span class="ident">AsyncFd</span>, <span class="ident">AsyncFdReadyGuard</span>, <span class="ident">AsyncFdReadyMutGuard</span>, <span class="ident">TryIoError</span>};
     }
 }
 
@@ -532,10 +532,10 @@
     <span class="doccomment">/// Types in this module can be mocked out in tests.</span>
     <span class="kw">mod</span> <span class="ident">sys</span> {
         <span class="comment">// TODO: don&#39;t rename</span>
-        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">blocking</span>::<span class="ident">spawn_blocking</span> <span class="kw">as</span> <span class="ident">run</span>;
-        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">blocking</span>::<span class="ident">JoinHandle</span> <span class="kw">as</span> <span class="ident">Blocking</span>;
+        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::blocking::spawn_blocking</span> <span class="kw">as</span> <span class="ident">run</span>;
+        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::blocking::JoinHandle</span> <span class="kw">as</span> <span class="ident">Blocking</span>;
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-js="../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

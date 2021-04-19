@@ -46,9 +46,9 @@
 <span id="43">43</span>
 <span id="44">44</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">future</span>::<span class="ident">Future</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">pin</span>::<span class="ident">Pin</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
+<span class="kw">use</span> <span class="ident">std::future::Future</span>;
+<span class="kw">use</span> <span class="ident">std::pin::Pin</span>;
+<span class="kw">use</span> <span class="ident">std::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 
 <span class="doccomment">/// Converts a function to a future that completes on poll</span>
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">BlockingTask</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
@@ -85,11 +85,11 @@
         <span class="comment">// currently goes through Task::poll(), and so is subject to budgeting. That isn&#39;t really</span>
         <span class="comment">// what we want; a blocking task may itself want to run tasks (it might be a Worker!), so</span>
         <span class="comment">// we want it to start without any budgeting.</span>
-        <span class="kw">crate</span>::<span class="ident">coop</span>::<span class="ident">stop</span>();
+        <span class="kw">crate</span><span class="ident">::coop::stop</span>();
 
-        <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="ident">func</span>())
+        <span class="ident">Poll::Ready</span>(<span class="ident">func</span>())
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="tokio" data-search-js="../../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="tokio" data-search-index-js="../../../../search-index.js" data-search-js="../../../../search.js"></div>
     <script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script></body></html>

@@ -56,12 +56,12 @@
 <span id="53">53</span>
 <span id="54">54</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="ident">core</span>::<span class="ident">pin</span>::<span class="ident">Pin</span>;
-<span class="kw">use</span> <span class="ident">futures_core</span>::<span class="ident">stream</span>::{<span class="ident">FusedStream</span>, <span class="ident">Stream</span>, <span class="ident">TryStream</span>};
-<span class="kw">use</span> <span class="ident">futures_core</span>::<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
+<span class="kw">use</span> <span class="ident">core::pin::Pin</span>;
+<span class="kw">use</span> <span class="ident">futures_core::stream</span>::{<span class="ident">FusedStream</span>, <span class="ident">Stream</span>, <span class="ident">TryStream</span>};
+<span class="kw">use</span> <span class="ident">futures_core::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;sink&quot;</span>)]</span>
-<span class="kw">use</span> <span class="ident">futures_sink</span>::<span class="ident">Sink</span>;
-<span class="kw">use</span> <span class="ident">pin_project</span>::<span class="ident">pin_project</span>;
+<span class="kw">use</span> <span class="ident">futures_sink::Sink</span>;
+<span class="kw">use</span> <span class="ident">pin_project::pin_project</span>;
 
 <span class="doccomment">/// Stream for the [`into_stream`](super::TryStreamExt::into_stream) method.</span>
 <span class="attribute">#[<span class="ident">pin_project</span>]</span>
@@ -88,13 +88,13 @@
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">St</span>: <span class="ident">TryStream</span><span class="op">&gt;</span> <span class="ident">Stream</span> <span class="kw">for</span> <span class="ident">IntoStream</span><span class="op">&lt;</span><span class="ident">St</span><span class="op">&gt;</span> {
-    <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">St</span>::<span class="prelude-val">Ok</span>, <span class="ident">St</span>::<span class="ident">Error</span><span class="op">&gt;</span>;
+    <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">St::Ok</span>, <span class="ident">St::Error</span><span class="op">&gt;</span>;
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">fn</span> <span class="ident">poll_next</span>(
         <span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>,
         <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Item</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="ident">::Item</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">project</span>().<span class="ident">stream</span>.<span class="ident">try_poll_next</span>(<span class="ident">cx</span>)
     }
 
@@ -106,10 +106,10 @@
 <span class="comment">// Forwarding impl of Sink from the underlying stream</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;sink&quot;</span>)]</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">Sink</span><span class="op">&lt;</span><span class="ident">Item</span><span class="op">&gt;</span>, <span class="ident">Item</span><span class="op">&gt;</span> <span class="ident">Sink</span><span class="op">&lt;</span><span class="ident">Item</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">IntoStream</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
-    <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">S</span>::<span class="ident">Error</span>;
+    <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">S::Error</span>;
 
     <span class="macro">delegate_sink!</span>(<span class="ident">stream</span>, <span class="ident">Item</span>);
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="futures_util" data-search-js="../../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="futures_util" data-search-index-js="../../../../search-index.js" data-search-js="../../../../search.js"></div>
     <script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script></body></html>

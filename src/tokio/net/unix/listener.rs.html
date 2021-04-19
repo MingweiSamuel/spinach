@@ -152,16 +152,16 @@
 <span id="149">149</span>
 <span id="150">150</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">io</span>::{<span class="ident">Interest</span>, <span class="ident">PollEvented</span>};
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">net</span>::<span class="ident">unix</span>::{<span class="ident">SocketAddr</span>, <span class="ident">UnixStream</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::io</span>::{<span class="ident">Interest</span>, <span class="ident">PollEvented</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::net::unix</span>::{<span class="ident">SocketAddr</span>, <span class="ident">UnixStream</span>};
 
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">TryFrom</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">unix</span>::<span class="ident">io</span>::{<span class="ident">AsRawFd</span>, <span class="ident">RawFd</span>};
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">unix</span>::<span class="ident">net</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">path</span>::<span class="ident">Path</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
+<span class="kw">use</span> <span class="ident">std::convert::TryFrom</span>;
+<span class="kw">use</span> <span class="ident">std::fmt</span>;
+<span class="kw">use</span> <span class="ident">std::io</span>;
+<span class="kw">use</span> <span class="ident">std::os::unix::io</span>::{<span class="ident">AsRawFd</span>, <span class="ident">RawFd</span>};
+<span class="kw">use</span> <span class="ident">std::os::unix::net</span>;
+<span class="kw">use</span> <span class="ident">std::path::Path</span>;
+<span class="kw">use</span> <span class="ident">std::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 
 <span class="macro">cfg_net_unix!</span> {
     <span class="doccomment">/// A Unix socket which can accept connections from other Unix sockets.</span>
@@ -199,7 +199,7 @@
     <span class="doccomment">/// }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">UnixListener</span> {
-        <span class="ident">io</span>: <span class="ident">PollEvented</span><span class="op">&lt;</span><span class="ident">mio</span>::<span class="ident">net</span>::<span class="ident">UnixListener</span><span class="op">&gt;</span>,
+        <span class="ident">io</span>: <span class="ident">PollEvented</span><span class="op">&lt;</span><span class="ident">mio::net::UnixListener</span><span class="op">&gt;</span>,
     }
 }
 
@@ -213,12 +213,12 @@
     <span class="doccomment">/// The runtime is usually set implicitly when this function is called</span>
     <span class="doccomment">/// from a future driven by a tokio runtime, otherwise runtime can be set</span>
     <span class="doccomment">/// explicitly with [`Runtime::enter`](crate::runtime::Runtime::enter) function.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">bind</span><span class="op">&lt;</span><span class="ident">P</span><span class="op">&gt;</span>(<span class="ident">path</span>: <span class="ident">P</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">UnixListener</span><span class="op">&gt;</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">bind</span><span class="op">&lt;</span><span class="ident">P</span><span class="op">&gt;</span>(<span class="ident">path</span>: <span class="ident">P</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io::Result</span><span class="op">&lt;</span><span class="ident">UnixListener</span><span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="ident">P</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>,
     {
-        <span class="kw">let</span> <span class="ident">listener</span> <span class="op">=</span> <span class="ident">mio</span>::<span class="ident">net</span>::<span class="ident">UnixListener</span>::<span class="ident">bind</span>(<span class="ident">path</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">io</span> <span class="op">=</span> <span class="ident">PollEvented</span>::<span class="ident">new</span>(<span class="ident">listener</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">listener</span> <span class="op">=</span> <span class="ident">mio::net::UnixListener::bind</span>(<span class="ident">path</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">io</span> <span class="op">=</span> <span class="ident">PollEvented::new</span>(<span class="ident">listener</span>)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(<span class="ident">UnixListener</span> { <span class="ident">io</span> })
     }
 
@@ -236,32 +236,32 @@
     <span class="doccomment">/// The runtime is usually set implicitly when this function is called</span>
     <span class="doccomment">/// from a future driven by a tokio runtime, otherwise runtime can be set</span>
     <span class="doccomment">/// explicitly with [`Runtime::enter`](crate::runtime::Runtime::enter) function.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_std</span>(<span class="ident">listener</span>: <span class="ident">net</span>::<span class="ident">UnixListener</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">UnixListener</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">listener</span> <span class="op">=</span> <span class="ident">mio</span>::<span class="ident">net</span>::<span class="ident">UnixListener</span>::<span class="ident">from_std</span>(<span class="ident">listener</span>);
-        <span class="kw">let</span> <span class="ident">io</span> <span class="op">=</span> <span class="ident">PollEvented</span>::<span class="ident">new</span>(<span class="ident">listener</span>)<span class="question-mark">?</span>;
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_std</span>(<span class="ident">listener</span>: <span class="ident">net::UnixListener</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io::Result</span><span class="op">&lt;</span><span class="ident">UnixListener</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">listener</span> <span class="op">=</span> <span class="ident">mio::net::UnixListener::from_std</span>(<span class="ident">listener</span>);
+        <span class="kw">let</span> <span class="ident">io</span> <span class="op">=</span> <span class="ident">PollEvented::new</span>(<span class="ident">listener</span>)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(<span class="ident">UnixListener</span> { <span class="ident">io</span> })
     }
 
     <span class="doccomment">/// Returns the local socket address of this listener.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">local_addr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">SocketAddr</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">local_addr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io::Result</span><span class="op">&lt;</span><span class="ident">SocketAddr</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">io</span>.<span class="ident">local_addr</span>().<span class="ident">map</span>(<span class="ident">SocketAddr</span>)
     }
 
     <span class="doccomment">/// Returns the value of the `SO_ERROR` option.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take_error</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">io</span>::<span class="ident">Error</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take_error</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io::Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">io::Error</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">io</span>.<span class="ident">take_error</span>()
     }
 
     <span class="doccomment">/// Accepts a new incoming connection to this listener.</span>
-    <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">accept</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">UnixStream</span>, <span class="ident">SocketAddr</span>)<span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">accept</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io::Result</span><span class="op">&lt;</span>(<span class="ident">UnixStream</span>, <span class="ident">SocketAddr</span>)<span class="op">&gt;</span> {
         <span class="kw">let</span> (<span class="ident">mio</span>, <span class="ident">addr</span>) <span class="op">=</span> <span class="self">self</span>
             .<span class="ident">io</span>
             .<span class="ident">registration</span>()
-            .<span class="ident">async_io</span>(<span class="ident">Interest</span>::<span class="ident">READABLE</span>, <span class="op">|</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">io</span>.<span class="ident">accept</span>())
+            .<span class="ident">async_io</span>(<span class="ident">Interest::READABLE</span>, <span class="op">|</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">io</span>.<span class="ident">accept</span>())
             .<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="kw">let</span> <span class="ident">addr</span> <span class="op">=</span> <span class="ident">SocketAddr</span>(<span class="ident">addr</span>);
-        <span class="kw">let</span> <span class="ident">stream</span> <span class="op">=</span> <span class="ident">UnixStream</span>::<span class="ident">new</span>(<span class="ident">mio</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">stream</span> <span class="op">=</span> <span class="ident">UnixStream::new</span>(<span class="ident">mio</span>)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>((<span class="ident">stream</span>, <span class="ident">addr</span>))
     }
 
@@ -271,28 +271,28 @@
     <span class="doccomment">/// current task will be notified by a waker.  Note that on multiple calls</span>
     <span class="doccomment">/// to `poll_accept`, only the `Waker` from the `Context` passed to the most</span>
     <span class="doccomment">/// recent call is scheduled to receive a wakeup.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">poll_accept</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">UnixStream</span>, <span class="ident">SocketAddr</span>)<span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">poll_accept</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">io::Result</span><span class="op">&lt;</span>(<span class="ident">UnixStream</span>, <span class="ident">SocketAddr</span>)<span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">let</span> (<span class="ident">sock</span>, <span class="ident">addr</span>) <span class="op">=</span> <span class="macro">ready!</span>(<span class="self">self</span>.<span class="ident">io</span>.<span class="ident">registration</span>().<span class="ident">poll_read_io</span>(<span class="ident">cx</span>, <span class="op">|</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">io</span>.<span class="ident">accept</span>()))<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">addr</span> <span class="op">=</span> <span class="ident">SocketAddr</span>(<span class="ident">addr</span>);
-        <span class="kw">let</span> <span class="ident">sock</span> <span class="op">=</span> <span class="ident">UnixStream</span>::<span class="ident">new</span>(<span class="ident">sock</span>)<span class="question-mark">?</span>;
-        <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Ok</span>((<span class="ident">sock</span>, <span class="ident">addr</span>)))
+        <span class="kw">let</span> <span class="ident">sock</span> <span class="op">=</span> <span class="ident">UnixStream::new</span>(<span class="ident">sock</span>)<span class="question-mark">?</span>;
+        <span class="ident">Poll::Ready</span>(<span class="prelude-val">Ok</span>((<span class="ident">sock</span>, <span class="ident">addr</span>)))
     }
 }
 
-<span class="kw">impl</span> <span class="ident">TryFrom</span><span class="op">&lt;</span><span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">unix</span>::<span class="ident">net</span>::<span class="ident">UnixListener</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">UnixListener</span> {
-    <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">io</span>::<span class="ident">Error</span>;
+<span class="kw">impl</span> <span class="ident">TryFrom</span><span class="op">&lt;</span><span class="ident">std::os::unix::net::UnixListener</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">UnixListener</span> {
+    <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">io::Error</span>;
 
     <span class="doccomment">/// Consumes stream, returning the tokio I/O object.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This is equivalent to</span>
     <span class="doccomment">/// [`UnixListener::from_std(stream)`](UnixListener::from_std).</span>
-    <span class="kw">fn</span> <span class="ident">try_from</span>(<span class="ident">stream</span>: <span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">unix</span>::<span class="ident">net</span>::<span class="ident">UnixListener</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
-        <span class="self">Self</span>::<span class="ident">from_std</span>(<span class="ident">stream</span>)
+    <span class="kw">fn</span> <span class="ident">try_from</span>(<span class="ident">stream</span>: <span class="ident">std::os::unix::net::UnixListener</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io::Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+        <span class="self">Self</span><span class="ident">::from_std</span>(<span class="ident">stream</span>)
     }
 }
 
-<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">UnixListener</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">impl</span> <span class="ident">fmt::Debug</span> <span class="kw">for</span> <span class="ident">UnixListener</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
         <span class="self">self</span>.<span class="ident">io</span>.<span class="ident">fmt</span>(<span class="ident">f</span>)
     }
 }
@@ -303,5 +303,5 @@
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="tokio" data-search-js="../../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="tokio" data-search-index-js="../../../../search-index.js" data-search-js="../../../../search.js"></div>
     <script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script></body></html>

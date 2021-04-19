@@ -112,15 +112,15 @@
 <span id="109">109</span>
 <span id="110">110</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">stream</span>::<span class="ident">Fuse</span>;
-<span class="kw">use</span> <span class="ident">futures_core</span>::<span class="ident">stream</span>::{<span class="ident">Stream</span>, <span class="ident">FusedStream</span>};
-<span class="kw">use</span> <span class="ident">futures_core</span>::<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::stream::Fuse</span>;
+<span class="kw">use</span> <span class="ident">futures_core::stream</span>::{<span class="ident">Stream</span>, <span class="ident">FusedStream</span>};
+<span class="kw">use</span> <span class="ident">futures_core::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;sink&quot;</span>)]</span>
-<span class="kw">use</span> <span class="ident">futures_sink</span>::<span class="ident">Sink</span>;
-<span class="kw">use</span> <span class="ident">pin_project</span>::<span class="ident">pin_project</span>;
-<span class="kw">use</span> <span class="ident">core</span>::<span class="ident">mem</span>;
-<span class="kw">use</span> <span class="ident">core</span>::<span class="ident">pin</span>::<span class="ident">Pin</span>;
-<span class="kw">use</span> <span class="ident">alloc</span>::<span class="ident">vec</span>::<span class="ident">Vec</span>;
+<span class="kw">use</span> <span class="ident">futures_sink::Sink</span>;
+<span class="kw">use</span> <span class="ident">pin_project::pin_project</span>;
+<span class="kw">use</span> <span class="ident">core::mem</span>;
+<span class="kw">use</span> <span class="ident">core::pin::Pin</span>;
+<span class="kw">use</span> <span class="ident">alloc::vec::Vec</span>;
 
 <span class="doccomment">/// Stream for the [`ready_chunks`](super::StreamExt::ready_chunks) method.</span>
 <span class="attribute">#[<span class="ident">pin_project</span>]</span>
@@ -129,7 +129,7 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ReadyChunks</span><span class="op">&lt;</span><span class="ident">St</span>: <span class="ident">Stream</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">pin</span>]</span>
     <span class="ident">stream</span>: <span class="ident">Fuse</span><span class="op">&lt;</span><span class="ident">St</span><span class="op">&gt;</span>,
-    <span class="ident">items</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">St</span>::<span class="ident">Item</span><span class="op">&gt;</span>,
+    <span class="ident">items</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">St::Item</span><span class="op">&gt;</span>,
     <span class="ident">cap</span>: <span class="ident">usize</span>, <span class="comment">// https://github.com/rust-lang/futures-rs/issues/1475</span>
 }
 
@@ -138,8 +138,8 @@
         <span class="macro">assert!</span>(<span class="ident">capacity</span> <span class="op">&gt;</span> <span class="number">0</span>);
 
         <span class="self">Self</span> {
-            <span class="ident">stream</span>: <span class="kw">super</span>::<span class="ident">Fuse</span>::<span class="ident">new</span>(<span class="ident">stream</span>),
-            <span class="ident">items</span>: <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="ident">capacity</span>),
+            <span class="ident">stream</span>: <span class="kw">super</span><span class="ident">::Fuse::new</span>(<span class="ident">stream</span>),
+            <span class="ident">items</span>: <span class="ident">Vec::with_capacity</span>(<span class="ident">capacity</span>),
             <span class="ident">cap</span>: <span class="ident">capacity</span>,
         }
     }
@@ -148,47 +148,47 @@
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">St</span>: <span class="ident">Stream</span><span class="op">&gt;</span> <span class="ident">Stream</span> <span class="kw">for</span> <span class="ident">ReadyChunks</span><span class="op">&lt;</span><span class="ident">St</span><span class="op">&gt;</span> {
-    <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">St</span>::<span class="ident">Item</span><span class="op">&gt;</span>;
+    <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">St::Item</span><span class="op">&gt;</span>;
 
     <span class="kw">fn</span> <span class="ident">poll_next</span>(
         <span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>,
         <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Item</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="ident">::Item</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">this</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">project</span>();
 
         <span class="kw">loop</span> {
             <span class="kw">match</span> <span class="ident">this</span>.<span class="ident">stream</span>.<span class="ident">as_mut</span>().<span class="ident">poll_next</span>(<span class="ident">cx</span>) {
                 <span class="comment">// Flush all collected data if underlying stream doesn&#39;t contain</span>
                 <span class="comment">// more ready values</span>
-                <span class="ident">Poll</span>::<span class="ident">Pending</span> <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="ident">Poll::Pending</span> <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="kw">return</span> <span class="kw">if</span> <span class="ident">this</span>.<span class="ident">items</span>.<span class="ident">is_empty</span>() {
-                        <span class="ident">Poll</span>::<span class="ident">Pending</span>
+                        <span class="ident">Poll::Pending</span>
                     } <span class="kw">else</span> {
-                        <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">mem</span>::<span class="ident">replace</span>(<span class="ident">this</span>.<span class="ident">items</span>, <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="kw-2">*</span><span class="ident">this</span>.<span class="ident">cap</span>))))
+                        <span class="ident">Poll::Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">mem::replace</span>(<span class="ident">this</span>.<span class="ident">items</span>, <span class="ident">Vec::with_capacity</span>(<span class="kw-2">*</span><span class="ident">this</span>.<span class="ident">cap</span>))))
                     }
                 }
 
                 <span class="comment">// Push the ready item into the buffer and check whether it is full.</span>
                 <span class="comment">// If so, replace our buffer with a new and empty one and return</span>
                 <span class="comment">// the full one.</span>
-                <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">item</span>)) <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="ident">Poll::Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">item</span>)) <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="ident">this</span>.<span class="ident">items</span>.<span class="ident">push</span>(<span class="ident">item</span>);
                     <span class="kw">if</span> <span class="ident">this</span>.<span class="ident">items</span>.<span class="ident">len</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="kw-2">*</span><span class="ident">this</span>.<span class="ident">cap</span> {
-                        <span class="kw">return</span> <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">mem</span>::<span class="ident">replace</span>(<span class="ident">this</span>.<span class="ident">items</span>, <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="kw-2">*</span><span class="ident">this</span>.<span class="ident">cap</span>))))
+                        <span class="kw">return</span> <span class="ident">Poll::Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">mem::replace</span>(<span class="ident">this</span>.<span class="ident">items</span>, <span class="ident">Vec::with_capacity</span>(<span class="kw-2">*</span><span class="ident">this</span>.<span class="ident">cap</span>))))
                     }
                 }
 
                 <span class="comment">// Since the underlying stream ran out of values, return what we</span>
                 <span class="comment">// have buffered, if we have anything.</span>
-                <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">None</span>) <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="ident">Poll::Ready</span>(<span class="prelude-val">None</span>) <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="kw">let</span> <span class="ident">last</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">this</span>.<span class="ident">items</span>.<span class="ident">is_empty</span>() {
                         <span class="prelude-val">None</span>
                     } <span class="kw">else</span> {
-                        <span class="kw">let</span> <span class="ident">full_buf</span> <span class="op">=</span> <span class="ident">mem</span>::<span class="ident">replace</span>(<span class="ident">this</span>.<span class="ident">items</span>, <span class="ident">Vec</span>::<span class="ident">new</span>());
+                        <span class="kw">let</span> <span class="ident">full_buf</span> <span class="op">=</span> <span class="ident">mem::replace</span>(<span class="ident">this</span>.<span class="ident">items</span>, <span class="ident">Vec::new</span>());
                         <span class="prelude-val">Some</span>(<span class="ident">full_buf</span>)
                     };
 
-                    <span class="kw">return</span> <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="ident">last</span>);
+                    <span class="kw">return</span> <span class="ident">Poll::Ready</span>(<span class="ident">last</span>);
                 }
             }
         }
@@ -218,10 +218,10 @@
 <span class="kw">where</span>
     <span class="ident">S</span>: <span class="ident">Stream</span> <span class="op">+</span> <span class="ident">Sink</span><span class="op">&lt;</span><span class="ident">Item</span><span class="op">&gt;</span>,
 {
-    <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">S</span>::<span class="ident">Error</span>;
+    <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">S::Error</span>;
 
     <span class="macro">delegate_sink!</span>(<span class="ident">stream</span>, <span class="ident">Item</span>);
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="futures_util" data-search-js="../../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="futures_util" data-search-index-js="../../../../search-index.js" data-search-js="../../../../search.js"></div>
     <script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script></body></html>

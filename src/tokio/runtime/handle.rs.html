@@ -223,12 +223,12 @@
 <span id="220">220</span>
 <span id="221">221</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">runtime</span>::<span class="ident">blocking</span>::<span class="ident">task</span>::<span class="ident">BlockingTask</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">runtime</span>::<span class="ident">task</span>::{<span class="self">self</span>, <span class="ident">JoinHandle</span>};
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">runtime</span>::{<span class="ident">blocking</span>, <span class="ident">context</span>, <span class="ident">driver</span>, <span class="ident">Spawner</span>};
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">util</span>::<span class="ident">error</span>::<span class="ident">CONTEXT_MISSING_ERROR</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::runtime::blocking::task::BlockingTask</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::runtime::task</span>::{<span class="self">self</span>, <span class="ident">JoinHandle</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::runtime</span>::{<span class="ident">blocking</span>, <span class="ident">context</span>, <span class="ident">driver</span>, <span class="ident">Spawner</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::util::error::CONTEXT_MISSING_ERROR</span>;
 
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">future</span>::<span class="ident">Future</span>;
+<span class="kw">use</span> <span class="ident">std::future::Future</span>;
 <span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">error</span>, <span class="ident">fmt</span>};
 
 <span class="doccomment">/// Handle to the runtime.</span>
@@ -242,19 +242,19 @@
     <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">spawner</span>: <span class="ident">Spawner</span>,
 
     <span class="doccomment">/// Handles to the I/O drivers</span>
-    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">io_handle</span>: <span class="ident">driver</span>::<span class="ident">IoHandle</span>,
+    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">io_handle</span>: <span class="ident">driver::IoHandle</span>,
 
     <span class="doccomment">/// Handles to the signal drivers</span>
-    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">signal_handle</span>: <span class="ident">driver</span>::<span class="ident">SignalHandle</span>,
+    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">signal_handle</span>: <span class="ident">driver::SignalHandle</span>,
 
     <span class="doccomment">/// Handles to the time drivers</span>
-    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">time_handle</span>: <span class="ident">driver</span>::<span class="ident">TimeHandle</span>,
+    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">time_handle</span>: <span class="ident">driver::TimeHandle</span>,
 
     <span class="doccomment">/// Source of `Instant::now()`</span>
-    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">clock</span>: <span class="ident">driver</span>::<span class="ident">Clock</span>,
+    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">clock</span>: <span class="ident">driver::Clock</span>,
 
     <span class="doccomment">/// Blocking pool spawner</span>
-    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">blocking_spawner</span>: <span class="ident">blocking</span>::<span class="ident">Spawner</span>,
+    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">blocking_spawner</span>: <span class="ident">blocking::Spawner</span>,
 }
 
 <span class="doccomment">/// Runtime context guard.</span>
@@ -266,7 +266,7 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">EnterGuard</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
     <span class="ident">handle</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Handle</span>,
-    <span class="ident">guard</span>: <span class="ident">context</span>::<span class="ident">EnterGuard</span>,
+    <span class="ident">guard</span>: <span class="ident">context::EnterGuard</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Handle</span> {
@@ -280,7 +280,7 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">enter</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EnterGuard</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span> {
         <span class="ident">EnterGuard</span> {
             <span class="ident">handle</span>: <span class="self">self</span>,
-            <span class="ident">guard</span>: <span class="ident">context</span>::<span class="ident">enter</span>(<span class="self">self</span>.<span class="ident">clone</span>()),
+            <span class="ident">guard</span>: <span class="ident">context::enter</span>(<span class="self">self</span>.<span class="ident">clone</span>()),
         }
     }
 
@@ -323,7 +323,7 @@
     <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">current</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">context</span>::<span class="ident">current</span>().<span class="ident">expect</span>(<span class="ident">CONTEXT_MISSING_ERROR</span>)
+        <span class="ident">context::current</span>().<span class="ident">expect</span>(<span class="ident">CONTEXT_MISSING_ERROR</span>)
     }
 
     <span class="doccomment">/// Returns a Handle view over the currently running Runtime</span>
@@ -332,7 +332,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// Contrary to `current`, this never panics</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">try_current</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">TryCurrentError</span><span class="op">&gt;</span> {
-        <span class="ident">context</span>::<span class="ident">current</span>().<span class="ident">ok_or</span>(<span class="ident">TryCurrentError</span>(()))
+        <span class="ident">context::current</span>().<span class="ident">ok_or</span>(<span class="ident">TryCurrentError</span>(()))
     }
 
     <span class="doccomment">/// Spawn a future onto the Tokio runtime.</span>
@@ -363,13 +363,13 @@
     <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">tokio_track_caller</span>, <span class="ident">track_caller</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">spawn</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">future</span>: <span class="ident">F</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">JoinHandle</span><span class="op">&lt;</span><span class="ident">F</span>::<span class="ident">Output</span><span class="op">&gt;</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">spawn</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">future</span>: <span class="ident">F</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">JoinHandle</span><span class="op">&lt;</span><span class="ident">F::Output</span><span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="ident">F</span>: <span class="ident">Future</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
-        <span class="ident">F</span>::<span class="ident">Output</span>: <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
+        <span class="ident">F::Output</span>: <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
     {
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">tokio_unstable</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;tracing&quot;</span>))]</span>
-        <span class="kw">let</span> <span class="ident">future</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">util</span>::<span class="ident">trace</span>::<span class="ident">task</span>(<span class="ident">future</span>, <span class="string">&quot;task&quot;</span>);
+        <span class="kw">let</span> <span class="ident">future</span> <span class="op">=</span> <span class="kw">crate</span><span class="ident">::util::trace::task</span>(<span class="ident">future</span>, <span class="string">&quot;task&quot;</span>);
         <span class="self">self</span>.<span class="ident">spawner</span>.<span class="ident">spawn</span>(<span class="ident">future</span>)
     }
 
@@ -401,28 +401,28 @@
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">tokio_unstable</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;tracing&quot;</span>))]</span>
         <span class="kw">let</span> <span class="ident">func</span> <span class="op">=</span> {
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">tokio_track_caller</span>)]</span>
-            <span class="kw">let</span> <span class="ident">location</span> <span class="op">=</span> <span class="ident">std</span>::<span class="ident">panic</span>::<span class="ident">Location</span>::<span class="ident">caller</span>();
+            <span class="kw">let</span> <span class="ident">location</span> <span class="op">=</span> <span class="ident">std::panic::Location::caller</span>();
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">tokio_track_caller</span>)]</span>
-            <span class="kw">let</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">tracing</span>::<span class="macro">trace_span!</span>(
+            <span class="kw">let</span> <span class="ident">span</span> <span class="op">=</span> <span class="macro">tracing::trace_span!</span>(
                 <span class="ident">target</span>: <span class="string">&quot;tokio::task&quot;</span>,
                 <span class="string">&quot;task&quot;</span>,
                 <span class="ident">kind</span> <span class="op">=</span> <span class="op">%</span><span class="string">&quot;blocking&quot;</span>,
-                <span class="ident">function</span> <span class="op">=</span> <span class="op">%</span><span class="ident">std</span>::<span class="ident">any</span>::<span class="ident">type_name</span>::<span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(),
+                <span class="ident">function</span> <span class="op">=</span> <span class="op">%</span><span class="ident">std::any::type_name</span>::<span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(),
                 <span class="ident">spawn</span>.<span class="ident">location</span> <span class="op">=</span> <span class="op">%</span><span class="macro">format_args!</span>(<span class="string">&quot;{}:{}:{}&quot;</span>, <span class="ident">location</span>.<span class="ident">file</span>(), <span class="ident">location</span>.<span class="ident">line</span>(), <span class="ident">location</span>.<span class="ident">column</span>()),
             );
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">tokio_track_caller</span>))]</span>
-            <span class="kw">let</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">tracing</span>::<span class="macro">trace_span!</span>(
+            <span class="kw">let</span> <span class="ident">span</span> <span class="op">=</span> <span class="macro">tracing::trace_span!</span>(
                 <span class="ident">target</span>: <span class="string">&quot;tokio::task&quot;</span>,
                 <span class="string">&quot;task&quot;</span>,
                 <span class="ident">kind</span> <span class="op">=</span> <span class="op">%</span><span class="string">&quot;blocking&quot;</span>,
-                <span class="ident">function</span> <span class="op">=</span> <span class="op">%</span><span class="ident">std</span>::<span class="ident">any</span>::<span class="ident">type_name</span>::<span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(),
+                <span class="ident">function</span> <span class="op">=</span> <span class="op">%</span><span class="ident">std::any::type_name</span>::<span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(),
             );
             <span class="kw">move</span> <span class="op">|</span><span class="op">|</span> {
                 <span class="kw">let</span> <span class="ident">_g</span> <span class="op">=</span> <span class="ident">span</span>.<span class="ident">enter</span>();
                 <span class="ident">func</span>()
             }
         };
-        <span class="kw">let</span> (<span class="ident">task</span>, <span class="ident">handle</span>) <span class="op">=</span> <span class="ident">task</span>::<span class="ident">joinable</span>(<span class="ident">BlockingTask</span>::<span class="ident">new</span>(<span class="ident">func</span>));
+        <span class="kw">let</span> (<span class="ident">task</span>, <span class="ident">handle</span>) <span class="op">=</span> <span class="ident">task::joinable</span>(<span class="ident">BlockingTask::new</span>(<span class="ident">func</span>));
         <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">blocking_spawner</span>.<span class="ident">spawn</span>(<span class="ident">task</span>, <span class="kw-2">&amp;</span><span class="self">self</span>);
         <span class="ident">handle</span>
     }
@@ -431,19 +431,19 @@
 <span class="doccomment">/// Error returned by `try_current` when no Runtime has been started</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TryCurrentError</span>(());
 
-<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">TryCurrentError</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">impl</span> <span class="ident">fmt::Debug</span> <span class="kw">for</span> <span class="ident">TryCurrentError</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
         <span class="ident">f</span>.<span class="ident">debug_struct</span>(<span class="string">&quot;TryCurrentError&quot;</span>).<span class="ident">finish</span>()
     }
 }
 
-<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">TryCurrentError</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">TryCurrentError</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
         <span class="ident">f</span>.<span class="ident">write_str</span>(<span class="ident">CONTEXT_MISSING_ERROR</span>)
     }
 }
 
-<span class="kw">impl</span> <span class="ident">error</span>::<span class="ident">Error</span> <span class="kw">for</span> <span class="ident">TryCurrentError</span> {}
+<span class="kw">impl</span> <span class="ident">error::Error</span> <span class="kw">for</span> <span class="ident">TryCurrentError</span> {}
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-js="../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

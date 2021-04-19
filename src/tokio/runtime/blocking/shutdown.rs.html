@@ -78,24 +78,24 @@
 <span class="doccomment">//! Each worker holds the `Sender` half. When all the `Sender` halves are</span>
 <span class="doccomment">//! dropped, the `Receiver` receives a notification.</span>
 
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">loom</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">sync</span>::<span class="ident">oneshot</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::loom::sync::Arc</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::sync::oneshot</span>;
 
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">time</span>::<span class="ident">Duration</span>;
+<span class="kw">use</span> <span class="ident">std::time::Duration</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">struct</span> <span class="ident">Sender</span> {
-    <span class="ident">tx</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">oneshot</span>::<span class="ident">Sender</span><span class="op">&lt;</span>()<span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">tx</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">oneshot::Sender</span><span class="op">&lt;</span>()<span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">struct</span> <span class="ident">Receiver</span> {
-    <span class="ident">rx</span>: <span class="ident">oneshot</span>::<span class="ident">Receiver</span><span class="op">&lt;</span>()<span class="op">&gt;</span>,
+    <span class="ident">rx</span>: <span class="ident">oneshot::Receiver</span><span class="op">&lt;</span>()<span class="op">&gt;</span>,
 }
 
 <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn</span> <span class="ident">channel</span>() <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">Sender</span>, <span class="ident">Receiver</span>) {
-    <span class="kw">let</span> (<span class="ident">tx</span>, <span class="ident">rx</span>) <span class="op">=</span> <span class="ident">oneshot</span>::<span class="ident">channel</span>();
-    <span class="kw">let</span> <span class="ident">tx</span> <span class="op">=</span> <span class="ident">Sender</span> { <span class="ident">tx</span>: <span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">tx</span>) };
+    <span class="kw">let</span> (<span class="ident">tx</span>, <span class="ident">rx</span>) <span class="op">=</span> <span class="ident">oneshot::channel</span>();
+    <span class="kw">let</span> <span class="ident">tx</span> <span class="op">=</span> <span class="ident">Sender</span> { <span class="ident">tx</span>: <span class="ident">Arc::new</span>(<span class="ident">tx</span>) };
     <span class="kw">let</span> <span class="ident">rx</span> <span class="op">=</span> <span class="ident">Receiver</span> { <span class="ident">rx</span> };
 
     (<span class="ident">tx</span>, <span class="ident">rx</span>)
@@ -110,16 +110,16 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// If the timeout has elapsed, it returns `false`, otherwise it returns `true`.</span>
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">wait</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">timeout</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Duration</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
-        <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">runtime</span>::<span class="ident">enter</span>::<span class="ident">try_enter</span>;
+        <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::runtime::enter::try_enter</span>;
 
-        <span class="kw">if</span> <span class="ident">timeout</span> <span class="op">=</span><span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Duration</span>::<span class="ident">from_nanos</span>(<span class="number">0</span>)) {
+        <span class="kw">if</span> <span class="ident">timeout</span> <span class="op">=</span><span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Duration::from_nanos</span>(<span class="number">0</span>)) {
             <span class="kw">return</span> <span class="bool-val">false</span>;
         }
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">e</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">try_enter</span>(<span class="bool-val">false</span>) {
             <span class="prelude-val">Some</span>(<span class="ident">enter</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">enter</span>,
             <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="kw">if</span> <span class="ident">std</span>::<span class="ident">thread</span>::<span class="ident">panicking</span>() {
+                <span class="kw">if</span> <span class="ident">std::thread::panicking</span>() {
                     <span class="comment">// Don&#39;t panic in a panic</span>
                     <span class="kw">return</span> <span class="bool-val">false</span>;
                 } <span class="kw">else</span> {
@@ -145,5 +145,5 @@
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="tokio" data-search-js="../../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="tokio" data-search-index-js="../../../../search-index.js" data-search-js="../../../../search.js"></div>
     <script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script></body></html>

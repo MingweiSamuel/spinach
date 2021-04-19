@@ -276,13 +276,13 @@
 <span id="273">273</span>
 <span id="274">274</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="ident">core</span>::<span class="ident">pin</span>::<span class="ident">Pin</span>;
-<span class="kw">use</span> <span class="ident">core</span>::<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
-<span class="kw">use</span> <span class="ident">futures_core</span>::<span class="ident">future</span>::{<span class="ident">FusedFuture</span>, <span class="ident">Future</span>};
-<span class="kw">use</span> <span class="ident">futures_core</span>::<span class="ident">stream</span>::{<span class="ident">FusedStream</span>, <span class="ident">Stream</span>};
+<span class="kw">use</span> <span class="ident">core::pin::Pin</span>;
+<span class="kw">use</span> <span class="ident">core::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
+<span class="kw">use</span> <span class="ident">futures_core::future</span>::{<span class="ident">FusedFuture</span>, <span class="ident">Future</span>};
+<span class="kw">use</span> <span class="ident">futures_core::stream</span>::{<span class="ident">FusedStream</span>, <span class="ident">Stream</span>};
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;sink&quot;</span>)]</span>
-<span class="kw">use</span> <span class="ident">futures_sink</span>::<span class="ident">Sink</span>;
-<span class="kw">use</span> <span class="ident">pin_project</span>::<span class="ident">pin_project</span>;
+<span class="kw">use</span> <span class="ident">futures_sink::Sink</span>;
+<span class="kw">use</span> <span class="ident">pin_project::pin_project</span>;
 
 <span class="doccomment">/// Combines two different futures, streams, or sinks having the same associated types into a single</span>
 <span class="doccomment">/// type.</span>
@@ -301,8 +301,8 @@
     <span class="doccomment">/// Here, the homogeneous type is the first element of the pairs.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">factor_first</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">T</span>, <span class="ident">Either</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span>) {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">Either</span>::<span class="ident">Left</span>((<span class="ident">x</span>, <span class="ident">a</span>)) <span class="op">=</span><span class="op">&gt;</span> (<span class="ident">x</span>, <span class="ident">Either</span>::<span class="ident">Left</span>(<span class="ident">a</span>)),
-            <span class="ident">Either</span>::<span class="ident">Right</span>((<span class="ident">x</span>, <span class="ident">b</span>)) <span class="op">=</span><span class="op">&gt;</span> (<span class="ident">x</span>, <span class="ident">Either</span>::<span class="ident">Right</span>(<span class="ident">b</span>)),
+            <span class="ident">Either::Left</span>((<span class="ident">x</span>, <span class="ident">a</span>)) <span class="op">=</span><span class="op">&gt;</span> (<span class="ident">x</span>, <span class="ident">Either::Left</span>(<span class="ident">a</span>)),
+            <span class="ident">Either::Right</span>((<span class="ident">x</span>, <span class="ident">b</span>)) <span class="op">=</span><span class="op">&gt;</span> (<span class="ident">x</span>, <span class="ident">Either::Right</span>(<span class="ident">b</span>)),
         }
     }
 }
@@ -313,8 +313,8 @@
     <span class="doccomment">/// Here, the homogeneous type is the second element of the pairs.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">factor_second</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">Either</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span>, <span class="ident">T</span>) {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">Either</span>::<span class="ident">Left</span>((<span class="ident">a</span>, <span class="ident">x</span>)) <span class="op">=</span><span class="op">&gt;</span> (<span class="ident">Either</span>::<span class="ident">Left</span>(<span class="ident">a</span>), <span class="ident">x</span>),
-            <span class="ident">Either</span>::<span class="ident">Right</span>((<span class="ident">b</span>, <span class="ident">x</span>)) <span class="op">=</span><span class="op">&gt;</span> (<span class="ident">Either</span>::<span class="ident">Right</span>(<span class="ident">b</span>), <span class="ident">x</span>),
+            <span class="ident">Either::Left</span>((<span class="ident">a</span>, <span class="ident">x</span>)) <span class="op">=</span><span class="op">&gt;</span> (<span class="ident">Either::Left</span>(<span class="ident">a</span>), <span class="ident">x</span>),
+            <span class="ident">Either::Right</span>((<span class="ident">b</span>, <span class="ident">x</span>)) <span class="op">=</span><span class="op">&gt;</span> (<span class="ident">Either::Right</span>(<span class="ident">b</span>), <span class="ident">x</span>),
         }
     }
 }
@@ -323,8 +323,8 @@
     <span class="doccomment">/// Extract the value of an either over two equivalent types.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_inner</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">T</span> {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">Either</span>::<span class="ident">Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>,
-            <span class="ident">Either</span>::<span class="ident">Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>,
+            <span class="ident">Either::Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>,
+            <span class="ident">Either::Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>,
         }
     }
 }
@@ -332,14 +332,14 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span> <span class="ident">Future</span> <span class="kw">for</span> <span class="ident">Either</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">A</span>: <span class="ident">Future</span>,
-    <span class="ident">B</span>: <span class="ident">Future</span><span class="op">&lt;</span><span class="ident">Output</span> <span class="op">=</span> <span class="ident">A</span>::<span class="ident">Output</span><span class="op">&gt;</span>,
+    <span class="ident">B</span>: <span class="ident">Future</span><span class="op">&lt;</span><span class="ident">Output</span> <span class="op">=</span> <span class="ident">A::Output</span><span class="op">&gt;</span>,
 {
-    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">A</span>::<span class="ident">Output</span>;
+    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">A::Output</span>;
 
-    <span class="kw">fn</span> <span class="ident">poll</span>(<span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Output</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">poll</span>(<span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="self">Self</span><span class="ident">::Output</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">project</span>() {
-            <span class="ident">EitherProj</span>::<span class="ident">Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll</span>(<span class="ident">cx</span>),
-            <span class="ident">EitherProj</span>::<span class="ident">Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll</span>(<span class="ident">cx</span>),
+            <span class="ident">EitherProj::Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll</span>(<span class="ident">cx</span>),
+            <span class="ident">EitherProj::Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll</span>(<span class="ident">cx</span>),
         }
     }
 }
@@ -347,12 +347,12 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span> <span class="ident">FusedFuture</span> <span class="kw">for</span> <span class="ident">Either</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">A</span>: <span class="ident">FusedFuture</span>,
-    <span class="ident">B</span>: <span class="ident">FusedFuture</span><span class="op">&lt;</span><span class="ident">Output</span> <span class="op">=</span> <span class="ident">A</span>::<span class="ident">Output</span><span class="op">&gt;</span>,
+    <span class="ident">B</span>: <span class="ident">FusedFuture</span><span class="op">&lt;</span><span class="ident">Output</span> <span class="op">=</span> <span class="ident">A::Output</span><span class="op">&gt;</span>,
 {
     <span class="kw">fn</span> <span class="ident">is_terminated</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">Either</span>::<span class="ident">Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">is_terminated</span>(),
-            <span class="ident">Either</span>::<span class="ident">Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">is_terminated</span>(),
+            <span class="ident">Either::Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">is_terminated</span>(),
+            <span class="ident">Either::Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">is_terminated</span>(),
         }
     }
 }
@@ -360,14 +360,14 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span> <span class="ident">Stream</span> <span class="kw">for</span> <span class="ident">Either</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">A</span>: <span class="ident">Stream</span>,
-    <span class="ident">B</span>: <span class="ident">Stream</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">A</span>::<span class="ident">Item</span><span class="op">&gt;</span>,
+    <span class="ident">B</span>: <span class="ident">Stream</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">A::Item</span><span class="op">&gt;</span>,
 {
-    <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">A</span>::<span class="ident">Item</span>;
+    <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">A::Item</span>;
 
-    <span class="kw">fn</span> <span class="ident">poll_next</span>(<span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Item</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">poll_next</span>(<span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="ident">::Item</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">project</span>() {
-            <span class="ident">EitherProj</span>::<span class="ident">Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_next</span>(<span class="ident">cx</span>),
-            <span class="ident">EitherProj</span>::<span class="ident">Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_next</span>(<span class="ident">cx</span>),
+            <span class="ident">EitherProj::Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_next</span>(<span class="ident">cx</span>),
+            <span class="ident">EitherProj::Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_next</span>(<span class="ident">cx</span>),
         }
     }
 }
@@ -375,12 +375,12 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span> <span class="ident">FusedStream</span> <span class="kw">for</span> <span class="ident">Either</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">A</span>: <span class="ident">FusedStream</span>,
-    <span class="ident">B</span>: <span class="ident">FusedStream</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">A</span>::<span class="ident">Item</span><span class="op">&gt;</span>,
+    <span class="ident">B</span>: <span class="ident">FusedStream</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">A::Item</span><span class="op">&gt;</span>,
 {
     <span class="kw">fn</span> <span class="ident">is_terminated</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">Either</span>::<span class="ident">Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">is_terminated</span>(),
-            <span class="ident">Either</span>::<span class="ident">Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">is_terminated</span>(),
+            <span class="ident">Either::Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">is_terminated</span>(),
+            <span class="ident">Either::Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">is_terminated</span>(),
         }
     }
 }
@@ -389,35 +389,35 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span>, <span class="ident">Item</span><span class="op">&gt;</span> <span class="ident">Sink</span><span class="op">&lt;</span><span class="ident">Item</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Either</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">A</span>: <span class="ident">Sink</span><span class="op">&lt;</span><span class="ident">Item</span><span class="op">&gt;</span>,
-    <span class="ident">B</span>: <span class="ident">Sink</span><span class="op">&lt;</span><span class="ident">Item</span>, <span class="ident">Error</span> <span class="op">=</span> <span class="ident">A</span>::<span class="ident">Error</span><span class="op">&gt;</span>,
+    <span class="ident">B</span>: <span class="ident">Sink</span><span class="op">&lt;</span><span class="ident">Item</span>, <span class="ident">Error</span> <span class="op">=</span> <span class="ident">A::Error</span><span class="op">&gt;</span>,
 {
-    <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">A</span>::<span class="ident">Error</span>;
+    <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">A::Error</span>;
 
-    <span class="kw">fn</span> <span class="ident">poll_ready</span>(<span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="self">Self</span>::<span class="ident">Error</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">poll_ready</span>(<span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="self">Self</span><span class="ident">::Error</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">project</span>() {
-            <span class="ident">EitherProj</span>::<span class="ident">Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_ready</span>(<span class="ident">cx</span>),
-            <span class="ident">EitherProj</span>::<span class="ident">Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_ready</span>(<span class="ident">cx</span>),
+            <span class="ident">EitherProj::Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_ready</span>(<span class="ident">cx</span>),
+            <span class="ident">EitherProj::Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_ready</span>(<span class="ident">cx</span>),
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">start_send</span>(<span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">item</span>: <span class="ident">Item</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="self">Self</span>::<span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">start_send</span>(<span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">item</span>: <span class="ident">Item</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="self">Self</span><span class="ident">::Error</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">project</span>() {
-            <span class="ident">EitherProj</span>::<span class="ident">Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">start_send</span>(<span class="ident">item</span>),
-            <span class="ident">EitherProj</span>::<span class="ident">Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">start_send</span>(<span class="ident">item</span>),
+            <span class="ident">EitherProj::Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">start_send</span>(<span class="ident">item</span>),
+            <span class="ident">EitherProj::Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">start_send</span>(<span class="ident">item</span>),
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">poll_flush</span>(<span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="self">Self</span>::<span class="ident">Error</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">poll_flush</span>(<span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="self">Self</span><span class="ident">::Error</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">project</span>() {
-            <span class="ident">EitherProj</span>::<span class="ident">Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_flush</span>(<span class="ident">cx</span>),
-            <span class="ident">EitherProj</span>::<span class="ident">Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_flush</span>(<span class="ident">cx</span>),
+            <span class="ident">EitherProj::Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_flush</span>(<span class="ident">cx</span>),
+            <span class="ident">EitherProj::Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_flush</span>(<span class="ident">cx</span>),
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">poll_close</span>(<span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="self">Self</span>::<span class="ident">Error</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">poll_close</span>(<span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="self">Self</span><span class="ident">::Error</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">project</span>() {
-            <span class="ident">EitherProj</span>::<span class="ident">Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_close</span>(<span class="ident">cx</span>),
-            <span class="ident">EitherProj</span>::<span class="ident">Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_close</span>(<span class="ident">cx</span>),
+            <span class="ident">EitherProj::Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_close</span>(<span class="ident">cx</span>),
+            <span class="ident">EitherProj::Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_close</span>(<span class="ident">cx</span>),
         }
     }
 }
@@ -427,10 +427,10 @@
 <span class="kw">mod</span> <span class="ident">if_std</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
-    <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">pin</span>::<span class="ident">Pin</span>;
-    <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
+    <span class="kw">use</span> <span class="ident">core::pin::Pin</span>;
+    <span class="kw">use</span> <span class="ident">core::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;read-initializer&quot;</span>)]</span>
-    <span class="kw">use</span> <span class="ident">futures_io</span>::<span class="ident">Initializer</span>;
+    <span class="kw">use</span> <span class="ident">futures_io::Initializer</span>;
     <span class="kw">use</span> <span class="ident">futures_io</span>::{
         <span class="ident">AsyncBufRead</span>, <span class="ident">AsyncRead</span>, <span class="ident">AsyncSeek</span>, <span class="ident">AsyncWrite</span>, <span class="ident">IoSlice</span>, <span class="ident">IoSliceMut</span>, <span class="prelude-ty">Result</span>, <span class="ident">SeekFrom</span>,
     };
@@ -443,8 +443,8 @@
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;read-initializer&quot;</span>)]</span>
         <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">initializer</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Initializer</span> {
             <span class="kw">match</span> <span class="self">self</span> {
-                <span class="ident">Either</span>::<span class="ident">Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">initializer</span>(),
-                <span class="ident">Either</span>::<span class="ident">Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">initializer</span>(),
+                <span class="ident">Either::Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">initializer</span>(),
+                <span class="ident">Either::Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">initializer</span>(),
             }
         }
 
@@ -454,8 +454,8 @@
             <span class="ident">buf</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>],
         ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span><span class="op">&gt;</span> {
             <span class="kw">match</span> <span class="self">self</span>.<span class="ident">project</span>() {
-                <span class="ident">EitherProj</span>::<span class="ident">Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_read</span>(<span class="ident">cx</span>, <span class="ident">buf</span>),
-                <span class="ident">EitherProj</span>::<span class="ident">Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_read</span>(<span class="ident">cx</span>, <span class="ident">buf</span>),
+                <span class="ident">EitherProj::Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_read</span>(<span class="ident">cx</span>, <span class="ident">buf</span>),
+                <span class="ident">EitherProj::Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_read</span>(<span class="ident">cx</span>, <span class="ident">buf</span>),
             }
         }
 
@@ -465,8 +465,8 @@
             <span class="ident">bufs</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">IoSliceMut</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>],
         ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span><span class="op">&gt;</span> {
             <span class="kw">match</span> <span class="self">self</span>.<span class="ident">project</span>() {
-                <span class="ident">EitherProj</span>::<span class="ident">Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_read_vectored</span>(<span class="ident">cx</span>, <span class="ident">bufs</span>),
-                <span class="ident">EitherProj</span>::<span class="ident">Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_read_vectored</span>(<span class="ident">cx</span>, <span class="ident">bufs</span>),
+                <span class="ident">EitherProj::Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_read_vectored</span>(<span class="ident">cx</span>, <span class="ident">bufs</span>),
+                <span class="ident">EitherProj::Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_read_vectored</span>(<span class="ident">cx</span>, <span class="ident">bufs</span>),
             }
         }
     }
@@ -482,8 +482,8 @@
             <span class="ident">buf</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>],
         ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span><span class="op">&gt;</span> {
             <span class="kw">match</span> <span class="self">self</span>.<span class="ident">project</span>() {
-                <span class="ident">EitherProj</span>::<span class="ident">Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_write</span>(<span class="ident">cx</span>, <span class="ident">buf</span>),
-                <span class="ident">EitherProj</span>::<span class="ident">Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_write</span>(<span class="ident">cx</span>, <span class="ident">buf</span>),
+                <span class="ident">EitherProj::Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_write</span>(<span class="ident">cx</span>, <span class="ident">buf</span>),
+                <span class="ident">EitherProj::Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_write</span>(<span class="ident">cx</span>, <span class="ident">buf</span>),
             }
         }
 
@@ -493,22 +493,22 @@
             <span class="ident">bufs</span>: <span class="kw-2">&amp;</span>[<span class="ident">IoSlice</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>],
         ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span><span class="op">&gt;</span> {
             <span class="kw">match</span> <span class="self">self</span>.<span class="ident">project</span>() {
-                <span class="ident">EitherProj</span>::<span class="ident">Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_write_vectored</span>(<span class="ident">cx</span>, <span class="ident">bufs</span>),
-                <span class="ident">EitherProj</span>::<span class="ident">Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_write_vectored</span>(<span class="ident">cx</span>, <span class="ident">bufs</span>),
+                <span class="ident">EitherProj::Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_write_vectored</span>(<span class="ident">cx</span>, <span class="ident">bufs</span>),
+                <span class="ident">EitherProj::Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_write_vectored</span>(<span class="ident">cx</span>, <span class="ident">bufs</span>),
             }
         }
 
         <span class="kw">fn</span> <span class="ident">poll_flush</span>(<span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span><span class="op">&gt;</span> {
             <span class="kw">match</span> <span class="self">self</span>.<span class="ident">project</span>() {
-                <span class="ident">EitherProj</span>::<span class="ident">Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_flush</span>(<span class="ident">cx</span>),
-                <span class="ident">EitherProj</span>::<span class="ident">Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_flush</span>(<span class="ident">cx</span>),
+                <span class="ident">EitherProj::Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_flush</span>(<span class="ident">cx</span>),
+                <span class="ident">EitherProj::Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_flush</span>(<span class="ident">cx</span>),
             }
         }
 
         <span class="kw">fn</span> <span class="ident">poll_close</span>(<span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span><span class="op">&gt;</span> {
             <span class="kw">match</span> <span class="self">self</span>.<span class="ident">project</span>() {
-                <span class="ident">EitherProj</span>::<span class="ident">Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_close</span>(<span class="ident">cx</span>),
-                <span class="ident">EitherProj</span>::<span class="ident">Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_close</span>(<span class="ident">cx</span>),
+                <span class="ident">EitherProj::Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_close</span>(<span class="ident">cx</span>),
+                <span class="ident">EitherProj::Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_close</span>(<span class="ident">cx</span>),
             }
         }
     }
@@ -524,8 +524,8 @@
             <span class="ident">pos</span>: <span class="ident">SeekFrom</span>,
         ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span><span class="op">&gt;</span> {
             <span class="kw">match</span> <span class="self">self</span>.<span class="ident">project</span>() {
-                <span class="ident">EitherProj</span>::<span class="ident">Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_seek</span>(<span class="ident">cx</span>, <span class="ident">pos</span>),
-                <span class="ident">EitherProj</span>::<span class="ident">Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_seek</span>(<span class="ident">cx</span>, <span class="ident">pos</span>),
+                <span class="ident">EitherProj::Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_seek</span>(<span class="ident">cx</span>, <span class="ident">pos</span>),
+                <span class="ident">EitherProj::Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_seek</span>(<span class="ident">cx</span>, <span class="ident">pos</span>),
             }
         }
     }
@@ -537,19 +537,19 @@
     {
         <span class="kw">fn</span> <span class="ident">poll_fill_buf</span>(<span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>]<span class="op">&gt;</span><span class="op">&gt;</span> {
             <span class="kw">match</span> <span class="self">self</span>.<span class="ident">project</span>() {
-                <span class="ident">EitherProj</span>::<span class="ident">Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_fill_buf</span>(<span class="ident">cx</span>),
-                <span class="ident">EitherProj</span>::<span class="ident">Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_fill_buf</span>(<span class="ident">cx</span>),
+                <span class="ident">EitherProj::Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_fill_buf</span>(<span class="ident">cx</span>),
+                <span class="ident">EitherProj::Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">poll_fill_buf</span>(<span class="ident">cx</span>),
             }
         }
 
         <span class="kw">fn</span> <span class="ident">consume</span>(<span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">amt</span>: <span class="ident">usize</span>) {
             <span class="kw">match</span> <span class="self">self</span>.<span class="ident">project</span>() {
-                <span class="ident">EitherProj</span>::<span class="ident">Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">consume</span>(<span class="ident">amt</span>),
-                <span class="ident">EitherProj</span>::<span class="ident">Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">consume</span>(<span class="ident">amt</span>),
+                <span class="ident">EitherProj::Left</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">consume</span>(<span class="ident">amt</span>),
+                <span class="ident">EitherProj::Right</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>.<span class="ident">consume</span>(<span class="ident">amt</span>),
             }
         }
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="futures_util" data-search-js="../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="futures_util" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

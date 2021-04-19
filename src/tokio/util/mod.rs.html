@@ -69,22 +69,22 @@
 
 <span class="macro">cfg_rt!</span> {
     <span class="kw">mod</span> <span class="ident">wake</span>;
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="ident">wake</span>::<span class="ident">WakerRef</span>;
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="ident">wake::WakerRef</span>;
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="ident">wake</span>::{<span class="ident">waker_ref</span>, <span class="ident">Wake</span>};
 }
 
 <span class="macro">cfg_rt_multi_thread!</span> {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="self">self</span>::<span class="ident">rand</span>::<span class="ident">FastRand</span>;
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="self">self</span><span class="ident">::rand::FastRand</span>;
 
     <span class="kw">mod</span> <span class="ident">try_lock</span>;
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="ident">try_lock</span>::<span class="ident">TryLock</span>;
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="ident">try_lock::TryLock</span>;
 }
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod</span> <span class="ident">trace</span>;
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;macros&quot;</span>))]</span>
 <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;macros&quot;</span>), <span class="ident">allow</span>(<span class="ident">unreachable_pub</span>))]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">rand</span>::<span class="ident">thread_rng_n</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::rand::thread_rng_n</span>;
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(
     <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;rt&quot;</span>,
@@ -95,5 +95,5 @@
 ))]</span>
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod</span> <span class="ident">error</span>;
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-js="../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

@@ -640,12 +640,12 @@
 <span class="attribute">#![<span class="ident">warn</span>(<span class="ident">missing_docs</span>, <span class="ident">missing_debug_implementations</span>, <span class="ident">rust_2018_idioms</span>, <span class="ident">unreachable_pub</span>)]</span>
 <span class="comment">// It cannot be included in the published code because this lints have false positives in the minimum required version.</span>
 <span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">test</span>, <span class="ident">warn</span>(<span class="ident">single_use_lifetimes</span>))]</span>
-<span class="attribute">#![<span class="ident">warn</span>(<span class="ident">clippy</span>::<span class="ident">all</span>)]</span>
+<span class="attribute">#![<span class="ident">warn</span>(<span class="ident">clippy::all</span>)]</span>
 
 <span class="comment">// mem::take requires Rust 1.40, matches! requires Rust 1.42</span>
 <span class="comment">// Can be removed if the minimum supported version increased or if https://github.com/rust-lang/rust-clippy/issues/3941</span>
 <span class="comment">// get&#39;s implemented.</span>
-<span class="attribute">#![<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">mem_replace_with_default</span>, <span class="ident">clippy</span>::<span class="ident">match_like_matches_macro</span>)]</span>
+<span class="attribute">#![<span class="ident">allow</span>(<span class="ident">clippy::mem_replace_with_default</span>, <span class="ident">clippy::match_like_matches_macro</span>)]</span>
 
 <span class="attribute">#![<span class="ident">doc</span>(<span class="ident">test</span>(<span class="ident">attr</span>(<span class="ident">deny</span>(<span class="ident">warnings</span>), <span class="ident">allow</span>(<span class="ident">dead_code</span>, <span class="ident">unused_assignments</span>, <span class="ident">unused_variables</span>))))]</span>
 
@@ -662,14 +662,14 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;read-initializer&quot;</span>, <span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;unstable&quot;</span>)))]</span>
 <span class="macro">compile_error!</span>(<span class="string">&quot;The `read-initializer` feature requires the `unstable` feature as an explicit opt-in to unstable features&quot;</span>);
 
-<span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span> <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_core</span>::<span class="ident">future</span>::{<span class="ident">Future</span>, <span class="ident">TryFuture</span>};
-<span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span> <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">future</span>::{<span class="ident">FutureExt</span>, <span class="ident">TryFutureExt</span>};
+<span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span> <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_core::future</span>::{<span class="ident">Future</span>, <span class="ident">TryFuture</span>};
+<span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span> <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util::future</span>::{<span class="ident">FutureExt</span>, <span class="ident">TryFutureExt</span>};
 
-<span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span> <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_core</span>::<span class="ident">stream</span>::{<span class="ident">Stream</span>, <span class="ident">TryStream</span>};
-<span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span> <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">stream</span>::{<span class="ident">StreamExt</span>, <span class="ident">TryStreamExt</span>};
+<span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span> <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_core::stream</span>::{<span class="ident">Stream</span>, <span class="ident">TryStream</span>};
+<span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span> <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util::stream</span>::{<span class="ident">StreamExt</span>, <span class="ident">TryStreamExt</span>};
 
-<span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span> <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_sink</span>::<span class="ident">Sink</span>;
-<span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span> <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">sink</span>::<span class="ident">SinkExt</span>;
+<span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span> <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_sink::Sink</span>;
+<span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span> <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util::sink::SinkExt</span>;
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
 <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span> <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_io</span>::{<span class="ident">AsyncRead</span>, <span class="ident">AsyncWrite</span>, <span class="ident">AsyncSeek</span>, <span class="ident">AsyncBufRead</span>};
@@ -677,13 +677,13 @@
 <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span> <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::{<span class="ident">AsyncReadExt</span>, <span class="ident">AsyncWriteExt</span>, <span class="ident">AsyncSeekExt</span>, <span class="ident">AsyncBufReadExt</span>};
 
 <span class="comment">// Macro reexports</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_core</span>::<span class="ident">ready</span>; <span class="comment">// Readiness propagation</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">pin_mut</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_core::ready</span>; <span class="comment">// Readiness propagation</span>
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util::pin_mut</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;async-await&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::{<span class="ident">pending</span>, <span class="ident">poll</span>, <span class="ident">join</span>, <span class="ident">try_join</span>, <span class="ident">select_biased</span>}; <span class="comment">// Async-await</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;async-await&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">select</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util::select</span>;
 
 <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;cfg-target-has-atomic&quot;</span>, <span class="ident">cfg</span>(<span class="ident">target_has_atomic</span> <span class="op">=</span> <span class="string">&quot;ptr&quot;</span>))]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
@@ -702,10 +702,10 @@
     <span class="doccomment">//! This module is only available when the `std` or `alloc` feature of this</span>
     <span class="doccomment">//! library is activated, and it is activated by default.</span>
 
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_channel</span>::<span class="ident">oneshot</span>;
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_channel::oneshot</span>;
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_channel</span>::<span class="ident">mpsc</span>;
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_channel::mpsc</span>;
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;compat&quot;</span>)]</span>
@@ -716,7 +716,7 @@
     <span class="doccomment">//! This module is only available when the `compat` feature of this</span>
     <span class="doccomment">//! library is activated.</span>
 
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">compat</span>::{
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util::compat</span>::{
         <span class="ident">Compat</span>,
         <span class="ident">CompatSink</span>,
         <span class="ident">Compat01As03</span>,
@@ -731,7 +731,7 @@
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;io-compat&quot;</span>)]</span>
     <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">docsrs</span>, <span class="ident">doc</span>(<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;io-compat&quot;</span>)))]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">compat</span>::{
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util::compat</span>::{
         <span class="ident">AsyncRead01CompatExt</span>,
         <span class="ident">AsyncWrite01CompatExt</span>,
     };
@@ -805,16 +805,16 @@
     <span class="doccomment">//!   [`ready`](crate::future::ready), which constructs a future with an</span>
     <span class="doccomment">//!   immediate defined value.</span>
 
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_core</span>::<span class="ident">future</span>::{
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_core::future</span>::{
         <span class="ident">Future</span>, <span class="ident">TryFuture</span>, <span class="ident">FusedFuture</span>,
     };
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_core</span>::<span class="ident">future</span>::{<span class="ident">BoxFuture</span>, <span class="ident">LocalBoxFuture</span>};
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_core::future</span>::{<span class="ident">BoxFuture</span>, <span class="ident">LocalBoxFuture</span>};
 
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_task</span>::{<span class="ident">FutureObj</span>, <span class="ident">LocalFutureObj</span>, <span class="ident">UnsafeFutureObj</span>};
 
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">future</span>::{
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util::future</span>::{
         <span class="ident">lazy</span>, <span class="ident">Lazy</span>,
         <span class="ident">maybe_done</span>, <span class="ident">MaybeDone</span>,
         <span class="ident">pending</span>, <span class="ident">Pending</span>,
@@ -839,7 +839,7 @@
     };
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">future</span>::{
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util::future</span>::{
         <span class="ident">join_all</span>, <span class="ident">JoinAll</span>,
         <span class="ident">select_all</span>, <span class="ident">SelectAll</span>,
         <span class="ident">try_join_all</span>, <span class="ident">TryJoinAll</span>,
@@ -848,12 +848,12 @@
 
     <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;cfg-target-has-atomic&quot;</span>, <span class="ident">cfg</span>(<span class="ident">target_has_atomic</span> <span class="op">=</span> <span class="string">&quot;ptr&quot;</span>))]</span>
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">future</span>::{
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util::future</span>::{
         <span class="ident">abortable</span>, <span class="ident">Abortable</span>, <span class="ident">AbortHandle</span>, <span class="ident">AbortRegistration</span>, <span class="ident">Aborted</span>,
     };
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">future</span>::{
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util::future</span>::{
         <span class="ident">Remote</span>, <span class="ident">RemoteHandle</span>,
         <span class="ident">CatchUnwind</span>, <span class="ident">Shared</span>, <span class="ident">WeakShared</span>,
     };
@@ -892,9 +892,9 @@
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;read-initializer&quot;</span>)]</span>
     <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">docsrs</span>, <span class="ident">doc</span>(<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;read-initializer&quot;</span>)))]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_io</span>::<span class="ident">Initializer</span>;
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_io::Initializer</span>;
 
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">io</span>::{
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util::io</span>::{
         <span class="ident">AsyncReadExt</span>, <span class="ident">AsyncWriteExt</span>, <span class="ident">AsyncSeekExt</span>, <span class="ident">AsyncBufReadExt</span>, <span class="ident">AllowStdIo</span>,
         <span class="ident">BufReader</span>, <span class="ident">BufWriter</span>, <span class="ident">Cursor</span>, <span class="ident">Chain</span>, <span class="ident">Close</span>, <span class="ident">copy</span>, <span class="ident">Copy</span>, <span class="ident">copy_buf</span>, <span class="ident">CopyBuf</span>,
         <span class="ident">empty</span>, <span class="ident">Empty</span>, <span class="ident">FillBuf</span>, <span class="ident">Flush</span>, <span class="ident">IntoSink</span>, <span class="ident">Lines</span>, <span class="ident">Read</span>, <span class="ident">ReadExact</span>, <span class="ident">ReadHalf</span>,
@@ -914,10 +914,10 @@
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;bilock&quot;</span>)]</span>
     <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">docsrs</span>, <span class="ident">doc</span>(<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;bilock&quot;</span>)))]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">lock</span>::{<span class="ident">BiLock</span>, <span class="ident">BiLockAcquire</span>, <span class="ident">BiLockGuard</span>, <span class="ident">ReuniteError</span>};
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util::lock</span>::{<span class="ident">BiLock</span>, <span class="ident">BiLockAcquire</span>, <span class="ident">BiLockGuard</span>, <span class="ident">ReuniteError</span>};
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">lock</span>::{<span class="ident">MappedMutexGuard</span>, <span class="ident">Mutex</span>, <span class="ident">MutexLockFuture</span>, <span class="ident">MutexGuard</span>};
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util::lock</span>::{<span class="ident">MappedMutexGuard</span>, <span class="ident">Mutex</span>, <span class="ident">MutexLockFuture</span>, <span class="ident">MutexGuard</span>};
 }
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">prelude</span> {
@@ -934,25 +934,25 @@
     <span class="doccomment">//!</span>
     <span class="doccomment">//! The prelude may grow over time as additional items see ubiquitous use.</span>
 
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">future</span>::{<span class="self">self</span>, <span class="ident">Future</span>, <span class="ident">TryFuture</span>};
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">stream</span>::{<span class="self">self</span>, <span class="ident">Stream</span>, <span class="ident">TryStream</span>};
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">sink</span>::{<span class="self">self</span>, <span class="ident">Sink</span>};
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::future</span>::{<span class="self">self</span>, <span class="ident">Future</span>, <span class="ident">TryFuture</span>};
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::stream</span>::{<span class="self">self</span>, <span class="ident">Stream</span>, <span class="ident">TryStream</span>};
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::sink</span>::{<span class="self">self</span>, <span class="ident">Sink</span>};
 
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">no_inline</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">future</span>::{<span class="ident">FutureExt</span> <span class="kw">as</span> <span class="kw">_</span>, <span class="ident">TryFutureExt</span> <span class="kw">as</span> <span class="kw">_</span>};
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::future</span>::{<span class="ident">FutureExt</span> <span class="kw">as</span> <span class="kw">_</span>, <span class="ident">TryFutureExt</span> <span class="kw">as</span> <span class="kw">_</span>};
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">no_inline</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">stream</span>::{<span class="ident">StreamExt</span> <span class="kw">as</span> <span class="kw">_</span>, <span class="ident">TryStreamExt</span> <span class="kw">as</span> <span class="kw">_</span>};
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::stream</span>::{<span class="ident">StreamExt</span> <span class="kw">as</span> <span class="kw">_</span>, <span class="ident">TryStreamExt</span> <span class="kw">as</span> <span class="kw">_</span>};
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">no_inline</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">sink</span>::<span class="ident">SinkExt</span> <span class="kw">as</span> <span class="kw">_</span>;
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::sink::SinkExt</span> <span class="kw">as</span> <span class="kw">_</span>;
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">io</span>::{
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::io</span>::{
         <span class="ident">AsyncRead</span>, <span class="ident">AsyncWrite</span>, <span class="ident">AsyncSeek</span>, <span class="ident">AsyncBufRead</span>,
     };
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">no_inline</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">io</span>::{
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::io</span>::{
         <span class="ident">AsyncReadExt</span> <span class="kw">as</span> <span class="kw">_</span>, <span class="ident">AsyncWriteExt</span> <span class="kw">as</span> <span class="kw">_</span>, <span class="ident">AsyncSeekExt</span> <span class="kw">as</span> <span class="kw">_</span>, <span class="ident">AsyncBufReadExt</span> <span class="kw">as</span> <span class="kw">_</span>,
     };
 }
@@ -967,16 +967,16 @@
     <span class="doccomment">//! - The [`SinkExt`](crate::sink::SinkExt) trait, which provides adapters</span>
     <span class="doccomment">//!   for chaining and composing sinks.</span>
 
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_sink</span>::<span class="ident">Sink</span>;
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_sink::Sink</span>;
 
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">sink</span>::{
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util::sink</span>::{
         <span class="ident">Close</span>, <span class="ident">Flush</span>, <span class="ident">Send</span>, <span class="ident">SendAll</span>, <span class="ident">SinkErrInto</span>, <span class="ident">SinkMapErr</span>, <span class="ident">With</span>,
         <span class="ident">SinkExt</span>, <span class="ident">Fanout</span>, <span class="ident">Drain</span>, <span class="ident">drain</span>,
         <span class="ident">WithFlatMap</span>,
     };
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">sink</span>::<span class="ident">Buffer</span>;
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util::sink::Buffer</span>;
 }
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">stream</span> {
@@ -991,14 +991,14 @@
     <span class="doccomment">//! - Top-level stream constructors like [`iter`](crate::stream::iter)</span>
     <span class="doccomment">//!   which creates a stream from an iterator.</span>
 
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_core</span>::<span class="ident">stream</span>::{
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_core::stream</span>::{
         <span class="ident">Stream</span>, <span class="ident">TryStream</span>, <span class="ident">FusedStream</span>,
     };
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_core</span>::<span class="ident">stream</span>::{<span class="ident">BoxStream</span>, <span class="ident">LocalBoxStream</span>};
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_core::stream</span>::{<span class="ident">BoxStream</span>, <span class="ident">LocalBoxStream</span>};
 
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">stream</span>::{
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util::stream</span>::{
         <span class="ident">iter</span>, <span class="ident">Iter</span>,
         <span class="ident">repeat</span>, <span class="ident">Repeat</span>,
         <span class="ident">empty</span>, <span class="ident">Empty</span>,
@@ -1024,14 +1024,14 @@
     };
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">stream</span>::{
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util::stream</span>::{
         <span class="comment">// For StreamExt:</span>
         <span class="ident">Chunks</span>, <span class="ident">ReadyChunks</span>,
     };
 
     <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;cfg-target-has-atomic&quot;</span>, <span class="ident">cfg</span>(<span class="ident">target_has_atomic</span> <span class="op">=</span> <span class="string">&quot;ptr&quot;</span>))]</span>
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">stream</span>::{
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util::stream</span>::{
         <span class="ident">FuturesOrdered</span>,
         <span class="ident">futures_unordered</span>, <span class="ident">FuturesUnordered</span>,
 
@@ -1043,20 +1043,20 @@
     };
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">stream</span>::{
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util::stream</span>::{
         <span class="comment">// For StreamExt:</span>
         <span class="ident">CatchUnwind</span>,
     };
 
     <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;cfg-target-has-atomic&quot;</span>, <span class="ident">cfg</span>(<span class="ident">target_has_atomic</span> <span class="op">=</span> <span class="string">&quot;ptr&quot;</span>))]</span>
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">stream</span>::{
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util::stream</span>::{
         <span class="comment">// For TryStreamExt:</span>
         <span class="ident">TryBufferUnordered</span>, <span class="ident">TryBuffered</span>, <span class="ident">TryForEachConcurrent</span>,
     };
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">stream</span>::<span class="ident">IntoAsyncRead</span>;
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util::stream::IntoAsyncRead</span>;
 }
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">task</span> {
@@ -1072,27 +1072,27 @@
     <span class="doccomment">//! The remaining types and traits in the module are used for implementing</span>
     <span class="doccomment">//! executors or dealing with synchronization issues around task wakeup.</span>
 
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_core</span>::<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>, <span class="ident">Waker</span>, <span class="ident">RawWaker</span>, <span class="ident">RawWakerVTable</span>};
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_core::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>, <span class="ident">Waker</span>, <span class="ident">RawWaker</span>, <span class="ident">RawWakerVTable</span>};
 
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_task</span>::{
         <span class="ident">Spawn</span>, <span class="ident">LocalSpawn</span>, <span class="ident">SpawnError</span>,
         <span class="ident">FutureObj</span>, <span class="ident">LocalFutureObj</span>, <span class="ident">UnsafeFutureObj</span>,
     };
 
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">task</span>::<span class="ident">noop_waker</span>;
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util::task::noop_waker</span>;
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">task</span>::<span class="ident">noop_waker_ref</span>;
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util::task::noop_waker_ref</span>;
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">task</span>::{<span class="ident">SpawnExt</span>, <span class="ident">LocalSpawnExt</span>};
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util::task</span>::{<span class="ident">SpawnExt</span>, <span class="ident">LocalSpawnExt</span>};
 
     <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;cfg-target-has-atomic&quot;</span>, <span class="ident">cfg</span>(<span class="ident">target_has_atomic</span> <span class="op">=</span> <span class="string">&quot;ptr&quot;</span>))]</span>
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">task</span>::{<span class="ident">waker</span>, <span class="ident">waker_ref</span>, <span class="ident">WakerRef</span>, <span class="ident">ArcWake</span>};
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util::task</span>::{<span class="ident">waker</span>, <span class="ident">waker_ref</span>, <span class="ident">WakerRef</span>, <span class="ident">ArcWake</span>};
 
     <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;cfg-target-has-atomic&quot;</span>, <span class="ident">cfg</span>(<span class="ident">target_has_atomic</span> <span class="op">=</span> <span class="string">&quot;ptr&quot;</span>))]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">task</span>::<span class="ident">AtomicWaker</span>;
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util::task::AtomicWaker</span>;
 }
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">never</span> {
@@ -1100,8 +1100,8 @@
     <span class="doccomment">//!</span>
     <span class="doccomment">//! Values of this type can never be created and will never exist.</span>
 
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util</span>::<span class="ident">never</span>::<span class="ident">Never</span>;
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_util::never::Never</span>;
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="futures" data-search-js="../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="futures" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>

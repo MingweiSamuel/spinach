@@ -134,8 +134,8 @@
 <span id="131">131</span>
 <span id="132">132</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">io</span>::<span class="ident">ReadBuf</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">MaybeUninit</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::io::ReadBuf</span>;
+<span class="kw">use</span> <span class="ident">std::mem::MaybeUninit</span>;
 
 <span class="kw">mod</span> <span class="ident">private</span> {
     <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Sealed</span> {}
@@ -146,7 +146,7 @@
 
 <span class="doccomment">/// A sealed trait that constrains the generic type parameter in `VecWithInitialized&lt;V&gt;`.  That struct&#39;s safety relies</span>
 <span class="doccomment">/// on certain invariants upheld by `Vec&lt;u8&gt;`.</span>
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">trait</span> <span class="ident">VecU8</span>: <span class="ident">AsMut</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">private</span>::<span class="ident">Sealed</span> {}
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">trait</span> <span class="ident">VecU8</span>: <span class="ident">AsMut</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">private::Sealed</span> {}
 
 <span class="kw">impl</span> <span class="ident">VecU8</span> <span class="kw">for</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {}
 <span class="kw">impl</span> <span class="ident">VecU8</span> <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {}
@@ -171,7 +171,7 @@
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;io-util&quot;</span>)]</span>
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">take</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">num_initialized</span> <span class="op">=</span> <span class="number">0</span>;
-        <span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">take</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">vec</span>)
+        <span class="ident">std::mem::take</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">vec</span>)
     }
 }
 
@@ -214,12 +214,12 @@
         <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">vec</span>.<span class="ident">len</span>();
         <span class="kw">let</span> <span class="ident">cap</span> <span class="op">=</span> <span class="ident">vec</span>.<span class="ident">capacity</span>();
         <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="ident">vec</span>.<span class="ident">as_mut_ptr</span>().<span class="ident">cast</span>::<span class="op">&lt;</span><span class="ident">MaybeUninit</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span>();
-        <span class="kw">let</span> <span class="ident">slice</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">std</span>::<span class="ident">slice</span>::<span class="ident">from_raw_parts_mut</span>::<span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">MaybeUninit</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">ptr</span>, <span class="ident">cap</span>) };
+        <span class="kw">let</span> <span class="ident">slice</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">std::slice::from_raw_parts_mut</span>::<span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">MaybeUninit</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">ptr</span>, <span class="ident">cap</span>) };
 
         <span class="comment">// SAFETY: This is safe because the safety invariants of</span>
         <span class="comment">// VecWithInitialized say that the first num_initialized bytes must be</span>
         <span class="comment">// initialized.</span>
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">read_buf</span> <span class="op">=</span> <span class="ident">ReadBuf</span>::<span class="ident">uninit</span>(<span class="ident">slice</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">read_buf</span> <span class="op">=</span> <span class="ident">ReadBuf::uninit</span>(<span class="ident">slice</span>);
         <span class="kw">unsafe</span> {
             <span class="ident">read_buf</span>.<span class="ident">assume_init</span>(<span class="ident">num_initialized</span>);
         }
@@ -267,5 +267,5 @@
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="tokio" data-search-js="../../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="tokio" data-search-index-js="../../../../search-index.js" data-search-js="../../../../search.js"></div>
     <script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script></body></html>

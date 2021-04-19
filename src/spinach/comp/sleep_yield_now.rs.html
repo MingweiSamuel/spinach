@@ -30,8 +30,8 @@
 <span id="27">27</span>
 <span id="28">28</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">future</span>::<span class="ident">Future</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
+<span class="kw">use</span> <span class="ident">std::future::Future</span>;
+<span class="kw">use</span> <span class="ident">std::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 
 <span class="doccomment">/// An async function which puts the current task to sleep.</span>
 <span class="doccomment">/// Unlike [`tokio::task::yield_now`], this marks the current task as not ready, so it</span>
@@ -45,13 +45,13 @@
     <span class="kw">impl</span> <span class="ident">Future</span> <span class="kw">for</span> <span class="ident">SleepYieldNow</span> {
         <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> ();
 
-        <span class="kw">fn</span> <span class="ident">poll</span>(<span class="kw-2">mut</span> <span class="self">self</span>: <span class="ident">std</span>::<span class="ident">pin</span>::<span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">_ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="kw">fn</span> <span class="ident">poll</span>(<span class="kw-2">mut</span> <span class="self">self</span>: <span class="ident">std::pin::Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">_ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
             <span class="kw">if</span> <span class="self">self</span>.<span class="ident">yielded</span> {
-                <span class="ident">Poll</span>::<span class="ident">Ready</span>(())
+                <span class="ident">Poll::Ready</span>(())
             } <span class="kw">else</span> {
                 <span class="self">self</span>.<span class="ident">yielded</span> <span class="op">=</span> <span class="bool-val">true</span>;
                 <span class="comment">// cx.waker().wake_by_ref();</span>
-                <span class="ident">Poll</span>::<span class="ident">Pending</span>
+                <span class="ident">Poll::Pending</span>
             }
         }
     }
@@ -59,5 +59,5 @@
     <span class="ident">SleepYieldNow</span> { <span class="ident">yielded</span>: <span class="bool-val">false</span> }.<span class="kw">await</span>
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="spinach" data-search-js="../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="spinach" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

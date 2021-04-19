@@ -33,18 +33,18 @@
 <span id="30">30</span>
 <span id="31">31</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::{<span class="self">self</span>, <span class="ident">MutexGuard</span>, <span class="ident">TryLockError</span>};
+<span class="kw">use</span> <span class="ident">std::sync</span>::{<span class="self">self</span>, <span class="ident">MutexGuard</span>, <span class="ident">TryLockError</span>};
 
 <span class="doccomment">/// Adapter for `std::Mutex` that removes the poisoning aspects</span>
 <span class="comment">// from its api</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span>(<span class="ident">sync</span>::<span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>);
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span>(<span class="ident">sync::Mutex</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>);
 
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">t</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-        <span class="ident">Mutex</span>(<span class="ident">sync</span>::<span class="ident">Mutex</span>::<span class="ident">new</span>(<span class="ident">t</span>))
+        <span class="ident">Mutex</span>(<span class="ident">sync::Mutex::new</span>(<span class="ident">t</span>))
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
@@ -59,11 +59,11 @@
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">try_lock</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">MutexGuard</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">try_lock</span>() {
             <span class="prelude-val">Ok</span>(<span class="ident">guard</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">guard</span>),
-            <span class="prelude-val">Err</span>(<span class="ident">TryLockError</span>::<span class="ident">Poisoned</span>(<span class="ident">p_err</span>)) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">p_err</span>.<span class="ident">into_inner</span>()),
-            <span class="prelude-val">Err</span>(<span class="ident">TryLockError</span>::<span class="ident">WouldBlock</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,
+            <span class="prelude-val">Err</span>(<span class="ident">TryLockError::Poisoned</span>(<span class="ident">p_err</span>)) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">p_err</span>.<span class="ident">into_inner</span>()),
+            <span class="prelude-val">Err</span>(<span class="ident">TryLockError::WouldBlock</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,
         }
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="tokio" data-search-js="../../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="tokio" data-search-index-js="../../../../search-index.js" data-search-js="../../../../search.js"></div>
     <script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script></body></html>

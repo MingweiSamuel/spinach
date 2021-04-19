@@ -296,19 +296,19 @@
 <span id="293">293</span>
 <span id="294">294</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">loom</span>::<span class="ident">sync</span>::<span class="ident">atomic</span>::<span class="ident">AtomicUsize</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">sync</span>::<span class="ident">mpsc</span>::<span class="ident">chan</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">sync</span>::<span class="ident">mpsc</span>::<span class="ident">error</span>::<span class="ident">SendError</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::loom::sync::atomic::AtomicUsize</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::sync::mpsc::chan</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::sync::mpsc::error::SendError</span>;
 
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
+<span class="kw">use</span> <span class="ident">std::fmt</span>;
+<span class="kw">use</span> <span class="ident">std::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 
 <span class="doccomment">/// Send values to the associated `UnboundedReceiver`.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// Instances are created by the</span>
 <span class="doccomment">/// [`unbounded_channel`](unbounded_channel) function.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">UnboundedSender</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="ident">chan</span>: <span class="ident">chan</span>::<span class="ident">Tx</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Semaphore</span><span class="op">&gt;</span>,
+    <span class="ident">chan</span>: <span class="ident">chan::Tx</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Semaphore</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Clone</span> <span class="kw">for</span> <span class="ident">UnboundedSender</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
@@ -319,8 +319,8 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">UnboundedSender</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">fmt::Debug</span> <span class="kw">for</span> <span class="ident">UnboundedSender</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
         <span class="ident">fmt</span>.<span class="ident">debug_struct</span>(<span class="string">&quot;UnboundedSender&quot;</span>)
             .<span class="ident">field</span>(<span class="string">&quot;chan&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">chan</span>)
             .<span class="ident">finish</span>()
@@ -337,11 +337,11 @@
 <span class="doccomment">/// [`UnboundedReceiverStream`]: https://docs.rs/tokio-stream/0.1/tokio_stream/wrappers/struct.UnboundedReceiverStream.html</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">UnboundedReceiver</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="doccomment">/// The channel receiver</span>
-    <span class="ident">chan</span>: <span class="ident">chan</span>::<span class="ident">Rx</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Semaphore</span><span class="op">&gt;</span>,
+    <span class="ident">chan</span>: <span class="ident">chan::Rx</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Semaphore</span><span class="op">&gt;</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">UnboundedReceiver</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">fmt::Debug</span> <span class="kw">for</span> <span class="ident">UnboundedReceiver</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
         <span class="ident">fmt</span>.<span class="ident">debug_struct</span>(<span class="string">&quot;UnboundedReceiver&quot;</span>)
             .<span class="ident">field</span>(<span class="string">&quot;chan&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">chan</span>)
             .<span class="ident">finish</span>()
@@ -359,10 +359,10 @@
 <span class="doccomment">/// the channel. Using an `unbounded` channel has the ability of causing the</span>
 <span class="doccomment">/// process to run out of memory. In this case, the process will be aborted.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">unbounded_channel</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">UnboundedSender</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">UnboundedReceiver</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) {
-    <span class="kw">let</span> (<span class="ident">tx</span>, <span class="ident">rx</span>) <span class="op">=</span> <span class="ident">chan</span>::<span class="ident">channel</span>(<span class="ident">AtomicUsize</span>::<span class="ident">new</span>(<span class="number">0</span>));
+    <span class="kw">let</span> (<span class="ident">tx</span>, <span class="ident">rx</span>) <span class="op">=</span> <span class="ident">chan::channel</span>(<span class="ident">AtomicUsize::new</span>(<span class="number">0</span>));
 
-    <span class="kw">let</span> <span class="ident">tx</span> <span class="op">=</span> <span class="ident">UnboundedSender</span>::<span class="ident">new</span>(<span class="ident">tx</span>);
-    <span class="kw">let</span> <span class="ident">rx</span> <span class="op">=</span> <span class="ident">UnboundedReceiver</span>::<span class="ident">new</span>(<span class="ident">rx</span>);
+    <span class="kw">let</span> <span class="ident">tx</span> <span class="op">=</span> <span class="ident">UnboundedSender::new</span>(<span class="ident">tx</span>);
+    <span class="kw">let</span> <span class="ident">rx</span> <span class="op">=</span> <span class="ident">UnboundedReceiver::new</span>(<span class="ident">rx</span>);
 
     (<span class="ident">tx</span>, <span class="ident">rx</span>)
 }
@@ -371,7 +371,7 @@
 <span class="kw">type</span> <span class="ident">Semaphore</span> <span class="op">=</span> <span class="ident">AtomicUsize</span>;
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">UnboundedReceiver</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">chan</span>: <span class="ident">chan</span>::<span class="ident">Rx</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Semaphore</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">UnboundedReceiver</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">chan</span>: <span class="ident">chan::Rx</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Semaphore</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">UnboundedReceiver</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
         <span class="ident">UnboundedReceiver</span> { <span class="ident">chan</span> }
     }
 
@@ -415,7 +415,7 @@
     <span class="doccomment">/// }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">recv</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-        <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">future</span>::<span class="ident">poll_fn</span>;
+        <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::future::poll_fn</span>;
 
         <span class="ident">poll_fn</span>(<span class="op">|</span><span class="ident">cx</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">poll_recv</span>(<span class="ident">cx</span>)).<span class="kw">await</span>
     }
@@ -447,7 +447,7 @@
     <span class="doccomment">/// ```</span>
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;sync&quot;</span>)]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">blocking_recv</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-        <span class="kw">crate</span>::<span class="ident">future</span>::<span class="ident">block_on</span>(<span class="self">self</span>.<span class="ident">recv</span>())
+        <span class="kw">crate</span><span class="ident">::future::block_on</span>(<span class="self">self</span>.<span class="ident">recv</span>())
     }
 
     <span class="doccomment">/// Closes the receiving half of a channel, without dropping it.</span>
@@ -479,7 +479,7 @@
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">UnboundedSender</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">chan</span>: <span class="ident">chan</span>::<span class="ident">Tx</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Semaphore</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">UnboundedSender</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">chan</span>: <span class="ident">chan::Tx</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Semaphore</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">UnboundedSender</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
         <span class="ident">UnboundedSender</span> { <span class="ident">chan</span> }
     }
 
@@ -505,8 +505,8 @@
     }
 
     <span class="kw">fn</span> <span class="ident">inc_num_messages</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
-        <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">process</span>;
-        <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">atomic</span>::<span class="ident">Ordering</span>::{<span class="ident">AcqRel</span>, <span class="ident">Acquire</span>};
+        <span class="kw">use</span> <span class="ident">std::process</span>;
+        <span class="kw">use</span> <span class="ident">std::sync::atomic::Ordering</span>::{<span class="ident">AcqRel</span>, <span class="ident">Acquire</span>};
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">curr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">chan</span>.<span class="ident">semaphore</span>().<span class="ident">load</span>(<span class="ident">Acquire</span>);
 
@@ -515,10 +515,10 @@
                 <span class="kw">return</span> <span class="bool-val">false</span>;
             }
 
-            <span class="kw">if</span> <span class="ident">curr</span> <span class="op">=</span><span class="op">=</span> <span class="ident">usize</span>::<span class="ident">MAX</span> <span class="op">^</span> <span class="number">1</span> {
+            <span class="kw">if</span> <span class="ident">curr</span> <span class="op">=</span><span class="op">=</span> <span class="ident">usize::MAX</span> <span class="op">^</span> <span class="number">1</span> {
                 <span class="comment">// Overflowed the ref count. There is no safe way to recover, so</span>
                 <span class="comment">// abort the process. In practice, this should never happen.</span>
-                <span class="ident">process</span>::<span class="ident">abort</span>()
+                <span class="ident">process::abort</span>()
             }
 
             <span class="kw">match</span> <span class="self">self</span>
@@ -591,5 +591,5 @@
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="tokio" data-search-js="../../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="tokio" data-search-index-js="../../../../search-index.js" data-search-js="../../../../search.js"></div>
     <script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script></body></html>

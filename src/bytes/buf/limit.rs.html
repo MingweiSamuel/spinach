@@ -77,10 +77,10 @@
 <span id="74">74</span>
 <span id="75">75</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">buf</span>::<span class="ident">UninitSlice</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">BufMut</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::buf::UninitSlice</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::BufMut</span>;
 
-<span class="kw">use</span> <span class="ident">core</span>::<span class="ident">cmp</span>;
+<span class="kw">use</span> <span class="ident">core::cmp</span>;
 
 <span class="doccomment">/// A `BufMut` adapter which limits the amount of bytes that can be written</span>
 <span class="doccomment">/// to an underlying buffer.</span>
@@ -137,12 +137,12 @@
 
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">BufMut</span><span class="op">&gt;</span> <span class="ident">BufMut</span> <span class="kw">for</span> <span class="ident">Limit</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">remaining_mut</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
-        <span class="ident">cmp</span>::<span class="ident">min</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">remaining_mut</span>(), <span class="self">self</span>.<span class="ident">limit</span>)
+        <span class="ident">cmp::min</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">remaining_mut</span>(), <span class="self">self</span>.<span class="ident">limit</span>)
     }
 
     <span class="kw">fn</span> <span class="ident">chunk_mut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">UninitSlice</span> {
         <span class="kw">let</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">chunk_mut</span>();
-        <span class="kw">let</span> <span class="ident">end</span> <span class="op">=</span> <span class="ident">cmp</span>::<span class="ident">min</span>(<span class="ident">bytes</span>.<span class="ident">len</span>(), <span class="self">self</span>.<span class="ident">limit</span>);
+        <span class="kw">let</span> <span class="ident">end</span> <span class="op">=</span> <span class="ident">cmp::min</span>(<span class="ident">bytes</span>.<span class="ident">len</span>(), <span class="self">self</span>.<span class="ident">limit</span>);
         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">bytes</span>[..<span class="ident">end</span>]
     }
 
@@ -153,5 +153,5 @@
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="bytes" data-search-js="../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="bytes" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

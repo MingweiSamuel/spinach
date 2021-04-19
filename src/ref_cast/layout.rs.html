@@ -64,15 +64,15 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Layout</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span>(<span class="ident">T</span>);
 
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">LayoutUnsized</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span> {
-    <span class="kw">const</span> <span class="ident">SIZE</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="ident">usize</span>::<span class="ident">MAX</span>;
-    <span class="kw">const</span> <span class="ident">ALIGN</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="ident">usize</span>::<span class="ident">MAX</span>;
+    <span class="kw">const</span> <span class="ident">SIZE</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="ident">usize::MAX</span>;
+    <span class="kw">const</span> <span class="ident">ALIGN</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="ident">usize::MAX</span>;
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span> <span class="ident">LayoutUnsized</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Layout</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {}
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Layout</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SIZE</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="ident">mem</span>::<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>();
-    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">ALIGN</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="ident">mem</span>::<span class="ident">align_of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>();
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SIZE</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="ident">mem::size_of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>();
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">ALIGN</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="ident">mem::align_of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>();
 }
 
 <span class="attribute">#[<span class="ident">inline</span>]</span>
@@ -92,8 +92,8 @@
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">no_intrinsic_type_name</span>))]</span>
         <span class="macro">panic!</span>(
             <span class="string">&quot;unexpected size in cast from {} to {}: {} != {}&quot;</span>,
-            <span class="ident">core</span>::<span class="ident">any</span>::<span class="ident">type_name</span>::<span class="op">&lt;</span><span class="ident">Inner</span><span class="op">&gt;</span>(),
-            <span class="ident">core</span>::<span class="ident">any</span>::<span class="ident">type_name</span>::<span class="op">&lt;</span><span class="ident">Outer</span><span class="op">&gt;</span>(),
+            <span class="ident">core::any::type_name</span>::<span class="op">&lt;</span><span class="ident">Inner</span><span class="op">&gt;</span>(),
+            <span class="ident">core::any::type_name</span>::<span class="op">&lt;</span><span class="ident">Outer</span><span class="op">&gt;</span>(),
             <span class="ident">inner_size</span>,
             <span class="ident">outer_size</span>,
         );
@@ -107,8 +107,8 @@
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">no_intrinsic_type_name</span>))]</span>
         <span class="macro">panic!</span>(
             <span class="string">&quot;unexpected alignment in cast from {} to {}: {} != {}&quot;</span>,
-            <span class="ident">core</span>::<span class="ident">any</span>::<span class="ident">type_name</span>::<span class="op">&lt;</span><span class="ident">Inner</span><span class="op">&gt;</span>(),
-            <span class="ident">core</span>::<span class="ident">any</span>::<span class="ident">type_name</span>::<span class="op">&lt;</span><span class="ident">Outer</span><span class="op">&gt;</span>(),
+            <span class="ident">core::any::type_name</span>::<span class="op">&lt;</span><span class="ident">Inner</span><span class="op">&gt;</span>(),
+            <span class="ident">core::any::type_name</span>::<span class="op">&lt;</span><span class="ident">Outer</span><span class="op">&gt;</span>(),
             <span class="ident">inner_align</span>,
             <span class="ident">outer_align</span>,
         );
@@ -117,5 +117,5 @@
     <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">name</span>;
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="ref_cast" data-search-js="../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="ref_cast" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>

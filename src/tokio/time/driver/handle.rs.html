@@ -85,20 +85,20 @@
 <span id="82">82</span>
 <span id="83">83</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">loom</span>::<span class="ident">sync</span>::{<span class="ident">Arc</span>, <span class="ident">Mutex</span>};
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">time</span>::<span class="ident">driver</span>::<span class="ident">ClockTime</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::loom::sync</span>::{<span class="ident">Arc</span>, <span class="ident">Mutex</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::time::driver::ClockTime</span>;
+<span class="kw">use</span> <span class="ident">std::fmt</span>;
 
 <span class="doccomment">/// Handle to time driver instance.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">Handle</span> {
     <span class="ident">time_source</span>: <span class="ident">ClockTime</span>,
-    <span class="ident">inner</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="kw">super</span>::<span class="ident">Inner</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">inner</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="kw">super</span><span class="ident">::Inner</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Handle</span> {
     <span class="doccomment">/// Creates a new timer `Handle` from a shared `Inner` timer state.</span>
-    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">inner</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="kw">super</span>::<span class="ident">Inner</span><span class="op">&gt;</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">inner</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="kw">super</span><span class="ident">::Inner</span><span class="op">&gt;</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">let</span> <span class="ident">time_source</span> <span class="op">=</span> <span class="ident">inner</span>.<span class="ident">lock</span>().<span class="ident">time_source</span>.<span class="ident">clone</span>();
         <span class="ident">Handle</span> { <span class="ident">time_source</span>, <span class="ident">inner</span> }
     }
@@ -109,7 +109,7 @@
     }
 
     <span class="doccomment">/// Locks the driver&#39;s inner structure</span>
-    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn</span> <span class="ident">lock</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw">crate</span>::<span class="ident">loom</span>::<span class="ident">sync</span>::<span class="ident">MutexGuard</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="kw">super</span>::<span class="ident">Inner</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn</span> <span class="ident">lock</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw">crate</span><span class="ident">::loom::sync::MutexGuard</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="kw">super</span><span class="ident">::Inner</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">lock</span>()
     }
 }
@@ -133,7 +133,7 @@
         <span class="doccomment">/// and so gets executed inside the runtime successfuly without</span>
         <span class="doccomment">/// panicking.</span>
         <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">current</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-            <span class="kw">crate</span>::<span class="ident">runtime</span>::<span class="ident">context</span>::<span class="ident">time_handle</span>()
+            <span class="kw">crate</span><span class="ident">::runtime::context::time_handle</span>()
                 .<span class="ident">expect</span>(<span class="string">&quot;A Tokio 1.x context was found, but timers are disabled. Call `enable_time` on the runtime builder to enable timers.&quot;</span>)
         }
     }
@@ -158,16 +158,16 @@
         <span class="doccomment">/// lazy, and so outside executed inside the runtime successfuly without</span>
         <span class="doccomment">/// panicking.</span>
         <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">current</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-            <span class="macro">panic!</span>(<span class="kw">crate</span>::<span class="ident">util</span>::<span class="ident">error</span>::<span class="ident">CONTEXT_MISSING_ERROR</span>)
+            <span class="macro">panic!</span>(<span class="kw">crate</span><span class="ident">::util::error::CONTEXT_MISSING_ERROR</span>)
         }
     }
 }
 
-<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Handle</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">impl</span> <span class="ident">fmt::Debug</span> <span class="kw">for</span> <span class="ident">Handle</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
         <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;Handle&quot;</span>)
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="tokio" data-search-js="../../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="tokio" data-search-index-js="../../../../search-index.js" data-search-js="../../../../search.js"></div>
     <script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script></body></html>

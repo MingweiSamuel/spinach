@@ -126,106 +126,106 @@
 <span class="doccomment">//! methods to `Future` types.</span>
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_core</span>::<span class="ident">future</span>::{<span class="ident">BoxFuture</span>, <span class="ident">LocalBoxFuture</span>};
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_core</span>::<span class="ident">future</span>::{<span class="ident">FusedFuture</span>, <span class="ident">Future</span>, <span class="ident">TryFuture</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_core::future</span>::{<span class="ident">BoxFuture</span>, <span class="ident">LocalBoxFuture</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_core::future</span>::{<span class="ident">FusedFuture</span>, <span class="ident">Future</span>, <span class="ident">TryFuture</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">futures_task</span>::{<span class="ident">FutureObj</span>, <span class="ident">LocalFutureObj</span>, <span class="ident">UnsafeFutureObj</span>};
 
 <span class="comment">// Extension traits and combinators</span>
-<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">module_inception</span>)]</span>
+<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy::module_inception</span>)]</span>
 <span class="kw">mod</span> <span class="ident">future</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">future</span>::{
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::future</span>::{
     <span class="ident">Flatten</span>, <span class="ident">Fuse</span>, <span class="ident">FutureExt</span>, <span class="ident">Inspect</span>, <span class="ident">IntoStream</span>, <span class="ident">Map</span>, <span class="ident">NeverError</span>, <span class="ident">Then</span>, <span class="ident">UnitError</span>, <span class="ident">MapInto</span>,
 };
 
 <span class="attribute">#[<span class="ident">deprecated</span>(<span class="ident">note</span> <span class="op">=</span> <span class="string">&quot;This is now an alias for [Flatten](Flatten)&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">future</span>::<span class="ident">FlattenStream</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::future::FlattenStream</span>;
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">future</span>::<span class="ident">CatchUnwind</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::future::CatchUnwind</span>;
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;channel&quot;</span>)]</span>
 <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">docsrs</span>, <span class="ident">doc</span>(<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;channel&quot;</span>)))]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">future</span>::{<span class="ident">Remote</span>, <span class="ident">RemoteHandle</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::future</span>::{<span class="ident">Remote</span>, <span class="ident">RemoteHandle</span>};
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">future</span>::{<span class="ident">Shared</span>, <span class="ident">WeakShared</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::future</span>::{<span class="ident">Shared</span>, <span class="ident">WeakShared</span>};
 
 <span class="kw">mod</span> <span class="ident">try_future</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">try_future</span>::{
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::try_future</span>::{
     <span class="ident">AndThen</span>, <span class="ident">ErrInto</span>, <span class="ident">OkInto</span>, <span class="ident">InspectErr</span>, <span class="ident">InspectOk</span>, <span class="ident">IntoFuture</span>, <span class="ident">MapErr</span>, <span class="ident">MapOk</span>, <span class="ident">OrElse</span>, <span class="ident">TryFlattenStream</span>,
     <span class="ident">TryFutureExt</span>, <span class="ident">UnwrapOrElse</span>, <span class="ident">MapOkOrElse</span>, <span class="ident">TryFlatten</span>,
 };
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;sink&quot;</span>)]</span>
 <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">docsrs</span>, <span class="ident">doc</span>(<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;sink&quot;</span>)))]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">try_future</span>::<span class="ident">FlattenSink</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::try_future::FlattenSink</span>;
 
 <span class="comment">// Primitive futures</span>
 
 <span class="kw">mod</span> <span class="ident">lazy</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">lazy</span>::{<span class="ident">lazy</span>, <span class="ident">Lazy</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::lazy</span>::{<span class="ident">lazy</span>, <span class="ident">Lazy</span>};
 
 <span class="kw">mod</span> <span class="ident">pending</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">pending</span>::{<span class="ident">pending</span>, <span class="ident">Pending</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::pending</span>::{<span class="ident">pending</span>, <span class="ident">Pending</span>};
 
 <span class="kw">mod</span> <span class="ident">maybe_done</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">maybe_done</span>::{<span class="ident">maybe_done</span>, <span class="ident">MaybeDone</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::maybe_done</span>::{<span class="ident">maybe_done</span>, <span class="ident">MaybeDone</span>};
 
 <span class="kw">mod</span> <span class="ident">try_maybe_done</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">try_maybe_done</span>::{<span class="ident">try_maybe_done</span>, <span class="ident">TryMaybeDone</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::try_maybe_done</span>::{<span class="ident">try_maybe_done</span>, <span class="ident">TryMaybeDone</span>};
 
 <span class="kw">mod</span> <span class="ident">option</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">option</span>::<span class="ident">OptionFuture</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::option::OptionFuture</span>;
 
 <span class="kw">mod</span> <span class="ident">poll_fn</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">poll_fn</span>::{<span class="ident">poll_fn</span>, <span class="ident">PollFn</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::poll_fn</span>::{<span class="ident">poll_fn</span>, <span class="ident">PollFn</span>};
 
 <span class="kw">mod</span> <span class="ident">ready</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">ready</span>::{<span class="ident">err</span>, <span class="ident">ok</span>, <span class="ident">ready</span>, <span class="ident">Ready</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::ready</span>::{<span class="ident">err</span>, <span class="ident">ok</span>, <span class="ident">ready</span>, <span class="ident">Ready</span>};
 
 <span class="kw">mod</span> <span class="ident">join</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">join</span>::{<span class="ident">join</span>, <span class="ident">join3</span>, <span class="ident">join4</span>, <span class="ident">join5</span>, <span class="ident">Join</span>, <span class="ident">Join3</span>, <span class="ident">Join4</span>, <span class="ident">Join5</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::join</span>::{<span class="ident">join</span>, <span class="ident">join3</span>, <span class="ident">join4</span>, <span class="ident">join5</span>, <span class="ident">Join</span>, <span class="ident">Join3</span>, <span class="ident">Join4</span>, <span class="ident">Join5</span>};
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
 <span class="kw">mod</span> <span class="ident">join_all</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">join_all</span>::{<span class="ident">join_all</span>, <span class="ident">JoinAll</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::join_all</span>::{<span class="ident">join_all</span>, <span class="ident">JoinAll</span>};
 
 <span class="kw">mod</span> <span class="ident">select</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">select</span>::{<span class="ident">select</span>, <span class="ident">Select</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::select</span>::{<span class="ident">select</span>, <span class="ident">Select</span>};
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
 <span class="kw">mod</span> <span class="ident">select_all</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">select_all</span>::{<span class="ident">select_all</span>, <span class="ident">SelectAll</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::select_all</span>::{<span class="ident">select_all</span>, <span class="ident">SelectAll</span>};
 
 <span class="kw">mod</span> <span class="ident">try_join</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">try_join</span>::{
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::try_join</span>::{
     <span class="ident">try_join</span>, <span class="ident">try_join3</span>, <span class="ident">try_join4</span>, <span class="ident">try_join5</span>, <span class="ident">TryJoin</span>, <span class="ident">TryJoin3</span>, <span class="ident">TryJoin4</span>, <span class="ident">TryJoin5</span>,
 };
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
 <span class="kw">mod</span> <span class="ident">try_join_all</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">try_join_all</span>::{<span class="ident">try_join_all</span>, <span class="ident">TryJoinAll</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::try_join_all</span>::{<span class="ident">try_join_all</span>, <span class="ident">TryJoinAll</span>};
 
 <span class="kw">mod</span> <span class="ident">try_select</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">try_select</span>::{<span class="ident">try_select</span>, <span class="ident">TrySelect</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::try_select</span>::{<span class="ident">try_select</span>, <span class="ident">TrySelect</span>};
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
 <span class="kw">mod</span> <span class="ident">select_ok</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">select_ok</span>::{<span class="ident">select_ok</span>, <span class="ident">SelectOk</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::select_ok</span>::{<span class="ident">select_ok</span>, <span class="ident">SelectOk</span>};
 
 <span class="kw">mod</span> <span class="ident">either</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">either</span>::<span class="ident">Either</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::either::Either</span>;
 
 <span class="macro">cfg_target_has_atomic!</span> {
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
     <span class="kw">mod</span> <span class="ident">abortable</span>;
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;alloc&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">abortable</span>::{<span class="ident">abortable</span>, <span class="ident">Abortable</span>, <span class="ident">AbortHandle</span>, <span class="ident">AbortRegistration</span>, <span class="ident">Aborted</span>};
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::abortable</span>::{<span class="ident">abortable</span>, <span class="ident">Abortable</span>, <span class="ident">AbortHandle</span>, <span class="ident">AbortRegistration</span>, <span class="ident">Aborted</span>};
 }
 
 <span class="comment">// Just a helper function to ensure the futures we&#39;re returning all have the</span>
@@ -237,5 +237,5 @@
     <span class="ident">future</span>
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="futures_util" data-search-js="../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="futures_util" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

@@ -177,14 +177,14 @@
 <span id="174">174</span>
 <span id="175">175</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">task</span>::<span class="ident">AtomicWaker</span>;
-<span class="kw">use</span> <span class="ident">futures_core</span>::<span class="ident">future</span>::<span class="ident">Future</span>;
-<span class="kw">use</span> <span class="ident">futures_core</span>::<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
-<span class="kw">use</span> <span class="ident">core</span>::<span class="ident">fmt</span>;
-<span class="kw">use</span> <span class="ident">core</span>::<span class="ident">pin</span>::<span class="ident">Pin</span>;
-<span class="kw">use</span> <span class="ident">core</span>::<span class="ident">sync</span>::<span class="ident">atomic</span>::{<span class="ident">AtomicBool</span>, <span class="ident">Ordering</span>};
-<span class="kw">use</span> <span class="ident">alloc</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>;
-<span class="kw">use</span> <span class="ident">pin_project</span>::<span class="ident">pin_project</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::task::AtomicWaker</span>;
+<span class="kw">use</span> <span class="ident">futures_core::future::Future</span>;
+<span class="kw">use</span> <span class="ident">futures_core::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
+<span class="kw">use</span> <span class="ident">core::fmt</span>;
+<span class="kw">use</span> <span class="ident">core::pin::Pin</span>;
+<span class="kw">use</span> <span class="ident">core::sync::atomic</span>::{<span class="ident">AtomicBool</span>, <span class="ident">Ordering</span>};
+<span class="kw">use</span> <span class="ident">alloc::sync::Arc</span>;
+<span class="kw">use</span> <span class="ident">pin_project::pin_project</span>;
 
 <span class="doccomment">/// A future which can be remotely short-circuited using an `AbortHandle`.</span>
 <span class="attribute">#[<span class="ident">pin_project</span>]</span>
@@ -257,9 +257,9 @@
     <span class="doccomment">/// # });</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_pair</span>() <span class="op">-</span><span class="op">&gt;</span> (<span class="self">Self</span>, <span class="ident">AbortRegistration</span>) {
-        <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">AbortInner</span> {
-            <span class="ident">waker</span>: <span class="ident">AtomicWaker</span>::<span class="ident">new</span>(),
-            <span class="ident">cancel</span>: <span class="ident">AtomicBool</span>::<span class="ident">new</span>(<span class="bool-val">false</span>),
+        <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">Arc::new</span>(<span class="ident">AbortInner</span> {
+            <span class="ident">waker</span>: <span class="ident">AtomicWaker::new</span>(),
+            <span class="ident">cancel</span>: <span class="ident">AtomicBool::new</span>(<span class="bool-val">false</span>),
         });
 
         (
@@ -291,9 +291,9 @@
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">abortable</span><span class="op">&lt;</span><span class="ident">Fut</span><span class="op">&gt;</span>(<span class="ident">future</span>: <span class="ident">Fut</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">Abortable</span><span class="op">&lt;</span><span class="ident">Fut</span><span class="op">&gt;</span>, <span class="ident">AbortHandle</span>)
     <span class="kw">where</span> <span class="ident">Fut</span>: <span class="ident">Future</span>
 {
-    <span class="kw">let</span> (<span class="ident">handle</span>, <span class="ident">reg</span>) <span class="op">=</span> <span class="ident">AbortHandle</span>::<span class="ident">new_pair</span>();
+    <span class="kw">let</span> (<span class="ident">handle</span>, <span class="ident">reg</span>) <span class="op">=</span> <span class="ident">AbortHandle::new_pair</span>();
     (
-        <span class="ident">Abortable</span>::<span class="ident">new</span>(<span class="ident">future</span>, <span class="ident">reg</span>),
+        <span class="ident">Abortable::new</span>(<span class="ident">future</span>, <span class="ident">reg</span>),
         <span class="ident">handle</span>,
     )
 }
@@ -302,27 +302,27 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Copy</span>, <span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Aborted</span>;
 
-<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">Aborted</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">Aborted</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
         <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;`Abortable` future has been aborted&quot;</span>)
     }
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
-<span class="kw">impl</span> <span class="ident">std</span>::<span class="ident">error</span>::<span class="ident">Error</span> <span class="kw">for</span> <span class="ident">Aborted</span> {}
+<span class="kw">impl</span> <span class="ident">std::error::Error</span> <span class="kw">for</span> <span class="ident">Aborted</span> {}
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Fut</span><span class="op">&gt;</span> <span class="ident">Future</span> <span class="kw">for</span> <span class="ident">Abortable</span><span class="op">&lt;</span><span class="ident">Fut</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="ident">Fut</span>: <span class="ident">Future</span> {
-    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Fut</span>::<span class="ident">Output</span>, <span class="ident">Aborted</span><span class="op">&gt;</span>;
+    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Fut::Output</span>, <span class="ident">Aborted</span><span class="op">&gt;</span>;
 
-    <span class="kw">fn</span> <span class="ident">poll</span>(<span class="kw-2">mut</span> <span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Output</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">poll</span>(<span class="kw-2">mut</span> <span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="self">Self</span><span class="ident">::Output</span><span class="op">&gt;</span> {
         <span class="comment">// Check if the future has been aborted</span>
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">cancel</span>.<span class="ident">load</span>(<span class="ident">Ordering</span>::<span class="ident">Relaxed</span>) {
-            <span class="kw">return</span> <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Err</span>(<span class="ident">Aborted</span>))
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">cancel</span>.<span class="ident">load</span>(<span class="ident">Ordering::Relaxed</span>) {
+            <span class="kw">return</span> <span class="ident">Poll::Ready</span>(<span class="prelude-val">Err</span>(<span class="ident">Aborted</span>))
         }
 
         <span class="comment">// attempt to complete the future</span>
-        <span class="kw">if</span> <span class="kw">let</span> <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="ident">x</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">as_mut</span>().<span class="ident">project</span>().<span class="ident">future</span>.<span class="ident">poll</span>(<span class="ident">cx</span>) {
-            <span class="kw">return</span> <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Ok</span>(<span class="ident">x</span>))
+        <span class="kw">if</span> <span class="kw">let</span> <span class="ident">Poll::Ready</span>(<span class="ident">x</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">as_mut</span>().<span class="ident">project</span>().<span class="ident">future</span>.<span class="ident">poll</span>(<span class="ident">cx</span>) {
+            <span class="kw">return</span> <span class="ident">Poll::Ready</span>(<span class="prelude-val">Ok</span>(<span class="ident">x</span>))
         }
 
         <span class="comment">// Register to receive a wakeup if the future is aborted in the... future</span>
@@ -332,11 +332,11 @@
         <span class="comment">// registration.</span>
         <span class="comment">// Checking with `Relaxed` is sufficient because `register` introduces an</span>
         <span class="comment">// `AcqRel` barrier.</span>
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">cancel</span>.<span class="ident">load</span>(<span class="ident">Ordering</span>::<span class="ident">Relaxed</span>) {
-            <span class="kw">return</span> <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">Err</span>(<span class="ident">Aborted</span>))
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">cancel</span>.<span class="ident">load</span>(<span class="ident">Ordering::Relaxed</span>) {
+            <span class="kw">return</span> <span class="ident">Poll::Ready</span>(<span class="prelude-val">Err</span>(<span class="ident">Aborted</span>))
         }
 
-        <span class="ident">Poll</span>::<span class="ident">Pending</span>
+        <span class="ident">Poll::Pending</span>
     }
 }
 
@@ -348,10 +348,10 @@
     <span class="doccomment">/// another thread, it will not immediately stop running. Instead, it will</span>
     <span class="doccomment">/// continue to run until its poll method returns.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">abort</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
-        <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">cancel</span>.<span class="ident">store</span>(<span class="bool-val">true</span>, <span class="ident">Ordering</span>::<span class="ident">Relaxed</span>);
+        <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">cancel</span>.<span class="ident">store</span>(<span class="bool-val">true</span>, <span class="ident">Ordering::Relaxed</span>);
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">waker</span>.<span class="ident">wake</span>();
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="futures_util" data-search-js="../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="futures_util" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

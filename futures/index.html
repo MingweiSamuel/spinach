@@ -5,18 +5,18 @@
 <p>This crate provides a number of core abstractions for writing asynchronous
 code:</p>
 <ul>
-<li><a href="../futures/prelude/trait.Future.html">Futures</a> are single eventual values produced by
+<li><a href="prelude/trait.Future.html">Futures</a> are single eventual values produced by
 asynchronous computations. Some programming languages (e.g. JavaScript)
 call this concept “promise”.</li>
-<li><a href="../futures/stream/trait.Stream.html">Streams</a> represent a series of values
+<li><a href="stream/trait.Stream.html">Streams</a> represent a series of values
 produced asynchronously.</li>
-<li><a href="../futures/sink/trait.Sink.html">Sinks</a> provide support for asynchronous writing of
+<li><a href="sink/trait.Sink.html">Sinks</a> provide support for asynchronous writing of
 data.</li>
-<li><a href="../futures/executor/index.html">Executors</a> are responsible for running asynchronous
+<li><a href="executor/index.html">Executors</a> are responsible for running asynchronous
 tasks.</li>
 </ul>
-<p>The crate also contains abstractions for <a href="../futures/io/index.html">asynchronous I/O</a> and
-<a href="../futures/channel/index.html">cross-task communication</a>.</p>
+<p>The crate also contains abstractions for <a href="io/index.html">asynchronous I/O</a> and
+<a href="channel/index.html">cross-task communication</a>.</p>
 <p>Underlying all of this is the <em>task system</em>, which is a form of lightweight
 threading. Large asynchronous computations are built up using futures,
 streams and sinks, and then spawned as independent tasks that are run to
@@ -27,8 +27,8 @@ within macros and keywords such as async and await!.</p>
 <div class="example-wrap"><pre class="rust rust-example-rendered">
 
 <span class="kw">fn</span> <span class="ident">main</span>() {
-    <span class="kw">let</span> <span class="ident">pool</span> <span class="op">=</span> <span class="ident">ThreadPool</span>::<span class="ident">new</span>().<span class="ident">expect</span>(<span class="string">&quot;Failed to build pool&quot;</span>);
-    <span class="kw">let</span> (<span class="ident">tx</span>, <span class="ident">rx</span>) <span class="op">=</span> <span class="ident">mpsc</span>::<span class="ident">unbounded</span>::<span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span>();
+    <span class="kw">let</span> <span class="ident">pool</span> <span class="op">=</span> <span class="ident">ThreadPool::new</span>().<span class="ident">expect</span>(<span class="string">&quot;Failed to build pool&quot;</span>);
+    <span class="kw">let</span> (<span class="ident">tx</span>, <span class="ident">rx</span>) <span class="op">=</span> <span class="ident">mpsc::unbounded</span>::<span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span>();
 
     <span class="comment">// Create a future by an async block, where async is responsible for an</span>
     <span class="comment">// implementation of Future. At this point no executor has been provided</span>
@@ -65,7 +65,7 @@ within macros and keywords such as async and await!.</p>
     <span class="comment">// Actually execute the above future, which will invoke Future::poll and</span>
     <span class="comment">// subsequenty chain appropriate Future::poll and methods needing executors</span>
     <span class="comment">// to drive all futures. Eventually fut_values will be driven to completion.</span>
-    <span class="kw">let</span> <span class="ident">values</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">executor</span>::<span class="ident">block_on</span>(<span class="ident">fut_values</span>);
+    <span class="kw">let</span> <span class="ident">values</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">executor::block_on</span>(<span class="ident">fut_values</span>);
 
     <span class="macro">println!</span>(<span class="string">&quot;Values={:?}&quot;</span>, <span class="ident">values</span>);
 }</pre></div>
@@ -100,5 +100,5 @@ one will be selected in order of declaration. Futures directly
 passed to <code>select_biased!</code> must be <code>Unpin</code> and implement <code>FusedFuture</code>.</p>
 </td></tr><tr class="module-item"><td><a class="macro" href="macro.try_join.html" title="futures::try_join macro">try_join</a></td><td class="docblock-short"><p>Polls multiple futures simultaneously, resolving to a <a href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="Result"><code>Result</code></a> containing
 either a tuple of the successful outputs or an error.</p>
-</td></tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../" data-current-crate="futures" data-search-js="../search-index.js"></div>
+</td></tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../" data-current-crate="futures" data-search-index-js="../search-index.js" data-search-js="../search.js"></div>
     <script src="../main.js"></script></body></html>

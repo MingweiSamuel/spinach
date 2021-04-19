@@ -41,17 +41,17 @@
 <span id="38">38</span>
 <span id="39">39</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">sys</span>::<span class="ident">unix</span>::<span class="ident">net</span>::{<span class="ident">new_ip_socket</span>, <span class="ident">socket_addr</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::sys::unix::net</span>::{<span class="ident">new_ip_socket</span>, <span class="ident">socket_addr</span>};
 
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">mem</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">net</span>::{<span class="self">self</span>, <span class="ident">SocketAddr</span>};
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">unix</span>::<span class="ident">io</span>::{<span class="ident">AsRawFd</span>, <span class="ident">FromRawFd</span>};
+<span class="kw">use</span> <span class="ident">std::io</span>;
+<span class="kw">use</span> <span class="ident">std::mem</span>;
+<span class="kw">use</span> <span class="ident">std::net</span>::{<span class="self">self</span>, <span class="ident">SocketAddr</span>};
+<span class="kw">use</span> <span class="ident">std::os::unix::io</span>::{<span class="ident">AsRawFd</span>, <span class="ident">FromRawFd</span>};
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">bind</span>(<span class="ident">addr</span>: <span class="ident">SocketAddr</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">net</span>::<span class="ident">UdpSocket</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">bind</span>(<span class="ident">addr</span>: <span class="ident">SocketAddr</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io::Result</span><span class="op">&lt;</span><span class="ident">net::UdpSocket</span><span class="op">&gt;</span> {
     <span class="comment">// Gives a warning for non Apple platforms.</span>
-    <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">let_and_return</span>)]</span>
-    <span class="kw">let</span> <span class="ident">socket</span> <span class="op">=</span> <span class="ident">new_ip_socket</span>(<span class="ident">addr</span>, <span class="ident">libc</span>::<span class="ident">SOCK_DGRAM</span>);
+    <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy::let_and_return</span>)]</span>
+    <span class="kw">let</span> <span class="ident">socket</span> <span class="op">=</span> <span class="ident">new_ip_socket</span>(<span class="ident">addr</span>, <span class="ident">libc::SOCK_DGRAM</span>);
 
     <span class="ident">socket</span>.<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">socket</span><span class="op">|</span> {
         <span class="kw">let</span> (<span class="ident">raw_addr</span>, <span class="ident">raw_addr_length</span>) <span class="op">=</span> <span class="ident">socket_addr</span>(<span class="kw-2">&amp;</span><span class="ident">addr</span>);
@@ -59,21 +59,21 @@
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">err</span><span class="op">|</span> {
                 <span class="comment">// Close the socket if we hit an error, ignoring the error</span>
                 <span class="comment">// from closing since we can&#39;t pass back two errors.</span>
-                <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">libc</span>::<span class="ident">close</span>(<span class="ident">socket</span>) };
+                <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">libc::close</span>(<span class="ident">socket</span>) };
                 <span class="ident">err</span>
             })
-            .<span class="ident">map</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="kw">unsafe</span> { <span class="ident">net</span>::<span class="ident">UdpSocket</span>::<span class="ident">from_raw_fd</span>(<span class="ident">socket</span>) })
+            .<span class="ident">map</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="kw">unsafe</span> { <span class="ident">net::UdpSocket::from_raw_fd</span>(<span class="ident">socket</span>) })
     })
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">only_v6</span>(<span class="ident">socket</span>: <span class="kw-2">&amp;</span><span class="ident">net</span>::<span class="ident">UdpSocket</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">optval</span>: <span class="ident">libc</span>::<span class="ident">c_int</span> <span class="op">=</span> <span class="number">0</span>;
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">optlen</span> <span class="op">=</span> <span class="ident">mem</span>::<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">libc</span>::<span class="ident">c_int</span><span class="op">&gt;</span>() <span class="kw">as</span> <span class="ident">libc</span>::<span class="ident">socklen_t</span>;
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">only_v6</span>(<span class="ident">socket</span>: <span class="kw-2">&amp;</span><span class="ident">net::UdpSocket</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io::Result</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">optval</span>: <span class="ident">libc::c_int</span> <span class="op">=</span> <span class="number">0</span>;
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">optlen</span> <span class="op">=</span> <span class="ident">mem::size_of</span>::<span class="op">&lt;</span><span class="ident">libc::c_int</span><span class="op">&gt;</span>() <span class="kw">as</span> <span class="ident">libc::socklen_t</span>;
 
     <span class="macro">syscall!</span>(<span class="ident">getsockopt</span>(
         <span class="ident">socket</span>.<span class="ident">as_raw_fd</span>(),
-        <span class="ident">libc</span>::<span class="ident">IPPROTO_IPV6</span>,
-        <span class="ident">libc</span>::<span class="ident">IPV6_V6ONLY</span>,
+        <span class="ident">libc::IPPROTO_IPV6</span>,
+        <span class="ident">libc::IPV6_V6ONLY</span>,
         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">optval</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span>,
         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">optlen</span>,
     ))<span class="question-mark">?</span>;
@@ -81,5 +81,5 @@
     <span class="prelude-val">Ok</span>(<span class="ident">optval</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span>)
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="mio" data-search-js="../../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="mio" data-search-index-js="../../../../search-index.js" data-search-js="../../../../search.js"></div>
     <script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script></body></html>

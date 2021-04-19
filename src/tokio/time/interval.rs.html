@@ -181,12 +181,12 @@
 <span id="178">178</span>
 <span id="179">179</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">future</span>::<span class="ident">poll_fn</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">time</span>::{<span class="ident">sleep_until</span>, <span class="ident">Duration</span>, <span class="ident">Instant</span>, <span class="ident">Sleep</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::future::poll_fn</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::time</span>::{<span class="ident">sleep_until</span>, <span class="ident">Duration</span>, <span class="ident">Instant</span>, <span class="ident">Sleep</span>};
 
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">future</span>::<span class="ident">Future</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">pin</span>::<span class="ident">Pin</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
+<span class="kw">use</span> <span class="ident">std::future::Future</span>;
+<span class="kw">use</span> <span class="ident">std::pin::Pin</span>;
+<span class="kw">use</span> <span class="ident">std::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 
 <span class="doccomment">/// Creates new `Interval` that yields with interval of `duration`. The first</span>
 <span class="doccomment">/// tick completes immediately.</span>
@@ -248,9 +248,9 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// [`sleep`]: crate::time::sleep()</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">interval</span>(<span class="ident">period</span>: <span class="ident">Duration</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Interval</span> {
-    <span class="macro">assert!</span>(<span class="ident">period</span> <span class="op">&gt;</span> <span class="ident">Duration</span>::<span class="ident">new</span>(<span class="number">0</span>, <span class="number">0</span>), <span class="string">&quot;`period` must be non-zero.&quot;</span>);
+    <span class="macro">assert!</span>(<span class="ident">period</span> <span class="op">&gt;</span> <span class="ident">Duration::new</span>(<span class="number">0</span>, <span class="number">0</span>), <span class="string">&quot;`period` must be non-zero.&quot;</span>);
 
-    <span class="ident">interval_at</span>(<span class="ident">Instant</span>::<span class="ident">now</span>(), <span class="ident">period</span>)
+    <span class="ident">interval_at</span>(<span class="ident">Instant::now</span>(), <span class="ident">period</span>)
 }
 
 <span class="doccomment">/// Creates new `Interval` that yields with interval of `period` with the</span>
@@ -281,10 +281,10 @@
 <span class="doccomment">/// }</span>
 <span class="doccomment">/// ```</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">interval_at</span>(<span class="ident">start</span>: <span class="ident">Instant</span>, <span class="ident">period</span>: <span class="ident">Duration</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Interval</span> {
-    <span class="macro">assert!</span>(<span class="ident">period</span> <span class="op">&gt;</span> <span class="ident">Duration</span>::<span class="ident">new</span>(<span class="number">0</span>, <span class="number">0</span>), <span class="string">&quot;`period` must be non-zero.&quot;</span>);
+    <span class="macro">assert!</span>(<span class="ident">period</span> <span class="op">&gt;</span> <span class="ident">Duration::new</span>(<span class="number">0</span>, <span class="number">0</span>), <span class="string">&quot;`period` must be non-zero.&quot;</span>);
 
     <span class="ident">Interval</span> {
-        <span class="ident">delay</span>: <span class="ident">Box</span>::<span class="ident">pin</span>(<span class="ident">sleep_until</span>(<span class="ident">start</span>)),
+        <span class="ident">delay</span>: <span class="ident">Box::pin</span>(<span class="ident">sleep_until</span>(<span class="ident">start</span>)),
         <span class="ident">period</span>,
     }
 }
@@ -346,7 +346,7 @@
     <span class="doccomment">/// most recent call is scheduled to receive a wakeup.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">poll_tick</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">Instant</span><span class="op">&gt;</span> {
         <span class="comment">// Wait for the delay to be done</span>
-        <span class="macro">ready!</span>(<span class="ident">Pin</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">delay</span>).<span class="ident">poll</span>(<span class="ident">cx</span>));
+        <span class="macro">ready!</span>(<span class="ident">Pin::new</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">delay</span>).<span class="ident">poll</span>(<span class="ident">cx</span>));
 
         <span class="comment">// Get the `now` by looking at the `delay` deadline</span>
         <span class="kw">let</span> <span class="ident">now</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">delay</span>.<span class="ident">deadline</span>();
@@ -357,9 +357,9 @@
         <span class="self">self</span>.<span class="ident">delay</span>.<span class="ident">as_mut</span>().<span class="ident">reset</span>(<span class="ident">next</span>);
 
         <span class="comment">// Return the current instant</span>
-        <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="ident">now</span>)
+        <span class="ident">Poll::Ready</span>(<span class="ident">now</span>)
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-js="../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

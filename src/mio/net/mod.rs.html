@@ -31,15 +31,15 @@
 <span class="doccomment">//! [portability guidelines]: ../struct.Poll.html#portability</span>
 
 <span class="kw">mod</span> <span class="ident">tcp</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">tcp</span>::{<span class="ident">TcpListener</span>, <span class="ident">TcpSocket</span>, <span class="ident">TcpStream</span>, <span class="ident">TcpKeepalive</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::tcp</span>::{<span class="ident">TcpListener</span>, <span class="ident">TcpSocket</span>, <span class="ident">TcpStream</span>, <span class="ident">TcpKeepalive</span>};
 
 <span class="kw">mod</span> <span class="ident">udp</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">udp</span>::<span class="ident">UdpSocket</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::udp::UdpSocket</span>;
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
 <span class="kw">mod</span> <span class="ident">uds</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">uds</span>::{<span class="ident">SocketAddr</span>, <span class="ident">UnixDatagram</span>, <span class="ident">UnixListener</span>, <span class="ident">UnixStream</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span><span class="ident">::uds</span>::{<span class="ident">SocketAddr</span>, <span class="ident">UnixDatagram</span>, <span class="ident">UnixListener</span>, <span class="ident">UnixStream</span>};
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="mio" data-search-js="../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="mio" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

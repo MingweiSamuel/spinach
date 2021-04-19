@@ -26,7 +26,7 @@
 <span id="23">23</span>
 <span id="24">24</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">runtime</span>::<span class="ident">task</span>::{<span class="self">self</span>, <span class="ident">Task</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::runtime::task</span>::{<span class="self">self</span>, <span class="ident">Task</span>};
 
 <span class="doccomment">/// `task::Schedule` implementation that does nothing. This is unique to the</span>
 <span class="doccomment">/// blocking scheduler as tasks scheduled are not really futures but blocking</span>
@@ -36,7 +36,7 @@
 <span class="doccomment">/// in `release.</span>
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">NoopSchedule</span>;
 
-<span class="kw">impl</span> <span class="ident">task</span>::<span class="ident">Schedule</span> <span class="kw">for</span> <span class="ident">NoopSchedule</span> {
+<span class="kw">impl</span> <span class="ident">task::Schedule</span> <span class="kw">for</span> <span class="ident">NoopSchedule</span> {
     <span class="kw">fn</span> <span class="ident">bind</span>(<span class="ident">_task</span>: <span class="ident">Task</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">NoopSchedule</span> {
         <span class="comment">// Do nothing w/ the task</span>
         <span class="ident">NoopSchedule</span>
@@ -46,10 +46,10 @@
         <span class="prelude-val">None</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">schedule</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">_task</span>: <span class="ident">task</span>::<span class="ident">Notified</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>) {
+    <span class="kw">fn</span> <span class="ident">schedule</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">_task</span>: <span class="ident">task::Notified</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>) {
         <span class="macro">unreachable!</span>();
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="tokio" data-search-js="../../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="tokio" data-search-index-js="../../../../search-index.js" data-search-js="../../../../search.js"></div>
     <script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script></body></html>

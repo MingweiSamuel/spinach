@@ -207,8 +207,8 @@
         $( ( $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">skip</span>:<span class="ident">tt</span>)<span class="op">*</span> ) <span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>:<span class="ident">expr</span>, )<span class="op">*</span>
 
     }) <span class="op">=</span><span class="op">&gt;</span> {{
-        <span class="kw">use</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">macros</span>::<span class="ident">support</span>::{<span class="ident">maybe_done</span>, <span class="ident">poll_fn</span>, <span class="ident">Future</span>, <span class="ident">Pin</span>};
-        <span class="kw">use</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">macros</span>::<span class="ident">support</span>::<span class="ident">Poll</span>::{<span class="ident">Ready</span>, <span class="ident">Pending</span>};
+        <span class="kw">use</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span><span class="macro-nonterminal">::macros::support</span>::{<span class="ident">maybe_done</span>, <span class="ident">poll_fn</span>, <span class="ident">Future</span>, <span class="ident">Pin</span>};
+        <span class="kw">use</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span><span class="macro-nonterminal">::macros::support::Poll</span>::{<span class="ident">Ready</span>, <span class="ident">Pending</span>};
 
         <span class="comment">// Safety: nothing must be moved out of `futures`. This is to satisfy</span>
         <span class="comment">// the requirement of `Pin::new_unchecked` called below.</span>
@@ -223,7 +223,7 @@
 
                 <span class="comment">// Safety: future is stored on the stack above</span>
                 <span class="comment">// and never moved.</span>
-                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">fut</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">Pin</span>::<span class="ident">new_unchecked</span>(<span class="ident">fut</span>) };
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">fut</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">Pin::new_unchecked</span>(<span class="ident">fut</span>) };
 
                 <span class="comment">// Try polling</span>
                 <span class="kw">if</span> <span class="ident">fut</span>.<span class="ident">as_mut</span>().<span class="ident">poll</span>(<span class="ident">cx</span>).<span class="ident">is_pending</span>() {
@@ -242,7 +242,7 @@
 
                     <span class="comment">// Safety: future is stored on the stack above</span>
                     <span class="comment">// and never moved.</span>
-                    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">fut</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">Pin</span>::<span class="ident">new_unchecked</span>(<span class="ident">fut</span>) };
+                    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">fut</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">Pin::new_unchecked</span>(<span class="ident">fut</span>) };
 
                     <span class="ident">fut</span>
                         .<span class="ident">take_output</span>()
@@ -257,15 +257,15 @@
     <span class="comment">// ===== Normalize =====</span>
 
     (@ { ( $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">s</span>:<span class="ident">tt</span>)<span class="op">*</span> ) $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>:<span class="ident">tt</span>)<span class="op">*</span> } <span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>:<span class="ident">expr</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">r</span>:<span class="ident">tt</span>)<span class="op">*</span> ) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">try_join!</span>(@{ ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">s</span>)<span class="op">*</span> <span class="kw">_</span>) $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>)<span class="op">*</span> ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">s</span>)<span class="kw-2">*</span>) <span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>, } $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">r</span>)<span class="kw-2">*</span>)
+        <span class="macro-nonterminal">$</span><span class="kw">crate</span><span class="macro">::try_join!</span>(@{ ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">s</span>)<span class="op">*</span> <span class="kw">_</span>) $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>)<span class="op">*</span> ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">s</span>)<span class="kw-2">*</span>) <span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>, } $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">r</span>)<span class="kw-2">*</span>)
     };
 
     <span class="comment">// ===== Entry point =====</span>
 
     ( $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>:<span class="ident">expr</span>),<span class="op">*</span> $(,)<span class="question-mark">?</span>) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro">try_join!</span>(@{ () } $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>,)<span class="kw-2">*</span>)
+        <span class="macro-nonterminal">$</span><span class="kw">crate</span><span class="macro">::try_join!</span>(@{ () } $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>,)<span class="kw-2">*</span>)
     };
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-js="../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

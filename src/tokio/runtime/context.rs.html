@@ -82,12 +82,12 @@
 <span id="79">79</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Thread local runtime context</span>
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">runtime</span>::<span class="ident">Handle</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::runtime::Handle</span>;
 
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">cell</span>::<span class="ident">RefCell</span>;
+<span class="kw">use</span> <span class="ident">std::cell::RefCell</span>;
 
 <span class="macro">thread_local!</span> {
-    <span class="kw">static</span> <span class="ident">CONTEXT</span>: <span class="ident">RefCell</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Handle</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">RefCell</span>::<span class="ident">new</span>(<span class="prelude-val">None</span>)
+    <span class="kw">static</span> <span class="ident">CONTEXT</span>: <span class="ident">RefCell</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Handle</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">RefCell::new</span>(<span class="prelude-val">None</span>)
 }
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">current</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Handle</span><span class="op">&gt;</span> {
@@ -95,34 +95,34 @@
 }
 
 <span class="macro">cfg_io_driver!</span> {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">io_handle</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="kw">crate</span>::<span class="ident">runtime</span>::<span class="ident">driver</span>::<span class="ident">IoHandle</span> {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">io_handle</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="kw">crate</span><span class="ident">::runtime::driver::IoHandle</span> {
         <span class="ident">CONTEXT</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">ctx</span><span class="op">|</span> {
             <span class="kw">let</span> <span class="ident">ctx</span> <span class="op">=</span> <span class="ident">ctx</span>.<span class="ident">borrow</span>();
-            <span class="ident">ctx</span>.<span class="ident">as_ref</span>().<span class="ident">expect</span>(<span class="kw">crate</span>::<span class="ident">util</span>::<span class="ident">error</span>::<span class="ident">CONTEXT_MISSING_ERROR</span>).<span class="ident">io_handle</span>.<span class="ident">clone</span>()
+            <span class="ident">ctx</span>.<span class="ident">as_ref</span>().<span class="ident">expect</span>(<span class="kw">crate</span><span class="ident">::util::error::CONTEXT_MISSING_ERROR</span>).<span class="ident">io_handle</span>.<span class="ident">clone</span>()
         })
     }
 }
 
 <span class="macro">cfg_signal_internal!</span> {
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">signal_handle</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="kw">crate</span>::<span class="ident">runtime</span>::<span class="ident">driver</span>::<span class="ident">SignalHandle</span> {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">signal_handle</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="kw">crate</span><span class="ident">::runtime::driver::SignalHandle</span> {
         <span class="ident">CONTEXT</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">ctx</span><span class="op">|</span> {
             <span class="kw">let</span> <span class="ident">ctx</span> <span class="op">=</span> <span class="ident">ctx</span>.<span class="ident">borrow</span>();
-            <span class="ident">ctx</span>.<span class="ident">as_ref</span>().<span class="ident">expect</span>(<span class="kw">crate</span>::<span class="ident">util</span>::<span class="ident">error</span>::<span class="ident">CONTEXT_MISSING_ERROR</span>).<span class="ident">signal_handle</span>.<span class="ident">clone</span>()
+            <span class="ident">ctx</span>.<span class="ident">as_ref</span>().<span class="ident">expect</span>(<span class="kw">crate</span><span class="ident">::util::error::CONTEXT_MISSING_ERROR</span>).<span class="ident">signal_handle</span>.<span class="ident">clone</span>()
         })
     }
 }
 
 <span class="macro">cfg_time!</span> {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">time_handle</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="kw">crate</span>::<span class="ident">runtime</span>::<span class="ident">driver</span>::<span class="ident">TimeHandle</span> {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">time_handle</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="kw">crate</span><span class="ident">::runtime::driver::TimeHandle</span> {
         <span class="ident">CONTEXT</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">ctx</span><span class="op">|</span> {
             <span class="kw">let</span> <span class="ident">ctx</span> <span class="op">=</span> <span class="ident">ctx</span>.<span class="ident">borrow</span>();
-            <span class="ident">ctx</span>.<span class="ident">as_ref</span>().<span class="ident">expect</span>(<span class="kw">crate</span>::<span class="ident">util</span>::<span class="ident">error</span>::<span class="ident">CONTEXT_MISSING_ERROR</span>).<span class="ident">time_handle</span>.<span class="ident">clone</span>()
+            <span class="ident">ctx</span>.<span class="ident">as_ref</span>().<span class="ident">expect</span>(<span class="kw">crate</span><span class="ident">::util::error::CONTEXT_MISSING_ERROR</span>).<span class="ident">time_handle</span>.<span class="ident">clone</span>()
         })
     }
 
     <span class="macro">cfg_test_util!</span> {
-        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">clock</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw">crate</span>::<span class="ident">runtime</span>::<span class="ident">driver</span>::<span class="ident">Clock</span><span class="op">&gt;</span> {
+        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">clock</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw">crate</span><span class="ident">::runtime::driver::Clock</span><span class="op">&gt;</span> {
             <span class="ident">CONTEXT</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">ctx</span><span class="op">|</span> <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">ctx</span>.<span class="ident">borrow</span>() {
                 <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">ctx</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">ctx</span>.<span class="ident">clock</span>.<span class="ident">clone</span>()),
                 <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,
@@ -132,7 +132,7 @@
 }
 
 <span class="macro">cfg_rt!</span> {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">spawn_handle</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw">crate</span>::<span class="ident">runtime</span>::<span class="ident">Spawner</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">spawn_handle</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw">crate</span><span class="ident">::runtime::Spawner</span><span class="op">&gt;</span> {
         <span class="ident">CONTEXT</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">ctx</span><span class="op">|</span> <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">ctx</span>.<span class="ident">borrow</span>() {
             <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">ctx</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">ctx</span>.<span class="ident">spawner</span>.<span class="ident">clone</span>()),
             <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,
@@ -161,5 +161,5 @@
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-js="../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

@@ -8,7 +8,7 @@ without requiring the user to use <a href="../tokio/runtime/struct.Runtime.html"
 <p>Arguments are allowed for any functions aside from <code>main</code> which is special</p>
 <h2 id="usage" class="section-header"><a href="#usage">Usage</a></h2><h3 id="using-default" class="section-header"><a href="#using-default">Using default</a></h3>
 <div class="example-wrap"><pre class="rust rust-example-rendered">
-<span class="attribute">#[<span class="ident">tokio</span>::<span class="ident">main</span>(<span class="ident">flavor</span> <span class="op">=</span> <span class="string">&quot;current_thread&quot;</span>)]</span>
+<span class="attribute">#[<span class="ident">tokio::main</span>(<span class="ident">flavor</span> <span class="op">=</span> <span class="string">&quot;current_thread&quot;</span>)]</span>
 <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">main</span>() {
     <span class="macro">println!</span>(<span class="string">&quot;Hello world&quot;</span>);
 }</pre></div>
@@ -16,7 +16,7 @@ without requiring the user to use <a href="../tokio/runtime/struct.Runtime.html"
 
 <div class="example-wrap"><pre class="rust rust-example-rendered">
 <span class="kw">fn</span> <span class="ident">main</span>() {
-    <span class="ident">tokio</span>::<span class="ident">runtime</span>::<span class="ident">Builder</span>::<span class="ident">new_current_thread</span>()
+    <span class="ident">tokio::runtime::Builder::new_current_thread</span>()
         .<span class="ident">enable_all</span>()
         .<span class="ident">build</span>()
         .<span class="ident">unwrap</span>()
@@ -29,5 +29,5 @@ without requiring the user to use <a href="../tokio/runtime/struct.Runtime.html"
 If you must rename the current version of Tokio because you’re also using an
 older version of Tokio, you <em>must</em> make the current version of Tokio
 available as <code>tokio</code> in the module where this macro is expanded.</p>
-</div></section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../" data-current-crate="tokio" data-search-js="../search-index.js"></div>
+</div></section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../" data-current-crate="tokio" data-search-index-js="../search-index.js" data-search-js="../search.js"></div>
     <script src="../main.js"></script></body></html>

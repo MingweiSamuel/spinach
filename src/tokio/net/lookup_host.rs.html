@@ -41,10 +41,10 @@
 <span id="38">38</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="macro">cfg_net!</span> {
-    <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">net</span>::<span class="ident">addr</span>::{<span class="self">self</span>, <span class="ident">ToSocketAddrs</span>};
+    <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::net::addr</span>::{<span class="self">self</span>, <span class="ident">ToSocketAddrs</span>};
 
-    <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>;
-    <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">net</span>::<span class="ident">SocketAddr</span>;
+    <span class="kw">use</span> <span class="ident">std::io</span>;
+    <span class="kw">use</span> <span class="ident">std::net::SocketAddr</span>;
 
     <span class="doccomment">/// Performs a DNS resolution.</span>
     <span class="doccomment">///</span>
@@ -71,13 +71,13 @@
     <span class="doccomment">///     Ok(())</span>
     <span class="doccomment">/// }</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">lookup_host</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">host</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw">impl</span> <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">SocketAddr</span><span class="op">&gt;</span><span class="op">&gt;</span>
+    <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">lookup_host</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">host</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io::Result</span><span class="op">&lt;</span><span class="kw">impl</span> <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">SocketAddr</span><span class="op">&gt;</span><span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="ident">T</span>: <span class="ident">ToSocketAddrs</span>
     {
-        <span class="ident">addr</span>::<span class="ident">to_socket_addrs</span>(<span class="ident">host</span>).<span class="kw">await</span>
+        <span class="ident">addr::to_socket_addrs</span>(<span class="ident">host</span>).<span class="kw">await</span>
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-js="../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

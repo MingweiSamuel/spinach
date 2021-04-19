@@ -46,23 +46,23 @@
 <span id="43">43</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">proc_macro</span>::{<span class="ident">TokenStream</span>, <span class="ident">TokenTree</span>};
-<span class="kw">use</span> <span class="ident">proc_macro2</span>::<span class="ident">Span</span>;
-<span class="kw">use</span> <span class="ident">quote</span>::<span class="ident">quote</span>;
-<span class="kw">use</span> <span class="ident">syn</span>::<span class="ident">Ident</span>;
+<span class="kw">use</span> <span class="ident">proc_macro2::Span</span>;
+<span class="kw">use</span> <span class="ident">quote::quote</span>;
+<span class="kw">use</span> <span class="ident">syn::Ident</span>;
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">declare_output_enum</span>(<span class="ident">input</span>: <span class="ident">TokenStream</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TokenStream</span> {
     <span class="comment">// passed in is: `(_ _ _)` with one `_` per branch</span>
     <span class="kw">let</span> <span class="ident">branches</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">input</span>.<span class="ident">into_iter</span>().<span class="ident">next</span>() {
-        <span class="prelude-val">Some</span>(<span class="ident">TokenTree</span>::<span class="ident">Group</span>(<span class="ident">group</span>)) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">group</span>.<span class="ident">stream</span>().<span class="ident">into_iter</span>().<span class="ident">count</span>(),
+        <span class="prelude-val">Some</span>(<span class="ident">TokenTree::Group</span>(<span class="ident">group</span>)) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">group</span>.<span class="ident">stream</span>().<span class="ident">into_iter</span>().<span class="ident">count</span>(),
         <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(<span class="string">&quot;unexpected macro input&quot;</span>),
     };
 
     <span class="kw">let</span> <span class="ident">variants</span> <span class="op">=</span> (<span class="number">0</span>..<span class="ident">branches</span>)
-        .<span class="ident">map</span>(<span class="op">|</span><span class="ident">num</span><span class="op">|</span> <span class="ident">Ident</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;_{}&quot;</span>, <span class="ident">num</span>), <span class="ident">Span</span>::<span class="ident">call_site</span>()))
+        .<span class="ident">map</span>(<span class="op">|</span><span class="ident">num</span><span class="op">|</span> <span class="ident">Ident::new</span>(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;_{}&quot;</span>, <span class="ident">num</span>), <span class="ident">Span::call_site</span>()))
         .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>();
 
     <span class="comment">// Use a bitfield to track which futures completed</span>
-    <span class="kw">let</span> <span class="ident">mask</span> <span class="op">=</span> <span class="ident">Ident</span>::<span class="ident">new</span>(
+    <span class="kw">let</span> <span class="ident">mask</span> <span class="op">=</span> <span class="ident">Ident::new</span>(
         <span class="kw">if</span> <span class="ident">branches</span> <span class="op">&lt;</span><span class="op">=</span> <span class="number">8</span> {
             <span class="string">&quot;u8&quot;</span>
         } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">branches</span> <span class="op">&lt;</span><span class="op">=</span> <span class="number">16</span> {
@@ -74,10 +74,10 @@
         } <span class="kw">else</span> {
             <span class="macro">panic!</span>(<span class="string">&quot;up to 64 branches supported&quot;</span>);
         },
-        <span class="ident">Span</span>::<span class="ident">call_site</span>(),
+        <span class="ident">Span::call_site</span>(),
     );
 
-    <span class="ident">TokenStream</span>::<span class="ident">from</span>(<span class="macro">quote!</span> {
+    <span class="ident">TokenStream::from</span>(<span class="macro">quote!</span> {
         <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">enum</span> <span class="ident">Out</span><span class="op">&lt;</span>#( #<span class="ident">variants</span> ),<span class="kw-2">*</span><span class="op">&gt;</span> {
             #( #<span class="ident">variants</span>(#<span class="ident">variants</span>), )<span class="op">*</span>
             <span class="comment">// Include a `Disabled` variant signifying that all select branches</span>
@@ -89,5 +89,5 @@
     })
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="tokio_macros" data-search-js="../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="tokio_macros" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>

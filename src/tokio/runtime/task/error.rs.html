@@ -147,10 +147,10 @@
 <span id="144">144</span>
 <span id="145">145</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">any</span>::<span class="ident">Any</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Mutex</span>;
+<span class="kw">use</span> <span class="ident">std::any::Any</span>;
+<span class="kw">use</span> <span class="ident">std::fmt</span>;
+<span class="kw">use</span> <span class="ident">std::io</span>;
+<span class="kw">use</span> <span class="ident">std::sync::Mutex</span>;
 
 <span class="macro">cfg_rt!</span> {
     <span class="doccomment">/// Task failed to execute to completion.</span>
@@ -167,19 +167,19 @@
 <span class="kw">impl</span> <span class="ident">JoinError</span> {
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">cancelled</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">JoinError</span> {
         <span class="ident">JoinError</span> {
-            <span class="ident">repr</span>: <span class="ident">Repr</span>::<span class="ident">Cancelled</span>,
+            <span class="ident">repr</span>: <span class="ident">Repr::Cancelled</span>,
         }
     }
 
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">panic</span>(<span class="ident">err</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Any</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">JoinError</span> {
         <span class="ident">JoinError</span> {
-            <span class="ident">repr</span>: <span class="ident">Repr</span>::<span class="ident">Panic</span>(<span class="ident">Mutex</span>::<span class="ident">new</span>(<span class="ident">err</span>)),
+            <span class="ident">repr</span>: <span class="ident">Repr::Panic</span>(<span class="ident">Mutex::new</span>(<span class="ident">err</span>)),
         }
     }
 
     <span class="doccomment">/// Returns true if the error was caused by the task being cancelled</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_cancelled</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
-        <span class="macro">matches!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">repr</span>, <span class="ident">Repr</span>::<span class="ident">Cancelled</span>)
+        <span class="macro">matches!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">repr</span>, <span class="ident">Repr::Cancelled</span>)
     }
 
     <span class="doccomment">/// Returns true if the error was caused by the task panicking</span>
@@ -199,7 +199,7 @@
     <span class="doccomment">/// }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_panic</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
-        <span class="macro">matches!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">repr</span>, <span class="ident">Repr</span>::<span class="ident">Panic</span>(<span class="kw">_</span>))
+        <span class="macro">matches!</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">repr</span>, <span class="ident">Repr::Panic</span>(<span class="kw">_</span>))
     }
 
     <span class="doccomment">/// Consumes the join error, returning the object with which the task panicked.</span>
@@ -255,43 +255,43 @@
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">try_into_panic</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Any</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span><span class="op">&gt;</span>, <span class="ident">JoinError</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">repr</span> {
-            <span class="ident">Repr</span>::<span class="ident">Panic</span>(<span class="ident">p</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">p</span>.<span class="ident">into_inner</span>().<span class="ident">expect</span>(<span class="string">&quot;Extracting panic from mutex&quot;</span>)),
+            <span class="ident">Repr::Panic</span>(<span class="ident">p</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">p</span>.<span class="ident">into_inner</span>().<span class="ident">expect</span>(<span class="string">&quot;Extracting panic from mutex&quot;</span>)),
             <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="self">self</span>),
         }
     }
 }
 
-<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">JoinError</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">JoinError</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
         <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">repr</span> {
-            <span class="ident">Repr</span>::<span class="ident">Cancelled</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;cancelled&quot;</span>),
-            <span class="ident">Repr</span>::<span class="ident">Panic</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;panic&quot;</span>),
+            <span class="ident">Repr::Cancelled</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;cancelled&quot;</span>),
+            <span class="ident">Repr::Panic</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;panic&quot;</span>),
         }
     }
 }
 
-<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">JoinError</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">impl</span> <span class="ident">fmt::Debug</span> <span class="kw">for</span> <span class="ident">JoinError</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
         <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">repr</span> {
-            <span class="ident">Repr</span>::<span class="ident">Cancelled</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;JoinError::Cancelled&quot;</span>),
-            <span class="ident">Repr</span>::<span class="ident">Panic</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;JoinError::Panic(...)&quot;</span>),
+            <span class="ident">Repr::Cancelled</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;JoinError::Cancelled&quot;</span>),
+            <span class="ident">Repr::Panic</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write!</span>(<span class="ident">fmt</span>, <span class="string">&quot;JoinError::Panic(...)&quot;</span>),
         }
     }
 }
 
-<span class="kw">impl</span> <span class="ident">std</span>::<span class="ident">error</span>::<span class="ident">Error</span> <span class="kw">for</span> <span class="ident">JoinError</span> {}
+<span class="kw">impl</span> <span class="ident">std::error::Error</span> <span class="kw">for</span> <span class="ident">JoinError</span> {}
 
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">JoinError</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">io</span>::<span class="ident">Error</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">src</span>: <span class="ident">JoinError</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="ident">Error</span> {
-        <span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">new</span>(
-            <span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">Other</span>,
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">JoinError</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">io::Error</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">src</span>: <span class="ident">JoinError</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io::Error</span> {
+        <span class="ident">io::Error::new</span>(
+            <span class="ident">io::ErrorKind::Other</span>,
             <span class="kw">match</span> <span class="ident">src</span>.<span class="ident">repr</span> {
-                <span class="ident">Repr</span>::<span class="ident">Cancelled</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;task was cancelled&quot;</span>,
-                <span class="ident">Repr</span>::<span class="ident">Panic</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;task panicked&quot;</span>,
+                <span class="ident">Repr::Cancelled</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;task was cancelled&quot;</span>,
+                <span class="ident">Repr::Panic</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;task panicked&quot;</span>,
             },
         )
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="tokio" data-search-js="../../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="tokio" data-search-index-js="../../../../search-index.js" data-search-js="../../../../search.js"></div>
     <script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script></body></html>

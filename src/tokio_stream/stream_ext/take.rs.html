@@ -78,13 +78,13 @@
 <span id="75">75</span>
 <span id="76">76</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">Stream</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::Stream</span>;
 
-<span class="kw">use</span> <span class="ident">core</span>::<span class="ident">cmp</span>;
-<span class="kw">use</span> <span class="ident">core</span>::<span class="ident">fmt</span>;
-<span class="kw">use</span> <span class="ident">core</span>::<span class="ident">pin</span>::<span class="ident">Pin</span>;
-<span class="kw">use</span> <span class="ident">core</span>::<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
-<span class="kw">use</span> <span class="ident">pin_project_lite</span>::<span class="ident">pin_project</span>;
+<span class="kw">use</span> <span class="ident">core::cmp</span>;
+<span class="kw">use</span> <span class="ident">core::fmt</span>;
+<span class="kw">use</span> <span class="ident">core::pin::Pin</span>;
+<span class="kw">use</span> <span class="ident">core::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
+<span class="kw">use</span> <span class="ident">pin_project_lite::pin_project</span>;
 
 <span class="macro">pin_project!</span> {
     <span class="doccomment">/// Stream for the [`take`](super::StreamExt::take) method.</span>
@@ -96,11 +96,11 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">St</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Take</span><span class="op">&lt;</span><span class="ident">St</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">St</span><span class="op">&gt;</span> <span class="ident">fmt::Debug</span> <span class="kw">for</span> <span class="ident">Take</span><span class="op">&lt;</span><span class="ident">St</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">St</span>: <span class="ident">fmt</span>::<span class="ident">Debug</span>,
+    <span class="ident">St</span>: <span class="ident">fmt::Debug</span>,
 {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
         <span class="ident">f</span>.<span class="ident">debug_struct</span>(<span class="string">&quot;Take&quot;</span>)
             .<span class="ident">field</span>(<span class="string">&quot;stream&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">stream</span>)
             .<span class="ident">finish</span>()
@@ -117,9 +117,9 @@
 <span class="kw">where</span>
     <span class="ident">St</span>: <span class="ident">Stream</span>,
 {
-    <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">St</span>::<span class="ident">Item</span>;
+    <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">St::Item</span>;
 
-    <span class="kw">fn</span> <span class="ident">poll_next</span>(<span class="kw-2">mut</span> <span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Item</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">poll_next</span>(<span class="kw-2">mut</span> <span class="self">self</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="ident">::Item</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">as_mut</span>().<span class="ident">project</span>().<span class="ident">remaining</span> <span class="op">&gt;</span> <span class="number">0</span> {
             <span class="self">self</span>.<span class="ident">as_mut</span>().<span class="ident">project</span>().<span class="ident">stream</span>.<span class="ident">poll_next</span>(<span class="ident">cx</span>).<span class="ident">map</span>(<span class="op">|</span><span class="ident">ready</span><span class="op">|</span> {
                 <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="ident">ready</span> {
@@ -133,7 +133,7 @@
                 <span class="ident">ready</span>
             })
         } <span class="kw">else</span> {
-            <span class="ident">Poll</span>::<span class="ident">Ready</span>(<span class="prelude-val">None</span>)
+            <span class="ident">Poll::Ready</span>(<span class="prelude-val">None</span>)
         }
     }
 
@@ -144,7 +144,7 @@
 
         <span class="kw">let</span> (<span class="ident">lower</span>, <span class="ident">upper</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">stream</span>.<span class="ident">size_hint</span>();
 
-        <span class="kw">let</span> <span class="ident">lower</span> <span class="op">=</span> <span class="ident">cmp</span>::<span class="ident">min</span>(<span class="ident">lower</span>, <span class="self">self</span>.<span class="ident">remaining</span> <span class="kw">as</span> <span class="ident">usize</span>);
+        <span class="kw">let</span> <span class="ident">lower</span> <span class="op">=</span> <span class="ident">cmp::min</span>(<span class="ident">lower</span>, <span class="self">self</span>.<span class="ident">remaining</span> <span class="kw">as</span> <span class="ident">usize</span>);
 
         <span class="kw">let</span> <span class="ident">upper</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">upper</span> {
             <span class="prelude-val">Some</span>(<span class="ident">x</span>) <span class="kw">if</span> <span class="ident">x</span> <span class="op">&lt;</span> <span class="self">self</span>.<span class="ident">remaining</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">x</span>),
@@ -155,5 +155,5 @@
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio_stream" data-search-js="../../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio_stream" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

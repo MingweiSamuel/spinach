@@ -26,15 +26,15 @@ The function signature is the same as for ordinary function-like procedural
 macros.</p>
 
 <div class="example-wrap"><pre class="rust rust-example-rendered">
-<span class="kw">use</span> <span class="ident">proc_macro</span>::<span class="ident">TokenStream</span>;
-<span class="kw">use</span> <span class="ident">proc_macro_hack</span>::<span class="ident">proc_macro_hack</span>;
-<span class="kw">use</span> <span class="ident">quote</span>::<span class="ident">quote</span>;
+<span class="kw">use</span> <span class="ident">proc_macro::TokenStream</span>;
+<span class="kw">use</span> <span class="ident">proc_macro_hack::proc_macro_hack</span>;
+<span class="kw">use</span> <span class="ident">quote::quote</span>;
 <span class="kw">use</span> <span class="ident">syn</span>::{<span class="ident">parse_macro_input</span>, <span class="ident">Expr</span>};
 
 <span class="attribute">#[<span class="ident">proc_macro_hack</span>]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_one</span>(<span class="ident">input</span>: <span class="ident">TokenStream</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TokenStream</span> {
     <span class="kw">let</span> <span class="ident">expr</span> <span class="op">=</span> <span class="macro">parse_macro_input!</span>(<span class="ident">input</span> <span class="kw">as</span> <span class="ident">Expr</span>);
-    <span class="ident">TokenStream</span>::<span class="ident">from</span>(<span class="macro">quote!</span> {
+    <span class="ident">TokenStream::from</span>(<span class="macro">quote!</span> {
         <span class="number">1</span> <span class="op">+</span> (#<span class="ident">expr</span>)
     })
 }</pre></div>
@@ -47,13 +47,13 @@ procedural macro from the implementation crate. The re-export also carries a
 #[proc_macro_hack] attribute.</p>
 
 <div class="example-wrap"><pre class="rust rust-example-rendered">
-<span class="kw">use</span> <span class="ident">proc_macro_hack</span>::<span class="ident">proc_macro_hack</span>;
+<span class="kw">use</span> <span class="ident">proc_macro_hack::proc_macro_hack</span>;
 
 <span class="doccomment">/// Add one to an expression.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// (Documentation goes here on the re-export, not in the other crate.)</span>
 <span class="attribute">#[<span class="ident">proc_macro_hack</span>]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">demo_hack_impl</span>::<span class="ident">add_one</span>;</pre></div>
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">demo_hack_impl::add_one</span>;</pre></div>
 <p>Both crates depend on <code>proc-macro-hack</code>:</p>
 <pre><code class="language-toml">[dependencies]
 proc-macro-hack = &quot;0.5&quot;
@@ -69,7 +69,7 @@ implementation crate), then use your procedural macros as usual.</p>
 <p><a href="https://github.com/dtolnay/proc-macro-hack/tree/master/example">» example of a downstream crate</a></p>
 
 <div class="example-wrap"><pre class="rust rust-example-rendered">
-<span class="kw">use</span> <span class="ident">demo_hack</span>::<span class="ident">add_one</span>;
+<span class="kw">use</span> <span class="ident">demo_hack::add_one</span>;
 
 <span class="kw">fn</span> <span class="ident">main</span>() {
     <span class="kw">let</span> <span class="ident">two</span> <span class="op">=</span> <span class="number">2</span>;
@@ -106,5 +106,5 @@ declaration crate.</p>
 </li>
 </ul>
 </div><h2 id="attributes" class="section-header"><a href="#attributes">Attribute Macros</a></h2>
-<table><tr class="module-item"><td><a class="attr" href="attr.proc_macro_hack.html" title="proc_macro_hack::proc_macro_hack attr">proc_macro_hack</a></td><td class="docblock-short"></td></tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../" data-current-crate="proc_macro_hack" data-search-js="../search-index.js"></div>
+<table><tr class="module-item"><td><a class="attr" href="attr.proc_macro_hack.html" title="proc_macro_hack::proc_macro_hack attr">proc_macro_hack</a></td><td class="docblock-short"></td></tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../" data-current-crate="proc_macro_hack" data-search-index-js="../search-index.js" data-search-js="../search.js"></div>
     <script src="../main.js"></script></body></html>

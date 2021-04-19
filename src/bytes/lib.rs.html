@@ -203,14 +203,14 @@
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">std</span>;
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">buf</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">buf</span>::{<span class="ident">Buf</span>, <span class="ident">BufMut</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::buf</span>::{<span class="ident">Buf</span>, <span class="ident">BufMut</span>};
 
 <span class="kw">mod</span> <span class="ident">bytes</span>;
 <span class="kw">mod</span> <span class="ident">bytes_mut</span>;
 <span class="kw">mod</span> <span class="ident">fmt</span>;
 <span class="kw">mod</span> <span class="ident">loom</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">bytes</span>::<span class="ident">Bytes</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">bytes_mut</span>::<span class="ident">BytesMut</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::bytes::Bytes</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::bytes_mut::BytesMut</span>;
 
 <span class="comment">// Optional Serde support</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;serde&quot;</span>)]</span>
@@ -221,7 +221,7 @@
 <span class="kw">fn</span> <span class="ident">abort</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="op">!</span> {
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
     {
-        <span class="ident">std</span>::<span class="ident">process</span>::<span class="ident">abort</span>();
+        <span class="ident">std::process::abort</span>();
     }
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>))]</span>
@@ -237,5 +237,5 @@
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="bytes" data-search-js="../../search-index.js"></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="bytes" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>
