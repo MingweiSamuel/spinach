@@ -39,22 +39,41 @@ where
         AF::partial_cmp(&val.0, &delta.0).or_else(|| BF::partial_cmp(&val.1, &delta.1))
     }
 
-    fn remainder(val: &mut Self::Domain, delta: Self::Domain) -> bool {
+    fn delta(val: &Self::Domain, delta: &mut Self::Domain) -> bool {
         match AF::partial_cmp(&val.0, &delta.0) {
             None => {
-                AF::merge_in(&mut val.0, delta.0);
-                BF::remainder(&mut val.1, delta.1);
-                false
+                AF::delta(&val.0, &mut delta.0);
+                BF::delta(&val.1, &mut delta.1);
+                true
             }
             Some(Ordering::Equal) => {
-                BF::remainder(&mut val.1, delta.1);
-                false
+                BF::delta(&val.1, &mut delta.1)
             }
             Some(Ordering::Less) => {
-                *val = delta;
+                true
+            }
+            Some(Ordering::Greater) => {
                 false
             }
-            Some(Ordering::Greater) => true,
         }
     }
+
+    // fn remainder(val: &mut Self::Domain, delta: Self::Domain) -> bool {
+    //     match AF::partial_cmp(&val.0, &delta.0) {
+    //         None => {
+    //             AF::merge_in(&mut val.0, delta.0);
+    //             BF::remainder(&mut val.1, delta.1);
+    //             false
+    //         }
+    //         Some(Ordering::Equal) => {
+    //             BF::remainder(&mut val.1, delta.1);
+    //             false
+    //         }
+    //         Some(Ordering::Less) => {
+    //             *val = delta;
+    //             false
+    //         }
+    //         Some(Ordering::Greater) => true,
+    //     }
+    // }
 }

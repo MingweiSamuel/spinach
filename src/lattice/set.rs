@@ -33,11 +33,16 @@ impl<T: Eq + Hash> Lattice for Union<HashSet<T>> {
         }
     }
 
-    fn remainder(val: &mut Self::Domain, mut delta: Self::Domain) -> bool {
-        delta.retain(|item| !val.contains(item));
-        *val = delta;
-        val.is_empty()
+    fn delta(val: &Self::Domain, delta: &mut Self::Domain) -> bool {
+        delta.retain(|x| !val.contains(x));
+        !delta.is_empty()
     }
+
+    // fn remainder(val: &mut Self::Domain, mut delta: Self::Domain) -> bool {
+    //     delta.retain(|item| !val.contains(item));
+    //     *val = delta;
+    //     val.is_empty()
+    // }
 }
 impl<T: Eq + Ord> Lattice for Union<BTreeSet<T>> {
     type Domain = BTreeSet<T>;
@@ -60,12 +65,17 @@ impl<T: Eq + Ord> Lattice for Union<BTreeSet<T>> {
             Some(Ordering::Less)
         }
     }
-
-    fn remainder(val: &mut Self::Domain, mut delta: Self::Domain) -> bool {
-        delta.retain(|item| !val.contains(item));
-        *val = delta;
-        val.is_empty()
+    
+    fn delta(val: &Self::Domain, delta: &mut Self::Domain) -> bool {
+        delta.retain(|x| !val.contains(x));
+        !delta.is_empty()
     }
+
+    // fn remainder(val: &mut Self::Domain, mut delta: Self::Domain) -> bool {
+    //     delta.retain(|item| !val.contains(item));
+    //     *val = delta;
+    //     val.is_empty()
+    // }
 }
 
 /// Set intersection lattice.
@@ -93,6 +103,11 @@ impl<T: Eq + Hash> Lattice for Intersect<HashSet<T>> {
             Some(Ordering::Less)
         }
     }
+    
+    fn delta(val: &Self::Domain, delta: &mut Self::Domain) -> bool {
+        delta.retain(|x| val.contains(x));
+        delta.len() > val.len()
+    }
 }
 impl<T: Eq + Ord> Lattice for Intersect<BTreeSet<T>> {
     type Domain = BTreeSet<T>;
@@ -115,5 +130,10 @@ impl<T: Eq + Ord> Lattice for Intersect<BTreeSet<T>> {
         } else {
             Some(Ordering::Less)
         }
+    }
+    
+    fn delta(val: &Self::Domain, delta: &mut Self::Domain) -> bool {
+        delta.retain(|x| val.contains(x));
+        delta.len() > val.len()
     }
 }

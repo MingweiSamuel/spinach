@@ -29,6 +29,30 @@ impl<'a, F: Lattice> Lattice for RefOptional<'a, F> {
             }
         }
     }
+
+    fn delta(val: &Self::Domain, delta: &mut Self::Domain) -> bool {
+        match val {
+            None => {
+                match delta {
+                    None => false,
+                    Some(_) => true,
+                }
+            }
+            Some(val_val) => {
+                match delta {
+                    None => false,
+                    Some(delta_val) => {
+                        match F::partial_cmp(val_val, delta_val) {
+                            None => true,
+                            Some(Ordering::Equal) => false,
+                            Some(Ordering::Less) => true,
+                            Some(Ordering::Greater) => false,
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 /// Mingwei's weird semilattice.
@@ -53,6 +77,19 @@ impl Lattice for RangeToZeroI32 {
         } else {
             let less = a.abs().cmp(&b.abs());
             Some(less.reverse())
+        }
+    }
+
+    fn delta(val: &Self::Domain, delta: &mut Self::Domain) -> bool {
+        if val.signum() != delta.signum() {
+            *delta = 0;
+            true
+        }
+        else if val.abs() > delta.abs() {
+            true
+        }
+        else {
+            false
         }
     }
 }

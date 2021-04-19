@@ -20,6 +20,10 @@ impl<T: Ord> Lattice for Max<T> {
     fn partial_cmp(val: &T, delta: &T) -> Option<Ordering> {
         val.partial_cmp(delta)
     }
+
+    fn delta(val: &Self::Domain, delta: &mut Self::Domain) -> bool {
+        *delta > *val
+    }
 }
 
 /// For totally-ordered demains, take the min value.
@@ -37,5 +41,9 @@ impl<T: Ord> Lattice for Min<T> {
 
     fn partial_cmp(val: &T, delta: &T) -> Option<Ordering> {
         val.partial_cmp(delta).map(|ord| ord.reverse())
+    }
+
+    fn delta(val: &Self::Domain, delta: &mut Self::Domain) -> bool {
+        *delta < *val
     }
 }

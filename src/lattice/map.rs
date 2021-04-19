@@ -77,22 +77,32 @@ where
         }
     }
 
-    fn remainder(val: &mut Self::Domain, delta: Self::Domain) -> bool {
-        for (k, v) in delta {
-            match val.entry(k) {
-                hash_map::Entry::Occupied(mut kv) => {
-                    if F::remainder(kv.get_mut(), v) {
-                        // If value is dominated, remove it.
-                        kv.remove_entry();
-                    }
-                }
-                hash_map::Entry::Vacant(kv) => {
-                    kv.insert(v);
-                }
+    fn delta(val: &Self::Domain, delta: &mut Self::Domain) -> bool {
+        delta.retain(|delta_key, delta_val| {
+            match val.get(&delta_key) {
+                Some(val_val) => F::delta(val_val, delta_val),
+                None => true,
             }
-        }
-        val.is_empty()
+        });
+        !delta.is_empty()
     }
+
+    // fn remainder(val: &mut Self::Domain, delta: Self::Domain) -> bool {
+    //     for (k, v) in delta {
+    //         match val.entry(k) {
+    //             hash_map::Entry::Occupied(mut kv) => {
+    //                 if F::remainder(kv.get_mut(), v) {
+    //                     // If value is dominated, remove it.
+    //                     kv.remove_entry();
+    //                 }
+    //             }
+    //             hash_map::Entry::Vacant(kv) => {
+    //                 kv.insert(v);
+    //             }
+    //         }
+    //     }
+    //     val.is_empty()
+    // }
 }
 
 impl<K, F> Lattice for MapUnion<BTreeMap<K, F>>
@@ -159,22 +169,32 @@ where
         }
     }
 
-    fn remainder(val: &mut Self::Domain, delta: Self::Domain) -> bool {
-        for (k, v) in delta {
-            match val.entry(k) {
-                btree_map::Entry::Occupied(mut kv) => {
-                    if F::remainder(kv.get_mut(), v) {
-                        // If value is dominated, remove it.
-                        kv.remove_entry();
-                    }
-                }
-                btree_map::Entry::Vacant(kv) => {
-                    kv.insert(v);
-                }
+    fn delta(val: &Self::Domain, delta: &mut Self::Domain) -> bool {
+        delta.retain(|delta_key, delta_val| {
+            match val.get(&delta_key) {
+                Some(val_val) => F::delta(val_val, delta_val),
+                None => true,
             }
-        }
-        val.is_empty()
+        });
+        !delta.is_empty()
     }
+
+    // fn remainder(val: &mut Self::Domain, delta: Self::Domain) -> bool {
+    //     for (k, v) in delta {
+    //         match val.entry(k) {
+    //             btree_map::Entry::Occupied(mut kv) => {
+    //                 if F::remainder(kv.get_mut(), v) {
+    //                     // If value is dominated, remove it.
+    //                     kv.remove_entry();
+    //                 }
+    //             }
+    //             btree_map::Entry::Vacant(kv) => {
+    //                 kv.insert(v);
+    //             }
+    //         }
+    //     }
+    //     val.is_empty()
+    // }
 }
 
 // pub struct MapIntersection<T> {

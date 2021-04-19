@@ -44,7 +44,7 @@ where
     /// For cloneable owned values.
     /// Adds a split off.
     pub async fn add_split(&mut self, mut push: O) -> Option<Vec<<O::Feedback as Future>::Output>> {
-        push.push(&self.state).await;
+        push.push(&self.state).await; // Note: be careful of the order these are added due to race condition. OK for now b/c &mut self is exclusive.
         self.pushes.push(push);
         self.tick().await
     }
