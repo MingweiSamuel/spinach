@@ -11,8 +11,11 @@ use super::{Lattice, Max, Min, Union, MapUnion, RefOptional};
 pub struct Hide<F: Lattice>(F::Domain);
 
 impl<F: Lattice> Hide<F> {
-    pub fn new(val: F::Domain) -> Self {
+    pub fn from_val(val: F::Domain) -> Self {
         Hide(val)
+    }
+    pub fn from_ref<'s>(rf: &'s F::Domain) -> &'s Self {
+        RefCast::ref_cast(rf)
     }
     pub fn reveal(&self) -> &F::Domain {
         &self.0
@@ -28,7 +31,7 @@ where
 {
     type Output = Hide<Min<T::Output>>;
     fn neg(self) -> Self::Output {
-        Hide::new(self.into_reveal().neg())
+        Hide::from_val(self.into_reveal().neg())
     }
 }
 
@@ -38,20 +41,20 @@ where
 {
     type Output = Hide<Max<T::Output>>;
     fn neg(self) -> Self::Output {
-        Hide::new(self.into_reveal().neg())
+        Hide::from_val(self.into_reveal().neg())
     }
 }
 
 impl<K: Eq + Ord, F: Lattice> Hide<MapUnion<BTreeMap<K, F>>> {
     pub fn get(&self, key: &K) -> Hide<RefOptional<'_, F>> {
         let opt = self.reveal().get(key);
-        Hide::new(opt)
+        Hide::from_val(opt)
     }
 }
 impl<K: Eq + Hash, F: Lattice> Hide<MapUnion<HashMap<K, F>>> {
     pub fn get(&self, key: &K) -> Hide<RefOptional<'_, F>> {
         let opt = self.reveal().get(key);
-        Hide::new(opt)
+        Hide::from_val(opt)
     }
 }
 

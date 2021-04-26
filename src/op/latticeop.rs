@@ -1,71 +1,83 @@
+use std::cell::RefCell;
 use std::task::{Context, Poll};
 
-use ref_cast::RefCast;
-
-use crate::flow::*;
-use crate::lattice::{Hide, Lattice};
+use crate::lattice::{Lattice};
 
 use super::*;
+
+pub enum LatticeWrapper<'s, O, F: Lattice>
+where
+    O: Op<'s, Outdomain = F::Domain>,
+{
+    Delta {
+        target: &'s LatticeOp<'s, O, F>,
+        delta: Option<F::Domain>,
+    },
+    Value(&'s LatticeOp<'s, O, F>),
+}
+
+// impl<'s, O: 'static, F: 'static + Lattice> LatticeWrapper<'s, O, F>
+// where
+//     for<'a> O: Op<Outdomain<'a> = F::Domain>,
+// {
+//     pub fn hide(&'s self) -> Option<&'s Hide<F>> {
+//         match self {
+//             Self::Delta { target: _, delta } => {
+//                 match delta {
+//                     Some(delta) => Some(Hide::from_ref(delta)),
+//                     None => None,
+//                 }
+//             }
+//             Self::Value(target) => Some(Hide::from_ref(&*target.state.borrow())),
+//         }
+//     }
+// }
+
+impl<'s, O, F: Lattice> Drop for LatticeWrapper<'s, O, F>
+where
+    O: Op<'s, Outdomain = F::Domain>,
+{
+    fn drop(&mut self) {
+        if let Self::Delta { target, delta } = self {
+            if let Some(delta) = delta.take() {
+                F::merge_in(&mut target.state.borrow_mut(), delta);
+            }
+        }
+    }
+}
 
 /// A state-accumulating lattice op.
 ///
 /// Input is owned `F::Domain` values as [`Df`] dataflow,
 /// output is reference `&F::Domain` values as [`Rx`] reactive.
-pub struct LatticeOp<O: Op, F: 'static + Lattice> {
+pub struct LatticeOp<'s, O: 's, F: 's + Lattice>
+where
+    O: Op<'s, Outdomain = F::Domain>,
+{
     op: O,
-    state: F::Domain,
+    state: RefCell<F::Domain>,
+    _phantom: &'s (),
 }
-impl<O: Op, F: 'static + Lattice> LatticeOp<O, F> {
-    /// Create a LatticeOp with the given BOTTOM value.
-    pub fn new(op: O, bottom: F::Domain) -> Self {
-        Self { op, state: bottom }
-    }
-}
-impl<O: Op, F: 'static + Lattice> LatticeOp<O, F>
+
+impl<'s, O, F: Lattice> Op<'s> for LatticeOp<'s, O, F>
 where
-    F::Domain: Default,
+    O: Op<'s, Outdomain = F::Domain>,
 {
-    /// Create a LatticeOp using the default value as bottom.
-    pub fn new_default(op: O) -> Self {
-        Self {
-            op,
-            state: Default::default(),
+    type Outdomain = LatticeWrapper<'s, O, F>;
+
+    fn poll_value(&'s self, flow_type: FlowType, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
+        match flow_type {
+            FlowType::Delta => {
+                match self.op.poll_value(FlowType::Delta, ctx) {
+                    Poll::Ready(Some(delta)) => Poll::Ready(Some(LatticeWrapper::Delta {
+                        target: self,
+                        delta: Some(delta),
+                    })),
+                    Poll::Ready(None) => Poll::Ready(None),
+                    Poll::Pending => Poll::Pending,
+                }
+            }
+            FlowType::Value => Poll::Ready(Some(LatticeWrapper::Value(&self)))
         }
-    }
-}
-
-impl<O: Op, F: 'static + Lattice> Op for LatticeOp<O, F> {}
-
-impl<O, F: 'static + Lattice> PullOp for LatticeOp<O, F>
-where
-    for<'a> O: PullOp<Outflow = Df, Outdomain<'a> = F::Domain>,
-{
-    type Outflow = Rx;
-    type Outdomain<'p> = &'p Hide<F>;
-
-    fn poll_next<'p>(&'p mut self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain<'p>>> {
-        if let Poll::Ready(Some(item)) = self.op.poll_next(ctx) {
-            F::merge_in(&mut self.state, item);
-        }
-
-        // Note: even if upstream is closed, this remains open.
-        let hide = Hide::ref_cast(&self.state);
-        Poll::Ready(Some(hide))
-    }
-}
-
-impl<O, F: 'static + Lattice> PushOp for LatticeOp<O, F>
-where
-    for<'a> O: PushOp<Inflow = Rx, Indomain<'a> = &'a Hide<F>>,
-{
-    type Inflow = Df;
-    type Indomain<'p> = F::Domain;
-
-    type Feedback = O::Feedback;
-
-    fn push<'p>(&mut self, item: Self::Indomain<'p>) -> Self::Feedback {
-        F::merge_in(&mut self.state, item);
-        let hide = Hide::ref_cast(&self.state);
-        self.op.push(hide)
     }
 }

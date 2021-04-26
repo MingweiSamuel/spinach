@@ -6,7 +6,6 @@
 #![feature(generic_associated_types)]
 #![feature(try_blocks)]
 #![feature(min_type_alias_impl_trait)]
-#![feature(btree_retain)]
 #![feature(external_doc)]
 #![forbid(unsafe_code)]
 
@@ -14,10 +13,8 @@ pub mod func;
 
 pub mod lattice;
 
-pub mod comp;
+// pub mod comp;
 
 pub mod op;
-
-pub mod flow;
 
 pub mod monotonic;
