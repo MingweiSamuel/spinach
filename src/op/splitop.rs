@@ -1,4 +1,5 @@
 use std::cell::{RefCell};
+use std::rc::Rc;
 use std::task::{Context, Poll, Waker};
 
 use super::*;
@@ -8,17 +9,17 @@ where
     O::Outdomain: Clone,
 {
     SplitOpFollow::<'s, O> {
-        split: RefCell::default(),
+        split: Rc::new(RefCell::default()),
     }
 }
 
-pub fn split_lead<'s, O: Op<'s>>(op: O, follow: &'s SplitOpFollow<'s, O>) -> SplitOpLead<'s, O>
+pub fn split_lead<'s, O: Op<'s>>(op: O, follow: &SplitOpFollow<'s, O>) -> SplitOpLead<'s, O>
 where
     O::Outdomain: Clone,
 {
     SplitOpLead::<'s, O> {
         op,
-        split: &follow.split,
+        split: follow.split.clone(),
     }
 }
 
@@ -31,8 +32,6 @@ pub fn test_construction() {
 
     let follow = split_follow();
     let op2 = split_lead(op1, &follow);
-
-    std::mem::drop(op2);
 }
 
 
@@ -41,7 +40,7 @@ where
     O::Outdomain: Clone,
 {
     op: O,
-    split: &'s RefCell<(Option<Waker>, Option<O::Outdomain>)>,
+    split: Rc<RefCell<(Option<Waker>, Option<O::Outdomain>)>>,
 }
 
 impl<'s, O: Op<'s>> Op<'s> for SplitOpLead<'s, O>
@@ -80,7 +79,7 @@ pub struct SplitOpFollow<'s, O: Op<'s>>
 where
     O::Outdomain: Clone,
 {
-    split: RefCell<(Option<Waker>, Option<O::Outdomain>)>,
+    split: Rc<RefCell<(Option<Waker>, Option<O::Outdomain>)>>,
 }
 
 impl<'s, O: Op<'s>> Op<'s> for SplitOpFollow<'s, O>
