@@ -16,6 +16,22 @@ where
     Value(&'s LatticeOp<'s, O, F>),
 }
 
+impl<'s, O, F: Lattice> Clone for LatticeWrapper<'s, O, F>
+where
+    O: Op<'s, Outdomain = F::Domain>,
+    F::Domain: Clone,
+{
+    fn clone(&self) -> Self {
+        match self {
+            Self::Delta { target, delta } => Self::Delta {
+                target: target,
+                delta: delta.clone(),
+            },
+            Self::Value(target) => Self::Value(target),
+        }
+    }
+}
+
 // impl<'s, O: 'static, F: 'static + Lattice> LatticeWrapper<'s, O, F>
 // where
 //     for<'a> O: Op<Outdomain<'a> = F::Domain>,
@@ -57,6 +73,19 @@ where
     op: O,
     state: RefCell<F::Domain>,
     _phantom: &'s (),
+}
+
+impl<'s, O, F: Lattice> LatticeOp<'s, O, F>
+where
+    O: Op<'s, Outdomain = F::Domain>,
+{
+    pub fn new(op: O, bottom: F::Domain) -> Self {
+        Self {
+            op,
+            state: RefCell::new(bottom),
+            _phantom: &(),
+        }
+    }
 }
 
 impl<'s, O, F: Lattice> Op<'s> for LatticeOp<'s, O, F>

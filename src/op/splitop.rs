@@ -24,10 +24,15 @@ where
 
 #[test]
 pub fn test_construction() {
-    let op = NullOp::<String>::new();
+    use crate::lattice::Max;
+
+    let op0 = NullOp::<String>::new();
+    let op1 = LatticeOp::<_, Max<String>>::new(op0, "Hi".to_owned());
 
     let follow = split_follow();
-    let op = split_lead(op, &follow);
+    let op2 = split_lead(op1, &follow);
+
+    std::mem::drop(op2);
 }
 
 
