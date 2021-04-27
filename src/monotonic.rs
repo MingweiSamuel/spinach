@@ -29,7 +29,7 @@ impl<K, T> MapProject<K, T> {
     }
 }
 
-impl<K: Hash + Eq, F: Lattice> MonotonicFilterRefFn for MapProject<K, HashMap<K, F>> {
+impl<K: Hash + Eq + Clone, F: Lattice> MonotonicFilterRefFn for MapProject<K, HashMap<K, F>> {
     type Inmerge = MapUnion<HashMap<K, F>>;
     type Outmerge = F;
 
@@ -37,7 +37,7 @@ impl<K: Hash + Eq, F: Lattice> MonotonicFilterRefFn for MapProject<K, HashMap<K,
         item.get(&self.key)
     }
 }
-impl<K: Ord + Eq, F: Lattice> MonotonicFilterRefFn for MapProject<K, BTreeMap<K, F>> {
+impl<K: Ord + Eq + Clone, F: Lattice> MonotonicFilterRefFn for MapProject<K, BTreeMap<K, F>> {
     type Inmerge = MapUnion<BTreeMap<K, F>>;
     type Outmerge = F;
 

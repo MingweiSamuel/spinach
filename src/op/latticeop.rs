@@ -10,7 +10,7 @@ where
     O: Op<'s, Outdomain = F::Domain>,
 {
     Delta {
-        target: &'s LatticeOp<'s, O, F>,
+        target: Option<&'s LatticeOp<'s, O, F>>,
         delta: Option<F::Domain>,
     },
     Value(&'s LatticeOp<'s, O, F>),
@@ -23,8 +23,8 @@ where
 {
     fn clone(&self) -> Self {
         match self {
-            Self::Delta { target, delta } => Self::Delta {
-                target: target,
+            Self::Delta { target: _, delta } => Self::Delta {
+                target: None, // Only first drop needs to merge.
                 delta: delta.clone(),
             },
             Self::Value(target) => Self::Value(target),
@@ -38,7 +38,7 @@ where
 {
     fn drop(&mut self) {
         if let Self::Delta { target, delta } = self {
-            if let Some(delta) = delta.take() {
+            if let (Some(target), Some(delta)) = (target.take(), delta.take()) {
                 F::merge_in(&mut target.state.borrow_mut(), delta);
             }
         }
@@ -85,7 +85,7 @@ where
     fn poll_delta(&'s self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
         match self.op.poll_delta(ctx) {
             Poll::Ready(Some(delta)) => Poll::Ready(Some(LatticeWrapper::Delta {
-                target: self,
+                target: Some(self),
                 delta: Some(delta),
             })),
             Poll::Ready(None) => Poll::Ready(None),

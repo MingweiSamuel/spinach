@@ -15,7 +15,7 @@ pub struct MapUnion<T> {
 
 impl<K, F> Lattice for MapUnion<HashMap<K, F>>
 where
-    K: Hash + Eq,
+    K: Hash + Eq + Clone,
     F: Lattice,
 {
     type Domain = HashMap<K, <F as Lattice>::Domain>;
@@ -107,7 +107,7 @@ where
 
 impl<K, F> Lattice for MapUnion<BTreeMap<K, F>>
 where
-    K: Ord + Eq,
+    K: Ord + Eq + Clone,
     F: Lattice,
 {
     type Domain = BTreeMap<K, <F as Lattice>::Domain>;

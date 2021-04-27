@@ -25,9 +25,9 @@ impl<F: Lattice> Hide<F> {
     }
 }
 
-impl<T: Ord + Neg> Neg for Hide<Max<T>>
+impl<T: Ord + Neg + Clone> Neg for Hide<Max<T>>
 where
-    T::Output: Ord,
+    T::Output: Ord + Clone,
 {
     type Output = Hide<Min<T::Output>>;
     fn neg(self) -> Self::Output {
@@ -35,9 +35,9 @@ where
     }
 }
 
-impl<T: Ord + Neg> Neg for Hide<Min<T>>
+impl<T: Ord + Neg + Clone> Neg for Hide<Min<T>>
 where
-    T::Output: Ord,
+    T::Output: Ord + Clone,
 {
     type Output = Hide<Max<T::Output>>;
     fn neg(self) -> Self::Output {
@@ -45,20 +45,20 @@ where
     }
 }
 
-impl<K: Eq + Ord, F: Lattice> Hide<MapUnion<BTreeMap<K, F>>> {
+impl<K: Eq + Ord + Clone, F: Lattice> Hide<MapUnion<BTreeMap<K, F>>> {
     pub fn get(&self, key: &K) -> Hide<RefOptional<'_, F>> {
         let opt = self.reveal().get(key);
         Hide::from_val(opt)
     }
 }
-impl<K: Eq + Hash, F: Lattice> Hide<MapUnion<HashMap<K, F>>> {
+impl<K: Eq + Hash + Clone, F: Lattice> Hide<MapUnion<HashMap<K, F>>> {
     pub fn get(&self, key: &K) -> Hide<RefOptional<'_, F>> {
         let opt = self.reveal().get(key);
         Hide::from_val(opt)
     }
 }
 
-impl<T: Eq + Ord> Hide<Union<BTreeSet<T>>> {
+impl<T: Eq + Ord + Clone> Hide<Union<BTreeSet<T>>> {
     pub fn iter(&self) -> btree_set::Iter<'_, T> {
         self.reveal().iter()
     }
@@ -66,7 +66,7 @@ impl<T: Eq + Ord> Hide<Union<BTreeSet<T>>> {
         self.into_reveal().into_iter()
     }
 }
-impl<T: Eq + Hash> Hide<Union<HashSet<T>>> {
+impl<T: Eq + Hash + Clone> Hide<Union<HashSet<T>>> {
     pub fn iter(&self) -> hash_set::Iter<'_, T> {
         self.reveal().iter()
     }

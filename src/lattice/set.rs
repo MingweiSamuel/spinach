@@ -11,7 +11,7 @@ use super::Lattice;
 pub struct Union<T> {
     _phantom: std::marker::PhantomData<T>,
 }
-impl<T: Eq + Hash> Lattice for Union<HashSet<T>> {
+impl<T: Eq + Hash + Clone> Lattice for Union<HashSet<T>> {
     type Domain = HashSet<T>;
 
     fn merge_in(val: &mut HashSet<T>, delta: HashSet<T>) {
@@ -44,7 +44,7 @@ impl<T: Eq + Hash> Lattice for Union<HashSet<T>> {
     //     val.is_empty()
     // }
 }
-impl<T: Eq + Ord> Lattice for Union<BTreeSet<T>> {
+impl<T: Eq + Ord + Clone> Lattice for Union<BTreeSet<T>> {
     type Domain = BTreeSet<T>;
 
     fn merge_in(val: &mut BTreeSet<T>, delta: BTreeSet<T>) {
@@ -82,7 +82,7 @@ impl<T: Eq + Ord> Lattice for Union<BTreeSet<T>> {
 pub struct Intersect<T> {
     _phantom: std::marker::PhantomData<T>,
 }
-impl<T: Eq + Hash> Lattice for Intersect<HashSet<T>> {
+impl<T: Eq + Hash + Clone> Lattice for Intersect<HashSet<T>> {
     type Domain = HashSet<T>;
 
     fn merge_in(val: &mut HashSet<T>, delta: HashSet<T>) {
@@ -109,7 +109,7 @@ impl<T: Eq + Hash> Lattice for Intersect<HashSet<T>> {
         delta.len() > val.len()
     }
 }
-impl<T: Eq + Ord> Lattice for Intersect<BTreeSet<T>> {
+impl<T: Eq + Ord + Clone> Lattice for Intersect<BTreeSet<T>> {
     type Domain = BTreeSet<T>;
 
     fn merge_in(val: &mut BTreeSet<T>, delta: BTreeSet<T>) {

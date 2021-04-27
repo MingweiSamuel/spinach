@@ -4,7 +4,7 @@ use std::cmp::Ordering;
 
 /// Lattice trait, a merge function which defines a lattice.
 pub trait Lattice {
-    type Domain;
+    type Domain: Clone;
 
     fn merge_in(val: &mut Self::Domain, delta: Self::Domain);
 

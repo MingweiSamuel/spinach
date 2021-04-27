@@ -8,7 +8,7 @@ use super::Lattice;
 pub struct Max<T: Ord> {
     _phantom: std::marker::PhantomData<T>,
 }
-impl<T: Ord> Lattice for Max<T> {
+impl<T: Ord + Clone> Lattice for Max<T> {
     type Domain = T;
 
     fn merge_in(val: &mut T, delta: T) {
@@ -30,7 +30,7 @@ impl<T: Ord> Lattice for Max<T> {
 pub struct Min<T: Ord> {
     _phantom: std::marker::PhantomData<T>,
 }
-impl<T: Ord> Lattice for Min<T> {
+impl<T: Ord + Clone> Lattice for Min<T> {
     type Domain = T;
 
     fn merge_in(val: &mut T, delta: T) {
