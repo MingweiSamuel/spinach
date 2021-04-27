@@ -10,5 +10,5 @@ pub trait OpDelta<'s>: Op<'s> {
 }
 
 pub trait OpValue<'s>: Op<'s> {
-    fn poll_value(&'s self, ctx: &mut Context<'_>) -> Poll<Self::Outdomain>;
+    fn get_value(&'s self) -> Self::Outdomain;
 }

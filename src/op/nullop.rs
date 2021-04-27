@@ -24,8 +24,8 @@ impl<'s, T: 's> OpDelta<'s> for NullOp<T> {
     }
 }
 
-impl<'s, T: 's> OpValue<'s> for NullOp<T> {
-    fn poll_value(&'s self, _ctx: &mut Context<'_>) -> Poll<Self::Outdomain> {
-        Poll::Pending
-    }
-}
+// impl<'s, T: 's> OpValue<'s> for NullOp<T> {
+//     fn poll_value(&'s self) -> Self::Outdomain {
+//         Poll::Pending
+//     }
+// }

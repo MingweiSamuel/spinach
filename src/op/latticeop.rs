@@ -74,7 +74,7 @@ impl<'s, O, F: Lattice> OpValue<'s> for LatticeOp<'s, O, F>
 where
     O: Op<'s, Outdomain = F::Domain>,
 {
-    fn poll_value(&'s self, _ctx: &mut Context<'_>) -> Poll<Self::Outdomain> {
-        Poll::Ready(LatticeWrapper::Value(&self.state))
+    fn get_value(&'s self) -> Self::Outdomain {
+        LatticeWrapper::Value(&self.state)
     }
 }
