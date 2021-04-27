@@ -105,14 +105,6 @@
 <span id="102">102</span>
 <span id="103">103</span>
 <span id="104">104</span>
-<span id="105">105</span>
-<span id="106">106</span>
-<span id="107">107</span>
-<span id="108">108</span>
-<span id="109">109</span>
-<span id="110">110</span>
-<span id="111">111</span>
-<span id="112">112</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std::cell::RefCell</span>;
 <span class="kw">use</span> <span class="ident">std::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
@@ -147,23 +139,6 @@
         }
     }
 }
-
-<span class="comment">// impl&lt;&#39;s, O: &#39;static, F: &#39;static + Lattice&gt; LatticeWrapper&lt;&#39;s, O, F&gt;</span>
-<span class="comment">// where</span>
-<span class="comment">//     for&lt;&#39;a&gt; O: Op&lt;Outdomain&lt;&#39;a&gt; = F::Domain&gt;,</span>
-<span class="comment">// {</span>
-<span class="comment">//     pub fn hide(&amp;&#39;s self) -&gt; Option&lt;&amp;&#39;s Hide&lt;F&gt;&gt; {</span>
-<span class="comment">//         match self {</span>
-<span class="comment">//             Self::Delta { target: _, delta } =&gt; {</span>
-<span class="comment">//                 match delta {</span>
-<span class="comment">//                     Some(delta) =&gt; Some(Hide::from_ref(delta)),</span>
-<span class="comment">//                     None =&gt; None,</span>
-<span class="comment">//                 }</span>
-<span class="comment">//             }</span>
-<span class="comment">//             Self::Value(target) =&gt; Some(Hide::from_ref(&amp;*target.state.borrow())),</span>
-<span class="comment">//         }</span>
-<span class="comment">//     }</span>
-<span class="comment">// }</span>
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span>, <span class="ident">O</span>, <span class="ident">F</span>: <span class="ident">Lattice</span><span class="op">&gt;</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">LatticeWrapper</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span>, <span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span>
 <span class="kw">where</span>
@@ -209,21 +184,30 @@
     <span class="ident">O</span>: <span class="ident">Op</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span>, <span class="ident">Outdomain</span> <span class="op">=</span> <span class="ident">F::Domain</span><span class="op">&gt;</span>,
 {
     <span class="kw">type</span> <span class="ident">Outdomain</span> <span class="op">=</span> <span class="ident">LatticeWrapper</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span>, <span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span>;
+}
 
-    <span class="kw">fn</span> <span class="ident">poll_value</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;s</span> <span class="self">self</span>, <span class="ident">flow_type</span>: <span class="ident">FlowType</span>, <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="ident">::Outdomain</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="ident">flow_type</span> {
-            <span class="ident">FlowType::Delta</span> <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="kw">match</span> <span class="self">self</span>.<span class="ident">op</span>.<span class="ident">poll_value</span>(<span class="ident">FlowType::Delta</span>, <span class="ident">ctx</span>) {
-                    <span class="ident">Poll::Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">delta</span>)) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Poll::Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">LatticeWrapper::Delta</span> {
-                        <span class="ident">target</span>: <span class="self">self</span>,
-                        <span class="ident">delta</span>: <span class="prelude-val">Some</span>(<span class="ident">delta</span>),
-                    })),
-                    <span class="ident">Poll::Ready</span>(<span class="prelude-val">None</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Poll::Ready</span>(<span class="prelude-val">None</span>),
-                    <span class="ident">Poll::Pending</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Poll::Pending</span>,
-                }
-            }
-            <span class="ident">FlowType::Value</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Poll::Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">LatticeWrapper::Value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>)))
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span>, <span class="ident">O</span>, <span class="ident">F</span>: <span class="ident">Lattice</span><span class="op">&gt;</span> <span class="ident">OpDelta</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">LatticeOp</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span>, <span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="ident">O</span>: <span class="ident">OpDelta</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span>, <span class="ident">Outdomain</span> <span class="op">=</span> <span class="ident">F::Domain</span><span class="op">&gt;</span>,
+{
+    <span class="kw">fn</span> <span class="ident">poll_delta</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;s</span> <span class="self">self</span>, <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="ident">::Outdomain</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">op</span>.<span class="ident">poll_delta</span>(<span class="ident">ctx</span>) {
+            <span class="ident">Poll::Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">delta</span>)) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Poll::Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">LatticeWrapper::Delta</span> {
+                <span class="ident">target</span>: <span class="self">self</span>,
+                <span class="ident">delta</span>: <span class="prelude-val">Some</span>(<span class="ident">delta</span>),
+            })),
+            <span class="ident">Poll::Ready</span>(<span class="prelude-val">None</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Poll::Ready</span>(<span class="prelude-val">None</span>),
+            <span class="ident">Poll::Pending</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Poll::Pending</span>,
         }
+    }
+}
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span>, <span class="ident">O</span>, <span class="ident">F</span>: <span class="ident">Lattice</span><span class="op">&gt;</span> <span class="ident">OpValue</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">LatticeOp</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span>, <span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="ident">O</span>: <span class="ident">Op</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span>, <span class="ident">Outdomain</span> <span class="op">=</span> <span class="ident">F::Domain</span><span class="op">&gt;</span>,
+{
+    <span class="kw">fn</span> <span class="ident">poll_value</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;s</span> <span class="self">self</span>, <span class="ident">_ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="self">Self</span><span class="ident">::Outdomain</span><span class="op">&gt;</span> {
+        <span class="ident">Poll::Ready</span>(<span class="ident">LatticeWrapper::Value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>))
     }
 }
 </pre></div>

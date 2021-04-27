@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["FlowType",""],["LatticeWrapper",""]],"fn":[["split_follow",""],["split_lead",""]],"struct":[["LatticeOp","A state-accumulating lattice op."],["NullOp",""],["SplitOpFollow",""],["SplitOpLead",""]],"trait":[["Op","A pull-based op, specifying an Outflow domain/flow type."]]});
+initSidebarItems({"enum":[["LatticeWrapper",""]],"fn":[["split_follow",""],["split_lead",""]],"struct":[["LatticeOp","A state-accumulating lattice op."],["NullOp",""],["SplitOpFollow",""],["SplitOpLead",""]],"trait":[["Op",""],["OpDelta",""],["OpValue",""]]});
