@@ -32,6 +32,8 @@ pub fn test_construction() {
 
     let follow = split_follow();
     let op2 = split_lead(op1, &follow);
+
+    let _ = op2;
 }
 
 
@@ -48,15 +50,16 @@ where
     O::Outdomain: Clone,
 {
     type Outdomain = O::Outdomain;
+}
 
-    fn poll_value(&'s self, flow_type: FlowType, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
-        if let FlowType::Value = flow_type {
-            todo!();
-        }
-
+impl<'s, O: OpDelta<'s>> OpDelta<'s> for SplitOpLead<'s, O>
+where
+    O::Outdomain: Clone,
+{
+    fn poll_delta(&'s self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
         let mut borrow = self.split.borrow_mut();
         if borrow.1.is_none() {
-            match self.op.poll_value(flow_type, ctx) {
+            match self.op.poll_delta(ctx) {
                 Poll::Ready(Some(delta)) => {
                     let old_opt = borrow.1.replace(delta.clone());
                     assert!(old_opt.is_none());
@@ -87,12 +90,13 @@ where
     O::Outdomain: Clone,
 {
     type Outdomain = O::Outdomain;
+}
 
-    fn poll_value(&'s self, flow_type: FlowType, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
-        if let FlowType::Value = flow_type {
-            todo!();
-        }
-
+impl<'s, O: OpDelta<'s>> OpDelta<'s> for SplitOpFollow<'s, O>
+where
+    O::Outdomain: Clone,
+{
+    fn poll_delta(&'s self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
         let mut borrow = self.split.borrow_mut();
         borrow.0.replace(ctx.waker().clone());
         match borrow.1.take() {

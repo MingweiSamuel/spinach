@@ -32,23 +32,6 @@ where
     }
 }
 
-// impl<'s, O: 'static, F: 'static + Lattice> LatticeWrapper<'s, O, F>
-// where
-//     for<'a> O: Op<Outdomain<'a> = F::Domain>,
-// {
-//     pub fn hide(&'s self) -> Option<&'s Hide<F>> {
-//         match self {
-//             Self::Delta { target: _, delta } => {
-//                 match delta {
-//                     Some(delta) => Some(Hide::from_ref(delta)),
-//                     None => None,
-//                 }
-//             }
-//             Self::Value(target) => Some(Hide::from_ref(&*target.state.borrow())),
-//         }
-//     }
-// }
-
 impl<'s, O, F: Lattice> Drop for LatticeWrapper<'s, O, F>
 where
     O: Op<'s, Outdomain = F::Domain>,
@@ -93,20 +76,29 @@ where
     O: Op<'s, Outdomain = F::Domain>,
 {
     type Outdomain = LatticeWrapper<'s, O, F>;
+}
 
-    fn poll_value(&'s self, flow_type: FlowType, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
-        match flow_type {
-            FlowType::Delta => {
-                match self.op.poll_value(FlowType::Delta, ctx) {
-                    Poll::Ready(Some(delta)) => Poll::Ready(Some(LatticeWrapper::Delta {
-                        target: self,
-                        delta: Some(delta),
-                    })),
-                    Poll::Ready(None) => Poll::Ready(None),
-                    Poll::Pending => Poll::Pending,
-                }
-            }
-            FlowType::Value => Poll::Ready(Some(LatticeWrapper::Value(&self)))
+impl<'s, O, F: Lattice> OpDelta<'s> for LatticeOp<'s, O, F>
+where
+    O: OpDelta<'s, Outdomain = F::Domain>,
+{
+    fn poll_delta(&'s self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
+        match self.op.poll_delta(ctx) {
+            Poll::Ready(Some(delta)) => Poll::Ready(Some(LatticeWrapper::Delta {
+                target: self,
+                delta: Some(delta),
+            })),
+            Poll::Ready(None) => Poll::Ready(None),
+            Poll::Pending => Poll::Pending,
         }
+    }
+}
+
+impl<'s, O, F: Lattice> OpValue<'s> for LatticeOp<'s, O, F>
+where
+    O: Op<'s, Outdomain = F::Domain>,
+{
+    fn poll_value(&'s self, _ctx: &mut Context<'_>) -> Poll<Self::Outdomain> {
+        Poll::Ready(LatticeWrapper::Value(&self))
     }
 }

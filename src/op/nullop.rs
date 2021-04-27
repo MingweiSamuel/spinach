@@ -16,8 +16,16 @@ impl<T> NullOp<T> {
 
 impl<'s, T: 's> Op<'s> for NullOp<T> {
     type Outdomain = T;
+}
 
-    fn poll_value(&'s self, _flow_type: FlowType, _ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
+impl<'s, T: 's> OpDelta<'s> for NullOp<T> {
+    fn poll_delta(&'s self, _ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
+        Poll::Pending
+    }
+}
+
+impl<'s, T: 's> OpValue<'s> for NullOp<T> {
+    fn poll_value(&'s self, _ctx: &mut Context<'_>) -> Poll<Self::Outdomain> {
         Poll::Pending
     }
 }
