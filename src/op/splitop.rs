@@ -42,7 +42,7 @@ where
     O::Outdomain: Clone,
 {
     op: O,
-    split: Rc<RefCell<(Option<Waker>, Option<O::Outdomain>)>>,
+    split: Rc<RefCell<FollowInternal<O::Outdomain>>>,
 }
 
 impl<'s, O: Op<'s>> Op<'s> for SplitOpLead<'s, O>
@@ -58,12 +58,12 @@ where
 {
     fn poll_delta(&'s self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
         let mut borrow = self.split.borrow_mut();
-        if borrow.1.is_none() {
+        if borrow.delta.is_none() {
             match self.op.poll_delta(ctx) {
                 Poll::Ready(Some(delta)) => {
-                    let old_opt = borrow.1.replace(delta.clone());
+                    let old_opt = borrow.delta.replace(delta.clone());
                     assert!(old_opt.is_none());
-                    if let Some(waker) = borrow.0.take() {
+                    if let Some(waker) = borrow.waker.take() {
                         waker.wake();
                     }
                     Poll::Ready(Some(delta))
@@ -78,11 +78,45 @@ where
     }
 }
 
+impl<'s, O: OpValue<'s>> OpValue<'s> for SplitOpLead<'s, O>
+where
+    O::Outdomain: Clone,
+{
+    fn poll_value(&'s self, ctx: &mut Context<'_>) -> Poll<Self::Outdomain> {
+        match self.op.poll_value(ctx) {
+            Poll::Ready(value) => {
+                let mut borrow = self.split.borrow_mut();
+                // TODO! PROBLEM: This only gets set once this is called, so the follow end will block! BAD!
+                // We want to set it on construction instead!
+                borrow.value.replace(value.clone());
+                Poll::Ready(value)
+            },
+            Poll::Pending => Poll::Pending,
+        }
+    }
+}
+
+struct FollowInternal<T> {
+    waker: Option<Waker>,
+    delta: Option<T>,
+    value: Option<T>,
+}
+
+impl<T> Default for FollowInternal<T> {
+    fn default() -> Self {
+        Self {
+            waker: None,
+            delta: None,
+            value: None,
+        }
+    }
+}
+
 pub struct SplitOpFollow<'s, O: Op<'s>>
 where
     O::Outdomain: Clone,
 {
-    split: Rc<RefCell<(Option<Waker>, Option<O::Outdomain>)>>,
+    split: Rc<RefCell<FollowInternal<O::Outdomain>>>,
 }
 
 impl<'s, O: Op<'s>> Op<'s> for SplitOpFollow<'s, O>
@@ -98,9 +132,23 @@ where
 {
     fn poll_delta(&'s self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
         let mut borrow = self.split.borrow_mut();
-        borrow.0.replace(ctx.waker().clone());
-        match borrow.1.take() {
+        borrow.waker.replace(ctx.waker().clone());
+        match borrow.delta.take() {
             Some(val) => Poll::Ready(Some(val)),
+            None => Poll::Pending,
+        }
+    }
+}
+
+impl<'s, O: OpValue<'s>> OpValue<'s> for SplitOpFollow<'s, O>
+where
+    O::Outdomain: Clone,
+{
+    fn poll_value(&'s self, ctx: &mut Context<'_>) -> Poll<Self::Outdomain> {
+        let mut borrow = self.split.borrow_mut();
+        borrow.waker.replace(ctx.waker().clone());
+        match &borrow.value { // No take.
+            Some(val) => Poll::Ready(val.clone()), // Clone.
             None => Poll::Pending,
         }
     }

@@ -5,42 +5,16 @@ use crate::lattice::{Lattice};
 
 use super::*;
 
-pub enum LatticeWrapper<'s, O, F: Lattice>
-where
-    O: Op<'s, Outdomain = F::Domain>,
-{
-    Delta {
-        target: Option<&'s LatticeOp<'s, O, F>>,
-        delta: Option<F::Domain>,
-    },
-    Value(&'s LatticeOp<'s, O, F>),
+pub enum LatticeWrapper<'s, F: Lattice> {
+    Delta(F::Domain),
+    Value(&'s RefCell<F::Domain>),
 }
 
-impl<'s, O, F: Lattice> Clone for LatticeWrapper<'s, O, F>
-where
-    O: Op<'s, Outdomain = F::Domain>,
-    F::Domain: Clone,
-{
+impl<'s, F: Lattice> Clone for LatticeWrapper<'s, F> {
     fn clone(&self) -> Self {
         match self {
-            Self::Delta { target: _, delta } => Self::Delta {
-                target: None, // Only first drop needs to merge.
-                delta: delta.clone(),
-            },
-            Self::Value(target) => Self::Value(target),
-        }
-    }
-}
-
-impl<'s, O, F: Lattice> Drop for LatticeWrapper<'s, O, F>
-where
-    O: Op<'s, Outdomain = F::Domain>,
-{
-    fn drop(&mut self) {
-        if let Self::Delta { target, delta } = self {
-            if let (Some(target), Some(delta)) = (target.take(), delta.take()) {
-                F::merge_in(&mut target.state.borrow_mut(), delta);
-            }
+            Self::Delta(delta) => Self::Delta(delta.clone()),
+            Self::Value(rcell) => Self::Value(rcell),
         }
     }
 }
@@ -75,7 +49,7 @@ impl<'s, O, F: Lattice> Op<'s> for LatticeOp<'s, O, F>
 where
     O: Op<'s, Outdomain = F::Domain>,
 {
-    type Outdomain = LatticeWrapper<'s, O, F>;
+    type Outdomain = LatticeWrapper<'s, F>;
 }
 
 impl<'s, O, F: Lattice> OpDelta<'s> for LatticeOp<'s, O, F>
@@ -84,10 +58,10 @@ where
 {
     fn poll_delta(&'s self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
         match self.op.poll_delta(ctx) {
-            Poll::Ready(Some(delta)) => Poll::Ready(Some(LatticeWrapper::Delta {
-                target: Some(self),
-                delta: Some(delta),
-            })),
+            Poll::Ready(Some(delta)) => {
+                F::merge_in(&mut self.state.borrow_mut(), delta.clone());
+                Poll::Ready(Some(LatticeWrapper::Delta(delta)))
+            }
             Poll::Ready(None) => Poll::Ready(None),
             Poll::Pending => Poll::Pending,
         }
@@ -99,6 +73,6 @@ where
     O: Op<'s, Outdomain = F::Domain>,
 {
     fn poll_value(&'s self, _ctx: &mut Context<'_>) -> Poll<Self::Outdomain> {
-        Poll::Ready(LatticeWrapper::Value(&self))
+        Poll::Ready(LatticeWrapper::Value(&self.state))
     }
 }
