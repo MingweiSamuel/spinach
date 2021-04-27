@@ -6,6 +6,9 @@ pub use optrait::*;
 mod nullop;
 pub use nullop::*;
 
+mod cloneop;
+pub use cloneop::*;
+
 mod latticeop;
 pub use latticeop::*;
 

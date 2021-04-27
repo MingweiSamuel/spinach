@@ -9,7 +9,8 @@ use super::*;
 pub fn test_construction() {
     use crate::lattice::Max;
 
-    let op0 = NullOp::<String>::new();
+    let op0 = NullRefOp::<String>::new();
+    let op0 = CloneOp::<_>::new(op0);
     let op1 = LatticeOp::<_, Max<String>>::new(op0, "Hi".to_owned());
     let op2 = SplitOp::new(op1);
     

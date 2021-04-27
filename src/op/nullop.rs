@@ -24,8 +24,24 @@ impl<'s, T: 's> OpDelta<'s> for NullOp<T> {
     }
 }
 
-// impl<'s, T: 's> OpValue<'s> for NullOp<T> {
-//     fn poll_value(&'s self) -> Self::Outdomain {
-//         Poll::Pending
-//     }
-// }
+pub struct NullRefOp<T: ?Sized> {
+    _phantom: std::marker::PhantomData<T>,
+}
+
+impl<T: ?Sized> NullRefOp<T> {
+    pub fn new() -> Self {
+        Self {
+            _phantom: std::marker::PhantomData,
+        }
+    }
+}
+
+impl<'s, T: 's + ?Sized> Op<'s> for NullRefOp<T> {
+    type Outdomain = &'s T;
+}
+
+impl<'s, T: 's + ?Sized> OpDelta<'s> for NullRefOp<T> {
+    fn poll_delta(&'s self, _ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
+        Poll::Pending
+    }
+}
