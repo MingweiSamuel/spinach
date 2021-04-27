@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["LatticeWrapper",""]],"fn":[["split_follow",""],["split_lead",""]],"struct":[["LatticeOp","A state-accumulating lattice op."],["NullOp",""],["SplitOpFollow",""],["SplitOpLead",""]],"trait":[["Op",""],["OpDelta",""],["OpValue",""]]});
+initSidebarItems({"enum":[["LatticeWrapper",""]],"struct":[["LatticeOp","A state-accumulating lattice op."],["NullOp",""],["SplitOp",""],["SplitOpFollow",""]],"trait":[["Op",""],["OpDelta",""],["OpValue",""]]});
