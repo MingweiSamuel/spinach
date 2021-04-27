@@ -58,8 +58,10 @@ where
 {
     fn poll_delta(&'s self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
         match self.op.poll_delta(ctx) {
-            Poll::Ready(Some(delta)) => {
-                F::merge_in(&mut self.state.borrow_mut(), delta.clone());
+            Poll::Ready(Some(mut delta)) => {
+                let state = &mut self.state.borrow_mut();
+                F::delta(state, &mut delta); // These can be combined into one? :)
+                F::merge_in(state, delta.clone());
                 Poll::Ready(Some(LatticeWrapper::Delta(delta)))
             }
             Poll::Ready(None) => Poll::Ready(None),
