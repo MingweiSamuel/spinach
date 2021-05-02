@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Max",""],["Min",""],["SetUnion",""]],"mod":[["set",""]],"struct":[["LatticePoint",""]],"trait":[["Lattice",""],["Merge",""],["Repr",""],["ReprCollection",""],["ReprOrd",""]]});
