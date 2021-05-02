@@ -102,7 +102,7 @@ pub trait ReprOrd<L: Lattice, Other>: Repr<L> {
 
 pub trait ReprCollection<L: Lattice, T>: Repr<L> {
     type MinDelta: Repr<L>;
-    fn min_delta(self, existing: &Self) -> Option<Self::MinDelta>;
+    fn min_delta<R: Repr<L> + Set<T>>(self, existing: &R) -> Option<Self::MinDelta>;
 
     type Map<U>: Repr<L>;
     fn map<U>(self, f: impl Fn(T) -> U) -> Self::Map<U>;
@@ -136,8 +136,9 @@ pub enum Max {}
 impl Lattice for Max {}
 
 impl<T: Ord> Repr<Max> for T {}
-impl<T: Ord> Merge<Max, T> for T {
-    fn merge(&mut self, value: T) {
+impl<T: Ord, U: Into<T>> Merge<Max, U> for T {
+    fn merge(&mut self, value: U) {
+        let value = value.into();
         if value > *self { *self = value; }
     }
 }
@@ -148,8 +149,9 @@ pub enum Min {}
 impl Lattice for Min {}
 
 impl<T: Ord> Repr<Min> for T {}
-impl<T: Ord> Merge<Min, T> for T {
-    fn merge(&mut self, value: T) {
+impl<T: Ord, U: Into<T>> Merge<Min, U> for T {
+    fn merge(&mut self, value: U) {
+        let value = value.into();
         if value < *self { *self = value; }
     }
 }
@@ -190,7 +192,7 @@ impl<T: Eq + Ord> ReprOrd<SetUnion, BTreeSet<T>> for BTreeSet<T> {
 
 impl<T: Eq + Hash> ReprCollection<SetUnion, T> for HashSet<T> {
     type MinDelta = HashSet<T>;
-    fn min_delta(mut self, existing: &Self) -> Option<Self::MinDelta> {
+    fn min_delta<R: Repr<SetUnion> + Set<T>>(mut self, existing: &R) -> Option<Self::MinDelta> {
         self.retain(|x| !existing.contains(x));
         if self.is_empty() { None } else { Some(self) }
     }
@@ -208,7 +210,7 @@ impl<T: Eq + Hash> ReprCollection<SetUnion, T> for HashSet<T> {
 
 impl<T: Eq + Ord> ReprCollection<SetUnion, T> for BTreeSet<T> {
     type MinDelta = BTreeSet<T>;
-    fn min_delta(mut self, existing: &Self) -> Option<Self::MinDelta> {
+    fn min_delta<R: Repr<SetUnion> + Set<T>>(mut self, existing: &R) -> Option<Self::MinDelta> {
         self.retain(|x| !existing.contains(x));
         if self.is_empty() { None } else { Some(self) }
     }
@@ -226,7 +228,7 @@ impl<T: Eq + Ord> ReprCollection<SetUnion, T> for BTreeSet<T> {
 
 impl<T: Eq> ReprCollection<SetUnion, T> for Vec<T> {
     type MinDelta = Vec<T>;
-    fn min_delta(mut self, existing: &Self) -> Option<Self::MinDelta> {
+    fn min_delta<R: Repr<SetUnion> + Set<T>>(mut self, existing: &R) -> Option<Self::MinDelta> {
         self.retain(|x| !existing.contains(x));
         if self.is_empty() { None } else { Some(self) }
     }
@@ -244,8 +246,17 @@ impl<T: Eq> ReprCollection<SetUnion, T> for Vec<T> {
 
 impl<T: Eq, const N: usize> ReprCollection<SetUnion, T> for Array<T, N> {
     type MinDelta = MaskedArray<T, N>;
-    fn min_delta(self, _existing: &Self) -> Option<Self::MinDelta> {
-        todo!(); // !!TODO!!
+    fn min_delta<R: Repr<SetUnion> + Set<T>>(self, existing: &R) -> Option<Self::MinDelta> {
+        let mut any_new = false;
+        let out = MaskedArray {
+            mask: self.0.each_ref().map(|item| {
+                let is_new = !existing.contains(item);
+                any_new |= is_new;
+                is_new
+            }),
+            vals: self.0,
+        };
+        if any_new { Some(out) } else { None }
     }
 
     type Map<U> = Array<U, N>;
@@ -321,4 +332,21 @@ pub fn test_setunion_merges() {
     assert_not_impl_any!(MaskedArray<u32, 8>: Merge<SetUnion, Option<u32>>);
     assert_not_impl_any!(MaskedArray<u32, 8>: Merge<SetUnion, Array<u32, 8>>);
     assert_not_impl_any!(MaskedArray<u32, 8>: Merge<SetUnion, MaskedArray<u32, 8>>);
+}
+
+#[test]
+pub fn test_ord_merges() {
+    use static_assertions::{assert_impl_all, assert_not_impl_any};
+
+    assert_impl_all!(u32: Merge<Max, u32>);
+    assert_not_impl_any!(u32: Merge<Max, u64>);
+
+    assert_impl_all!(u64: Merge<Max, u32>);
+    assert_impl_all!(u64: Merge<Max, u64>);
+
+    assert_impl_all!(u32: Merge<Min, u32>);
+    assert_not_impl_any!(u32: Merge<Min, u64>);
+
+    assert_impl_all!(u64: Merge<Min, u32>);
+    assert_impl_all!(u64: Merge<Min, u64>);
 }
