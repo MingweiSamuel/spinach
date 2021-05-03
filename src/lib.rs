@@ -21,6 +21,8 @@ pub mod lattice;
 
 pub mod lattice2;
 
+pub mod lattice3;
+
 // pub mod comp;
 
 pub mod op;
