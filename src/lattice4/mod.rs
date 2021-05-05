@@ -2,184 +2,6 @@ use std::cmp::Ordering;
 
 use collections::*;
 
-
-
-pub trait Lattice {}
-
-pub trait Repr<L: Lattice> {}
-
-pub trait LatticeAndRepr {
-    type Lattice: Lattice;
-    type Repr: Repr<Self::Lattice>;
-}
-
-pub trait Merge<L: Lattice, R: Repr<L>>: Repr<L> {
-    fn merge(&mut self, delta: R);
-}
-
-pub trait Convert<L: Lattice, R: Repr<L>>: Repr<L> {
-    fn convert(self) -> R;
-}
-
-
-pub struct LP<L: Lattice, R: Repr<L>> {
-    value: R,
-    _phantom: std::marker::PhantomData<L>,
-}
-
-impl<L: Lattice, R: Repr<L>> LP<L, R> {
-    pub fn merge<S: Repr<L>>(&mut self, delta: LP<L, S>)
-    where
-        R: Merge<L, S>,
-    {
-        // REVEAL!
-        self.value.merge(delta.value);
-    }
-}
-
-pub mod setunion {
-    use super::*;
-
-    use std::collections::{BTreeSet, HashSet};
-    use std::hash::Hash;
-    use std::iter::FromIterator;
-
-    pub struct SetUnion<T> {
-        _phantom: std::marker::PhantomData<T>,
-    }
-    impl<T> Lattice for SetUnion<T> {}
-
-    pub struct SetUnionBoth<T, R: Repr<SetUnion<T>>> {
-        _phantom: std::marker::PhantomData<(T, R)>,
-    }
-    impl<T, R: Repr<SetUnion<T>>> LatticeAndRepr for SetUnionBoth<T, R> {
-        type Lattice = SetUnion<T>;
-        type Repr = R;
-    }
-
-    impl<T: Eq + Hash> Repr<SetUnion<T>> for HashSet<T> {}
-    impl<T: Eq + Ord> Repr<SetUnion<T>> for BTreeSet<T> {}
-    impl<T> Repr<SetUnion<T>> for Vec<T> {}
-    impl<T> Repr<SetUnion<T>> for Single<T> {}
-    impl<T> Repr<SetUnion<T>> for Option<T> {}
-    impl<T, const N: usize> Repr<SetUnion<T>> for Array<T, N> {}
-    impl<T, const N: usize> Repr<SetUnion<T>> for MaskedArray<T, N> {}
-    
-
-    impl<T, Target: Repr<SetUnion<T>> + Extend<T>, Delta: Repr<SetUnion<T>> + IntoIterator<Item = T>> Merge<SetUnion<T>, Delta> for Target {
-        fn merge(&mut self, delta: Delta) {
-            self.extend(delta);
-        }
-    }
-
-    impl<T, Original: Repr<SetUnion<T>>  + IntoIterator<Item = T>, Target: Repr<SetUnion<T>> + FromIterator<T>> Convert<SetUnion<T>, Target> for Original {
-        fn convert(self) -> Target {
-            self.into_iter().collect()
-        }
-    }
-
-    fn __assert_merges() {
-        use static_assertions::{assert_impl_all, assert_not_impl_any};
-
-        assert_impl_all!(HashSet<u32>:
-            Merge<SetUnion<u32>, HashSet<u32>>,
-            Merge<SetUnion<u32>, BTreeSet<u32>>,
-            Merge<SetUnion<u32>, Vec<u32>>,
-            Merge<SetUnion<u32>, Single<u32>>,
-            Merge<SetUnion<u32>, Option<u32>>,
-            Merge<SetUnion<u32>, Array<u32, 8>>,
-            Merge<SetUnion<u32>, MaskedArray<u32, 8>>,
-        );
-
-        assert_impl_all!(BTreeSet<u32>:
-            Merge<SetUnion<u32>, HashSet<u32>>,
-            Merge<SetUnion<u32>, BTreeSet<u32>>,
-            Merge<SetUnion<u32>, Vec<u32>>,
-            Merge<SetUnion<u32>, Single<u32>>,
-            Merge<SetUnion<u32>, Option<u32>>,
-            Merge<SetUnion<u32>, Array<u32, 8>>,
-            Merge<SetUnion<u32>, MaskedArray<u32, 8>>,
-        );
-
-        assert_impl_all!(Vec<u32>:
-            Merge<SetUnion<u32>, HashSet<u32>>,
-            Merge<SetUnion<u32>, BTreeSet<u32>>,
-            Merge<SetUnion<u32>, Vec<u32>>,
-            Merge<SetUnion<u32>, Single<u32>>,
-            Merge<SetUnion<u32>, Option<u32>>,
-            Merge<SetUnion<u32>, Array<u32, 8>>,
-            Merge<SetUnion<u32>, MaskedArray<u32, 8>>,
-        );
-
-        assert_not_impl_any!(Single<u32>:
-            Merge<SetUnion<u32>, HashSet<u32>>,
-            Merge<SetUnion<u32>, BTreeSet<u32>>,
-            Merge<SetUnion<u32>, Vec<u32>>,
-            Merge<SetUnion<u32>, Single<u32>>,
-            Merge<SetUnion<u32>, Option<u32>>,
-            Merge<SetUnion<u32>, Array<u32, 8>>,
-            Merge<SetUnion<u32>, MaskedArray<u32, 8>>,
-        );
-
-        assert_not_impl_any!(Option<u32>:
-            Merge<SetUnion<u32>, HashSet<u32>>,
-            Merge<SetUnion<u32>, BTreeSet<u32>>,
-            Merge<SetUnion<u32>, Vec<u32>>,
-            Merge<SetUnion<u32>, Single<u32>>,
-            Merge<SetUnion<u32>, Option<u32>>,
-            Merge<SetUnion<u32>, Array<u32, 8>>,
-            Merge<SetUnion<u32>, MaskedArray<u32, 8>>,
-        );
-
-        assert_not_impl_any!(Array<u32, 8>:
-            Merge<SetUnion<u32>, HashSet<u32>>,
-            Merge<SetUnion<u32>, BTreeSet<u32>>,
-            Merge<SetUnion<u32>, Vec<u32>>,
-            Merge<SetUnion<u32>, Single<u32>>,
-            Merge<SetUnion<u32>, Option<u32>>,
-            Merge<SetUnion<u32>, Array<u32, 8>>,
-            Merge<SetUnion<u32>, MaskedArray<u32, 8>>,
-        );
-
-        assert_not_impl_any!(MaskedArray<u32, 8>:
-            Merge<SetUnion<u32>, HashSet<u32>>,
-            Merge<SetUnion<u32>, BTreeSet<u32>>,
-            Merge<SetUnion<u32>, Vec<u32>>,
-            Merge<SetUnion<u32>, Single<u32>>,
-            Merge<SetUnion<u32>, Option<u32>>,
-            Merge<SetUnion<u32>, Array<u32, 8>>,
-            Merge<SetUnion<u32>, MaskedArray<u32, 8>>,
-        );
-    }
-}
-
-pub mod mapunion {
-    use super::*;
-
-    use std::collections::{BTreeMap, HashMap};
-
-    pub struct MapUnion<K, L: Lattice> {
-        _phantom: std::marker::PhantomData<(K, L)>,
-    }
-
-    pub struct MapUnionBoth<K, R: Repr<MapUnion<K, B::Lattice>>, B: LatticeAndRepr> {
-        _phantom: std::marker::PhantomData<(K, R, B)>,
-    }
-    impl<K, R: Repr<MapUnion<K, B::Lattice>>, B: LatticeAndRepr> LatticeAndRepr for MapUnionBoth<K, R, B> {
-        type Lattice = MapUnion<K, B::Lattice>;
-        type Repr = R;
-    }
-
-    impl<K, L: Lattice> Lattice for MapUnion<K, L> {}
-
-    impl<K, L: Lattice, R: Repr<L>> Repr<MapUnion<K, L>> for HashMap<K, R> {}
-    impl<K, L: Lattice, R: Repr<L>> Repr<MapUnion<K, L>> for BTreeMap<K, R> {}
-    impl<K, L: Lattice, R: Repr<L>> Repr<MapUnion<K, L>> for Vec<(K, R)> {}
-    impl<K, L: Lattice, R: Repr<L>> Repr<MapUnion<K, L>> for Single<(K, R)> {}
-    impl<K, L: Lattice, R: Repr<L>> Repr<MapUnion<K, L>> for Option<(K, R)> {}
-    impl<K, L: Lattice, R: Repr<L>, const N: usize> Repr<MapUnion<K, L>> for Array<(K, R), N> {}
-    impl<K, L: Lattice, R: Repr<L>, const N: usize> Repr<MapUnion<K, L>> for MaskedArray<(K, R), N> {}
-
     // type MyVectorClockVersionedHashMap =
     //     MapUnion<Key,
     //         DominatingPair<
@@ -199,30 +21,279 @@ pub mod mapunion {
     //             SetUnion<Vec<String>>,
     //         >
     //     >>;
-    
 
 
-    // impl<K, L: Lattice, Target, Delta, TargetRepr, DeltaRepr> Merge<MapUnion<K, L>, Delta> for Target
+
+pub trait Lattice {}
+
+pub trait LatticeBind {
+    type Lattice: Lattice;
+    type Repr;
+}
+
+pub trait Merge<L: Lattice, Delta: LatticeBind<Lattice = L>>: LatticeBind<Lattice = L> {
+    fn merge(this: &mut Self::Repr, delta: Delta::Repr);
+}
+
+pub trait Convert<L: Lattice, Target: LatticeBind<Lattice = L>>: LatticeBind<Lattice = L> {
+    fn convert(this: Self::Repr) -> Target::Repr;
+}
+
+pub struct LP<B: LatticeBind> {
+    value: B::Repr,
+}
+
+// impl<L: Lattice, R: Repr<L>> LP<L, R> {
+//     pub fn merge<S: Repr<L>>(&mut self, delta: LP<L, S>)
+//     where
+//         R: Merge<L, S>,
+//     {
+//         // REVEAL!
+//         self.value.merge(delta.value);
+//     }
+// }
+
+pub mod setunion {
+    use super::*;
+
+    use std::collections::{BTreeSet, HashSet};
+    use std::hash::Hash;
+    use std::iter::FromIterator;
+
+    pub struct SetUnion<T> {
+        _phantom: std::marker::PhantomData<T>,
+    }
+    impl<T> Lattice for SetUnion<T> {}
+
+    pub struct SetUnionBind<X> {
+        _phantom: std::marker::PhantomData<X>,
+    }
+
+    impl<T: Eq + Hash> LatticeBind for SetUnionBind<HashSet<T>> {
+        type Lattice = SetUnion<T>;
+        type Repr = HashSet<T>;
+    }
+    impl<T: Eq + Ord> LatticeBind for SetUnionBind<BTreeSet<T>> {
+        type Lattice = SetUnion<T>;
+        type Repr = BTreeSet<T>;
+    }
+    impl<T: Eq> LatticeBind for SetUnionBind<Vec<T>> {
+        type Lattice = SetUnion<T>;
+        type Repr = Vec<T>;
+    }
+    impl<T: Eq> LatticeBind for SetUnionBind<Single<T>> {
+        type Lattice = SetUnion<T>;
+        type Repr = Single<T>;
+    }
+    impl<T: Eq> LatticeBind for SetUnionBind<Option<T>> {
+        type Lattice = SetUnion<T>;
+        type Repr = Option<T>;
+    }
+    impl<T: Eq, const N: usize> LatticeBind for SetUnionBind<Array<T, N>> {
+        type Lattice = SetUnion<T>;
+        type Repr = Array<T, N>;
+    }
+    impl<T: Eq, const N: usize> LatticeBind for SetUnionBind<MaskedArray<T, N>> {
+        type Lattice = SetUnion<T>;
+        type Repr = MaskedArray<T, N>;
+    }
+
+    // impl<T, This: LatticeBind<Lattice = SetUnion<T>>, Delta: LatticeBind<Lattice = SetUnion<T>>> Merge<SetUnion<T>, Delta> for This
     // where
-    //     Target: Repr<MapUnion<K, L>> + Extend<(K, TargetRepr)> + Dict<K, TargetRepr>,
-    //     Delta: Repr<MapUnion<K, L>> + IntoIterator<Item = (K, DeltaRepr)>,
-    //     TargetRepr: Repr<L> + Merge<L, DeltaRepr>,
-    //     DeltaRepr: Repr<L> + Convert<L, TargetRepr>,
+    //     This::Repr: Extend<T>,
+    //     Delta::Repr: IntoIterator<Item = T>,
     // {
-    //     fn merge(&mut self, delta: Delta) {
-    //         let iter = delta.into_iter()
-    //             .filter_map(|(k, v)| {
-    //                 match self.get_mut(&k) {
-    //                     Some(target_val) => {
-    //                         target_val.merge(v);
-    //                         None
-    //                     }
-    //                     None => Some((k, v.convert()))
-    //                 }
-    //             });
-    //         self.extend(iter);
+    //     fn merge(this: &mut Self::Repr, delta: Delta::Repr) {
+    //         this.extend(delta)
     //     }
     // }
+
+    impl<T, X, Y> Merge<SetUnion<T>, SetUnionBind<Y>> for SetUnionBind<X>
+    where
+        Self: LatticeBind<Lattice = SetUnion<T>>,
+        SetUnionBind<Y>: LatticeBind<Lattice = SetUnion<T>>,
+        Self::Repr: Extend<T>,
+        <SetUnionBind<Y> as LatticeBind>::Repr: IntoIterator<Item = T>,
+    {
+        fn merge(this: &mut Self::Repr, delta: <SetUnionBind<Y> as LatticeBind>::Repr) {
+            this.extend(delta)
+        }
+    }
+
+    impl<T, X, Y> Convert<SetUnion<T>, SetUnionBind<Y>> for SetUnionBind<X>
+    where
+        Self: LatticeBind<Lattice = SetUnion<T>>,
+        SetUnionBind<Y>: LatticeBind<Lattice = SetUnion<T>>,
+        Self::Repr: IntoIterator<Item = T>,
+        <SetUnionBind<Y> as LatticeBind>::Repr: FromIterator<T>,
+    {
+        fn convert(this: Self::Repr) -> <SetUnionBind<Y> as LatticeBind>::Repr {
+            this.into_iter().collect()
+        }
+    }
+
+    // impl<T, This: LatticeBind<Lattice = SetUnion<T>>, Target: LatticeBind<Lattice = SetUnion<T>>> Convert<Target> for This
+    // where
+    //     This::Repr: IntoIterator<Item = T>,
+    //     Target::Repr: FromIterator<T>,
+    // {
+    //     fn convert(this: Self::Repr) -> Target::Repr {
+    //         this.into_iter().collect()
+    //     }
+    // }
+
+    // impl<T, Original: Repr<SetUnion<T>> + IntoIterator<Item = T>, Target: Repr<SetUnion<T>> + FromIterator<T>> Convert<SetUnion<T>, Target> for Original {
+    //     fn convert(self) -> Target {
+    //         self.into_iter().collect()
+    //     }
+    // }
+
+    // fn __assert_merges() {
+    //     use static_assertions::{assert_impl_all, assert_not_impl_any};
+
+    //     assert_impl_all!(HashSet<u32>:
+    //         Merge<SetUnion<u32>, HashSet<u32>>,
+    //         Merge<SetUnion<u32>, BTreeSet<u32>>,
+    //         Merge<SetUnion<u32>, Vec<u32>>,
+    //         Merge<SetUnion<u32>, Single<u32>>,
+    //         Merge<SetUnion<u32>, Option<u32>>,
+    //         Merge<SetUnion<u32>, Array<u32, 8>>,
+    //         Merge<SetUnion<u32>, MaskedArray<u32, 8>>,
+    //     );
+
+    //     assert_impl_all!(BTreeSet<u32>:
+    //         Merge<SetUnion<u32>, HashSet<u32>>,
+    //         Merge<SetUnion<u32>, BTreeSet<u32>>,
+    //         Merge<SetUnion<u32>, Vec<u32>>,
+    //         Merge<SetUnion<u32>, Single<u32>>,
+    //         Merge<SetUnion<u32>, Option<u32>>,
+    //         Merge<SetUnion<u32>, Array<u32, 8>>,
+    //         Merge<SetUnion<u32>, MaskedArray<u32, 8>>,
+    //     );
+
+    //     assert_impl_all!(Vec<u32>:
+    //         Merge<SetUnion<u32>, HashSet<u32>>,
+    //         Merge<SetUnion<u32>, BTreeSet<u32>>,
+    //         Merge<SetUnion<u32>, Vec<u32>>,
+    //         Merge<SetUnion<u32>, Single<u32>>,
+    //         Merge<SetUnion<u32>, Option<u32>>,
+    //         Merge<SetUnion<u32>, Array<u32, 8>>,
+    //         Merge<SetUnion<u32>, MaskedArray<u32, 8>>,
+    //     );
+
+    //     assert_not_impl_any!(Single<u32>:
+    //         Merge<SetUnion<u32>, HashSet<u32>>,
+    //         Merge<SetUnion<u32>, BTreeSet<u32>>,
+    //         Merge<SetUnion<u32>, Vec<u32>>,
+    //         Merge<SetUnion<u32>, Single<u32>>,
+    //         Merge<SetUnion<u32>, Option<u32>>,
+    //         Merge<SetUnion<u32>, Array<u32, 8>>,
+    //         Merge<SetUnion<u32>, MaskedArray<u32, 8>>,
+    //     );
+
+    //     assert_not_impl_any!(Option<u32>:
+    //         Merge<SetUnion<u32>, HashSet<u32>>,
+    //         Merge<SetUnion<u32>, BTreeSet<u32>>,
+    //         Merge<SetUnion<u32>, Vec<u32>>,
+    //         Merge<SetUnion<u32>, Single<u32>>,
+    //         Merge<SetUnion<u32>, Option<u32>>,
+    //         Merge<SetUnion<u32>, Array<u32, 8>>,
+    //         Merge<SetUnion<u32>, MaskedArray<u32, 8>>,
+    //     );
+
+    //     assert_not_impl_any!(Array<u32, 8>:
+    //         Merge<SetUnion<u32>, HashSet<u32>>,
+    //         Merge<SetUnion<u32>, BTreeSet<u32>>,
+    //         Merge<SetUnion<u32>, Vec<u32>>,
+    //         Merge<SetUnion<u32>, Single<u32>>,
+    //         Merge<SetUnion<u32>, Option<u32>>,
+    //         Merge<SetUnion<u32>, Array<u32, 8>>,
+    //         Merge<SetUnion<u32>, MaskedArray<u32, 8>>,
+    //     );
+
+    //     assert_not_impl_any!(MaskedArray<u32, 8>:
+    //         Merge<SetUnion<u32>, HashSet<u32>>,
+    //         Merge<SetUnion<u32>, BTreeSet<u32>>,
+    //         Merge<SetUnion<u32>, Vec<u32>>,
+    //         Merge<SetUnion<u32>, Single<u32>>,
+    //         Merge<SetUnion<u32>, Option<u32>>,
+    //         Merge<SetUnion<u32>, Array<u32, 8>>,
+    //         Merge<SetUnion<u32>, MaskedArray<u32, 8>>,
+    //     );
+    // }
+}
+
+pub mod mapunion {
+    use super::*;
+
+    use std::collections::{BTreeMap, HashMap};
+    use std::hash::Hash;
+
+    pub struct MapUnion<K, L: Lattice> {
+        _phantom: std::marker::PhantomData<(K, L)>,
+    }
+    impl<K, L: Lattice> Lattice for MapUnion<K, L> {}
+
+    pub struct MapUnionBind<T, B: LatticeBind> {
+        _phantom: std::marker::PhantomData<(T, B)>,
+    }
+
+    impl<K: Eq + Hash, B: LatticeBind> LatticeBind for MapUnionBind<HashMap<K, B>, B> {
+        type Lattice = MapUnion<K, B::Lattice>;
+        type Repr = HashMap<K, B::Repr>;
+    }
+    impl<K: Eq + Ord, B: LatticeBind> LatticeBind for MapUnionBind<BTreeMap<K, B>, B> {
+        type Lattice = MapUnion<K, B::Lattice>;
+        type Repr = BTreeMap<K, B::Repr>;
+    }
+    impl<K: Eq, B: LatticeBind> LatticeBind for MapUnionBind<Vec<(K, B)>, B> {
+        type Lattice = MapUnion<K, B::Lattice>;
+        type Repr = Vec<(K, B::Repr)>;
+    }
+    impl<K: Eq, B: LatticeBind> LatticeBind for MapUnionBind<Single<(K, B)>, B> {
+        type Lattice = MapUnion<K, B::Lattice>;
+        type Repr = Single<(K, B::Repr)>;
+    }
+    impl<K: Eq, B: LatticeBind> LatticeBind for MapUnionBind<Option<(K, B)>, B> {
+        type Lattice = MapUnion<K, B::Lattice>;
+        type Repr = Option<(K, B::Repr)>;
+    }
+    impl<K: Eq, B: LatticeBind, const N: usize> LatticeBind for MapUnionBind<Array<(K, B), N>, B> {
+        type Lattice = MapUnion<K, B::Lattice>;
+        type Repr = Array<(K, B::Repr), N>;
+    }
+    impl<K: Eq, B: LatticeBind, const N: usize> LatticeBind for MapUnionBind<MaskedArray<(K, B), N>, B> {
+        type Lattice = MapUnion<K, B::Lattice>;
+        type Repr = MaskedArray<(K, B::Repr), N>;
+    }
+
+    impl<K, X, Y, B: LatticeBind<Lattice = L>, C: LatticeBind<Lattice = L>, L: Lattice> Merge<MapUnion<K, L>, MapUnionBind<Y, C>> for MapUnionBind<X, B>
+    where
+        Self: LatticeBind<Lattice = MapUnion<K, B::Lattice>>,
+        MapUnionBind<Y, C>: LatticeBind<Lattice = MapUnion<K, C::Lattice>>,
+        Self::Repr: Extend<(K, B::Repr)> + Dict<K, B::Repr>,
+        <MapUnionBind<Y, C> as LatticeBind>::Repr: IntoIterator<Item = (K, C::Repr)>,
+        B: Merge<L, C>,
+        C: Convert<L, B>,
+    {
+        fn merge(this: &mut Self::Repr, delta: <MapUnionBind<Y, C> as LatticeBind>::Repr) {
+            let iter: Vec<(K, B::Repr)> = delta.into_iter()
+                .filter_map(|(k, v)| {
+                    match this.get_mut(&k) {
+                        Some(target_val) => {
+                            <B as Merge<L, C>>::merge(target_val, v);
+                            None
+                        }
+                        None => {
+                            let val: B::Repr = <C as Convert<L, B>>::convert(v);
+                            Some((k, val))
+                        }
+                    }
+                })
+                .collect();
+            this.extend(iter);
+        }
+    }
 
     // fn __assert_merges() {
     //     use static_assertions::{assert_impl_all, assert_not_impl_any};
@@ -310,67 +381,72 @@ pub mod collections {
     use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
     use std::hash::Hash;
 
-    fn bool_to_option<'a>(value: bool) -> Option<&'a ()> {
-        if value { Some(&()) } else { None }
-    }
+    // fn bool_to_option<'a>(value: bool) -> Option<&'a ()> {
+    //     if value { Some(&()) } else { None }
+    // }
 
-    fn bool_to_option_mut<'a>(value: bool) -> Option<&'a mut ()> {
-        if value { Some(&mut ()) } else { None }
-    }
+    // fn bool_to_option_mut<'a>(value: bool) -> Option<&'a mut ()> {
+    //     if value {
+    //         Some(&mut ())
+    //     } 
+    //     else {
+    //         None
+    //     }
+    // }
 
     pub trait Dict<K, V> {
         fn get(&self, key: &K) -> Option<&V>;
         fn get_mut(&mut self, key: &K) -> Option<&mut V>;
     }
 
-    impl<K: Eq + Hash> Dict<K, ()> for HashSet<K> {
-        fn get(&self, key: &K) -> Option<&()> {
-            bool_to_option(self.contains(key))
-        }
-        fn get_mut(&mut self, key: &K) -> Option<&mut ()> {
-            bool_to_option_mut(self.contains(key))
-        }
-    }
+    // impl<K: Eq + Hash> Dict<K, ()> for HashSet<K> {
+    //     fn get(&self, key: &K) -> Option<&()> {
+    //         bool_to_option(self.contains(key))
+    //     }
+    //     fn get_mut(&mut self, key: &K) -> Option<&mut ()> {
+    //         bool_to_option_mut(self.contains(key))
+    //     }
+    // }
 
-    impl<K: Eq + Ord> Dict<K, ()> for BTreeSet<K> {
-        fn get(&self, key: &K) -> Option<&()> {
-            bool_to_option(self.contains(key))
-        }
-        fn get_mut(&mut self, key: &K) -> Option<&mut ()> {
-            bool_to_option_mut(self.contains(key))
-        }
-    }
+    // impl<K: Eq + Ord> Dict<K, ()> for BTreeSet<K> {
+    //     fn get(&self, key: &K) -> Option<&()> {
+    //         bool_to_option(self.contains(key))
+    //     }
+    //     fn get_mut(&mut self, key: &K) -> Option<&mut ()> {
+    //         bool_to_option_mut(self.contains(key))
+    //     }
+    // }
 
-    impl<K: Eq> Dict<K, ()> for Vec<K> {
-        fn get(&self, key: &K) -> Option<&()> {
-            bool_to_option(<[K]>::contains(self, key))
-        }
-        fn get_mut(&mut self, key: &K) -> Option<&mut ()> {
-            bool_to_option_mut(self.contains(key))
-        }
-    }
+    // impl<K: Eq> Dict<K, ()> for Vec<K> {
+    //     fn get(&self, key: &K) -> Option<&()> {
+    //         bool_to_option(<[K]>::contains(self, key))
+    //     }
+    //     fn get_mut(&mut self, key: &K) -> Option<&mut ()> {
+    //         bool_to_option_mut(self.contains(key))
+    //     }
+    // }
 
-    impl<K: Eq, const N: usize> Dict<K, ()> for Array<K, N> {
-        fn get(&self, key: &K) -> Option<&()> {
-            bool_to_option(self.0.contains(key))
-        }
-        fn get_mut(&mut self, key: &K) -> Option<&mut ()> {
-            bool_to_option_mut(self.0.contains(key))
-        }
-    }
+    // impl<K: Eq, const N: usize> Dict<K, ()> for Array<K, N> {
+    //     fn get(&self, key: &K) -> Option<&()> {
+    //         bool_to_option(self.0.contains(key))
+    //     }
+    //     fn get_mut(&mut self, key: &K) -> Option<&mut ()> {
+    //         bool_to_option_mut(self.0.contains(key))
+    //     }
+    // }
 
-    impl<K: Eq, const N: usize> Dict<K, ()> for MaskedArray<K, N> {
-        fn get(&self, key: &K) -> Option<&()> {
-            bool_to_option(self.mask.iter()
-                    .zip(self.vals.iter())
-                    .any(|(mask, item)| *mask && item == key))
-        }
-        fn get_mut(&mut self, key: &K) -> Option<&mut ()> {
-            bool_to_option_mut(self.mask.iter()
-                    .zip(self.vals.iter())
-                    .any(|(mask, item)| *mask && item == key))
-        }
-    }
+    // impl<K: Eq, const N: usize> Dict<K, ()> for MaskedArray<K, N> {
+    //     fn get(&self, key: &K) -> Option<&()> {
+    //         bool_to_option(self.mask.iter()
+    //                 .zip(self.vals.iter())
+    //                 .any(|(mask, item)| *mask && item == key))
+    //     }
+    //     fn get_mut(&mut self, key: &K) -> Option<&mut ()> {
+    //         bool_to_option_mut(self.mask.iter()
+    //                 .zip(self.vals.iter())
+    //                 .any(|(mask, item)| *mask && item == key))
+    //     }
+    // }
 
 
 
