@@ -132,95 +132,49 @@ pub mod setunion {
         }
     }
 
-    // impl<T, This: LatticeBind<Lattice = SetUnion<T>>, Target: LatticeBind<Lattice = SetUnion<T>>> Convert<Target> for This
-    // where
-    //     This::Repr: IntoIterator<Item = T>,
-    //     Target::Repr: FromIterator<T>,
-    // {
-    //     fn convert(this: Self::Repr) -> Target::Repr {
-    //         this.into_iter().collect()
-    //     }
-    // }
+    fn __assert_merges() {
+        use static_assertions::{assert_impl_all, assert_not_impl_any};
 
-    // impl<T, Original: Repr<SetUnion<T>> + IntoIterator<Item = T>, Target: Repr<SetUnion<T>> + FromIterator<T>> Convert<SetUnion<T>, Target> for Original {
-    //     fn convert(self) -> Target {
-    //         self.into_iter().collect()
-    //     }
-    // }
+        assert_impl_all!(SetUnionBind<HashSet<u32>>:
+            Merge<SetUnion<u32>, SetUnionBind<HashSet<u32>>>,
+            Merge<SetUnion<u32>, SetUnionBind<BTreeSet<u32>>>,
+            Merge<SetUnion<u32>, SetUnionBind<Vec<u32>>>,
+            Merge<SetUnion<u32>, SetUnionBind<Single<u32>>>,
+            Merge<SetUnion<u32>, SetUnionBind<Option<u32>>>,
+            Merge<SetUnion<u32>, SetUnionBind<Array<u32, 8>>>,
+            Merge<SetUnion<u32>, SetUnionBind<MaskedArray<u32, 8>>>,
+        );
 
-    // fn __assert_merges() {
-    //     use static_assertions::{assert_impl_all, assert_not_impl_any};
+        assert_impl_all!(SetUnionBind<BTreeSet<u32>>:
+            Merge<SetUnion<u32>, SetUnionBind<HashSet<u32>>>,
+            Merge<SetUnion<u32>, SetUnionBind<BTreeSet<u32>>>,
+            Merge<SetUnion<u32>, SetUnionBind<Vec<u32>>>,
+            Merge<SetUnion<u32>, SetUnionBind<Single<u32>>>,
+            Merge<SetUnion<u32>, SetUnionBind<Option<u32>>>,
+            Merge<SetUnion<u32>, SetUnionBind<Array<u32, 8>>>,
+            Merge<SetUnion<u32>, SetUnionBind<MaskedArray<u32, 8>>>,
+        );
 
-    //     assert_impl_all!(HashSet<u32>:
-    //         Merge<SetUnion<u32>, HashSet<u32>>,
-    //         Merge<SetUnion<u32>, BTreeSet<u32>>,
-    //         Merge<SetUnion<u32>, Vec<u32>>,
-    //         Merge<SetUnion<u32>, Single<u32>>,
-    //         Merge<SetUnion<u32>, Option<u32>>,
-    //         Merge<SetUnion<u32>, Array<u32, 8>>,
-    //         Merge<SetUnion<u32>, MaskedArray<u32, 8>>,
-    //     );
+        assert_impl_all!(SetUnionBind<Vec<u32>>:
+            Merge<SetUnion<u32>, SetUnionBind<HashSet<u32>>>,
+            Merge<SetUnion<u32>, SetUnionBind<BTreeSet<u32>>>,
+            Merge<SetUnion<u32>, SetUnionBind<Vec<u32>>>,
+            Merge<SetUnion<u32>, SetUnionBind<Single<u32>>>,
+            Merge<SetUnion<u32>, SetUnionBind<Option<u32>>>,
+            Merge<SetUnion<u32>, SetUnionBind<Array<u32, 8>>>,
+            Merge<SetUnion<u32>, SetUnionBind<MaskedArray<u32, 8>>>,
+        );
 
-    //     assert_impl_all!(BTreeSet<u32>:
-    //         Merge<SetUnion<u32>, HashSet<u32>>,
-    //         Merge<SetUnion<u32>, BTreeSet<u32>>,
-    //         Merge<SetUnion<u32>, Vec<u32>>,
-    //         Merge<SetUnion<u32>, Single<u32>>,
-    //         Merge<SetUnion<u32>, Option<u32>>,
-    //         Merge<SetUnion<u32>, Array<u32, 8>>,
-    //         Merge<SetUnion<u32>, MaskedArray<u32, 8>>,
-    //     );
-
-    //     assert_impl_all!(Vec<u32>:
-    //         Merge<SetUnion<u32>, HashSet<u32>>,
-    //         Merge<SetUnion<u32>, BTreeSet<u32>>,
-    //         Merge<SetUnion<u32>, Vec<u32>>,
-    //         Merge<SetUnion<u32>, Single<u32>>,
-    //         Merge<SetUnion<u32>, Option<u32>>,
-    //         Merge<SetUnion<u32>, Array<u32, 8>>,
-    //         Merge<SetUnion<u32>, MaskedArray<u32, 8>>,
-    //     );
-
-    //     assert_not_impl_any!(Single<u32>:
-    //         Merge<SetUnion<u32>, HashSet<u32>>,
-    //         Merge<SetUnion<u32>, BTreeSet<u32>>,
-    //         Merge<SetUnion<u32>, Vec<u32>>,
-    //         Merge<SetUnion<u32>, Single<u32>>,
-    //         Merge<SetUnion<u32>, Option<u32>>,
-    //         Merge<SetUnion<u32>, Array<u32, 8>>,
-    //         Merge<SetUnion<u32>, MaskedArray<u32, 8>>,
-    //     );
-
-    //     assert_not_impl_any!(Option<u32>:
-    //         Merge<SetUnion<u32>, HashSet<u32>>,
-    //         Merge<SetUnion<u32>, BTreeSet<u32>>,
-    //         Merge<SetUnion<u32>, Vec<u32>>,
-    //         Merge<SetUnion<u32>, Single<u32>>,
-    //         Merge<SetUnion<u32>, Option<u32>>,
-    //         Merge<SetUnion<u32>, Array<u32, 8>>,
-    //         Merge<SetUnion<u32>, MaskedArray<u32, 8>>,
-    //     );
-
-    //     assert_not_impl_any!(Array<u32, 8>:
-    //         Merge<SetUnion<u32>, HashSet<u32>>,
-    //         Merge<SetUnion<u32>, BTreeSet<u32>>,
-    //         Merge<SetUnion<u32>, Vec<u32>>,
-    //         Merge<SetUnion<u32>, Single<u32>>,
-    //         Merge<SetUnion<u32>, Option<u32>>,
-    //         Merge<SetUnion<u32>, Array<u32, 8>>,
-    //         Merge<SetUnion<u32>, MaskedArray<u32, 8>>,
-    //     );
-
-    //     assert_not_impl_any!(MaskedArray<u32, 8>:
-    //         Merge<SetUnion<u32>, HashSet<u32>>,
-    //         Merge<SetUnion<u32>, BTreeSet<u32>>,
-    //         Merge<SetUnion<u32>, Vec<u32>>,
-    //         Merge<SetUnion<u32>, Single<u32>>,
-    //         Merge<SetUnion<u32>, Option<u32>>,
-    //         Merge<SetUnion<u32>, Array<u32, 8>>,
-    //         Merge<SetUnion<u32>, MaskedArray<u32, 8>>,
-    //     );
-    // }
+        assert_not_impl_any!(Single<Vec<u32>>:
+            Merge<SetUnion<u32>, SetUnionBind<HashSet<u32>>>,
+            Merge<SetUnion<u32>, SetUnionBind<BTreeSet<u32>>>,
+            Merge<SetUnion<u32>, SetUnionBind<Vec<u32>>>,
+            Merge<SetUnion<u32>, SetUnionBind<Single<u32>>>,
+            Merge<SetUnion<u32>, SetUnionBind<Option<u32>>>,
+            Merge<SetUnion<u32>, SetUnionBind<Array<u32, 8>>>,
+            Merge<SetUnion<u32>, SetUnionBind<MaskedArray<u32, 8>>>,
+        );
+    }
 }
 
 pub mod mapunion {
@@ -295,79 +249,21 @@ pub mod mapunion {
         }
     }
 
-    // fn __assert_merges() {
-    //     use static_assertions::{assert_impl_all, assert_not_impl_any};
+    fn __assert_merges() {
+        use std::collections::{BTreeSet, HashSet};
+        use static_assertions::{assert_impl_all, assert_not_impl_any};
+        
+        use super::setunion::{SetUnionBind, SetUnion};
 
-    //     assert_impl_all!(HashSet<u32>:
-    //         Merge<MapUnion<String, HashSet<u32>>, HashSet<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, BTreeSet<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, Vec<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, Single<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, Option<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, Array<u32, 8>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, MaskedArray<u32, 8>>,
-    //     );
+        type HashMapHashSet = MapUnionBind<HashMap<String, SetUnionBind<HashSet<u32>>>, SetUnionBind<HashSet<u32>>>;
+        type HashMapArraySet = MapUnionBind<HashMap<String, SetUnionBind<Array<u32, 8>>>, SetUnionBind<Array<u32, 8>>>;
 
-    //     assert_impl_all!(BTreeSet<u32>:
-    //         Merge<MapUnion<String, HashSet<u32>>, HashSet<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, BTreeSet<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, Vec<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, Single<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, Option<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, Array<u32, 8>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, MaskedArray<u32, 8>>,
-    //     );
+        assert_impl_all!(HashMapHashSet: Merge<MapUnion<String, SetUnion<u32>>, HashMapHashSet>);
+        assert_impl_all!(HashMapHashSet: Merge<MapUnion<String, SetUnion<u32>>, HashMapArraySet>);
 
-    //     assert_impl_all!(Vec<u32>:
-    //         Merge<MapUnion<String, HashSet<u32>>, HashSet<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, BTreeSet<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, Vec<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, Single<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, Option<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, Array<u32, 8>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, MaskedArray<u32, 8>>,
-    //     );
-
-    //     assert_not_impl_any!(Single<u32>:
-    //         Merge<MapUnion<String, HashSet<u32>>, HashSet<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, BTreeSet<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, Vec<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, Single<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, Option<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, Array<u32, 8>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, MaskedArray<u32, 8>>,
-    //     );
-
-    //     assert_not_impl_any!(Option<u32>:
-    //         Merge<MapUnion<String, HashSet<u32>>, HashSet<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, BTreeSet<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, Vec<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, Single<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, Option<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, Array<u32, 8>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, MaskedArray<u32, 8>>,
-    //     );
-
-    //     assert_not_impl_any!(Array<u32, 8>:
-    //         Merge<MapUnion<String, HashSet<u32>>, HashSet<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, BTreeSet<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, Vec<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, Single<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, Option<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, Array<u32, 8>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, MaskedArray<u32, 8>>,
-    //     );
-
-    //     assert_not_impl_any!(MaskedArray<u32, 8>:
-    //         Merge<MapUnion<String, HashSet<u32>>, HashSet<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, BTreeSet<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, Vec<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, Single<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, Option<u32>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, Array<u32, 8>>,
-    //         Merge<MapUnion<String, HashSet<u32>>, MaskedArray<u32, 8>>,
-    //     );
-    // }
+        assert_not_impl_any!(HashMapArraySet: Merge<MapUnion<String, SetUnion<u32>>, HashMapHashSet>);
+        assert_not_impl_any!(HashMapArraySet: Merge<MapUnion<String, SetUnion<u32>>, HashMapArraySet>);
+    }
 }
 
 
