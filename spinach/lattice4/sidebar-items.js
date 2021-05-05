@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["collections",""],["mapunion",""],["setunion",""]],"struct":[["LP",""]],"trait":[["Convert",""],["Lattice",""],["LatticeAndRepr",""],["Merge",""],["Repr",""]]});
+initSidebarItems({"mod":[["collections",""],["mapunion",""],["setunion",""]],"struct":[["LP",""]],"trait":[["Convert",""],["Lattice",""],["LatticeBind",""],["Merge",""]]});

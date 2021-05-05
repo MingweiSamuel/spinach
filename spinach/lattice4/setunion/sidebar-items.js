@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["SetUnion",""],["SetUnionBoth",""]]});
+initSidebarItems({"struct":[["SetUnion",""],["SetUnionBind",""]]});
