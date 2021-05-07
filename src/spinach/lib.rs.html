@@ -29,8 +29,6 @@
 <span id="26">26</span>
 <span id="27">27</span>
 <span id="28">28</span>
-<span id="29">29</span>
-<span id="30">30</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="attribute">#![<span class="ident">allow</span>(<span class="ident">clippy::redundant_closure</span>)]</span>
 <span class="attribute">#![<span class="ident">allow</span>(<span class="ident">incomplete_features</span>)]</span>
@@ -49,19 +47,17 @@
 
 <span class="attribute">#![<span class="ident">forbid</span>(<span class="ident">unsafe_code</span>)]</span>
 
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">collections</span>;
+
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">func</span>;
+
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">tag</span>;
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">lattice</span>;
 
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">lattice2</span>;
+<span class="comment">// pub mod op;</span>
 
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">lattice4</span>;
-
-<span class="comment">// pub mod comp;</span>
-
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">op</span>;
-
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">monotonic</span>;
+<span class="comment">// pub mod monotonic;</span>
 </pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="spinach" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>

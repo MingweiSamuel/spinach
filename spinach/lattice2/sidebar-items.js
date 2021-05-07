@@ -1,1 +1,0 @@
-initSidebarItems({"mod":[["mapunion",""],["ord",""],["set",""],["setunion",""]],"struct":[["LatticePoint",""]],"trait":[["Lattice",""],["Merge",""],["Repr",""],["ReprCollection",""],["ReprOrd",""]]});
