@@ -1,56 +1,19 @@
 use collections::*;
 
-    // type MyVectorClockVersionedHashMap =
-    //     MapUnion<Key,
-    //         DominatingPair<
-    //             MapUnion<Id, Max<usize>>,
-    //             Max<String>
-    //         >
-    //     >
-    // ;
-
-    // type MyVCRepr = HashMap<Key, (HashMap<Id, usize>, String)>
-
-    // type MyBoth =
-    //     MapUnion<HashMap<
-    //         Key,
-    //         DominatingPair<
-    //             MapUnion<HashMap<Id, Max<usize, usize>>,
-    //             SetUnion<Vec<String>>,
-    //         >
-    //     >>;
-
-
-
 pub trait Lattice {}
 
-pub trait LatticeBind {
+pub trait LatticeRepr {
     type Lattice: Lattice;
     type Repr;
 }
 
-// Inelegant!
-pub trait Merge<L: Lattice, Delta: LatticeBind<Lattice = L>>: LatticeBind<Lattice = L> {
+pub trait Merge<Delta: LatticeRepr>: LatticeRepr<Lattice = Delta::Lattice> {
     fn merge(this: &mut Self::Repr, delta: Delta::Repr);
 }
 
-pub trait Convert<L: Lattice, Target: LatticeBind<Lattice = L>>: LatticeBind<Lattice = L> {
+pub trait Convert<Target: LatticeRepr<Lattice = Self::Lattice>>: LatticeRepr {
     fn convert(this: Self::Repr) -> Target::Repr;
 }
-
-pub struct LP<B: LatticeBind> {
-    value: B::Repr,
-}
-
-// impl<L: Lattice, R: Repr<L>> LP<L, R> {
-//     pub fn merge<S: Repr<L>>(&mut self, delta: LP<L, S>)
-//     where
-//         R: Merge<L, S>,
-//     {
-//         // REVEAL!
-//         self.value.merge(delta.value);
-//     }
-// }
 
 pub mod setunion {
     use super::*;
@@ -68,36 +31,36 @@ pub mod setunion {
         _phantom: std::marker::PhantomData<X>,
     }
 
-    impl<T: Eq + Hash> LatticeBind for SetUnionBind<HashSet<T>> {
+    impl<T: Eq + Hash> LatticeRepr for SetUnionBind<HashSet<T>> {
         type Lattice = SetUnion<T>;
         type Repr = HashSet<T>;
     }
-    impl<T: Eq + Ord> LatticeBind for SetUnionBind<BTreeSet<T>> {
+    impl<T: Eq + Ord> LatticeRepr for SetUnionBind<BTreeSet<T>> {
         type Lattice = SetUnion<T>;
         type Repr = BTreeSet<T>;
     }
-    impl<T: Eq> LatticeBind for SetUnionBind<Vec<T>> {
+    impl<T: Eq> LatticeRepr for SetUnionBind<Vec<T>> {
         type Lattice = SetUnion<T>;
         type Repr = Vec<T>;
     }
-    impl<T: Eq> LatticeBind for SetUnionBind<Single<T>> {
+    impl<T: Eq> LatticeRepr for SetUnionBind<Single<T>> {
         type Lattice = SetUnion<T>;
         type Repr = Single<T>;
     }
-    impl<T: Eq> LatticeBind for SetUnionBind<Option<T>> {
+    impl<T: Eq> LatticeRepr for SetUnionBind<Option<T>> {
         type Lattice = SetUnion<T>;
         type Repr = Option<T>;
     }
-    impl<T: Eq, const N: usize> LatticeBind for SetUnionBind<Array<T, N>> {
+    impl<T: Eq, const N: usize> LatticeRepr for SetUnionBind<Array<T, N>> {
         type Lattice = SetUnion<T>;
         type Repr = Array<T, N>;
     }
-    impl<T: Eq, const N: usize> LatticeBind for SetUnionBind<MaskedArray<T, N>> {
+    impl<T: Eq, const N: usize> LatticeRepr for SetUnionBind<MaskedArray<T, N>> {
         type Lattice = SetUnion<T>;
         type Repr = MaskedArray<T, N>;
     }
 
-    // impl<T, This: LatticeBind<Lattice = SetUnion<T>>, Delta: LatticeBind<Lattice = SetUnion<T>>> Merge<SetUnion<T>, Delta> for This
+    // impl<T, This: LatticeRepr<Lattice = SetUnion<T>>, Delta: LatticeRepr<Lattice = SetUnion<T>>> Merge<SetUnion<T>, Delta> for This
     // where
     //     This::Repr: Extend<T>,
     //     Delta::Repr: IntoIterator<Item = T>,
@@ -107,26 +70,26 @@ pub mod setunion {
     //     }
     // }
 
-    impl<T, X, Y> Merge<SetUnion<T>, SetUnionBind<Y>> for SetUnionBind<X>
+    impl<T, X, Y> Merge<SetUnionBind<Y>> for SetUnionBind<X>
     where
-        SetUnionBind<X>: LatticeBind<Lattice = SetUnion<T>>,
-        SetUnionBind<Y>: LatticeBind<Lattice = SetUnion<T>>,
-        <SetUnionBind<X> as LatticeBind>::Repr: Extend<T>,
-        <SetUnionBind<Y> as LatticeBind>::Repr: IntoIterator<Item = T>,
+        SetUnionBind<X>: LatticeRepr<Lattice = SetUnion<T>>,
+        SetUnionBind<Y>: LatticeRepr<Lattice = SetUnion<T>>,
+        <SetUnionBind<X> as LatticeRepr>::Repr: Extend<T>,
+        <SetUnionBind<Y> as LatticeRepr>::Repr: IntoIterator<Item = T>,
     {
-        fn merge(this: &mut <SetUnionBind<X> as LatticeBind>::Repr, delta: <SetUnionBind<Y> as LatticeBind>::Repr) {
+        fn merge(this: &mut <SetUnionBind<X> as LatticeRepr>::Repr, delta: <SetUnionBind<Y> as LatticeRepr>::Repr) {
             this.extend(delta)
         }
     }
 
-    impl<T, X, Y> Convert<SetUnion<T>, SetUnionBind<Y>> for SetUnionBind<X>
+    impl<T, X, Y> Convert<SetUnionBind<Y>> for SetUnionBind<X>
     where
-        SetUnionBind<X>: LatticeBind<Lattice = SetUnion<T>>,
-        SetUnionBind<Y>: LatticeBind<Lattice = SetUnion<T>>,
-        <SetUnionBind<X> as LatticeBind>::Repr: IntoIterator<Item = T>,
-        <SetUnionBind<Y> as LatticeBind>::Repr: FromIterator<T>,
+        SetUnionBind<X>: LatticeRepr<Lattice = SetUnion<T>>,
+        SetUnionBind<Y>: LatticeRepr<Lattice = SetUnion<T>>,
+        <SetUnionBind<X> as LatticeRepr>::Repr: IntoIterator<Item = T>,
+        <SetUnionBind<Y> as LatticeRepr>::Repr: FromIterator<T>,
     {
-        fn convert(this: <SetUnionBind<X> as LatticeBind>::Repr) -> <SetUnionBind<Y> as LatticeBind>::Repr {
+        fn convert(this: <SetUnionBind<X> as LatticeRepr>::Repr) -> <SetUnionBind<Y> as LatticeRepr>::Repr {
             this.into_iter().collect()
         }
     }
@@ -135,43 +98,43 @@ pub mod setunion {
         use static_assertions::{assert_impl_all, assert_not_impl_any};
 
         assert_impl_all!(SetUnionBind<HashSet<u32>>:
-            Merge<SetUnion<u32>, SetUnionBind<HashSet<u32>>>,
-            Merge<SetUnion<u32>, SetUnionBind<BTreeSet<u32>>>,
-            Merge<SetUnion<u32>, SetUnionBind<Vec<u32>>>,
-            Merge<SetUnion<u32>, SetUnionBind<Single<u32>>>,
-            Merge<SetUnion<u32>, SetUnionBind<Option<u32>>>,
-            Merge<SetUnion<u32>, SetUnionBind<Array<u32, 8>>>,
-            Merge<SetUnion<u32>, SetUnionBind<MaskedArray<u32, 8>>>,
+            Merge<SetUnionBind<HashSet<u32>>>,
+            Merge<SetUnionBind<BTreeSet<u32>>>,
+            Merge<SetUnionBind<Vec<u32>>>,
+            Merge<SetUnionBind<Single<u32>>>,
+            Merge<SetUnionBind<Option<u32>>>,
+            Merge<SetUnionBind<Array<u32, 8>>>,
+            Merge<SetUnionBind<MaskedArray<u32, 8>>>,
         );
 
         assert_impl_all!(SetUnionBind<BTreeSet<u32>>:
-            Merge<SetUnion<u32>, SetUnionBind<HashSet<u32>>>,
-            Merge<SetUnion<u32>, SetUnionBind<BTreeSet<u32>>>,
-            Merge<SetUnion<u32>, SetUnionBind<Vec<u32>>>,
-            Merge<SetUnion<u32>, SetUnionBind<Single<u32>>>,
-            Merge<SetUnion<u32>, SetUnionBind<Option<u32>>>,
-            Merge<SetUnion<u32>, SetUnionBind<Array<u32, 8>>>,
-            Merge<SetUnion<u32>, SetUnionBind<MaskedArray<u32, 8>>>,
+            Merge<SetUnionBind<HashSet<u32>>>,
+            Merge<SetUnionBind<BTreeSet<u32>>>,
+            Merge<SetUnionBind<Vec<u32>>>,
+            Merge<SetUnionBind<Single<u32>>>,
+            Merge<SetUnionBind<Option<u32>>>,
+            Merge<SetUnionBind<Array<u32, 8>>>,
+            Merge<SetUnionBind<MaskedArray<u32, 8>>>,
         );
 
         assert_impl_all!(SetUnionBind<Vec<u32>>:
-            Merge<SetUnion<u32>, SetUnionBind<HashSet<u32>>>,
-            Merge<SetUnion<u32>, SetUnionBind<BTreeSet<u32>>>,
-            Merge<SetUnion<u32>, SetUnionBind<Vec<u32>>>,
-            Merge<SetUnion<u32>, SetUnionBind<Single<u32>>>,
-            Merge<SetUnion<u32>, SetUnionBind<Option<u32>>>,
-            Merge<SetUnion<u32>, SetUnionBind<Array<u32, 8>>>,
-            Merge<SetUnion<u32>, SetUnionBind<MaskedArray<u32, 8>>>,
+            Merge<SetUnionBind<HashSet<u32>>>,
+            Merge<SetUnionBind<BTreeSet<u32>>>,
+            Merge<SetUnionBind<Vec<u32>>>,
+            Merge<SetUnionBind<Single<u32>>>,
+            Merge<SetUnionBind<Option<u32>>>,
+            Merge<SetUnionBind<Array<u32, 8>>>,
+            Merge<SetUnionBind<MaskedArray<u32, 8>>>,
         );
 
         assert_not_impl_any!(Single<Vec<u32>>:
-            Merge<SetUnion<u32>, SetUnionBind<HashSet<u32>>>,
-            Merge<SetUnion<u32>, SetUnionBind<BTreeSet<u32>>>,
-            Merge<SetUnion<u32>, SetUnionBind<Vec<u32>>>,
-            Merge<SetUnion<u32>, SetUnionBind<Single<u32>>>,
-            Merge<SetUnion<u32>, SetUnionBind<Option<u32>>>,
-            Merge<SetUnion<u32>, SetUnionBind<Array<u32, 8>>>,
-            Merge<SetUnion<u32>, SetUnionBind<MaskedArray<u32, 8>>>,
+            Merge<SetUnionBind<HashSet<u32>>>,
+            Merge<SetUnionBind<BTreeSet<u32>>>,
+            Merge<SetUnionBind<Vec<u32>>>,
+            Merge<SetUnionBind<Single<u32>>>,
+            Merge<SetUnionBind<Option<u32>>>,
+            Merge<SetUnionBind<Array<u32, 8>>>,
+            Merge<SetUnionBind<MaskedArray<u32, 8>>>,
         );
     }
 }
@@ -187,58 +150,58 @@ pub mod mapunion {
     }
     impl<K, L: Lattice> Lattice for MapUnion<K, L> {}
 
-    pub struct MapUnionBind<K, B: LatticeBind> {
+    pub struct MapUnionBind<K, B: LatticeRepr> {
         _phantom: std::marker::PhantomData<(K, B)>,
     }
 
-    impl<K: Eq + Hash, B: LatticeBind> LatticeBind for MapUnionBind<HashMap<K, ()>, B> {
+    impl<K: Eq + Hash, B: LatticeRepr> LatticeRepr for MapUnionBind<HashMap<K, ()>, B> {
         type Lattice = MapUnion<K, B::Lattice>;
         type Repr = HashMap<K, B::Repr>;
     }
-    impl<K: Eq + Ord, B: LatticeBind> LatticeBind for MapUnionBind<BTreeMap<K, ()>, B> {
+    impl<K: Eq + Ord, B: LatticeRepr> LatticeRepr for MapUnionBind<BTreeMap<K, ()>, B> {
         type Lattice = MapUnion<K, B::Lattice>;
         type Repr = BTreeMap<K, B::Repr>;
     }
-    impl<K: Eq, B: LatticeBind> LatticeBind for MapUnionBind<Vec<(K, ())>, B> {
+    impl<K: Eq, B: LatticeRepr> LatticeRepr for MapUnionBind<Vec<(K, ())>, B> {
         type Lattice = MapUnion<K, B::Lattice>;
         type Repr = Vec<(K, B::Repr)>;
     }
-    impl<K: Eq, B: LatticeBind> LatticeBind for MapUnionBind<Single<(K, ())>, B> {
+    impl<K: Eq, B: LatticeRepr> LatticeRepr for MapUnionBind<Single<(K, ())>, B> {
         type Lattice = MapUnion<K, B::Lattice>;
         type Repr = Single<(K, B::Repr)>;
     }
-    impl<K: Eq, B: LatticeBind> LatticeBind for MapUnionBind<Option<(K, ())>, B> {
+    impl<K: Eq, B: LatticeRepr> LatticeRepr for MapUnionBind<Option<(K, ())>, B> {
         type Lattice = MapUnion<K, B::Lattice>;
         type Repr = Option<(K, B::Repr)>;
     }
-    impl<K: Eq, B: LatticeBind, const N: usize> LatticeBind for MapUnionBind<Array<(K, ()), N>, B> {
+    impl<K: Eq, B: LatticeRepr, const N: usize> LatticeRepr for MapUnionBind<Array<(K, ()), N>, B> {
         type Lattice = MapUnion<K, B::Lattice>;
         type Repr = Array<(K, B::Repr), N>;
     }
-    impl<K: Eq, B: LatticeBind, const N: usize> LatticeBind for MapUnionBind<MaskedArray<(K, ()), N>, B> {
+    impl<K: Eq, B: LatticeRepr, const N: usize> LatticeRepr for MapUnionBind<MaskedArray<(K, ()), N>, B> {
         type Lattice = MapUnion<K, B::Lattice>;
         type Repr = MaskedArray<(K, B::Repr), N>;
     }
 
-    impl<K, X, Y, B: LatticeBind<Lattice = L>, C: LatticeBind<Lattice = L>, L: Lattice> Merge<MapUnion<K, L>, MapUnionBind<Y, C>> for MapUnionBind<X, B>
+    impl<K, X, Y, B: LatticeRepr<Lattice = L>, C: LatticeRepr<Lattice = L>, L: Lattice> Merge<MapUnionBind<Y, C>> for MapUnionBind<X, B>
     where
-        MapUnionBind<X, B>: LatticeBind<Lattice = MapUnion<K, B::Lattice>>,
-        MapUnionBind<Y, C>: LatticeBind<Lattice = MapUnion<K, C::Lattice>>,
-        <MapUnionBind<X, B> as LatticeBind>::Repr: Extend<(K, B::Repr)> + Dict<K, B::Repr>,
-        <MapUnionBind<Y, C> as LatticeBind>::Repr: IntoIterator<Item = (K, C::Repr)>,
-        B: Merge<L, C>,
-        C: Convert<L, B>,
+        MapUnionBind<X, B>: LatticeRepr<Lattice = MapUnion<K, L>>,
+        MapUnionBind<Y, C>: LatticeRepr<Lattice = MapUnion<K, L>>,
+        <MapUnionBind<X, B> as LatticeRepr>::Repr: Extend<(K, B::Repr)> + Dict<K, B::Repr>,
+        <MapUnionBind<Y, C> as LatticeRepr>::Repr: IntoIterator<Item = (K, C::Repr)>,
+        B: Merge<C>,
+        C: Convert<B>,
     {
-        fn merge(this: &mut <MapUnionBind<X, B> as LatticeBind>::Repr, delta: <MapUnionBind<Y, C> as LatticeBind>::Repr) {
+        fn merge(this: &mut <MapUnionBind<X, B> as LatticeRepr>::Repr, delta: <MapUnionBind<Y, C> as LatticeRepr>::Repr) {
             let iter: Vec<(K, B::Repr)> = delta.into_iter()
                 .filter_map(|(k, v)| {
                     match this.get_mut(&k) {
                         Some(target_val) => {
-                            <B as Merge<L, C>>::merge(target_val, v);
+                            <B as Merge<C>>::merge(target_val, v);
                             None
                         }
                         None => {
-                            let val: B::Repr = <C as Convert<L, B>>::convert(v);
+                            let val: B::Repr = <C as Convert<B>>::convert(v);
                             Some((k, val))
                         }
                     }
@@ -270,14 +233,14 @@ pub mod mapunion {
         // // Option A: Tag
         // type HashMapHashSet  = MapUnionBind<HashMapTag<String>, SetUnionBind<ThisIsAHashSet<u32>>>;
 
-        assert_impl_all!(HashMapHashSet: Merge<MapUnion<String, SetUnion<u32>>, HashMapHashSet>);
-        assert_impl_all!(HashMapHashSet: Merge<MapUnion<String, SetUnion<u32>>, HashMapArraySet>);
+        assert_impl_all!(HashMapHashSet: Merge<HashMapHashSet>);
+        assert_impl_all!(HashMapHashSet: Merge<HashMapArraySet>);
 
-        assert_not_impl_any!(HashMapArraySet: Merge<MapUnion<String, SetUnion<u32>>, HashMapHashSet>);
-        assert_not_impl_any!(HashMapArraySet: Merge<MapUnion<String, SetUnion<u32>>, HashMapArraySet>);
+        assert_not_impl_any!(HashMapArraySet: Merge<HashMapHashSet>);
+        assert_not_impl_any!(HashMapArraySet: Merge<HashMapArraySet>);
 
-        assert_not_impl_any!(OptionMapArraySet: Merge<MapUnion<String, SetUnion<u32>>, HashMapHashSet>);
-        assert_not_impl_any!(OptionMapArraySet: Merge<MapUnion<String, SetUnion<u32>>, HashMapArraySet>);
+        assert_not_impl_any!(OptionMapArraySet: Merge<HashMapHashSet>);
+        assert_not_impl_any!(OptionMapArraySet: Merge<HashMapArraySet>);
     }
 }
 
