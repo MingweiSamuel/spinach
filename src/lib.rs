@@ -15,16 +15,14 @@
 
 #![forbid(unsafe_code)]
 
+pub mod collections;
+
 pub mod func;
+
+pub mod tag;
 
 pub mod lattice;
 
-pub mod lattice2;
+// pub mod op;
 
-pub mod lattice4;
-
-// pub mod comp;
-
-pub mod op;
-
-pub mod monotonic;
+// pub mod monotonic;
