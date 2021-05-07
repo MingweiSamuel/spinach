@@ -1,8 +1,11 @@
+use std::iter::FromIterator;
+use std::cmp::Ordering;
+
 use super::*;
 
 use crate::tag;
+use crate::collections::Collection;
 
-use std::iter::FromIterator;
 
 pub struct SetUnion<T> {
     _phantom: std::marker::PhantomData<T>,
@@ -41,13 +44,48 @@ where
 
 impl<T, SelfTag: SetTag, TargetTag: SetTag> Convert<SetUnionRepr<TargetTag, T>> for SetUnionRepr<SelfTag, T>
 where
-    SetUnionRepr<SelfTag, T>: LatticeRepr<Lattice = SetUnion<T>>,
+    SetUnionRepr<SelfTag,   T>: LatticeRepr<Lattice = SetUnion<T>>,
     SetUnionRepr<TargetTag, T>: LatticeRepr<Lattice = SetUnion<T>>,
-    <SetUnionRepr<SelfTag, T> as LatticeRepr>::Repr: IntoIterator<Item = T>,
+    <SetUnionRepr<SelfTag,   T> as LatticeRepr>::Repr: IntoIterator<Item = T>,
     <SetUnionRepr<TargetTag, T> as LatticeRepr>::Repr: FromIterator<T>,
 {
     fn convert(this: <SetUnionRepr<SelfTag, T> as LatticeRepr>::Repr) -> <SetUnionRepr<TargetTag, T> as LatticeRepr>::Repr {
         this.into_iter().collect()
+    }
+}
+
+impl<T: 'static, SelfTag: SetTag, TargetTag: SetTag> Compare<SetUnionRepr<TargetTag, T>> for SetUnionRepr<SelfTag, T>
+where
+    SetUnionRepr<SelfTag,   T>: LatticeRepr<Lattice = SetUnion<T>>,
+    SetUnionRepr<TargetTag, T>: LatticeRepr<Lattice = SetUnion<T>>,
+    <SetUnionRepr<SelfTag,   T> as LatticeRepr>::Repr: Collection<T, ()>,
+    <SetUnionRepr<TargetTag, T> as LatticeRepr>::Repr: Collection<T, ()>,
+{
+    fn compare(this: &<SetUnionRepr<SelfTag, T> as LatticeRepr>::Repr, other: &<SetUnionRepr<TargetTag, T> as LatticeRepr>::Repr) -> Option<Ordering> {
+        if this.len() > other.len() {
+            if this.keys().all(|key| other.get(key).is_some()) {
+                Some(Ordering::Greater)
+            }
+            else {
+                None
+            }
+        }
+        else if this.len() == other.len() {
+            if this.keys().all(|key| other.get(key).is_some()) {
+                Some(Ordering::Equal)
+            }
+            else {
+                None
+            }
+        }
+        else { // this.len() < other.len()
+            if other.keys().all(|key| this.get(key).is_some()) {
+                Some(Ordering::Less)
+            }
+            else {
+                None
+            }
+        }
     }
 }
 

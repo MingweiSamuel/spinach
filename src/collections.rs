@@ -1,97 +1,193 @@
 use std::array::IntoIter;
-use std::collections::{BTreeMap, HashMap};
-//use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
+use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 use std::hash::Hash;
 
-// fn bool_to_option<'a>(value: bool) -> Option<&'a ()> {
-//     if value { Some(&()) } else { None }
-// }
+fn bool_to_option<'a>(value: bool) -> Option<&'a ()> {
+    if value { Some(&()) } else { None }
+}
+fn bool_to_option_mut<'a>(value: bool) -> Option<&'a mut ()> {
+    if value { Some(Box::leak(Box::new(()))) } else { None }
+}
 
-// fn bool_to_option_mut<'a>(value: bool) -> Option<&'a mut ()> {
-//     if value {
-//         Some(&mut ())
-//     } 
-//     else {
-//         None
-//     }
-// }
-
-pub trait Dict<K, V> {
+pub trait Collection<K, V> {
     fn get(&self, key: &K) -> Option<&V>;
     fn get_mut(&mut self, key: &K) -> Option<&mut V>;
+    fn len(&self) -> usize;
+
+    type Keys<'s>: Iterator<Item = &'s K> where K: 's;
+    fn keys(&self) -> Self::Keys<'_>;
+
+    type Entries<'s>: Iterator<Item = (&'s K, &'s V)> where K: 's, V: 's;
+    fn entries(&self) -> Self::Entries<'_>;
 }
 
-// impl<K: Eq + Hash> Dict<K, ()> for HashSet<K> {
-//     fn get(&self, key: &K) -> Option<&()> {
-//         bool_to_option(self.contains(key))
-//     }
-//     fn get_mut(&mut self, key: &K) -> Option<&mut ()> {
-//         bool_to_option_mut(self.contains(key))
-//     }
-// }
+impl<K: 'static + Eq + Hash> Collection<K, ()> for HashSet<K> {
+    fn get(&self, key: &K) -> Option<&()> {
+        bool_to_option(self.contains(key))
+    }
+    fn get_mut(&mut self, key: &K) -> Option<&mut ()> {
+        bool_to_option_mut(self.contains(key))
+    }
+    fn len(&self) -> usize {
+        self.len()
+    }
 
-// impl<K: Eq + Ord> Dict<K, ()> for BTreeSet<K> {
-//     fn get(&self, key: &K) -> Option<&()> {
-//         bool_to_option(self.contains(key))
-//     }
-//     fn get_mut(&mut self, key: &K) -> Option<&mut ()> {
-//         bool_to_option_mut(self.contains(key))
-//     }
-// }
+    type Keys<'s> = std::collections::hash_set::Iter<'s, K>;
+    fn keys(&self) -> Self::Keys<'_> {
+        self.iter()
+    }
 
-// impl<K: Eq> Dict<K, ()> for Vec<K> {
-//     fn get(&self, key: &K) -> Option<&()> {
-//         bool_to_option(<[K]>::contains(self, key))
-//     }
-//     fn get_mut(&mut self, key: &K) -> Option<&mut ()> {
-//         bool_to_option_mut(self.contains(key))
-//     }
-// }
+    type Entries<'s> = impl Iterator<Item = (&'s K, &'s ())>;
+    fn entries(&self) -> Self::Entries<'_> {
+        self.keys().map(|k| (k, &()))
+    }
+}
 
-// impl<K: Eq, const N: usize> Dict<K, ()> for Array<K, N> {
-//     fn get(&self, key: &K) -> Option<&()> {
-//         bool_to_option(self.0.contains(key))
-//     }
-//     fn get_mut(&mut self, key: &K) -> Option<&mut ()> {
-//         bool_to_option_mut(self.0.contains(key))
-//     }
-// }
+impl<K: 'static + Eq + Ord> Collection<K, ()> for BTreeSet<K> {
+    fn get(&self, key: &K) -> Option<&()> {
+        bool_to_option(self.contains(key))
+    }
+    fn get_mut(&mut self, key: &K) -> Option<&mut ()> {
+        bool_to_option_mut(self.contains(key))
+    }
+    fn len(&self) -> usize {
+        self.len()
+    }
 
-// impl<K: Eq, const N: usize> Dict<K, ()> for MaskedArray<K, N> {
-//     fn get(&self, key: &K) -> Option<&()> {
-//         bool_to_option(self.mask.iter()
-//                 .zip(self.vals.iter())
-//                 .any(|(mask, item)| *mask && item == key))
-//     }
-//     fn get_mut(&mut self, key: &K) -> Option<&mut ()> {
-//         bool_to_option_mut(self.mask.iter()
-//                 .zip(self.vals.iter())
-//                 .any(|(mask, item)| *mask && item == key))
-//     }
-// }
+    type Keys<'s> = std::collections::btree_set::Iter<'s, K>;
+    fn keys(&self) -> Self::Keys<'_> {
+        self.iter()
+    }
+
+    type Entries<'s> = impl Iterator<Item = (&'s K, &'s ())>;
+    fn entries(&self) -> Self::Entries<'_> {
+        self.keys().map(|k| (k, &()))
+    }
+}
+
+impl<K: 'static + Eq> Collection<K, ()> for Vec<K> {
+    fn get(&self, key: &K) -> Option<&()> {
+        bool_to_option(self.contains(key))
+    }
+    fn get_mut(&mut self, key: &K) -> Option<&mut ()> {
+        bool_to_option_mut(self.contains(key))
+    }
+    fn len(&self) -> usize {
+        self.len()
+    }
+
+    type Keys<'s> = std::slice::Iter<'s, K>;
+    fn keys(&self) -> Self::Keys<'_> {
+        self.iter()
+    }
+
+    type Entries<'s> = impl Iterator<Item = (&'s K, &'s ())>;
+    fn entries(&self) -> Self::Entries<'_> {
+        self.keys().map(|k| (k, &()))
+    }
+}
+
+impl<K: 'static + Eq, const N: usize> Collection<K, ()> for Array<K, N> {
+    fn get(&self, key: &K) -> Option<&()> {
+        bool_to_option(self.0.contains(key))
+    }
+    fn get_mut(&mut self, key: &K) -> Option<&mut ()> {
+        bool_to_option_mut(self.0.contains(key))
+    }
+    fn len(&self) -> usize {
+        N
+    }
+
+    type Keys<'s> = std::slice::Iter<'s, K>;
+    fn keys(&self) -> Self::Keys<'_> {
+        self.0.iter()
+    }
+
+    type Entries<'s> = impl Iterator<Item = (&'s K, &'s ())>;
+    fn entries(&self) -> Self::Entries<'_> {
+        self.keys().map(|k| (k, &()))
+    }
+}
+
+impl<K: 'static + Eq, const N: usize> Collection<K, ()> for MaskedArray<K, N> {
+    fn get(&self, key: &K) -> Option<&()> {
+        bool_to_option(self.mask.iter()
+                .zip(self.vals.iter())
+                .any(|(mask, item)| *mask && item == key)
+            )
+    }
+    fn get_mut(&mut self, key: &K) -> Option<&mut ()> {
+        bool_to_option_mut(self.mask.iter()
+                .zip(self.vals.iter())
+                .any(|(mask, item)| *mask && item == key)
+            )
+    }
+    fn len(&self) -> usize {
+        self.mask.iter().filter(|mask| **mask).count()
+    }
+
+    type Keys<'s> = impl Iterator<Item = &'s K>;
+    fn keys(&self) -> Self::Keys<'_> {
+        self.mask.iter()
+            .zip(self.vals.iter())
+            .filter(|(mask, _)| **mask)
+            .map(|(_, item)| item)
+    }
+
+    type Entries<'s> = impl Iterator<Item = (&'s K, &'s ())>;
+    fn entries(&self) -> Self::Entries<'_> {
+        self.keys().map(|k| (k, &()))
+    }
+}
 
 
 
 
-impl<K: Eq + Hash, V> Dict<K, V> for HashMap<K, V> {
+impl<K: 'static + Eq + Hash, V: 'static> Collection<K, V> for HashMap<K, V> {
     fn get(&self, key: &K) -> Option<&V> {
         self.get(key)
     }
     fn get_mut(&mut self, key: &K) -> Option<&mut V> {
         self.get_mut(key)
     }
+    fn len(&self) -> usize {
+        self.len()
+    }
+
+    type Keys<'s> = impl Iterator<Item = &'s K>;
+    fn keys(&self) -> Self::Keys<'_> {
+        self.keys()
+    }
+
+    type Entries<'s> = impl Iterator<Item = (&'s K, &'s V)>;
+    fn entries(&self) -> Self::Entries<'_> {
+        self.iter()
+    }
 }
 
-impl<K: Eq + Ord, V> Dict<K, V> for BTreeMap<K, V> {
+impl<K: 'static + Eq + Ord, V: 'static> Collection<K, V> for BTreeMap<K, V> {
     fn get(&self, key: &K) -> Option<&V> {
         self.get(key)
     }
     fn get_mut(&mut self, key: &K) -> Option<&mut V> {
         self.get_mut(key)
     }
+    fn len(&self) -> usize {
+        self.len()
+    }
+
+    type Keys<'s> = impl Iterator<Item = &'s K>;
+    fn keys(&self) -> Self::Keys<'_> {
+        self.keys()
+    }
+
+    type Entries<'s> = impl Iterator<Item = (&'s K, &'s V)>;
+    fn entries(&self) -> Self::Entries<'_> {
+        self.iter()
+    }
 }
 
-impl<K: Eq, V> Dict<K, V> for Vec<(K, V)> {
+impl<K: 'static + Eq, V: 'static> Collection<K, V> for Vec<(K, V)> {
     fn get(&self, key: &K) -> Option<&V> {
         self.iter()
             .find(|(k, _)| k == key)
@@ -102,9 +198,24 @@ impl<K: Eq, V> Dict<K, V> for Vec<(K, V)> {
             .find(|(k, _)| k == key)
             .map(|(_, val)| val)
     }
+    fn len(&self) -> usize {
+        self.len()
+    }
+
+    type Keys<'s> = impl Iterator<Item = &'s K>;
+    fn keys(&self) -> Self::Keys<'_> {
+        self.iter()
+            .map(|(k, _)| k)
+    }
+
+    type Entries<'s> = impl Iterator<Item = (&'s K, &'s V)>;
+    fn entries(&self) -> Self::Entries<'_> {
+        self.iter()
+            .map(|(k, v)| (k, v))
+    }
 }
 
-impl<K: Eq, V, const N: usize> Dict<K, V> for Array<(K, V), N> {
+impl<K: 'static + Eq, V: 'static, const N: usize> Collection<K, V> for Array<(K, V), N> {
     fn get(&self, key: &K) -> Option<&V> {
         self.0.iter()
             .find(|(k, _)| k == key)
@@ -115,9 +226,24 @@ impl<K: Eq, V, const N: usize> Dict<K, V> for Array<(K, V), N> {
             .find(|(k, _)| k == key)
             .map(|(_, val)| val)
     }
+    fn len(&self) -> usize {
+        N
+    }
+
+    type Keys<'s> = impl Iterator<Item = &'s K>;
+    fn keys(&self) -> Self::Keys<'_> {
+        self.0.iter()
+            .map(|(k, _)| k)
+    }
+
+    type Entries<'s> = impl Iterator<Item = (&'s K, &'s V)>;
+    fn entries(&self) -> Self::Entries<'_> {
+        self.0.iter()
+            .map(|(k, v)| (k, v))
+    }
 }
 
-impl<K: Eq, V, const N: usize> Dict<K, V> for MaskedArray<(K, V), N> {
+impl<K: 'static + Eq, V: 'static, const N: usize> Collection<K, V> for MaskedArray<(K, V), N> {
     fn get(&self, key: &K) -> Option<&V> {
         self.mask.iter()
             .zip(self.vals.iter())
@@ -129,6 +255,25 @@ impl<K: Eq, V, const N: usize> Dict<K, V> for MaskedArray<(K, V), N> {
             .zip(self.vals.iter_mut())
             .find(|(mask, (k, _))| **mask && k == key)
             .map(|(_, (_, val))| val)
+    }
+    fn len(&self) -> usize {
+        self.mask.iter().filter(|mask| **mask).count()
+    }
+
+    type Keys<'s> = impl Iterator<Item = &'s K>;
+    fn keys(&self) -> Self::Keys<'_> {
+        self.mask.iter()
+            .zip(self.vals.iter())
+            .filter(|(mask, _)| **mask)
+            .map(|(_, (k, _))| k)
+    }
+
+    type Entries<'s> = impl Iterator<Item = (&'s K, &'s V)>;
+    fn entries(&self) -> Self::Entries<'_> {
+        self.mask.iter()
+            .zip(self.vals.iter())
+            .filter(|(mask, _)| **mask)
+            .map(|(_, (k, v))| (k, v))
     }
 }
 
