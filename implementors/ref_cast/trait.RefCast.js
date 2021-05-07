@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["spinach"] = [{"text":"impl&lt;Y:&nbsp;<a class=\"trait\" href=\"spinach/hide/trait.Type.html\" title=\"trait spinach::hide::Type\">Type</a>, LR:&nbsp;<a class=\"trait\" href=\"spinach/lattice/trait.LatticeRepr.html\" title=\"trait spinach::lattice::LatticeRepr\">LatticeRepr</a>&gt; <a class=\"trait\" href=\"ref_cast/trait.RefCast.html\" title=\"trait ref_cast::RefCast\">RefCast</a> for <a class=\"struct\" href=\"spinach/hide/struct.Hide.html\" title=\"struct spinach::hide::Hide\">Hide</a>&lt;Y, LR&gt;","synthetic":false,"types":["spinach::hide::Hide"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
