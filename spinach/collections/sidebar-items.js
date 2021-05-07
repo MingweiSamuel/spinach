@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["Array",""],["MaskedArray",""],["Single",""]],"trait":[["Dict",""]]});
+initSidebarItems({"struct":[["Array",""],["MaskedArray",""],["Single",""]],"trait":[["Collection",""]]});

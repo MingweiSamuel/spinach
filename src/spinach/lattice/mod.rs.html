@@ -18,9 +18,17 @@
 <span id="15">15</span>
 <span id="16">16</span>
 <span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">setunion</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">mapunion</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">ord</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">dompair</span>;
 
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Lattice</span> {}
 
@@ -35,6 +43,10 @@
 
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Convert</span><span class="op">&lt;</span><span class="ident">Target</span>: <span class="ident">LatticeRepr</span><span class="op">&lt;</span><span class="ident">Lattice</span> <span class="op">=</span> <span class="self">Self</span><span class="ident">::Lattice</span><span class="op">&gt;</span><span class="op">&gt;</span>: <span class="ident">LatticeRepr</span> {
     <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">this</span>: <span class="self">Self</span><span class="ident">::Repr</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Target::Repr</span>;
+}
+
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Compare</span><span class="op">&lt;</span><span class="ident">Other</span>: <span class="ident">LatticeRepr</span><span class="op">&lt;</span><span class="ident">Lattice</span> <span class="op">=</span> <span class="self">Self</span><span class="ident">::Lattice</span><span class="op">&gt;</span><span class="op">&gt;</span>: <span class="ident">LatticeRepr</span> {
+    <span class="kw">fn</span> <span class="ident">compare</span>(<span class="ident">this</span>: <span class="kw-2">&amp;</span><span class="self">Self</span><span class="ident">::Repr</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="ident">Other::Repr</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">std::cmp::Ordering</span><span class="op">&gt;</span>;
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="spinach" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>

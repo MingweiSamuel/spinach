@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["MapUnion",""],["MapUnionBind",""]],"trait":[["MapTag",""]]});
+initSidebarItems({"struct":[["MapUnion",""],["MapUnionRepr",""]],"trait":[["MapTag",""]]});
