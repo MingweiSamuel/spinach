@@ -132,3 +132,42 @@ fn __assert_merges() {
         Merge<SetUnionRepr<tag::MASKED_ARRAY<8>, u32>>,
     );
 }
+
+mod fns {
+    use crate::hide::{Hide, Delta, Value};
+
+    use super::*;
+    use super::ord::MaxRepr;
+
+    impl<Tag: SetTag, T> Hide<Value, SetUnionRepr<Tag, T>>
+    where
+        <SetUnionRepr<Tag, T> as LatticeRepr>::Repr: Collection<T, ()>,
+    {
+        pub fn len(&self) -> Hide<Value, MaxRepr<usize>> {
+            Hide::new(self.as_reveal().len())
+        }
+    }
+
+    impl<Tag: SetTag, T> Hide<Delta, SetUnionRepr<Tag, T>>
+    where
+        <SetUnionRepr<Tag, T> as LatticeRepr>::Repr: Collection<T, ()>,
+    {
+        pub fn contains(&self, val: &T) -> Hide<Value, MaxRepr<bool>> {
+            Hide::new(self.as_reveal().get(val).is_some())
+        }
+    }
+
+
+    fn __test_things() {
+        let my_lattice: Hide<Value, SetUnionRepr<tag::HASH_SET, u32>> =
+            Hide::new(vec![ 0, 1, 2, 3, 5, 8, 13 ].into_iter().collect());
+
+        let _: Hide<Value, MaxRepr<usize>> = my_lattice.len();
+        let _: Hide<Value, MaxRepr<bool>>  = my_lattice.contains(&4);
+
+        let my_delta: &Hide<Delta, SetUnionRepr<tag::HASH_SET, u32>> = &my_lattice;
+
+        // let _: Hide<Value, MaxRepr<usize>> = my_delta.len();
+        let _: Hide<Value, MaxRepr<bool>>  = my_delta.contains(&4);
+    }
+}

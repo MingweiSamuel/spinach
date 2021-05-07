@@ -23,6 +23,8 @@ pub mod tag;
 
 pub mod lattice;
 
+pub mod hide;
+
 // pub mod op;
 
 // pub mod monotonic;
