@@ -1,67 +1,108 @@
-// use super::*;
+use std::cmp::Ordering;
 
-// use crate::collections::*;
-// use crate::tag;
+use super::*;
 
-// pub struct DomPair<LA: Lattice, LB: Lattice> {
-//     _phantom: std::marker::PhantomData<(LA, LB)>,
-// }
-// impl<LA: Lattice, LB: Lattice> Lattice for DomPair<LA, LB> {}
+use crate::tag;
 
-// pub struct DomPairRepr<RA: LatticeRepr, RB: LatticeRepr> {
-//     _phantom: std::marker::PhantomData<(RA, RB)>,
-// }
-// impl<RA: LatticeRepr, RB: LatticeRepr> LatticeRepr for DomPairRepr<RA, RB> {
-//     type Lattice = DomPair<RA::Lattice, RB::Lattice>;
-//     type Repr = (RA::Repr, RB::Repr);
-// }
+pub struct DomPair<LA: Lattice, LB: Lattice> {
+    _phantom: std::marker::PhantomData<(LA, LB)>,
+}
+impl<LA: Lattice, LB: Lattice> Lattice for DomPair<LA, LB> {}
+
+pub struct DomPairRepr<RA: LatticeRepr, RB: LatticeRepr> {
+    _phantom: std::marker::PhantomData<(RA, RB)>,
+}
+impl<RA: LatticeRepr, RB: LatticeRepr> LatticeRepr for DomPairRepr<RA, RB> {
+    type Lattice = DomPair<RA::Lattice, RB::Lattice>;
+    type Repr = (RA::Repr, RB::Repr);
+}
+
+impl<SelfRA, SelfRB, DeltaRA, DeltaRB, LA, LB> Merge<DomPairRepr<DeltaRA, DeltaRB>> for DomPairRepr<SelfRA, SelfRB>
+where
+    LA: Lattice,
+    LB: Lattice,
+    SelfRA:  LatticeRepr<Lattice = LA>,
+    SelfRB:  LatticeRepr<Lattice = LB>,
+    DeltaRA: LatticeRepr<Lattice = LA>,
+    DeltaRB: LatticeRepr<Lattice = LB>,
+    SelfRA:  Merge<DeltaRA> + Compare<DeltaRA>,
+    SelfRB:  Merge<DeltaRB> + Compare<DeltaRB>,
+    DeltaRA: Convert<SelfRA>,
+    DeltaRB: Convert<SelfRB>,
+{
+    fn merge(this: &mut <DomPairRepr<SelfRA, SelfRB> as LatticeRepr>::Repr, delta: <DomPairRepr<DeltaRA, DeltaRB> as LatticeRepr>::Repr) {
+        match SelfRA::compare(&this.0, &delta.0) {
+            None => {
+                SelfRA::merge(&mut this.0, delta.0);
+                SelfRB::merge(&mut this.1, delta.1);
+            }
+            Some(Ordering::Equal) => {
+                SelfRB::merge(&mut this.1, delta.1);
+            }
+            Some(Ordering::Less) => {
+                *this = (
+                    DeltaRA::convert(delta.0),
+                    DeltaRB::convert(delta.1),
+                );
+            }
+            Some(Ordering::Greater) => {}
+        }
+    }
+}
 
 
-// impl<K, SelfTag, DeltaTag, SelfLR: LatticeRepr<Lattice = L>, DeltaLR: LatticeRepr<Lattice = L>, L: Lattice> Merge<DomPairRepr<DeltaTag, K, DeltaLR>> for DomPairRepr<SelfTag, K, SelfLR>
-// where
-//     SelfTag:  MapTag,
-//     DeltaTag: MapTag,
-//     DomPairRepr<SelfTag,  K, SelfLR>: LatticeRepr<Lattice = MapUnion<K, L>>,
-//     DomPairRepr<DeltaTag, K, DeltaLR>: LatticeRepr<Lattice = MapUnion<K, L>>,
-//     <DomPairRepr<SelfTag,  K, SelfLR> as LatticeRepr>::Repr: Extend<(K, SelfLR::Repr)> + Collection<K, SelfLR::Repr>,
-//     <DomPairRepr<DeltaTag, K, DeltaLR> as LatticeRepr>::Repr: IntoIterator<Item = (K, DeltaLR::Repr)>,
-//     SelfLR:  Merge<DeltaLR>,
-//     DeltaLR: Convert<SelfLR>,
-// {
-//     fn merge(this: &mut <DomPairRepr<SelfTag, K, SelfLR> as LatticeRepr>::Repr, delta: <DomPairRepr<DeltaTag, K, DeltaLR> as LatticeRepr>::Repr) {
-//         let iter: Vec<(K, SelfLR::Repr)> = delta.into_iter()
-//             .filter_map(|(k, v)| {
-//                 match this.get_mut(&k) {
-//                     Some(target_val) => {
-//                         <SelfLR as Merge<DeltaLR>>::merge(target_val, v);
-//                         None
-//                     }
-//                     None => {
-//                         let val: SelfLR::Repr = <DeltaLR as Convert<SelfLR>>::convert(v);
-//                         Some((k, val))
-//                     }
-//                 }
-//             })
-//             .collect();
-//         this.extend(iter);
-//     }
-// }
+impl<SelfRA, SelfRB, DeltaRA, DeltaRB, LA, LB> Compare<DomPairRepr<DeltaRA, DeltaRB>> for DomPairRepr<SelfRA, SelfRB>
+where
+    LA: Lattice,
+    LB: Lattice,
+    SelfRA:  LatticeRepr<Lattice = LA>,
+    SelfRB:  LatticeRepr<Lattice = LB>,
+    DeltaRA: LatticeRepr<Lattice = LA>,
+    DeltaRB: LatticeRepr<Lattice = LB>,
+    SelfRA:  Compare<DeltaRA>,
+    SelfRB:  Compare<DeltaRB>,
+{
+    fn compare(this: &<DomPairRepr<SelfRA, SelfRB> as LatticeRepr>::Repr, other: &<DomPairRepr<DeltaRA, DeltaRB> as LatticeRepr>::Repr) -> Option<Ordering> {
+        SelfRA::compare(&this.0, &other.0)
+            .or_else(|| SelfRB::compare(&this.1, &other.1))
+    }
+}
 
-// fn __assert_merges() {
-//     use static_assertions::{assert_impl_all, assert_not_impl_any};
+fn __assert_merges() {
+    use static_assertions::{assert_impl_all, assert_not_impl_any};
     
-//     use super::setunion::{SetUnionRepr};
+    use super::setunion::{SetUnionRepr};
 
-//     type HashMapHashSet    = DomPairRepr<tag::HASH_MAP, String, SetUnionRepr<tag::HASH_SET, u32>>;
-//     type HashMapArraySet   = DomPairRepr<tag::HASH_MAP, String, SetUnionRepr<tag::ARRAY<8>, u32>>;
-//     type OptionMapArraySet = DomPairRepr<tag::OPTION,   String, SetUnionRepr<tag::HASH_SET, u32>>;
+    type HashSetHashSet   = DomPairRepr<SetUnionRepr<tag::HASH_SET, u32>, SetUnionRepr<tag::HASH_SET, u32>>;
+    type HashSetArraySet  = DomPairRepr<SetUnionRepr<tag::HASH_SET, u32>, SetUnionRepr<tag::ARRAY<8>, u32>>;
+    type ArraySetHashSet  = DomPairRepr<SetUnionRepr<tag::ARRAY<8>, u32>, SetUnionRepr<tag::HASH_SET, u32>>;
+    type ArraySetArraySet = DomPairRepr<SetUnionRepr<tag::ARRAY<8>, u32>, SetUnionRepr<tag::ARRAY<8>, u32>>;
 
-//     assert_impl_all!(HashMapHashSet: Merge<HashMapHashSet>);
-//     assert_impl_all!(HashMapHashSet: Merge<HashMapArraySet>);
+    assert_impl_all!(HashSetHashSet:
+        Merge<HashSetHashSet>,
+        Merge<HashSetArraySet>,
+        Merge<ArraySetHashSet>,
+        Merge<ArraySetArraySet>,
+    );
 
-//     assert_not_impl_any!(HashMapArraySet: Merge<HashMapHashSet>);
-//     assert_not_impl_any!(HashMapArraySet: Merge<HashMapArraySet>);
+    assert_not_impl_any!(HashSetArraySet:
+        Merge<HashSetHashSet>,
+        Merge<HashSetArraySet>,
+        Merge<ArraySetHashSet>,
+        Merge<ArraySetArraySet>,
+    );
 
-//     assert_not_impl_any!(OptionMapArraySet: Merge<HashMapHashSet>);
-//     assert_not_impl_any!(OptionMapArraySet: Merge<HashMapArraySet>);
-// }
+    assert_not_impl_any!(ArraySetHashSet:
+        Merge<HashSetHashSet>,
+        Merge<HashSetArraySet>,
+        Merge<ArraySetHashSet>,
+        Merge<ArraySetArraySet>,
+    );
+
+    assert_not_impl_any!(ArraySetArraySet:
+        Merge<HashSetHashSet>,
+        Merge<HashSetArraySet>,
+        Merge<ArraySetHashSet>,
+        Merge<ArraySetArraySet>,
+    );
+}
