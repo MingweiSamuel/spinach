@@ -6,11 +6,14 @@ pub use optrait::*;
 mod nullop;
 pub use nullop::*;
 
-mod cloneop;
-pub use cloneop::*;
+mod constop;
+pub use constop::*;
 
-mod latticeop;
-pub use latticeop::*;
+// mod cloneop;
+// pub use cloneop::*;
 
-mod splitop;
-pub use splitop::*;
+// mod latticeop;
+// pub use latticeop::*;
+
+// mod splitop;
+// pub use splitop::*;

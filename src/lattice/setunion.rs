@@ -157,6 +157,36 @@ mod fns {
         }
     }
 
+    // impl<Tag: SetTag, T> Hide<Delta, SetUnionRepr<Tag, T>>
+    // where
+    //     <SetUnionRepr<Tag, T> as LatticeRepr>::Repr: IntoIterator<Item = T>,
+    // {
+    //     pub fn map<U, TargetTag: SetTag>(self, f: impl Fn(T) -> U) -> Hide<Delta, SetUnionRepr<TargetTag, U>>
+    //     where
+    //         SetUnionRepr<TargetTag, U>: LatticeRepr<Lattice = SetUnion<U>>,
+    //         <SetUnionRepr<TargetTag, U> as LatticeRepr>::Repr: FromIterator<U>,
+    //     {
+    //         Hide::new(self.into_reveal().into_iter().map(f).collect())
+    //     }
+
+    //     pub fn filter<TargetTag: SetTag>(self, f: impl Fn(&T) -> bool) -> Hide<Delta, SetUnionRepr<TargetTag, T>>
+    //     where
+    //         SetUnionRepr<TargetTag, T>: LatticeRepr<Lattice = SetUnion<T>>,
+    //         <SetUnionRepr<TargetTag, T> as LatticeRepr>::Repr: FromIterator<T>,
+    //     {
+    //         Hide::new(self.into_reveal().into_iter().filter(f).collect())
+    //     }
+
+    //     pub fn flatten<TargetTag: SetTag>(self) -> Hide<Delta, SetUnionRepr<TargetTag, T::Item>>
+    //     where
+    //         T: IntoIterator,
+    //         SetUnionRepr<TargetTag, T::Item>: LatticeRepr<Lattice = SetUnion<T::Item>>,
+    //         <SetUnionRepr<TargetTag, T::Item> as LatticeRepr>::Repr: FromIterator<T::Item>,
+    //     {
+    //         Hide::new(self.into_reveal().into_iter().flatten().collect())
+    //     }
+    // }
+
 
     fn __test_things() {
         let my_lattice: Hide<Value, SetUnionRepr<tag::HASH_SET, u32>> =

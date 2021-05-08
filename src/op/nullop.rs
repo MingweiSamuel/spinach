@@ -1,12 +1,15 @@
 use std::task::{Context, Poll};
 
+use crate::hide::{Hide, Delta};
+use crate::lattice::LatticeRepr;
+
 use super::*;
 
-pub struct NullOp<T> {
-    _phantom: std::marker::PhantomData<T>,
+pub struct NullOp<Lr: LatticeRepr> {
+    _phantom: std::marker::PhantomData<Lr>,
 }
 
-impl<T> NullOp<T> {
+impl<Lr: LatticeRepr> NullOp<Lr> {
     pub fn new() -> Self {
         Self {
             _phantom: std::marker::PhantomData,
@@ -14,34 +17,12 @@ impl<T> NullOp<T> {
     }
 }
 
-impl<'s, T: 's> Op<'s> for NullOp<T> {
-    type Outdomain = T;
+impl<'s, Lr: LatticeRepr> Op<'s> for NullOp<Lr> {
+    type LatRepr = Lr;
 }
 
-impl<'s, T: 's> OpDelta<'s> for NullOp<T> {
-    fn poll_delta(&'s self, _ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
-        Poll::Pending
-    }
-}
-
-pub struct NullRefOp<T: ?Sized> {
-    _phantom: std::marker::PhantomData<T>,
-}
-
-impl<T: ?Sized> NullRefOp<T> {
-    pub fn new() -> Self {
-        Self {
-            _phantom: std::marker::PhantomData,
-        }
-    }
-}
-
-impl<'s, T: 's + ?Sized> Op<'s> for NullRefOp<T> {
-    type Outdomain = &'s T;
-}
-
-impl<'s, T: 's + ?Sized> OpDelta<'s> for NullRefOp<T> {
-    fn poll_delta(&'s self, _ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
+impl<'s, Lr: LatticeRepr> OpDelta<'s> for NullOp<Lr> {
+    fn poll_delta(&'s self, _ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
         Poll::Pending
     }
 }

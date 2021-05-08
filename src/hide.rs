@@ -10,30 +10,30 @@ impl Type for Value {}
 
 #[derive(RefCast)]
 #[repr(transparent)]
-pub struct Hide<Y: Type, LR: LatticeRepr> {
-    value: LR::Repr,
+pub struct Hide<Y: Type, Lr: LatticeRepr> {
+    value: Lr::Repr,
     _phantom: std::marker::PhantomData<Y>,
 }
 
-impl<Y: Type, LR: LatticeRepr> Hide<Y, LR> {
-    pub fn new(value: LR::Repr) -> Self {
+impl<Y: Type, Lr: LatticeRepr> Hide<Y, Lr> {
+    pub fn new(value: Lr::Repr) -> Self {
         Self {
             value,
             _phantom: std::marker::PhantomData,
         }
     }
 
-    pub fn into_reveal(self) -> LR::Repr {
+    pub fn into_reveal(self) -> Lr::Repr {
         self.value
     }
 
-    pub fn as_reveal(&self) -> &LR::Repr {
+    pub fn as_reveal(&self) -> &Lr::Repr {
         &self.value
     }
 }
 
-impl<LR: LatticeRepr> std::ops::Deref for Hide<Value, LR> {
-    type Target = Hide<Delta, LR>;
+impl<Lr: LatticeRepr> std::ops::Deref for Hide<Value, Lr> {
+    type Target = Hide<Delta, Lr>;
 
     fn deref(&self) -> &Self::Target {
         Hide::ref_cast(&self.value)
