@@ -27,7 +27,7 @@ pub struct SetUnionRepr<Tag: SetTag, T> {
 
 impl<Tag: SetTag, T> LatticeRepr for SetUnionRepr<Tag, T> {
     type Lattice = SetUnion<T>;
-    type Repr = Tag::Type<T>;
+    type Repr = Tag::Bind<T>;
 }
 
 impl<T, SelfTag: SetTag, DeltaTag: SetTag> Merge<SetUnionRepr<DeltaTag, T>> for SetUnionRepr<SelfTag, T>

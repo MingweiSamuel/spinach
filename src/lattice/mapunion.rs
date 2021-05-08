@@ -25,7 +25,7 @@ pub struct MapUnionRepr<Tag: MapTag, K, B: LatticeRepr> {
 
 impl<Tag: MapTag, K, B: LatticeRepr> LatticeRepr for MapUnionRepr<Tag, K, B>{
     type Lattice = MapUnion<K, B::Lattice>;
-    type Repr = Tag::Type<K, B::Repr>;
+    type Repr = Tag::Bind<K, B::Repr>;
 }
 
 impl<K: 'static, SelfTag, DeltaTag, SelfLR: LatticeRepr<Lattice = L>, DeltaLR: LatticeRepr<Lattice = L>, L: Lattice> Merge<MapUnionRepr<DeltaTag, K, DeltaLR>> for MapUnionRepr<SelfTag, K, SelfLR>
