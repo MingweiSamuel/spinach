@@ -34,7 +34,7 @@
 
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">LatticeRepr</span> {
     <span class="kw">type</span> <span class="ident">Lattice</span>: <span class="ident">Lattice</span>;
-    <span class="kw">type</span> <span class="ident">Repr</span>;
+    <span class="kw">type</span> <span class="ident">Repr</span>: <span class="ident">Clone</span>;
 }
 
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Merge</span><span class="op">&lt;</span><span class="ident">Delta</span>: <span class="ident">LatticeRepr</span><span class="op">&gt;</span>: <span class="ident">LatticeRepr</span><span class="op">&lt;</span><span class="ident">Lattice</span> <span class="op">=</span> <span class="ident">Delta::Lattice</span><span class="op">&gt;</span> {
