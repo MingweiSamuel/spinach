@@ -2,62 +2,59 @@ use std::cell::{RefCell};
 use std::rc::{Rc};
 use std::task::{Context, Poll, Waker};
 
+use crate::hide::{Hide, Delta, Value};
+
 use super::*;
 
 
-// #[test]
-// pub fn test_construction() {
-//     use crate::lattice::Max;
+#[test]
+pub fn test_construction() {
+    use crate::lattice::ord::MaxRepr;
 
-//     let op0 = NullRefOp::<String>::new();
-//     let op0 = CloneOp::<_>::new(op0);
-//     let op1 = LatticeOp::<_, Max<String>>::new(op0, "Hi".to_owned());
-//     let op2 = SplitOp::new(op1);
+    let op = NullOp::<MaxRepr<String>>::new();
+    let op = LatticeOp::<_, MaxRepr<String>>::new(op, "Hi".to_owned());
     
-//     let follow0 = op2.get_split();
-//     let _ = follow0;
-//     // let follow1 = LatticeOp::<_, Max<String>>::new(follow0, "No".to_owned());
+    let lead = SplitOp::new(&op);
 
-//     let _ = op2;
-// }
+    let follow = SplitOpFollow::new(&lead);
+    let follow = LatticeOp::<_, MaxRepr<String>>::new(follow, "Hah".to_owned());
 
+    let lead = LatticeOp::<_, MaxRepr<String>>::new(lead, "Wah".to_owned());
 
-pub struct SplitOp<'s, O> {
-    op: O,
-    split: Rc<RefCell<FollowState<O::Outdomain>>>,
+    std::mem::drop(follow);
+    std::mem::drop(lead);
 }
 
-impl<'s, O: OpValue<'s>> SplitOp<'s, O>
-where
-    O::Outdomain: Clone,
-{
-    pub fn new(op: O) -> Self {
+
+pub struct SplitOp<'s, O: OpValue> {
+    op: &'s O,
+    split: Rc<RefCell<FollowState<O>>>,
+}
+
+impl<'s, O: OpValue> SplitOp<'s, O> {
+    pub fn new(op: &'s O) -> Self {
         Self {
             op,
-            split: Rc::default(),
+            split: Default::default(),
         }
     }
 
-    pub fn get_split(&'s self) -> SplitOpFollow<'s, O> {
-        SplitOpFollow {
-            value: self.get_value(),
-            split: self.split.clone(),
-        }
-    }
+    // pub fn get_split(&self) -> SplitOpFollow<'s, O> {
+    //     let rcell = RefCell::default();
+    //     self.split.replace(&rcell)
+    //     SplitOpFollow {
+    //         op: self.op,
+    //         split: rcell,
+    //     }
+    // }
 }
 
-impl<'s, O: Op<'s>> Op<'s> for SplitOp<'s, O>
-where
-    O::Outdomain: Clone,
-{
-    type Outdomain = O::Outdomain;
+impl<'s, O: OpValue> Op for SplitOp<'s, O> {
+    type LatRepr = O::LatRepr;
 }
 
-impl<'s, O: OpDelta<'s>> OpDelta<'s> for SplitOp<'s, O>
-where
-    O::Outdomain: Clone,
-{
-    fn poll_delta(&'s self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
+impl<'s, O: OpValue + OpDelta> OpDelta for SplitOp<'s, O> {
+    fn poll_delta(&self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
         let mut borrow = self.split.borrow_mut();
         match borrow.delta {
             None => {
@@ -83,24 +80,21 @@ where
     }
 }
 
-impl<'s, O: OpValue<'s>> OpValue<'s> for SplitOp<'s, O>
-where
-    O::Outdomain: Clone,
-{
-    fn get_value(&'s self) -> Self::Outdomain {
+impl<'s, O: OpValue> OpValue for SplitOp<'s, O> {
+    fn get_value(&self) -> Hide<Value, Self::LatRepr> {
         self.op.get_value()
     }
 }
 
 
 
-struct FollowState<T> {
+struct FollowState<O: OpValue> {
     lead_waker: Option<Waker>,
     follow_waker: Option<Waker>,
-    delta: Option<T>,
+    delta: Option<Hide<Delta, O::LatRepr>>,
 }
 
-impl<T> Default for FollowState<T> {
+impl<O: OpValue> Default for FollowState<O> {
     fn default() -> Self {
         Self {
             lead_waker: None,
@@ -110,17 +104,28 @@ impl<T> Default for FollowState<T> {
     }
 }
 
-pub struct SplitOpFollow<'s, O: Op<'s>> {
-    value: O::Outdomain,
-    split: Rc<RefCell<FollowState<O::Outdomain>>>,
+
+
+pub struct SplitOpFollow<'s, O: OpValue> {
+    op: &'s O,
+    split: Rc<RefCell<FollowState<O>>>,
 }
 
-impl<'s, O: Op<'s>> Op<'s> for SplitOpFollow<'s, O> {
-    type Outdomain = O::Outdomain;
+impl<'s, O: OpValue> SplitOpFollow<'s, O> {
+    pub fn new(lead: &SplitOp<'s, O>) -> Self {
+        Self {
+            op: lead.op,
+            split: lead.split.clone(),
+        }
+    }
 }
 
-impl<'s, O: OpDelta<'s>> OpDelta<'s> for SplitOpFollow<'s, O> {
-    fn poll_delta(&'s self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
+impl<'s, O: OpValue> Op for SplitOpFollow<'s, O> {
+    type LatRepr = O::LatRepr;
+}
+
+impl<'s, O: OpValue + OpDelta> OpDelta for SplitOpFollow<'s, O> {
+    fn poll_delta(&self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
         let mut borrow = self.split.borrow_mut();
         match borrow.delta.take() {
             Some(val) => {
@@ -137,11 +142,8 @@ impl<'s, O: OpDelta<'s>> OpDelta<'s> for SplitOpFollow<'s, O> {
     }
 }
 
-impl<'s, O: OpValue<'s>> OpValue<'s> for SplitOpFollow<'s, O>
-where
-    O::Outdomain: Clone,
-{
-    fn get_value(&'s self) -> Self::Outdomain {
-        self.value.clone()
+impl<'s, O: OpValue> OpValue for SplitOpFollow<'s, O> {
+    fn get_value(&self) -> Hide<Value, Self::LatRepr> {
+        self.op.get_value()
     }
 }

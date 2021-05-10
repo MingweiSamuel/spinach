@@ -28,6 +28,12 @@ impl<T: Ord + Clone> Compare<MaxRepr<T>> for MaxRepr<T> {
     }
 }
 
+impl<T: Ord + Clone> Convert<MaxRepr<T>> for MaxRepr<T> {
+    fn convert(this: <MaxRepr<T> as LatticeRepr>::Repr) -> <MaxRepr<T> as LatticeRepr>::Repr {
+        this
+    }
+}
+
 
 
 
@@ -56,5 +62,11 @@ impl<T: Ord + Clone> Merge<MinRepr<T>> for MinRepr<T> {
 impl<T: Ord + Clone> Compare<MinRepr<T>> for MinRepr<T> {
     fn compare(this: &<MinRepr<T> as LatticeRepr>::Repr, other: &<MinRepr<T> as LatticeRepr>::Repr) -> Option<std::cmp::Ordering> {
         Some(this.cmp(other).reverse())
+    }
+}
+
+impl<T: Ord + Clone> Convert<MinRepr<T>> for MinRepr<T> {
+    fn convert(this: <MinRepr<T> as LatticeRepr>::Repr) -> <MinRepr<T> as LatticeRepr>::Repr {
+        this
     }
 }

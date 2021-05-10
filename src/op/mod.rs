@@ -12,5 +12,5 @@ pub use constop::*;
 mod latticeop;
 pub use latticeop::*;
 
-// mod splitop;
-// pub use splitop::*;
+mod splitop;
+pub use splitop::*;
