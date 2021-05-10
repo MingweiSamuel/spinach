@@ -18,27 +18,27 @@ where
     }
 }
 
-impl<'s, Lr: LatticeRepr> Op<'s> for ConstOp<Lr>
+impl<Lr: LatticeRepr> Op for ConstOp<Lr>
 where
     Lr::Repr: Clone,
 {
     type LatRepr = Lr;
 }
 
-impl<'s, Lr: LatticeRepr> OpDelta<'s> for ConstOp<Lr>
+impl<Lr: LatticeRepr> OpDelta for ConstOp<Lr>
 where
     Lr::Repr: Clone,
 {
-    fn poll_delta(&'s self, _ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
+    fn poll_delta(&self, _ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
         Poll::Pending
     }
 }
 
-impl<'s, Lr: LatticeRepr> OpValue<'s> for ConstOp<Lr>
+impl<Lr: LatticeRepr> OpValue for ConstOp<Lr>
 where
     Lr::Repr: Clone,
 {
-    fn get_value(&'s self) -> Hide<Value, Self::LatRepr> {
+    fn get_value(&self) -> Hide<Value, Self::LatRepr> {
         Hide::new(self.value.clone())
     }
 }

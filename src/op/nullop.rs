@@ -17,12 +17,12 @@ impl<Lr: LatticeRepr> NullOp<Lr> {
     }
 }
 
-impl<'s, Lr: LatticeRepr> Op<'s> for NullOp<Lr> {
+impl<Lr: LatticeRepr> Op for NullOp<Lr> {
     type LatRepr = Lr;
 }
 
-impl<'s, Lr: LatticeRepr> OpDelta<'s> for NullOp<Lr> {
-    fn poll_delta(&'s self, _ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
+impl<Lr: LatticeRepr> OpDelta for NullOp<Lr> {
+    fn poll_delta(&self, _ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
         Poll::Pending
     }
 }

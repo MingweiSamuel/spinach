@@ -5,27 +5,24 @@ use std::task::{Context, Poll, Waker};
 use super::*;
 
 
-#[test]
-pub fn test_construction() {
-    use crate::lattice::Max;
+// #[test]
+// pub fn test_construction() {
+//     use crate::lattice::Max;
 
-    let op0 = NullRefOp::<String>::new();
-    let op0 = CloneOp::<_>::new(op0);
-    let op1 = LatticeOp::<_, Max<String>>::new(op0, "Hi".to_owned());
-    let op2 = SplitOp::new(op1);
+//     let op0 = NullRefOp::<String>::new();
+//     let op0 = CloneOp::<_>::new(op0);
+//     let op1 = LatticeOp::<_, Max<String>>::new(op0, "Hi".to_owned());
+//     let op2 = SplitOp::new(op1);
     
-    let follow0 = op2.get_split();
-    let _ = follow0;
-    // let follow1 = LatticeOp::<_, Max<String>>::new(follow0, "No".to_owned());
+//     let follow0 = op2.get_split();
+//     let _ = follow0;
+//     // let follow1 = LatticeOp::<_, Max<String>>::new(follow0, "No".to_owned());
 
-    let _ = op2;
-}
+//     let _ = op2;
+// }
 
 
-pub struct SplitOp<'s, O: Op<'s>>
-where
-    O::Outdomain: Clone,
-{
+pub struct SplitOp<'s, O> {
     op: O,
     split: Rc<RefCell<FollowState<O::Outdomain>>>,
 }
