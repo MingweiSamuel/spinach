@@ -25,7 +25,10 @@ pub struct SetUnionRepr<Tag: SetTag, T> {
     _phantom: std::marker::PhantomData<(Tag, T)>,
 }
 
-impl<Tag: SetTag, T> LatticeRepr for SetUnionRepr<Tag, T> {
+impl<Tag: SetTag, T> LatticeRepr for SetUnionRepr<Tag, T>
+where
+    Tag::Bind<T>: Clone,
+{
     type Lattice = SetUnion<T>;
     type Repr = Tag::Bind<T>;
 }
@@ -141,6 +144,7 @@ mod fns {
 
     impl<Tag: SetTag, T> Hide<Value, SetUnionRepr<Tag, T>>
     where
+        Tag::Bind<T>: Clone,
         <SetUnionRepr<Tag, T> as LatticeRepr>::Repr: Collection<T, ()>,
     {
         pub fn len(&self) -> Hide<Value, MaxRepr<usize>> {
@@ -150,6 +154,7 @@ mod fns {
 
     impl<Tag: SetTag, T> Hide<Delta, SetUnionRepr<Tag, T>>
     where
+        Tag::Bind<T>: Clone,
         <SetUnionRepr<Tag, T> as LatticeRepr>::Repr: Collection<T, ()>,
     {
         pub fn contains(&self, val: &T) -> Hide<Value, MaxRepr<bool>> {

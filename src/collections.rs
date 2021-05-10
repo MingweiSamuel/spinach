@@ -279,6 +279,7 @@ impl<K: 'static + Eq, V: 'static, const N: usize> Collection<K, V> for MaskedArr
 
 
 #[repr(transparent)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Single<T>(pub T);
 impl<T> IntoIterator for Single<T> {
     type Item = T;
@@ -289,7 +290,8 @@ impl<T> IntoIterator for Single<T> {
     }
 }
 
-
+#[repr(transparent)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Array<T, const N: usize>(pub [T; N]);
 impl<T, const N: usize> IntoIterator for Array<T, N> {
     type Item = T;
@@ -300,7 +302,7 @@ impl<T, const N: usize> IntoIterator for Array<T, N> {
     }
 }
 
-
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub struct MaskedArray<T, const N: usize> {
     pub mask: [bool; N],
     pub vals: [T; N],

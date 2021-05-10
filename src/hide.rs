@@ -39,3 +39,12 @@ impl<Lr: LatticeRepr> std::ops::Deref for Hide<Value, Lr> {
         Hide::ref_cast(&self.value)
     }
 }
+
+impl<Y: Type, Lr: LatticeRepr> Clone for Hide<Y, Lr> {
+    fn clone(&self) -> Self {
+        Self {
+            value: self.value.clone(),
+            _phantom: std::marker::PhantomData,
+        }
+    }
+}

@@ -23,7 +23,10 @@ pub struct MapUnionRepr<Tag: MapTag, K, B: LatticeRepr> {
     _phantom: std::marker::PhantomData<(Tag, K, B)>,
 }
 
-impl<Tag: MapTag, K, B: LatticeRepr> LatticeRepr for MapUnionRepr<Tag, K, B>{
+impl<Tag: MapTag, K, B: LatticeRepr> LatticeRepr for MapUnionRepr<Tag, K, B>
+where
+    Tag::Bind<K, B::Repr>: Clone,
+{
     type Lattice = MapUnion<K, B::Lattice>;
     type Repr = Tag::Bind<K, B::Repr>;
 }

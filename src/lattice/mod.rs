@@ -7,7 +7,7 @@ pub trait Lattice {}
 
 pub trait LatticeRepr {
     type Lattice: Lattice;
-    type Repr;
+    type Repr: Clone;
 }
 
 pub trait Merge<Delta: LatticeRepr>: LatticeRepr<Lattice = Delta::Lattice> {

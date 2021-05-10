@@ -1,68 +1,50 @@
 use std::cell::RefCell;
 use std::task::{Context, Poll};
 
-use crate::lattice::{Lattice};
+use crate::lattice::{LatticeRepr, Merge, Convert};
+use crate::hide::{Hide, Delta, Value};
 
 use super::*;
-
-pub enum LatticeWrapper<'s, F: Lattice> {
-    Delta(F::Domain),
-    Value(&'s RefCell<F::Domain>),
-}
-
-impl<'s, F: Lattice> Clone for LatticeWrapper<'s, F> {
-    fn clone(&self) -> Self {
-        match self {
-            Self::Delta(delta) => Self::Delta(delta.clone()),
-            Self::Value(rcell) => Self::Value(rcell),
-        }
-    }
-}
 
 /// A state-accumulating lattice op.
 ///
 /// Input is owned `F::Domain` values as [`Df`] dataflow,
 /// output is reference `&F::Domain` values as [`Rx`] reactive.
-pub struct LatticeOp<'s, O: 's, F: 's + Lattice>
-where
-    O: Op<'s, Outdomain = F::Domain>,
-{
+pub struct LatticeOp<O, Lr: LatticeRepr> {
     op: O,
-    state: RefCell<F::Domain>,
-    _phantom: &'s (),
+    state: RefCell<Lr::Repr>,
 }
 
-impl<'s, O, F: Lattice> LatticeOp<'s, O, F>
+impl<'s, O: Op<'s>, Lr: LatticeRepr + Merge<O::LatRepr>> LatticeOp<O, Lr>
 where
-    O: Op<'s, Outdomain = F::Domain>,
+    O::LatRepr: Convert<Lr>,
 {
-    pub fn new(op: O, bottom: F::Domain) -> Self {
+    pub fn new(op: O, bottom: Lr::Repr) -> Self {
         Self {
             op,
             state: RefCell::new(bottom),
-            _phantom: &(),
         }
     }
 }
 
-impl<'s, O, F: Lattice> Op<'s> for LatticeOp<'s, O, F>
+impl<'s, O: Op<'s>, Lr: LatticeRepr + Merge<O::LatRepr>> Op<'s> for LatticeOp<O, Lr>
 where
-    O: Op<'s, Outdomain = F::Domain>,
+    O::LatRepr: Convert<Lr>,
 {
-    type Outdomain = LatticeWrapper<'s, F>;
+    type LatRepr = Lr;
 }
 
-impl<'s, O, F: Lattice> OpDelta<'s> for LatticeOp<'s, O, F>
+impl<'s, O: OpDelta<'s>, Lr: LatticeRepr + Merge<O::LatRepr>> OpDelta<'s> for LatticeOp<O, Lr>
 where
-    O: OpDelta<'s, Outdomain = F::Domain>,
+    O::LatRepr: Convert<Lr>,
 {
-    fn poll_delta(&'s self, ctx: &mut Context<'_>) -> Poll<Option<Self::Outdomain>> {
+    fn poll_delta(&'s self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
         match self.op.poll_delta(ctx) {
-            Poll::Ready(Some(mut delta)) => {
+            Poll::Ready(Some(delta)) => {
                 let state = &mut self.state.borrow_mut();
-                F::delta(state, &mut delta); // These can be combined into one? :)
-                F::merge_in(state, delta.clone());
-                Poll::Ready(Some(LatticeWrapper::Delta(delta)))
+                // F::delta(state, &mut delta); // TODO!! Doesn't minimize deltas.
+                Lr::merge(state, delta.as_reveal().clone());
+                Poll::Ready(Some(Hide::new(<O::LatRepr as Convert<Lr>>::convert(delta.into_reveal()))))
             }
             Poll::Ready(None) => Poll::Ready(None),
             Poll::Pending => Poll::Pending,
@@ -70,11 +52,11 @@ where
     }
 }
 
-impl<'s, O, F: Lattice> OpValue<'s> for LatticeOp<'s, O, F>
+impl<'s, O: Op<'s>, Lr: LatticeRepr + Merge<O::LatRepr>> OpValue<'s> for LatticeOp<O, Lr>
 where
-    O: Op<'s, Outdomain = F::Domain>,
+    O::LatRepr: Convert<Lr>,
 {
-    fn get_value(&'s self) -> Self::Outdomain {
-        LatticeWrapper::Value(&self.state)
+    fn get_value(&'s self) -> Hide<Value, Self::LatRepr> {
+        Hide::new(self.state.borrow().clone())
     }
 }
