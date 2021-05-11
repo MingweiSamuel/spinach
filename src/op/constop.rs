@@ -9,35 +9,23 @@ pub struct ConstOp<Lr: LatticeRepr> {
     value: Lr::Repr,
 }
 
-impl<Lr: LatticeRepr> ConstOp<Lr>
-where
-    Lr::Repr: Clone,
-{
+impl<Lr: LatticeRepr> ConstOp<Lr> {
     pub fn new(value: Lr::Repr) -> Self {
         Self { value }
     }
 }
 
-impl<Lr: LatticeRepr> Op for ConstOp<Lr>
-where
-    Lr::Repr: Clone,
-{
+impl<Lr: LatticeRepr> Op for ConstOp<Lr> {
     type LatRepr = Lr;
 }
 
-impl<Lr: LatticeRepr> OpDelta for ConstOp<Lr>
-where
-    Lr::Repr: Clone,
-{
+impl<Lr: LatticeRepr> OpDelta for ConstOp<Lr> {
     fn poll_delta(&self, _ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
         Poll::Pending
     }
 }
 
-impl<Lr: LatticeRepr> OpValue for ConstOp<Lr>
-where
-    Lr::Repr: Clone,
-{
+impl<Lr: LatticeRepr> OpValue for ConstOp<Lr> {
     fn get_value(&self) -> Hide<Value, Self::LatRepr> {
         Hide::new(self.value.clone())
     }

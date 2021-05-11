@@ -21,8 +21,7 @@ pub fn test_construction() {
 
     let lead = LatticeOp::<_, MaxRepr<String>>::new(lead, "Wah".to_owned());
 
-    std::mem::drop(follow);
-    std::mem::drop(lead);
+    let merge = MergeOp::new(lead, follow);
 }
 
 

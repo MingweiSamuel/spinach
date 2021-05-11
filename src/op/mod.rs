@@ -14,3 +14,6 @@ pub use latticeop::*;
 
 mod splitop;
 pub use splitop::*;
+
+mod mergeop;
+pub use mergeop::*;
