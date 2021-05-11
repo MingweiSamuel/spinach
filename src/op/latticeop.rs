@@ -42,15 +42,19 @@ where
     O::LatRepr: Convert<Lr>,
 {
     fn poll_delta(&self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
-        match self.op.poll_delta(ctx) {
-            Poll::Ready(Some(delta)) => {
-                let state = &mut self.state.borrow_mut();
-                // F::delta(state, &mut delta); // TODO!! Doesn't minimize deltas.
-                Lr::merge(state, delta.as_reveal().clone());
-                Poll::Ready(Some(Hide::new(<O::LatRepr as Convert<Lr>>::convert(delta.into_reveal()))))
+        loop {
+            match self.op.poll_delta(ctx) {
+                Poll::Ready(Some(delta)) => {
+                    let state = &mut self.state.borrow_mut();
+                    // F::delta(state, &mut delta); // TODO!! Doesn't minimize deltas.
+                    if Lr::merge(state, delta.as_reveal().clone()) {
+                        return Poll::Ready(Some(Hide::new(<O::LatRepr as Convert<Lr>>::convert(delta.into_reveal()))))
+                    }
+                    // Else: Delta did not change state, try again.
+                }
+                Poll::Ready(None) => return Poll::Ready(None),
+                Poll::Pending => return Poll::Pending,
             }
-            Poll::Ready(None) => Poll::Ready(None),
-            Poll::Pending => Poll::Pending,
         }
     }
 }

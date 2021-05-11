@@ -30,22 +30,24 @@ where
     DeltaRA: Convert<SelfRA>,
     DeltaRB: Convert<SelfRB>,
 {
-    fn merge(this: &mut <DomPairRepr<SelfRA, SelfRB> as LatticeRepr>::Repr, delta: <DomPairRepr<DeltaRA, DeltaRB> as LatticeRepr>::Repr) {
+    fn merge(this: &mut <DomPairRepr<SelfRA, SelfRB> as LatticeRepr>::Repr, delta: <DomPairRepr<DeltaRA, DeltaRB> as LatticeRepr>::Repr) -> bool {
         match SelfRA::compare(&this.0, &delta.0) {
             None => {
                 SelfRA::merge(&mut this.0, delta.0);
                 SelfRB::merge(&mut this.1, delta.1);
+                true
             }
             Some(Ordering::Equal) => {
-                SelfRB::merge(&mut this.1, delta.1);
+                SelfRB::merge(&mut this.1, delta.1)
             }
             Some(Ordering::Less) => {
                 *this = (
                     DeltaRA::convert(delta.0),
                     DeltaRB::convert(delta.1),
                 );
+                true
             }
-            Some(Ordering::Greater) => {}
+            Some(Ordering::Greater) => false
         }
     }
 }

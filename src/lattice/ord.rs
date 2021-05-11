@@ -15,9 +15,13 @@ impl<T: Ord + Clone> LatticeRepr for MaxRepr<T> {
 }
 
 impl<T: Ord + Clone> Merge<MaxRepr<T>> for MaxRepr<T> {
-    fn merge(this: &mut <MaxRepr<T> as LatticeRepr>::Repr, delta: <MaxRepr<T> as LatticeRepr>::Repr) {
+    fn merge(this: &mut <MaxRepr<T> as LatticeRepr>::Repr, delta: <MaxRepr<T> as LatticeRepr>::Repr) -> bool {
         if delta > *this {
             *this = delta;
+            true
+        }
+        else {
+            false
         }
     }
 }
@@ -52,9 +56,13 @@ impl<T: Ord + Clone> LatticeRepr for MinRepr<T> {
 }
 
 impl<T: Ord + Clone> Merge<MinRepr<T>> for MinRepr<T> {
-    fn merge(this: &mut <MinRepr<T> as LatticeRepr>::Repr, delta: <MinRepr<T> as LatticeRepr>::Repr) {
+    fn merge(this: &mut <MinRepr<T> as LatticeRepr>::Repr, delta: <MinRepr<T> as LatticeRepr>::Repr) -> bool {
         if delta < *this {
             *this = delta;
+            true
+        }
+        else {
+            false
         }
     }
 }

@@ -42,15 +42,19 @@ where
     SelfLR:  Merge<DeltaLR>,
     DeltaLR: Convert<SelfLR>,
 {
-    fn merge(this: &mut <MapUnionRepr<SelfTag, K, SelfLR> as LatticeRepr>::Repr, delta: <MapUnionRepr<DeltaTag, K, DeltaLR> as LatticeRepr>::Repr) {
+    fn merge(this: &mut <MapUnionRepr<SelfTag, K, SelfLR> as LatticeRepr>::Repr, delta: <MapUnionRepr<DeltaTag, K, DeltaLR> as LatticeRepr>::Repr) -> bool {
+        let mut changed = false;
         let iter: Vec<(K, SelfLR::Repr)> = delta.into_iter()
             .filter_map(|(k, v)| {
                 match this.get_mut(&k) {
+                    // Key collision, merge into THIS.
                     Some(target_val) => {
-                        <SelfLR as Merge<DeltaLR>>::merge(target_val, v);
+                        changed |= <SelfLR as Merge<DeltaLR>>::merge(target_val, v);
                         None
                     }
+                    // New value, convert for extending.
                     None => {
+                        changed = true;
                         let val: SelfLR::Repr = <DeltaLR as Convert<SelfLR>>::convert(v);
                         Some((k, val))
                     }
@@ -58,6 +62,7 @@ where
             })
             .collect();
         this.extend(iter);
+        changed
     }
 }
 

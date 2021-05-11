@@ -37,11 +37,13 @@ impl<T, SelfTag: SetTag, DeltaTag: SetTag> Merge<SetUnionRepr<DeltaTag, T>> for 
 where
     SetUnionRepr<SelfTag,  T>: LatticeRepr<Lattice = SetUnion<T>>,
     SetUnionRepr<DeltaTag, T>: LatticeRepr<Lattice = SetUnion<T>>,
-    <SetUnionRepr<SelfTag,  T> as LatticeRepr>::Repr: Extend<T>,
+    <SetUnionRepr<SelfTag,  T> as LatticeRepr>::Repr: Collection<T, ()> + Extend<T>,
     <SetUnionRepr<DeltaTag, T> as LatticeRepr>::Repr: IntoIterator<Item = T>,
 {
-    fn merge(this: &mut <SetUnionRepr<SelfTag, T> as LatticeRepr>::Repr, delta: <SetUnionRepr<DeltaTag, T> as LatticeRepr>::Repr) {
-        this.extend(delta)
+    fn merge(this: &mut <SetUnionRepr<SelfTag, T> as LatticeRepr>::Repr, delta: <SetUnionRepr<DeltaTag, T> as LatticeRepr>::Repr) -> bool {
+        let old_len = this.len();
+        this.extend(delta);
+        this.len() > old_len
     }
 }
 
