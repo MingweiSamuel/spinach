@@ -13,39 +13,48 @@ pub fn test_construction() {
 
     let op = NullOp::<MaxRepr<String>>::new();
     let op = LatticeOp::<_, MaxRepr<String>>::new(op, "Hi".to_owned());
-    
-    let lead = SplitOp::new(&op);
 
-    let follow = SplitOpFollow::new(&lead);
-    let follow = LatticeOp::<_, MaxRepr<String>>::new(follow, "Hah".to_owned());
+    let splitter = Splitter::new(op);
 
-    let lead = LatticeOp::<_, MaxRepr<String>>::new(lead, "Wah".to_owned());
+    let split0 = splitter.add_split();
+    let split0 = LatticeOp::<_, MaxRepr<String>>::new(split0, "Wah".to_owned());
 
-    let merge = MergeOp::new(lead, follow);
+    let split1 = splitter.add_split();
+    let split1 = LatticeOp::<_, MaxRepr<String>>::new(split1, "Hah".to_owned());
+
+    let merge = MergeOp::new(split0, split1);
+}
+
+pub struct Splitter<O: OpValue> {
+    op: O,
+    splits: RefCell<Vec<SplitState<O>>>,
+}
+impl<O: OpValue> Splitter<O> {
+    pub fn new(op: O) -> Self {
+        Self {
+            op,
+            splits: Default::default(),
+        }
+    }
+
+    pub fn add_split(&self) -> SplitOp<'_, O> {
+        let mut splits = self.splits.borrow_mut();
+        let index = splits.len();
+        splits.push(SplitState::default());
+
+        SplitOp {
+            op: &self.op,
+            splits: &self.splits,
+            index,
+        }
+    }
 }
 
 
 pub struct SplitOp<'s, O: OpValue> {
     op: &'s O,
-    split: Rc<RefCell<FollowState<O>>>,
-}
-
-impl<'s, O: OpValue> SplitOp<'s, O> {
-    pub fn new(op: &'s O) -> Self {
-        Self {
-            op,
-            split: Default::default(),
-        }
-    }
-
-    // pub fn get_split(&self) -> SplitOpFollow<'s, O> {
-    //     let rcell = RefCell::default();
-    //     self.split.replace(&rcell)
-    //     SplitOpFollow {
-    //         op: self.op,
-    //         split: rcell,
-    //     }
-    // }
+    splits: &'s RefCell<Vec<SplitState<O>>>,
+    index: usize,
 }
 
 impl<'s, O: OpValue> Op for SplitOp<'s, O> {
@@ -54,27 +63,37 @@ impl<'s, O: OpValue> Op for SplitOp<'s, O> {
 
 impl<'s, O: OpValue + OpDelta> OpDelta for SplitOp<'s, O> {
     fn poll_delta(&self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
-        let mut borrow = self.split.borrow_mut();
-        match borrow.delta {
-            None => {
-                match self.op.poll_delta(ctx) {
-                    Poll::Ready(Some(delta)) => {
-                        let old_opt = borrow.delta.replace(delta.clone());
-                        assert!(old_opt.is_none());
-    
-                        if let Some(waker) = borrow.follow_waker.take() {
-                            waker.wake();
-                        }
-                        Poll::Ready(Some(delta))
-                    },
-                    Poll::Ready(None) => Poll::Ready(None),
-                    Poll::Pending => Poll::Pending,
+        let mut splits = self.splits.borrow_mut();
+
+        // Check if other splits are ready to receive a value.
+        for i in 0..splits.len() {
+            let split = &mut splits[i];
+            if self.index == i {
+                split.waker.replace(ctx.waker().clone());
+                continue;
+            }
+            if let Some(_) = split.delta {
+                if let Some(waker) = &split.waker {
+                    waker.wake_by_ref();
                 }
+                return Poll::Pending;
             }
-            Some(_) => {
-                borrow.lead_waker.replace(ctx.waker().clone());
-                Poll::Pending
-            }
+        }
+
+        match self.op.poll_delta(ctx) {
+            Poll::Ready(Some(delta)) => {
+                for split in splits.iter_mut() {
+                    let old_delta_opt = split.delta.replace(delta.clone());
+                    assert!(old_delta_opt.is_none());
+
+                    if let Some(waker) = split.waker.take() {
+                        waker.wake();
+                    }
+                }
+                Poll::Ready(Some(delta))
+            },
+            Poll::Ready(None) => Poll::Ready(None),
+            Poll::Pending => Poll::Pending,
         }
     }
 }
@@ -87,62 +106,16 @@ impl<'s, O: OpValue> OpValue for SplitOp<'s, O> {
 
 
 
-struct FollowState<O: OpValue> {
-    lead_waker: Option<Waker>,
-    follow_waker: Option<Waker>,
+struct SplitState<O: OpValue> {
+    waker: Option<Waker>,
     delta: Option<Hide<Delta, O::LatRepr>>,
 }
 
-impl<O: OpValue> Default for FollowState<O> {
+impl<O: OpValue> Default for SplitState<O> {
     fn default() -> Self {
         Self {
-            lead_waker: None,
-            follow_waker: None,
+            waker: None,
             delta: None,
         }
-    }
-}
-
-
-
-pub struct SplitOpFollow<'s, O: OpValue> {
-    op: &'s O,
-    split: Rc<RefCell<FollowState<O>>>,
-}
-
-impl<'s, O: OpValue> SplitOpFollow<'s, O> {
-    pub fn new(lead: &SplitOp<'s, O>) -> Self {
-        Self {
-            op: lead.op,
-            split: lead.split.clone(),
-        }
-    }
-}
-
-impl<'s, O: OpValue> Op for SplitOpFollow<'s, O> {
-    type LatRepr = O::LatRepr;
-}
-
-impl<'s, O: OpValue + OpDelta> OpDelta for SplitOpFollow<'s, O> {
-    fn poll_delta(&self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
-        let mut borrow = self.split.borrow_mut();
-        match borrow.delta.take() {
-            Some(val) => {
-                if let Some(lead_waker) = borrow.lead_waker.take() {
-                    lead_waker.wake();
-                }
-                Poll::Ready(Some(val))
-            }
-            None => {
-                borrow.follow_waker.replace(ctx.waker().clone());
-                Poll::Pending
-            }
-        }
-    }
-}
-
-impl<'s, O: OpValue> OpValue for SplitOpFollow<'s, O> {
-    fn get_value(&self) -> Hide<Value, Self::LatRepr> {
-        self.op.get_value()
     }
 }
