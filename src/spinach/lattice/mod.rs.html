@@ -25,7 +25,19 @@
 <span id="22">22</span>
 <span id="23">23</span>
 <span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
 </pre><pre class="rust">
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::hide</span>::{<span class="ident">Hide</span>, <span class="ident">Type</span>};
+
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">setunion</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">mapunion</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">ord</span>;
@@ -41,10 +53,18 @@
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Merge</span><span class="op">&lt;</span><span class="ident">Delta</span>: <span class="ident">LatticeRepr</span><span class="op">&gt;</span>: <span class="ident">LatticeRepr</span><span class="op">&lt;</span><span class="ident">Lattice</span> <span class="op">=</span> <span class="ident">Delta::Lattice</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Merge DELTA into THIS. Return TRUE if THIS changed, FALSE if THIS was unchanged.</span>
     <span class="kw">fn</span> <span class="ident">merge</span>(<span class="ident">this</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="ident">::Repr</span>, <span class="ident">delta</span>: <span class="ident">Delta::Repr</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span>;
+
+    <span class="kw">fn</span> <span class="ident">merge_hide</span><span class="op">&lt;</span><span class="ident">Y</span>: <span class="ident">Type</span>, <span class="ident">Z</span>: <span class="ident">Type</span><span class="op">&gt;</span>(<span class="ident">this</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">delta</span>: <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Z</span>, <span class="ident">Delta</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+        <span class="self">Self</span><span class="ident">::merge</span>(<span class="ident">this</span>.<span class="ident">as_reveal_mut</span>(), <span class="ident">delta</span>.<span class="ident">into_reveal</span>())
+    }
 }
 
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Convert</span><span class="op">&lt;</span><span class="ident">Target</span>: <span class="ident">LatticeRepr</span><span class="op">&lt;</span><span class="ident">Lattice</span> <span class="op">=</span> <span class="self">Self</span><span class="ident">::Lattice</span><span class="op">&gt;</span><span class="op">&gt;</span>: <span class="ident">LatticeRepr</span> {
     <span class="kw">fn</span> <span class="ident">convert</span>(<span class="ident">this</span>: <span class="self">Self</span><span class="ident">::Repr</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Target::Repr</span>;
+
+    <span class="kw">fn</span> <span class="ident">convert_hide</span><span class="op">&lt;</span><span class="ident">Y</span>: <span class="ident">Type</span><span class="op">&gt;</span>(<span class="ident">this</span>: <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="self">Self</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="ident">Target</span><span class="op">&gt;</span> {
+        <span class="ident">Hide::new</span>(<span class="self">Self</span><span class="ident">::convert</span>(<span class="ident">this</span>.<span class="ident">into_reveal</span>()))
+    }
 }
 
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Compare</span><span class="op">&lt;</span><span class="ident">Other</span>: <span class="ident">LatticeRepr</span><span class="op">&lt;</span><span class="ident">Lattice</span> <span class="op">=</span> <span class="self">Self</span><span class="ident">::Lattice</span><span class="op">&gt;</span><span class="op">&gt;</span>: <span class="ident">LatticeRepr</span> {

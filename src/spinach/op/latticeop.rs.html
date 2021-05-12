@@ -88,7 +88,7 @@
     <span class="ident">O::LatRepr</span>: <span class="ident">Convert</span><span class="op">&lt;</span><span class="ident">Lr</span><span class="op">&gt;</span>,
 {
     <span class="ident">op</span>: <span class="ident">O</span>,
-    <span class="ident">state</span>: <span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">Lr::Repr</span><span class="op">&gt;</span>,
+    <span class="ident">state</span>: <span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Value</span>, <span class="ident">Lr</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">Op</span>, <span class="ident">Lr</span>: <span class="ident">LatticeRepr</span> <span class="op">+</span> <span class="ident">Merge</span><span class="op">&lt;</span><span class="ident">O::LatRepr</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">LatticeOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">Lr</span><span class="op">&gt;</span>
@@ -98,7 +98,7 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">op</span>: <span class="ident">O</span>, <span class="ident">bottom</span>: <span class="ident">Lr::Repr</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> {
             <span class="ident">op</span>,
-            <span class="ident">state</span>: <span class="ident">RefCell::new</span>(<span class="ident">bottom</span>),
+            <span class="ident">state</span>: <span class="ident">RefCell::new</span>(<span class="ident">Hide::new</span>(<span class="ident">bottom</span>)),
         }
     }
 }
@@ -120,8 +120,8 @@
                 <span class="ident">Poll::Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">delta</span>)) <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="kw">let</span> <span class="ident">state</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">borrow_mut</span>();
                     <span class="comment">// F::delta(state, &amp;mut delta); // TODO!! Doesn&#39;t minimize deltas.</span>
-                    <span class="kw">if</span> <span class="ident">Lr::merge</span>(<span class="ident">state</span>, <span class="ident">delta</span>.<span class="ident">as_reveal</span>().<span class="ident">clone</span>()) {
-                        <span class="kw">return</span> <span class="ident">Poll::Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">Hide::new</span>(<span class="op">&lt;</span><span class="ident">O::LatRepr</span> <span class="kw">as</span> <span class="ident">Convert</span><span class="op">&lt;</span><span class="ident">Lr</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::convert</span>(<span class="ident">delta</span>.<span class="ident">into_reveal</span>()))))
+                    <span class="kw">if</span> <span class="ident">Lr::merge_hide</span>(<span class="ident">state</span>, <span class="ident">delta</span>.<span class="ident">clone</span>()) {
+                        <span class="kw">return</span> <span class="ident">Poll::Ready</span>(<span class="prelude-val">Some</span>(<span class="op">&lt;</span><span class="ident">O::LatRepr</span> <span class="kw">as</span> <span class="ident">Convert</span><span class="op">&lt;</span><span class="ident">Lr</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::convert_hide</span>(<span class="ident">delta</span>)))
                     }
                     <span class="comment">// Else: Delta did not change state, try again.</span>
                 }
@@ -137,7 +137,7 @@
     <span class="ident">O::LatRepr</span>: <span class="ident">Convert</span><span class="op">&lt;</span><span class="ident">Lr</span><span class="op">&gt;</span>,
 {
     <span class="kw">fn</span> <span class="ident">get_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Value</span>, <span class="self">Self</span><span class="ident">::LatRepr</span><span class="op">&gt;</span> {
-        <span class="ident">Hide::new</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">borrow</span>().<span class="ident">clone</span>())
+        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">borrow</span>().<span class="ident">clone</span>()
     }
 }
 </pre></div>
