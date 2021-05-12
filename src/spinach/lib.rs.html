@@ -31,6 +31,7 @@
 <span id="28">28</span>
 <span id="29">29</span>
 <span id="30">30</span>
+<span id="31">31</span>
 </pre><pre class="rust">
 <span class="attribute">#![<span class="ident">allow</span>(<span class="ident">clippy::redundant_closure</span>)]</span>
 <span class="attribute">#![<span class="ident">allow</span>(<span class="ident">incomplete_features</span>)]</span>
@@ -45,6 +46,7 @@
 <span class="attribute">#![<span class="ident">feature</span>(<span class="ident">generic_associated_types</span>)]</span>
 <span class="attribute">#![<span class="ident">feature</span>(<span class="ident">try_blocks</span>)]</span>
 <span class="attribute">#![<span class="ident">feature</span>(<span class="ident">min_type_alias_impl_trait</span>)]</span>
+<span class="attribute">#![<span class="ident">feature</span>(<span class="ident">never_type</span>)]</span>
 <span class="attribute">#![<span class="ident">feature</span>(<span class="ident">external_doc</span>)]</span>
 
 <span class="attribute">#![<span class="ident">forbid</span>(<span class="ident">unsafe_code</span>)]</span>
@@ -61,7 +63,7 @@
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">op</span>;
 
-<span class="comment">// pub mod monotonic;</span>
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">comp</span>;
 </pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="spinach" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>

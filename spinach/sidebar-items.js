@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["collections",""],["func","Function traits."],["hide",""],["lattice",""],["op","All the standard operators."],["tag",""]]});
+initSidebarItems({"mod":[["collections",""],["comp",""],["func","Function traits."],["hide",""],["lattice",""],["op","All the standard operators."],["tag",""]]});

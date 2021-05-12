@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["ConstOp",""],["LatticeOp","A state-accumulating lattice op."],["MergeOp",""],["NullOp",""],["SplitOp",""],["Splitter",""]],"trait":[["Op",""],["OpDelta",""],["OpValue",""]]});
+initSidebarItems({"struct":[["ConstOp",""],["LatticeOp","A state-accumulating lattice op."],["MergeOp",""],["MorphOp",""],["NullOp",""],["OnceOp",""],["SplitOp",""],["Splitter",""]],"trait":[["Op",""],["OpDelta",""],["OpValue",""]]});

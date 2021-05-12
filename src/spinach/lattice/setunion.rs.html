@@ -211,6 +211,7 @@
 <span id="208">208</span>
 <span id="209">209</span>
 <span id="210">210</span>
+<span id="211">211</span>
 </pre><pre class="rust">
 <span class="kw">use</span> <span class="ident">std::iter::FromIterator</span>;
 <span class="kw">use</span> <span class="ident">std::cmp::Ordering</span>;
@@ -378,35 +379,36 @@
         }
     }
 
-    <span class="comment">// impl&lt;Tag: SetTag, T&gt; Hide&lt;Delta, SetUnionRepr&lt;Tag, T&gt;&gt;</span>
-    <span class="comment">// where</span>
-    <span class="comment">//     &lt;SetUnionRepr&lt;Tag, T&gt; as LatticeRepr&gt;::Repr: IntoIterator&lt;Item = T&gt;,</span>
-    <span class="comment">// {</span>
-    <span class="comment">//     pub fn map&lt;U, TargetTag: SetTag&gt;(self, f: impl Fn(T) -&gt; U) -&gt; Hide&lt;Delta, SetUnionRepr&lt;TargetTag, U&gt;&gt;</span>
-    <span class="comment">//     where</span>
-    <span class="comment">//         SetUnionRepr&lt;TargetTag, U&gt;: LatticeRepr&lt;Lattice = SetUnion&lt;U&gt;&gt;,</span>
-    <span class="comment">//         &lt;SetUnionRepr&lt;TargetTag, U&gt; as LatticeRepr&gt;::Repr: FromIterator&lt;U&gt;,</span>
-    <span class="comment">//     {</span>
-    <span class="comment">//         Hide::new(self.into_reveal().into_iter().map(f).collect())</span>
-    <span class="comment">//     }</span>
+    <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Tag</span>: <span class="ident">SetTag</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Delta</span>, <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">Tag</span>, <span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>
+    <span class="kw">where</span>
+        <span class="ident">Tag::Bind</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>: <span class="ident">Clone</span>,
+        <span class="op">&lt;</span><span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">Tag</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="kw">as</span> <span class="ident">LatticeRepr</span><span class="op">&gt;</span><span class="ident">::Repr</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span>,
+    {
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">map</span><span class="op">&lt;</span><span class="ident">U</span>, <span class="ident">TargetTag</span>: <span class="ident">SetTag</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">f</span>: <span class="kw">impl</span> <span class="ident">Fn</span>(<span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">U</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Delta</span>, <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">TargetTag</span>, <span class="ident">U</span><span class="op">&gt;</span><span class="op">&gt;</span>
+        <span class="kw">where</span>
+            <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">TargetTag</span>, <span class="ident">U</span><span class="op">&gt;</span>: <span class="ident">LatticeRepr</span><span class="op">&lt;</span><span class="ident">Lattice</span> <span class="op">=</span> <span class="ident">SetUnion</span><span class="op">&lt;</span><span class="ident">U</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+            <span class="op">&lt;</span><span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">TargetTag</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="kw">as</span> <span class="ident">LatticeRepr</span><span class="op">&gt;</span><span class="ident">::Repr</span>: <span class="ident">FromIterator</span><span class="op">&lt;</span><span class="ident">U</span><span class="op">&gt;</span>,
+        {
+            <span class="ident">Hide::new</span>(<span class="self">self</span>.<span class="ident">into_reveal</span>().<span class="ident">into_iter</span>().<span class="ident">map</span>(<span class="ident">f</span>).<span class="ident">collect</span>())
+        }
 
-    <span class="comment">//     pub fn filter&lt;TargetTag: SetTag&gt;(self, f: impl Fn(&amp;T) -&gt; bool) -&gt; Hide&lt;Delta, SetUnionRepr&lt;TargetTag, T&gt;&gt;</span>
-    <span class="comment">//     where</span>
-    <span class="comment">//         SetUnionRepr&lt;TargetTag, T&gt;: LatticeRepr&lt;Lattice = SetUnion&lt;T&gt;&gt;,</span>
-    <span class="comment">//         &lt;SetUnionRepr&lt;TargetTag, T&gt; as LatticeRepr&gt;::Repr: FromIterator&lt;T&gt;,</span>
-    <span class="comment">//     {</span>
-    <span class="comment">//         Hide::new(self.into_reveal().into_iter().filter(f).collect())</span>
-    <span class="comment">//     }</span>
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">filter</span><span class="op">&lt;</span><span class="ident">TargetTag</span>: <span class="ident">SetTag</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">f</span>: <span class="kw">impl</span> <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Delta</span>, <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">TargetTag</span>, <span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>
+        <span class="kw">where</span>
+            <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">TargetTag</span>, <span class="ident">T</span><span class="op">&gt;</span>: <span class="ident">LatticeRepr</span><span class="op">&lt;</span><span class="ident">Lattice</span> <span class="op">=</span> <span class="ident">SetUnion</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+            <span class="op">&lt;</span><span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">TargetTag</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="kw">as</span> <span class="ident">LatticeRepr</span><span class="op">&gt;</span><span class="ident">::Repr</span>: <span class="ident">FromIterator</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
+        {
+            <span class="ident">Hide::new</span>(<span class="self">self</span>.<span class="ident">into_reveal</span>().<span class="ident">into_iter</span>().<span class="ident">filter</span>(<span class="ident">f</span>).<span class="ident">collect</span>())
+        }
 
-    <span class="comment">//     pub fn flatten&lt;TargetTag: SetTag&gt;(self) -&gt; Hide&lt;Delta, SetUnionRepr&lt;TargetTag, T::Item&gt;&gt;</span>
-    <span class="comment">//     where</span>
-    <span class="comment">//         T: IntoIterator,</span>
-    <span class="comment">//         SetUnionRepr&lt;TargetTag, T::Item&gt;: LatticeRepr&lt;Lattice = SetUnion&lt;T::Item&gt;&gt;,</span>
-    <span class="comment">//         &lt;SetUnionRepr&lt;TargetTag, T::Item&gt; as LatticeRepr&gt;::Repr: FromIterator&lt;T::Item&gt;,</span>
-    <span class="comment">//     {</span>
-    <span class="comment">//         Hide::new(self.into_reveal().into_iter().flatten().collect())</span>
-    <span class="comment">//     }</span>
-    <span class="comment">// }</span>
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">flatten</span><span class="op">&lt;</span><span class="ident">TargetTag</span>: <span class="ident">SetTag</span><span class="op">&gt;</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Delta</span>, <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">TargetTag</span>, <span class="ident">T::Item</span><span class="op">&gt;</span><span class="op">&gt;</span>
+        <span class="kw">where</span>
+            <span class="ident">T</span>: <span class="ident">IntoIterator</span>,
+            <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">TargetTag</span>, <span class="ident">T::Item</span><span class="op">&gt;</span>: <span class="ident">LatticeRepr</span><span class="op">&lt;</span><span class="ident">Lattice</span> <span class="op">=</span> <span class="ident">SetUnion</span><span class="op">&lt;</span><span class="ident">T::Item</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+            <span class="op">&lt;</span><span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">TargetTag</span>, <span class="ident">T::Item</span><span class="op">&gt;</span> <span class="kw">as</span> <span class="ident">LatticeRepr</span><span class="op">&gt;</span><span class="ident">::Repr</span>: <span class="ident">FromIterator</span><span class="op">&lt;</span><span class="ident">T::Item</span><span class="op">&gt;</span>,
+        {
+            <span class="ident">Hide::new</span>(<span class="self">self</span>.<span class="ident">into_reveal</span>().<span class="ident">into_iter</span>().<span class="ident">flatten</span>().<span class="ident">collect</span>())
+        }
+    }
 
 
     <span class="kw">fn</span> <span class="ident">__test_things</span>() {
