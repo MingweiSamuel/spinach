@@ -46,14 +46,6 @@ impl<Y: Type, Lr: LatticeRepr> Hide<Y, Lr> {
     }
 }
 
-impl<Lr: LatticeRepr> std::ops::Deref for Hide<Value, Lr> {
-    type Target = Hide<Delta, Lr>;
-
-    fn deref(&self) -> &Self::Target {
-        Hide::ref_cast(&self.value)
-    }
-}
-
 impl<Y: Type, Lr: LatticeRepr> Clone for Hide<Y, Lr> {
     fn clone(&self) -> Self {
         Self {

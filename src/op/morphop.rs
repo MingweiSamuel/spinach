@@ -1,53 +1,37 @@
 use std::task::{Context, Poll};
 
 use crate::hide::{Hide, Delta, Value};
-use crate::lattice::{LatticeRepr};
+use crate::func::Morphism;
 
 use super::*;
 
-pub struct MorphOp<O: Op, Lr: LatticeRepr, F>
-where
-    F: Fn(Hide<Delta, O::LatRepr>) -> Hide<Delta, Lr>,
-{
+pub struct MorphismOp<O: Op, F: Morphism<InLatRepr = O::LatRepr>> {
     op: O,
     f: F,
 }
 
-impl<O: Op, Lr: LatticeRepr, F> MorphOp<O, Lr, F>
-where
-    F: Fn(Hide<Delta, O::LatRepr>) -> Hide<Delta, Lr>,
-{
+impl<O: Op, F: Morphism<InLatRepr = O::LatRepr>> MorphismOp<O, F> {
     pub fn new(op: O, f: F) -> Self {
         Self { op, f }
     }
 }
 
-impl<O: Op, Lr: LatticeRepr, F> Op for MorphOp<O, Lr, F>
-where
-    F: Fn(Hide<Delta, O::LatRepr>) -> Hide<Delta, Lr>,
-{
-    type LatRepr = Lr;
+impl<O: Op, F: Morphism<InLatRepr = O::LatRepr>> Op for MorphismOp<O, F> {
+    type LatRepr = F::OutLatRepr;
 }
 
-impl<O: OpDelta, Lr: LatticeRepr, F> OpDelta for MorphOp<O, Lr, F>
-where
-    F: Fn(Hide<Delta, O::LatRepr>) -> Hide<Delta, Lr>,
-{
+impl<O: OpDelta, F: Morphism<InLatRepr = O::LatRepr>> OpDelta for MorphismOp<O, F> {
     fn poll_delta(&self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
         match self.op.poll_delta(ctx) {
-            Poll::Ready(Some(delta)) => Poll::Ready(Some((self.f)(delta))),
+            Poll::Ready(Some(delta)) => Poll::Ready(Some(self.f.call(delta))),
             Poll::Ready(None) => Poll::Ready(None),
             Poll::Pending => Poll::Pending,
         }
     }
 }
 
-impl<O: OpValue, Lr: LatticeRepr, F> OpValue for MorphOp<O, Lr, F>
-where
-    F: Fn(Hide<Delta, O::LatRepr>) -> Hide<Delta, Lr>,
-{
+impl<O: OpValue, F: Morphism<InLatRepr = O::LatRepr>> OpValue for MorphismOp<O, F> {
     fn get_value(&self) -> Hide<Value, Self::LatRepr> {
-        let value: Hide<Value, O::LatRepr> = self.op.get_value();
-        (self.f)(value.into_delta()).into_reveal_value()
+        self.f.call(self.op.get_value())
     }
 }

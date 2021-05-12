@@ -1,28 +1,16 @@
 //! Function traits.
 
-/// Represents a pure function, owned->owned values.
-pub trait PureFn {
-    type Indomain;
-    type Outdomain;
-    fn call(&self, item: Self::Indomain) -> Self::Outdomain;
+use crate::lattice::LatticeRepr;
+use crate::hide::{Hide, Type, Value};
+
+pub trait Morphism {
+    type InLatRepr: LatticeRepr;
+    type OutLatRepr: LatticeRepr;
+    fn call<Y: Type>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr>;
 }
 
-/// Represents a pure function, reference->owned values.
-pub trait PureRefFn {
-    type Indomain;
-    type Outdomain;
-    fn call(&self, item: &Self::Indomain) -> Self::Outdomain;
-}
-
-pub trait PureRefRefFn {
-    type Indomain;
-    type Outdomain;
-    fn call<'a>(&self, item: &'a Self::Indomain) -> &'a Self::Outdomain;
-}
-
-pub trait RendezvousFn {
-    type InDf;
-    type InRx;
-    type Outdomain;
-    fn call<'a>(&self, item: (Self::InDf, &'a Self::InRx)) -> Self::Outdomain;
+pub trait Monotone {
+    type InLatRepr: LatticeRepr;
+    type OutLatRepr: LatticeRepr;
+    fn call(&self, item: Hide<Value, Self::InLatRepr>) -> Hide<Value, Self::OutLatRepr>;
 }
