@@ -10,12 +10,12 @@ impl Type for Value {}
 
 #[derive(RefCast)]
 #[repr(transparent)]
-pub struct Hide<Y: Type, Lr: LatticeRepr> {
+pub struct Hide<Y: Type, Lr: LatticeRepr + ?Sized> {
     value: Lr::Repr,
     _phantom: std::marker::PhantomData<Y>,
 }
 
-impl<Y: Type, Lr: LatticeRepr> Hide<Y, Lr> {
+impl<Y: Type, Lr: LatticeRepr + ?Sized> Hide<Y, Lr> {
     pub fn new(value: Lr::Repr) -> Self {
         Self {
             value,
@@ -29,6 +29,10 @@ impl<Y: Type, Lr: LatticeRepr> Hide<Y, Lr> {
 
     pub fn as_reveal(&self) -> &Lr::Repr {
         &self.value
+    }
+
+    pub fn as_reveal_mut(&mut self) -> &mut Lr::Repr {
+        &mut self.value
     }
 
     pub fn into_reveal_value(self) -> Hide<Value, Lr> {

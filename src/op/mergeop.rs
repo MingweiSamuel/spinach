@@ -41,7 +41,7 @@ where
             Poll::Pending => Poll::Pending,
         };
         match self.op_b.poll_delta(ctx) {
-            Poll::Ready(Some(delta)) => Poll::Ready(Some(Hide::new(<B::LatRepr as Convert<A::LatRepr>>::convert(delta.into_reveal())))),
+            Poll::Ready(Some(delta)) => Poll::Ready(Some(<B::LatRepr as Convert<A::LatRepr>>::convert_hide(delta))),
             Poll::Ready(None) => not_ready,
             Poll::Pending => Poll::Pending,
         }
@@ -54,8 +54,8 @@ where
     A::LatRepr: Merge<B::LatRepr>,
 {
     fn get_value(&self) -> Hide<Value, Self::LatRepr> {
-        let mut val = self.op_a.get_value().into_reveal();
-        <A::LatRepr as Merge<B::LatRepr>>::merge(&mut val, self.op_b.get_value().into_reveal());
-        Hide::new(val)
+        let mut val = self.op_a.get_value();
+        <A::LatRepr as Merge<B::LatRepr>>::merge_hide(&mut val, self.op_b.get_value());
+        val
     }
 }

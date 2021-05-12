@@ -15,7 +15,7 @@ where
     O::LatRepr: Convert<Lr>,
 {
     op: O,
-    state: RefCell<Lr::Repr>,
+    state: RefCell<Hide<Value, Lr>>,
 }
 
 impl<O: Op, Lr: LatticeRepr + Merge<O::LatRepr>> LatticeOp<O, Lr>
@@ -25,7 +25,7 @@ where
     pub fn new(op: O, bottom: Lr::Repr) -> Self {
         Self {
             op,
-            state: RefCell::new(bottom),
+            state: RefCell::new(Hide::new(bottom)),
         }
     }
 }
@@ -47,8 +47,8 @@ where
                 Poll::Ready(Some(delta)) => {
                     let state = &mut self.state.borrow_mut();
                     // F::delta(state, &mut delta); // TODO!! Doesn't minimize deltas.
-                    if Lr::merge(state, delta.as_reveal().clone()) {
-                        return Poll::Ready(Some(Hide::new(<O::LatRepr as Convert<Lr>>::convert(delta.into_reveal()))))
+                    if Lr::merge_hide(state, delta.clone()) {
+                        return Poll::Ready(Some(<O::LatRepr as Convert<Lr>>::convert_hide(delta)))
                     }
                     // Else: Delta did not change state, try again.
                 }
@@ -64,6 +64,6 @@ where
     O::LatRepr: Convert<Lr>,
 {
     fn get_value(&self) -> Hide<Value, Self::LatRepr> {
-        Hide::new(self.state.borrow().clone())
+        self.state.borrow().clone()
     }
 }
