@@ -11,6 +11,7 @@
 #![feature(generic_associated_types)]
 #![feature(try_blocks)]
 #![feature(min_type_alias_impl_trait)]
+#![feature(never_type)]
 #![feature(external_doc)]
 
 #![forbid(unsafe_code)]
@@ -27,4 +28,4 @@ pub mod hide;
 
 pub mod op;
 
-// pub mod monotonic;
+pub mod comp;

@@ -23,6 +23,6 @@ impl<Lr: LatticeRepr> Op for NullOp<Lr> {
 
 impl<Lr: LatticeRepr> OpDelta for NullOp<Lr> {
     fn poll_delta(&self, _ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
-        Poll::Pending
+        Poll::Ready(None)
     }
 }

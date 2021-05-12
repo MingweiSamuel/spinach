@@ -1,38 +1,20 @@
-use std::cell::{RefCell};
-use std::rc::{Rc};
+use std::cell::{Cell, RefCell};
 use std::task::{Context, Poll, Waker};
 
 use crate::hide::{Hide, Delta, Value};
 
 use super::*;
 
-
-#[test]
-pub fn test_construction() {
-    use crate::lattice::ord::MaxRepr;
-
-    let op = NullOp::<MaxRepr<String>>::new();
-    let op = LatticeOp::<_, MaxRepr<String>>::new(op, "Hi".to_owned());
-
-    let splitter = Splitter::new(op);
-
-    let split0 = splitter.add_split();
-    let split0 = LatticeOp::<_, MaxRepr<String>>::new(split0, "Wah".to_owned());
-
-    let split1 = splitter.add_split();
-    let split1 = LatticeOp::<_, MaxRepr<String>>::new(split1, "Hah".to_owned());
-
-    let merge = MergeOp::new(split0, split1);
-}
-
 pub struct Splitter<O: OpValue> {
     op: O,
+    closed: Cell<bool>,
     splits: RefCell<Vec<SplitState<O>>>,
 }
 impl<O: OpValue> Splitter<O> {
     pub fn new(op: O) -> Self {
         Self {
             op,
+            closed: Cell::new(false),
             splits: Default::default(),
         }
     }
@@ -43,8 +25,7 @@ impl<O: OpValue> Splitter<O> {
         splits.push(SplitState::default());
 
         SplitOp {
-            op: &self.op,
-            splits: &self.splits,
+            splitter: &self,
             index,
         }
     }
@@ -52,8 +33,7 @@ impl<O: OpValue> Splitter<O> {
 
 
 pub struct SplitOp<'s, O: OpValue> {
-    op: &'s O,
-    splits: &'s RefCell<Vec<SplitState<O>>>,
+    splitter: &'s Splitter<O>,
     index: usize,
 }
 
@@ -63,15 +43,27 @@ impl<'s, O: OpValue> Op for SplitOp<'s, O> {
 
 impl<'s, O: OpValue + OpDelta> OpDelta for SplitOp<'s, O> {
     fn poll_delta(&self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
-        let mut splits = self.splits.borrow_mut();
+        if self.splitter.closed.get() {
+            return Poll::Ready(None);
+        }
+
+        let mut splits = self.splitter.splits.borrow_mut();
+
+        // Check if we have a value waiting.
+        let split = &mut splits[self.index];
+        match split.delta.take() {
+            Some(polled) => {
+                return Poll::Ready(Some(polled));
+            }
+            None => {
+                split.waker.replace(ctx.waker().clone());
+            }
+        }
 
         // Check if other splits are ready to receive a value.
-        for i in 0..splits.len() {
-            let split = &mut splits[i];
-            if self.index == i {
-                split.waker.replace(ctx.waker().clone());
-                continue;
-            }
+        for (i, split) in splits.iter().enumerate() {
+            if self.index == i { continue; }
+
             if let Some(_) = split.delta {
                 if let Some(waker) = &split.waker {
                     waker.wake_by_ref();
@@ -80,9 +72,11 @@ impl<'s, O: OpValue + OpDelta> OpDelta for SplitOp<'s, O> {
             }
         }
 
-        match self.op.poll_delta(ctx) {
+        match self.splitter.op.poll_delta(ctx) {
             Poll::Ready(Some(delta)) => {
-                for split in splits.iter_mut() {
+                for (i, split) in splits.iter_mut().enumerate() {
+                    if self.index == i { continue; }
+
                     let old_delta_opt = split.delta.replace(delta.clone());
                     assert!(old_delta_opt.is_none());
 
@@ -92,7 +86,10 @@ impl<'s, O: OpValue + OpDelta> OpDelta for SplitOp<'s, O> {
                 }
                 Poll::Ready(Some(delta))
             },
-            Poll::Ready(None) => Poll::Ready(None),
+            Poll::Ready(None) => {
+                self.splitter.closed.replace(true);
+                Poll::Ready(None)
+            },
             Poll::Pending => Poll::Pending,
         }
     }
@@ -100,7 +97,7 @@ impl<'s, O: OpValue + OpDelta> OpDelta for SplitOp<'s, O> {
 
 impl<'s, O: OpValue> OpValue for SplitOp<'s, O> {
     fn get_value(&self) -> Hide<Value, Self::LatRepr> {
-        self.op.get_value()
+        self.splitter.op.get_value()
     }
 }
 

@@ -30,6 +30,20 @@ impl<Y: Type, Lr: LatticeRepr> Hide<Y, Lr> {
     pub fn as_reveal(&self) -> &Lr::Repr {
         &self.value
     }
+
+    pub fn into_reveal_value(self) -> Hide<Value, Lr> {
+        Hide {
+            value: self.value,
+            _phantom: std::marker::PhantomData,
+        }
+    }
+
+    pub fn into_delta(self) -> Hide<Delta, Lr> {
+        Hide {
+            value: self.value,
+            _phantom: std::marker::PhantomData,
+        }
+    }
 }
 
 impl<Lr: LatticeRepr> std::ops::Deref for Hide<Value, Lr> {
