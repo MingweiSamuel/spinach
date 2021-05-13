@@ -10,52 +10,52 @@ pub struct MapUnion<K, L: Lattice> {
 }
 impl<K, L: Lattice> Lattice for MapUnion<K, L> {}
 
-pub trait MapTag: tag::Tag2 {}
-impl MapTag for tag::HASH_MAP {}
-impl MapTag for tag::BTREE_MAP {}
-impl MapTag for tag::VEC {}
-impl MapTag for tag::SINGLE {}
-impl MapTag for tag::OPTION {}
-impl<const N: usize> MapTag for tag::ARRAY<N> {}
-impl<const N: usize> MapTag for tag::MASKED_ARRAY<N> {}
+pub trait MapTag<T, U>: tag::Tag2<T, U> {}
+impl<T, U> MapTag<T, U> for tag::HASH_MAP {}
+impl<T, U> MapTag<T, U> for tag::BTREE_MAP {}
+impl<T, U> MapTag<T, U> for tag::VEC {}
+impl<T, U> MapTag<T, U> for tag::SINGLE {}
+impl<T, U> MapTag<T, U> for tag::OPTION {}
+impl<T, U, const N: usize> MapTag<T, U> for tag::ARRAY<N> {}
+impl<T, U, const N: usize> MapTag<T, U> for tag::MASKED_ARRAY<N> {}
 
-pub struct MapUnionRepr<Tag: MapTag, K, B: LatticeRepr> {
+pub struct MapUnionRepr<Tag: MapTag<K, B::Repr>, K, B: LatticeRepr> {
     _phantom: std::marker::PhantomData<(Tag, K, B)>,
 }
 
-impl<Tag: MapTag, K, B: LatticeRepr> LatticeRepr for MapUnionRepr<Tag, K, B>
+impl<Tag: MapTag<K, B::Repr>, K, B: LatticeRepr> LatticeRepr for MapUnionRepr<Tag, K, B>
 where
-    Tag::Bind<K, B::Repr>: Clone,
+    Tag::Bind: Clone,
 {
     type Lattice = MapUnion<K, B::Lattice>;
-    type Repr = Tag::Bind<K, B::Repr>;
+    type Repr = Tag::Bind;
 }
 
-impl<K: 'static, SelfTag, DeltaTag, SelfLR: LatticeRepr<Lattice = L>, DeltaLR: LatticeRepr<Lattice = L>, L: Lattice> Merge<MapUnionRepr<DeltaTag, K, DeltaLR>> for MapUnionRepr<SelfTag, K, SelfLR>
+impl<K: 'static, SelfTag, DeltaTag, SelfLr: LatticeRepr<Lattice = L>, DeltaLr: LatticeRepr<Lattice = L>, L: Lattice> Merge<MapUnionRepr<DeltaTag, K, DeltaLr>> for MapUnionRepr<SelfTag, K, SelfLr>
 where
-    SelfTag:  MapTag,
-    DeltaTag: MapTag,
-    MapUnionRepr<SelfTag,  K, SelfLR>:  LatticeRepr<Lattice = MapUnion<K, L>>,
-    MapUnionRepr<DeltaTag, K, DeltaLR>: LatticeRepr<Lattice = MapUnion<K, L>>,
-    <MapUnionRepr<SelfTag,  K, SelfLR>  as LatticeRepr>::Repr: Extend<(K, SelfLR::Repr)> + Collection<K, SelfLR::Repr>,
-    <MapUnionRepr<DeltaTag, K, DeltaLR> as LatticeRepr>::Repr: IntoIterator<Item = (K, DeltaLR::Repr)>,
-    SelfLR:  Merge<DeltaLR>,
-    DeltaLR: Convert<SelfLR>,
+    SelfTag:  MapTag<K, SelfLr::Repr>,
+    DeltaTag: MapTag<K, DeltaLr::Repr>,
+    MapUnionRepr<SelfTag,  K, SelfLr>:  LatticeRepr<Lattice = MapUnion<K, L>>,
+    MapUnionRepr<DeltaTag, K, DeltaLr>: LatticeRepr<Lattice = MapUnion<K, L>>,
+    <MapUnionRepr<SelfTag,  K, SelfLr>  as LatticeRepr>::Repr: Extend<(K, SelfLr::Repr)> + Collection<K, SelfLr::Repr>,
+    <MapUnionRepr<DeltaTag, K, DeltaLr> as LatticeRepr>::Repr: IntoIterator<Item = (K, DeltaLr::Repr)>,
+    SelfLr:  Merge<DeltaLr>,
+    DeltaLr: Convert<SelfLr>,
 {
-    fn merge(this: &mut <MapUnionRepr<SelfTag, K, SelfLR> as LatticeRepr>::Repr, delta: <MapUnionRepr<DeltaTag, K, DeltaLR> as LatticeRepr>::Repr) -> bool {
+    fn merge(this: &mut <MapUnionRepr<SelfTag, K, SelfLr> as LatticeRepr>::Repr, delta: <MapUnionRepr<DeltaTag, K, DeltaLr> as LatticeRepr>::Repr) -> bool {
         let mut changed = false;
-        let iter: Vec<(K, SelfLR::Repr)> = delta.into_iter()
+        let iter: Vec<(K, SelfLr::Repr)> = delta.into_iter()
             .filter_map(|(k, v)| {
                 match this.get_mut(&k) {
                     // Key collision, merge into THIS.
                     Some(target_val) => {
-                        changed |= <SelfLR as Merge<DeltaLR>>::merge(target_val, v);
+                        changed |= <SelfLr as Merge<DeltaLr>>::merge(target_val, v);
                         None
                     }
                     // New value, convert for extending.
                     None => {
                         changed = true;
-                        let val: SelfLR::Repr = <DeltaLR as Convert<SelfLR>>::convert(v);
+                        let val: SelfLr::Repr = <DeltaLr as Convert<SelfLr>>::convert(v);
                         Some((k, val))
                     }
                 }
@@ -66,21 +66,21 @@ where
     }
 }
 
-impl<K: 'static, SelfTag, DeltaTag, SelfLR: LatticeRepr<Lattice = L>, DeltaLR: LatticeRepr<Lattice = L>, L: Lattice> Compare<MapUnionRepr<DeltaTag, K, DeltaLR>> for MapUnionRepr<SelfTag, K, SelfLR>
+impl<K: 'static, SelfTag, DeltaTag, SelfLr: LatticeRepr<Lattice = L>, DeltaLr: LatticeRepr<Lattice = L>, L: Lattice> Compare<MapUnionRepr<DeltaTag, K, DeltaLr>> for MapUnionRepr<SelfTag, K, SelfLr>
 where
-    SelfTag:  MapTag,
-    DeltaTag: MapTag,
-    MapUnionRepr<SelfTag,  K, SelfLR>:  LatticeRepr<Lattice = MapUnion<K, L>>,
-    MapUnionRepr<DeltaTag, K, DeltaLR>: LatticeRepr<Lattice = MapUnion<K, L>>,
-    <MapUnionRepr<SelfTag,  K, SelfLR>  as LatticeRepr>::Repr: Collection<K, SelfLR::Repr>,
-    <MapUnionRepr<DeltaTag, K, DeltaLR> as LatticeRepr>::Repr: Collection<K, DeltaLR::Repr>,
-    SelfLR: Compare<DeltaLR>,
+    SelfTag:  MapTag<K, SelfLr::Repr>,
+    DeltaTag: MapTag<K, DeltaLr::Repr>,
+    MapUnionRepr<SelfTag,  K, SelfLr>:  LatticeRepr<Lattice = MapUnion<K, L>>,
+    MapUnionRepr<DeltaTag, K, DeltaLr>: LatticeRepr<Lattice = MapUnion<K, L>>,
+    <MapUnionRepr<SelfTag,  K, SelfLr>  as LatticeRepr>::Repr: Collection<K, SelfLr::Repr>,
+    <MapUnionRepr<DeltaTag, K, DeltaLr> as LatticeRepr>::Repr: Collection<K, DeltaLr::Repr>,
+    SelfLr: Compare<DeltaLr>,
 {
-    fn compare(this: &<MapUnionRepr<SelfTag, K, SelfLR> as LatticeRepr>::Repr, other: &<MapUnionRepr<DeltaTag, K, DeltaLR> as LatticeRepr>::Repr) -> Option<Ordering> {
+    fn compare(this: &<MapUnionRepr<SelfTag, K, SelfLr> as LatticeRepr>::Repr, other: &<MapUnionRepr<DeltaTag, K, DeltaLr> as LatticeRepr>::Repr) -> Option<Ordering> {
         if this.len() > other.len() {
             for (key, this_value) in this.entries() {
                 if let Some(other_value) = other.get(key) {
-                    if let Some(Ordering::Less) = SelfLR::compare(this_value, other_value) {
+                    if let Some(Ordering::Less) = SelfLr::compare(this_value, other_value) {
                         return None;
                     }
                 }
@@ -92,7 +92,7 @@ where
             for (key, this_value) in this.entries() {
                 match other.get(key) {
                     Some(other_value) => {
-                        match SelfLR::compare(this_value, other_value) {
+                        match SelfLr::compare(this_value, other_value) {
                             // current_ordering unchanged
                             Some(Ordering::Equal) => {},
                             // If we get a strict inequality, check if that conflicts with the current_ordering.
@@ -119,7 +119,7 @@ where
         else { // this.len() < other.len()
             for (key, other_value) in other.entries() {
                 if let Some(this_value) = this.get(key) {
-                    if let Some(Ordering::Greater) = SelfLR::compare(this_value, other_value) {
+                    if let Some(Ordering::Greater) = SelfLr::compare(this_value, other_value) {
                         return None;
                     }
                 }
@@ -131,7 +131,7 @@ where
 
 fn __assert_merges() {
     use static_assertions::{assert_impl_all, assert_not_impl_any};
-    
+
     use super::setunion::{SetUnionRepr};
 
     type HashMapHashSet    = MapUnionRepr<tag::HASH_MAP, String, SetUnionRepr<tag::HASH_SET, u32>>;

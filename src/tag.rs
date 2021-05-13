@@ -4,77 +4,77 @@ use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 
 use crate::collections::{Single, Array, MaskedArray};
 
-pub trait Tag1 {
-    type Bind<T>;
+pub trait Tag1<T> {
+    type Bind;
 }
 
-pub trait Tag2 {
-    type Bind<T, U>;
+pub trait Tag2<T, U> {
+    type Bind;
 }
 
 
 pub enum HASH_SET {}
-impl Tag1 for HASH_SET {
-    type Bind<T> = HashSet<T>;
+impl<T> Tag1<T> for HASH_SET {
+    type Bind = HashSet<T>;
 }
 
 pub enum HASH_MAP {}
-impl Tag2 for HASH_MAP {
-    type Bind<T, U> = HashMap<T, U>;
+impl<T, U> Tag2<T, U> for HASH_MAP {
+    type Bind = HashMap<T, U>;
 }
 
 
 pub enum BTREE_SET {}
-impl Tag1 for BTREE_SET {
-    type Bind<T> = BTreeSet<T>;
+impl<T> Tag1<T> for BTREE_SET {
+    type Bind = BTreeSet<T>;
 }
 
 pub enum BTREE_MAP {}
-impl Tag2 for BTREE_MAP {
-    type Bind<T, U> = BTreeMap<T, U>;
+impl<T, U> Tag2<T, U> for BTREE_MAP {
+    type Bind = BTreeMap<T, U>;
 }
 
 
 pub enum VEC {}
-impl Tag1 for VEC {
-    type Bind<T> = Vec<T>;
+impl<T> Tag1<T> for VEC {
+    type Bind = Vec<T>;
 }
-impl Tag2 for VEC {
-    type Bind<T, U> = Vec<(T, U)>;
+impl<T, U> Tag2<T, U> for VEC {
+    type Bind = Vec<(T, U)>;
 }
 
 
 pub enum SINGLE {}
-impl Tag1 for SINGLE {
-    type Bind<T> = Single<T>;
+impl<T> Tag1<T> for SINGLE {
+    type Bind = Single<T>;
 }
-impl Tag2 for SINGLE {
-    type Bind<T, U> = Single<(T, U)>;
+impl<T, U> Tag2<T, U> for SINGLE {
+    type Bind = Single<(T, U)>;
 }
 
 
 pub enum OPTION {}
-impl Tag1 for OPTION {
-    type Bind<T> = Option<T>;
+impl<T> Tag1<T> for OPTION {
+    type Bind = Option<T>;
 }
-impl Tag2 for OPTION {
-    type Bind<T, U> = Option<(T, U)>;
+impl<T, U> Tag2<T, U> for OPTION {
+    type Bind = Option<(T, U)>;
 }
 
 
 pub struct ARRAY<const N: usize>([(); N]);
-impl<const N: usize> Tag1 for ARRAY<N> {
-    type Bind<T> = Array<T, N>;
+impl<T, const N: usize> Tag1<T> for ARRAY<N> {
+    type Bind = Array<T, N>;
 }
-impl<const N: usize> Tag2 for ARRAY<N> {
-    type Bind<T, U> = Array<(T, U), N>;
+impl<T, U, const N: usize> Tag2<T, U> for ARRAY<N> {
+    type Bind = Array<(T, U), N>;
 }
 
 
 pub struct MASKED_ARRAY<const N: usize>([(); N]);
-impl<const N: usize> Tag1 for MASKED_ARRAY<N> {
-    type Bind<T> = MaskedArray<T, N>;
+impl<T, const N: usize> Tag1<T> for MASKED_ARRAY<N> {
+    type Bind = MaskedArray<T, N>;
 }
-impl<const N: usize> Tag2 for MASKED_ARRAY<N> {
-    type Bind<T, U> = MaskedArray<(T, U), N>;
+impl<T, U, const N: usize> Tag2<T, U> for MASKED_ARRAY<N> {
+    type Bind = MaskedArray<(T, U), N>;
 }

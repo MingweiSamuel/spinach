@@ -12,28 +12,28 @@ pub struct SetUnion<T> {
 }
 impl<T> Lattice for SetUnion<T> {}
 
-pub trait SetTag: tag::Tag1 {}
-impl SetTag for tag::HASH_SET {}
-impl SetTag for tag::BTREE_SET {}
-impl SetTag for tag::VEC {}
-impl SetTag for tag::SINGLE {}
-impl SetTag for tag::OPTION {}
-impl<const N: usize> SetTag for tag::ARRAY<N> {}
-impl<const N: usize> SetTag for tag::MASKED_ARRAY<N> {}
+pub trait SetTag<T>: tag::Tag1<T> {}
+impl<T> SetTag<T> for tag::HASH_SET {}
+impl<T> SetTag<T> for tag::BTREE_SET {}
+impl<T> SetTag<T> for tag::VEC {}
+impl<T> SetTag<T> for tag::SINGLE {}
+impl<T> SetTag<T> for tag::OPTION {}
+impl<T, const N: usize> SetTag<T> for tag::ARRAY<N> {}
+impl<T, const N: usize> SetTag<T> for tag::MASKED_ARRAY<N> {}
 
-pub struct SetUnionRepr<Tag: SetTag, T> {
+pub struct SetUnionRepr<Tag: SetTag<T>, T> {
     _phantom: std::marker::PhantomData<(Tag, T)>,
 }
 
-impl<Tag: SetTag, T> LatticeRepr for SetUnionRepr<Tag, T>
+impl<Tag: SetTag<T>, T> LatticeRepr for SetUnionRepr<Tag, T>
 where
-    Tag::Bind<T>: Clone,
+    Tag::Bind: Clone,
 {
     type Lattice = SetUnion<T>;
-    type Repr = Tag::Bind<T>;
+    type Repr = Tag::Bind;
 }
 
-impl<T, SelfTag: SetTag, DeltaTag: SetTag> Merge<SetUnionRepr<DeltaTag, T>> for SetUnionRepr<SelfTag, T>
+impl<T, SelfTag: SetTag<T>, DeltaTag: SetTag<T>> Merge<SetUnionRepr<DeltaTag, T>> for SetUnionRepr<SelfTag, T>
 where
     SetUnionRepr<SelfTag,  T>: LatticeRepr<Lattice = SetUnion<T>>,
     SetUnionRepr<DeltaTag, T>: LatticeRepr<Lattice = SetUnion<T>>,
@@ -47,7 +47,7 @@ where
     }
 }
 
-impl<T, SelfTag: SetTag, TargetTag: SetTag> Convert<SetUnionRepr<TargetTag, T>> for SetUnionRepr<SelfTag, T>
+impl<T, SelfTag: SetTag<T>, TargetTag: SetTag<T>> Convert<SetUnionRepr<TargetTag, T>> for SetUnionRepr<SelfTag, T>
 where
     SetUnionRepr<SelfTag,   T>: LatticeRepr<Lattice = SetUnion<T>>,
     SetUnionRepr<TargetTag, T>: LatticeRepr<Lattice = SetUnion<T>>,
@@ -59,7 +59,7 @@ where
     }
 }
 
-impl<T: 'static, SelfTag: SetTag, TargetTag: SetTag> Compare<SetUnionRepr<TargetTag, T>> for SetUnionRepr<SelfTag, T>
+impl<T: 'static, SelfTag: SetTag<T>, TargetTag: SetTag<T>> Compare<SetUnionRepr<TargetTag, T>> for SetUnionRepr<SelfTag, T>
 where
     SetUnionRepr<SelfTag,   T>: LatticeRepr<Lattice = SetUnion<T>>,
     SetUnionRepr<TargetTag, T>: LatticeRepr<Lattice = SetUnion<T>>,
@@ -144,9 +144,9 @@ mod fns {
     use super::*;
     use super::ord::MaxRepr;
 
-    impl<Tag: SetTag, T> Hide<Value, SetUnionRepr<Tag, T>>
+    impl<Tag: SetTag<T>, T> Hide<Value, SetUnionRepr<Tag, T>>
     where
-        Tag::Bind<T>: Clone,
+        Tag::Bind: Clone,
         <SetUnionRepr<Tag, T> as LatticeRepr>::Repr: Collection<T, ()>,
     {
         pub fn len(&self) -> Hide<Value, MaxRepr<usize>> {
@@ -154,9 +154,9 @@ mod fns {
         }
     }
 
-    impl<Y: Qualifier, Tag: SetTag, T> Hide<Y, SetUnionRepr<Tag, T>>
+    impl<Y: Qualifier, Tag: SetTag<T>, T> Hide<Y, SetUnionRepr<Tag, T>>
     where
-        Tag::Bind<T>: Clone,
+        Tag::Bind: Clone,
         <SetUnionRepr<Tag, T> as LatticeRepr>::Repr: Collection<T, ()>,
     {
         pub fn contains(&self, val: &T) -> Hide<Value, MaxRepr<bool>> {
@@ -164,12 +164,12 @@ mod fns {
         }
     }
 
-    impl<Y: Qualifier, Tag: SetTag, T> Hide<Y, SetUnionRepr<Tag, T>>
+    impl<Y: Qualifier, Tag: SetTag<T>, T> Hide<Y, SetUnionRepr<Tag, T>>
     where
-        Tag::Bind<T>: Clone,
+        Tag::Bind: Clone,
         <SetUnionRepr<Tag, T> as LatticeRepr>::Repr: IntoIterator<Item = T>,
     {
-        pub fn map<U, TargetTag: SetTag>(self, f: impl Fn(T) -> U) -> Hide<Y, SetUnionRepr<TargetTag, U>>
+        pub fn map<U, TargetTag: SetTag<U>>(self, f: impl Fn(T) -> U) -> Hide<Y, SetUnionRepr<TargetTag, U>>
         where
             SetUnionRepr<TargetTag, U>: LatticeRepr<Lattice = SetUnion<U>>,
             <SetUnionRepr<TargetTag, U> as LatticeRepr>::Repr: FromIterator<U>,
@@ -177,7 +177,7 @@ mod fns {
             Hide::new(self.into_reveal().into_iter().map(f).collect())
         }
 
-        pub fn filter<TargetTag: SetTag>(self, f: impl Fn(&T) -> bool) -> Hide<Y, SetUnionRepr<TargetTag, T>>
+        pub fn filter<TargetTag: SetTag<T>>(self, f: impl Fn(&T) -> bool) -> Hide<Y, SetUnionRepr<TargetTag, T>>
         where
             SetUnionRepr<TargetTag, T>: LatticeRepr<Lattice = SetUnion<T>>,
             <SetUnionRepr<TargetTag, T> as LatticeRepr>::Repr: FromIterator<T>,
@@ -185,7 +185,7 @@ mod fns {
             Hide::new(self.into_reveal().into_iter().filter(f).collect())
         }
 
-        pub fn flatten<TargetTag: SetTag>(self) -> Hide<Y, SetUnionRepr<TargetTag, T::Item>>
+        pub fn flatten<TargetTag: SetTag<T::Item>>(self) -> Hide<Y, SetUnionRepr<TargetTag, T::Item>>
         where
             T: IntoIterator,
             SetUnionRepr<TargetTag, T::Item>: LatticeRepr<Lattice = SetUnion<T::Item>>,
