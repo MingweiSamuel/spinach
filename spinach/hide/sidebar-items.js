@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["Delta",""],["Value",""]],"struct":[["Hide",""]],"trait":[["Type",""]]});
+initSidebarItems({"enum":[["Delta",""],["Value",""]],"struct":[["Hide",""]],"trait":[["Qualifier",""]]});
