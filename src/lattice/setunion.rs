@@ -139,7 +139,7 @@ fn __assert_merges() {
 }
 
 mod fns {
-    use crate::hide::{Hide, Type, Delta, Value};
+    use crate::hide::{Hide, Qualifier, Delta, Value};
 
     use super::*;
     use super::ord::MaxRepr;
@@ -154,7 +154,7 @@ mod fns {
         }
     }
 
-    impl<Y: Type, Tag: SetTag, T> Hide<Y, SetUnionRepr<Tag, T>>
+    impl<Y: Qualifier, Tag: SetTag, T> Hide<Y, SetUnionRepr<Tag, T>>
     where
         Tag::Bind<T>: Clone,
         <SetUnionRepr<Tag, T> as LatticeRepr>::Repr: Collection<T, ()>,
@@ -164,7 +164,7 @@ mod fns {
         }
     }
 
-    impl<Y: Type, Tag: SetTag, T> Hide<Y, SetUnionRepr<Tag, T>>
+    impl<Y: Qualifier, Tag: SetTag, T> Hide<Y, SetUnionRepr<Tag, T>>
     where
         Tag::Bind<T>: Clone,
         <SetUnionRepr<Tag, T> as LatticeRepr>::Repr: IntoIterator<Item = T>,

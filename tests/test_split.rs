@@ -1,7 +1,7 @@
 use spinach::collections::Array;
 use spinach::comp::DebugComp;
 use spinach::func::Morphism;
-use spinach::hide::{Hide, Type};
+use spinach::hide::{Hide, Qualifier};
 use spinach::lattice::setunion::SetUnionRepr;
 use spinach::op::{OnceOp, LatticeOp, Splitter, MergeOp, MorphismOp};
 use spinach::tag;
@@ -10,7 +10,7 @@ struct Mult2Add1;
 impl Morphism for Mult2Add1 {
     type InLatRepr = SetUnionRepr<tag::BTREE_SET, usize>;
     type OutLatRepr = SetUnionRepr<tag::BTREE_SET, usize>;
-    fn call<Y: Type>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
+    fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
         item.map(|x| x * 2 + 1)
     }
 }
@@ -19,7 +19,7 @@ struct Square;
 impl Morphism for Square {
     type InLatRepr = SetUnionRepr<tag::BTREE_SET, usize>;
     type OutLatRepr = SetUnionRepr<tag::BTREE_SET, usize>;
-    fn call<Y: Type>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
+    fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
         item.map(|x| x * x)
     }
 }

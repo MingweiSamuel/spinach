@@ -2,20 +2,20 @@ use crate::lattice::LatticeRepr;
 
 use ref_cast::RefCast;
 
-pub trait Type {}
+pub trait Qualifier {}
 pub enum Delta {}
-impl Type for Delta {}
+impl Qualifier for Delta {}
 pub enum Value {}
-impl Type for Value {}
+impl Qualifier for Value {}
 
 #[derive(RefCast)]
 #[repr(transparent)]
-pub struct Hide<Y: Type, Lr: LatticeRepr + ?Sized> {
+pub struct Hide<Y: Qualifier, Lr: LatticeRepr + ?Sized> {
     value: Lr::Repr,
     _phantom: std::marker::PhantomData<Y>,
 }
 
-impl<Y: Type, Lr: LatticeRepr + ?Sized> Hide<Y, Lr> {
+impl<Y: Qualifier, Lr: LatticeRepr + ?Sized> Hide<Y, Lr> {
     pub fn new(value: Lr::Repr) -> Self {
         Self {
             value,
@@ -50,7 +50,7 @@ impl<Y: Type, Lr: LatticeRepr + ?Sized> Hide<Y, Lr> {
     }
 }
 
-impl<Y: Type, Lr: LatticeRepr> Clone for Hide<Y, Lr> {
+impl<Y: Qualifier, Lr: LatticeRepr> Clone for Hide<Y, Lr> {
     fn clone(&self) -> Self {
         Self {
             value: self.value.clone(),
