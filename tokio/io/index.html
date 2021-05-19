@@ -115,7 +115,7 @@ buffer of bytes, and then use that <a href="https://docs.rs/tokio-util/0.6/tokio
 that implements <a href="trait.AsyncRead.html"><code>AsyncRead</code></a> and <a href="trait.AsyncWrite.html"><code>AsyncWrite</code></a> into a <code>Sink</code>/<code>Stream</code> of
 your structured data.</p>
 <h1 id="standard-input-and-output" class="section-header"><a href="#standard-input-and-output">Standard input and output</a></h1>
-<p>Tokio provides asynchronous APIs to standard <a href="fn@stdin">input</a>, <a href="fn@stdout">output</a>, and <a href="fn@stderr">error</a>.
+<p>Tokio provides asynchronous APIs to standard <a href="fn.stdin.html">input</a>, <a href="fn.stdout.html">output</a>, and <a href="fn.stderr.html">error</a>.
 These APIs are very similar to the ones provided by <code>std</code>, but they also
 implement <a href="trait.AsyncRead.html"><code>AsyncRead</code></a> and <a href="trait.AsyncWrite.html"><code>AsyncWrite</code></a>.</p>
 <p>Note that the standard input / output APIs  <strong>must</strong> be used from the
@@ -142,6 +142,9 @@ re-exported from <code>std::io</code> for ease of use.</p>
 over and…</p>
 </td></tr><tr class="module-item"><td><a class="struct" href="struct.Sink.html" title="tokio::io::Sink struct">Sink</a></td><td class="docblock-short"><p>An async writer which will move data into the void.</p>
 </td></tr><tr class="module-item"><td><a class="struct" href="struct.Split.html" title="tokio::io::Split struct">Split</a></td><td class="docblock-short"><p>Splitter for the <a href="trait.AsyncBufReadExt.html#method.split"><code>split</code></a> method.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.Stderr.html" title="tokio::io::Stderr struct">Stderr</a></td><td class="docblock-short"><p>A handle to the standard error stream of a process.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.Stdin.html" title="tokio::io::Stdin struct">Stdin</a></td><td class="docblock-short"><p>A handle to the standard input stream of a process.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.Stdout.html" title="tokio::io::Stdout struct">Stdout</a></td><td class="docblock-short"><p>A handle to the standard output stream of a process.</p>
 </td></tr><tr class="module-item"><td><a class="struct" href="struct.Take.html" title="tokio::io::Take struct">Take</a></td><td class="docblock-short"><p>Stream for the <a href="trait.AsyncReadExt.html#method.take"><code>take</code></a> method.</p>
 </td></tr><tr class="module-item"><td><a class="struct" href="struct.WriteHalf.html" title="tokio::io::WriteHalf struct">WriteHalf</a></td><td class="docblock-short"><p>The writable half of a value returned from <a href="fn.split.html"><code>split</code></a>.</p>
 </td></tr></table><h2 id="traits" class="section-header"><a href="#traits">Traits</a></h2>
@@ -163,5 +166,8 @@ over and…</p>
 data.</p>
 </td></tr><tr class="module-item"><td><a class="fn" href="fn.split.html" title="tokio::io::split fn">split</a></td><td class="docblock-short"><p>Splits a single value implementing <code>AsyncRead + AsyncWrite</code> into separate
 <code>AsyncRead</code> and <code>AsyncWrite</code> handles.</p>
+</td></tr><tr class="module-item"><td><a class="fn" href="fn.stderr.html" title="tokio::io::stderr fn">stderr</a></td><td class="docblock-short"><p>Constructs a new handle to the standard error of the current process.</p>
+</td></tr><tr class="module-item"><td><a class="fn" href="fn.stdin.html" title="tokio::io::stdin fn">stdin</a></td><td class="docblock-short"><p>Constructs a new handle to the standard input of the current process.</p>
+</td></tr><tr class="module-item"><td><a class="fn" href="fn.stdout.html" title="tokio::io::stdout fn">stdout</a></td><td class="docblock-short"><p>Constructs a new handle to the standard output of the current process.</p>
 </td></tr></table></section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="tokio" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
     <script src="../../main.js"></script></body></html>

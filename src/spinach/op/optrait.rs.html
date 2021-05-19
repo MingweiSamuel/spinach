@@ -18,11 +18,17 @@
 <span id="15">15</span>
 <span id="16">16</span>
 <span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
 </pre><pre class="rust">
 <span class="kw">use</span> <span class="ident">std::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 
 <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::hide</span>::{<span class="ident">Hide</span>, <span class="ident">Delta</span>, <span class="ident">Value</span>};
 <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::lattice::LatticeRepr</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::metadata::Order</span>;
 
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Op</span> {
     <span class="doccomment">/// The output element type of this op.</span>
@@ -30,7 +36,11 @@
 }
 
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">OpDelta</span>: <span class="ident">Op</span> {
+    <span class="doccomment">/// Ordering metadata.</span>
+    <span class="kw">type</span> <span class="ident">Ord</span>: <span class="ident">Order</span>;
+
     <span class="kw">fn</span> <span class="ident">poll_delta</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Delta</span>, <span class="self">Self</span><span class="ident">::LatRepr</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>;
+
 }
 
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">OpValue</span>: <span class="ident">Op</span> {

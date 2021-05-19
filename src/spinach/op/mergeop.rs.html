@@ -62,11 +62,18 @@
 <span id="59">59</span>
 <span id="60">60</span>
 <span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
 </pre><pre class="rust">
 <span class="kw">use</span> <span class="ident">std::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 
 <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::hide</span>::{<span class="ident">Hide</span>, <span class="ident">Delta</span>, <span class="ident">Value</span>};
 <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::lattice</span>::{<span class="ident">LatticeRepr</span>, <span class="ident">Merge</span>, <span class="ident">Convert</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::metadata::Order</span>;
 
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
@@ -99,6 +106,8 @@
     <span class="ident">A::LatRepr</span>: <span class="ident">LatticeRepr</span><span class="op">&lt;</span><span class="ident">Lattice</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">B::LatRepr</span> <span class="kw">as</span> <span class="ident">LatticeRepr</span><span class="op">&gt;</span><span class="ident">::Lattice</span><span class="op">&gt;</span>,
     <span class="ident">B::LatRepr</span>: <span class="ident">Convert</span><span class="op">&lt;</span><span class="ident">A::LatRepr</span><span class="op">&gt;</span>,
 {
+    <span class="kw">type</span> <span class="ident">Ord</span> <span class="op">=</span> <span class="ident">MergeOrder</span><span class="op">&lt;</span><span class="ident">A::Ord</span>, <span class="ident">B::Ord</span><span class="op">&gt;</span>;
+
     <span class="kw">fn</span> <span class="ident">poll_delta</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Delta</span>, <span class="self">Self</span><span class="ident">::LatRepr</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">not_ready</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">op_a</span>.<span class="ident">poll_delta</span>(<span class="ident">ctx</span>) {
             <span class="ident">Poll::Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">delta</span>)) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="ident">Poll::Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">delta</span>)),
@@ -124,6 +133,9 @@
         <span class="ident">val</span>
     }
 }
+
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MergeOrder</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Order</span>, <span class="ident">B</span>: <span class="ident">Order</span><span class="op">&gt;</span>(<span class="ident">std::marker::PhantomData</span><span class="op">&lt;</span>(<span class="ident">A</span>, <span class="ident">B</span>)<span class="op">&gt;</span>);
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Order</span>, <span class="ident">B</span>: <span class="ident">Order</span><span class="op">&gt;</span> <span class="ident">Order</span> <span class="kw">for</span> <span class="ident">MergeOrder</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span> {}
 </pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="spinach" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

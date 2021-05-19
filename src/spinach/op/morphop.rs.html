@@ -38,11 +38,18 @@
 <span id="35">35</span>
 <span id="36">36</span>
 <span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
 </pre><pre class="rust">
 <span class="kw">use</span> <span class="ident">std::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 
 <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::hide</span>::{<span class="ident">Hide</span>, <span class="ident">Delta</span>, <span class="ident">Value</span>};
 <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::func::Morphism</span>;
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::metadata::Order</span>;
 
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
@@ -62,6 +69,8 @@
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">OpDelta</span>, <span class="ident">F</span>: <span class="ident">Morphism</span><span class="op">&lt;</span><span class="ident">InLatRepr</span> <span class="op">=</span> <span class="ident">O::LatRepr</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">OpDelta</span> <span class="kw">for</span> <span class="ident">MorphismOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span> {
+    <span class="kw">type</span> <span class="ident">Ord</span> <span class="op">=</span> <span class="ident">MorphismOrder</span><span class="op">&lt;</span><span class="ident">O::Ord</span>, <span class="ident">F</span><span class="op">&gt;</span>;
+
     <span class="kw">fn</span> <span class="ident">poll_delta</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Delta</span>, <span class="self">Self</span><span class="ident">::LatRepr</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">op</span>.<span class="ident">poll_delta</span>(<span class="ident">ctx</span>) {
             <span class="ident">Poll::Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">delta</span>)) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Poll::Ready</span>(<span class="prelude-val">Some</span>(<span class="self">self</span>.<span class="ident">f</span>.<span class="ident">call</span>(<span class="ident">delta</span>))),
@@ -76,6 +85,9 @@
         <span class="self">self</span>.<span class="ident">f</span>.<span class="ident">call</span>(<span class="self">self</span>.<span class="ident">op</span>.<span class="ident">get_value</span>())
     }
 }
+
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MorphismOrder</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">Order</span>, <span class="ident">F</span>: <span class="ident">Morphism</span><span class="op">&gt;</span>(<span class="ident">std::marker::PhantomData</span><span class="op">&lt;</span>(<span class="ident">O</span>, <span class="ident">F</span>)<span class="op">&gt;</span>);
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">Order</span>, <span class="ident">F</span>: <span class="ident">Morphism</span><span class="op">&gt;</span> <span class="ident">Order</span> <span class="kw">for</span> <span class="ident">MorphismOrder</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">F</span><span class="op">&gt;</span> {}
 </pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="spinach" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>
