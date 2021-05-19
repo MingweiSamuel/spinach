@@ -23,3 +23,9 @@ pub use mergeop::*;
 
 mod morphop;
 pub use morphop::*;
+
+mod stdinop;
+pub use stdinop::*;
+
+mod zipop;
+pub use zipop::*;

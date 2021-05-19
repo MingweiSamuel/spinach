@@ -20,6 +20,8 @@ impl<Lr: LatticeRepr> Op for ConstOp<Lr> {
 }
 
 impl<Lr: LatticeRepr> OpDelta for ConstOp<Lr> {
+    type Ord = crate::metadata::EmptyOrder;
+
     fn poll_delta(&self, _ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
         Poll::Ready(None)
     }

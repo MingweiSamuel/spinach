@@ -29,3 +29,5 @@ pub mod hide;
 pub mod op;
 
 pub mod comp;
+
+pub mod metadata;

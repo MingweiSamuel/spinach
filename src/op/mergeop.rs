@@ -2,6 +2,7 @@ use std::task::{Context, Poll};
 
 use crate::hide::{Hide, Delta, Value};
 use crate::lattice::{LatticeRepr, Merge, Convert};
+use crate::metadata::Order;
 
 use super::*;
 
@@ -34,6 +35,8 @@ where
     A::LatRepr: LatticeRepr<Lattice = <B::LatRepr as LatticeRepr>::Lattice>,
     B::LatRepr: Convert<A::LatRepr>,
 {
+    type Ord = MergeOrder<A::Ord, B::Ord>;
+
     fn poll_delta(&self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
         let not_ready = match self.op_a.poll_delta(ctx) {
             Poll::Ready(Some(delta)) => return Poll::Ready(Some(delta)),
@@ -59,3 +62,6 @@ where
         val
     }
 }
+
+pub struct MergeOrder<A: Order, B: Order>(std::marker::PhantomData<(A, B)>);
+impl<A: Order, B: Order> Order for MergeOrder<A, B> {}

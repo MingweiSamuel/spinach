@@ -42,6 +42,8 @@ impl<'s, O: OpValue> Op for SplitOp<'s, O> {
 }
 
 impl<'s, O: OpValue + OpDelta> OpDelta for SplitOp<'s, O> {
+    type Ord = O::Ord;
+
     fn poll_delta(&self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
         if self.splitter.closed.get() {
             return Poll::Ready(None);

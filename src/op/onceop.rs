@@ -3,6 +3,7 @@ use std::cell::Cell;
 
 use crate::hide::{Hide, Delta};
 use crate::lattice::LatticeRepr;
+use crate::metadata::Order;
 
 use super::*;
 
@@ -23,7 +24,12 @@ impl<Lr: LatticeRepr> Op for OnceOp<Lr> {
 }
 
 impl<Lr: LatticeRepr> OpDelta for OnceOp<Lr> {
+    type Ord = OnceOrder;
+
     fn poll_delta(&self, _ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
         Poll::Ready(self.value.take())
     }
 }
+
+pub struct OnceOrder;
+impl Order for OnceOrder {}

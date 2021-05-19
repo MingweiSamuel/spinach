@@ -41,6 +41,8 @@ impl<O: OpDelta, Lr: LatticeRepr + Merge<O::LatRepr>> OpDelta for LatticeOp<O, L
 where
     O::LatRepr: Convert<Lr>,
 {
+    type Ord = O::Ord;
+
     fn poll_delta(&self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
         loop {
             match self.op.poll_delta(ctx) {

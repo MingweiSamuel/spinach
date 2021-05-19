@@ -2,6 +2,7 @@ use std::task::{Context, Poll};
 
 use crate::hide::{Hide, Delta, Value};
 use crate::func::Morphism;
+use crate::metadata::Order;
 
 use super::*;
 
@@ -21,6 +22,8 @@ impl<O: Op, F: Morphism<InLatRepr = O::LatRepr>> Op for MorphismOp<O, F> {
 }
 
 impl<O: OpDelta, F: Morphism<InLatRepr = O::LatRepr>> OpDelta for MorphismOp<O, F> {
+    type Ord = MorphismOrder<O::Ord, F>;
+
     fn poll_delta(&self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
         match self.op.poll_delta(ctx) {
             Poll::Ready(Some(delta)) => Poll::Ready(Some(self.f.call(delta))),
@@ -35,3 +38,6 @@ impl<O: OpValue, F: Morphism<InLatRepr = O::LatRepr>> OpValue for MorphismOp<O, 
         self.f.call(self.op.get_value())
     }
 }
+
+pub struct MorphismOrder<O: Order, F: Morphism>(std::marker::PhantomData<(O, F)>);
+impl<O: Order, F: Morphism> Order for MorphismOrder<O, F> {}
