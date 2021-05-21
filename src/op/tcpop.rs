@@ -17,7 +17,7 @@ use super::*;
 
 pub struct TcpOp<T: Clone + DeserializeOwned> {
     _phantom: std::marker::PhantomData<T>,
-    framed_read: RefCell<Pin<Box<FramedRead<OwnedReadHalf, LengthDelimitedCodec>>>>,
+    framed_read: RefCell<FramedRead<OwnedReadHalf, LengthDelimitedCodec>>,
 }
 
 impl<T: Clone + DeserializeOwned> TcpOp<T> {
@@ -27,7 +27,7 @@ impl<T: Clone + DeserializeOwned> TcpOp<T> {
             .new_read(tcp_read);
         Self {
             _phantom: std::marker::PhantomData,
-            framed_read: RefCell::new(Box::pin(framed_read)),
+            framed_read: RefCell::new(framed_read),
         }
     }
 }
@@ -40,11 +40,7 @@ impl<T: Clone + DeserializeOwned> OpDelta for TcpOp<T> {
     type Ord = TcpOrderInvalid;
 
     fn poll_delta(&self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
-        match self.framed_read
-            .borrow_mut()
-            .as_mut()
-            .poll_next(ctx)
-        {
+        match Pin::new(&mut *self.framed_read.borrow_mut()).poll_next(ctx) {
             Poll::Ready(None) => Poll::Ready(None),
             Poll::Ready(Some(Err(err))) => {
                 println!("!!!0 {:?}", err);
@@ -52,9 +48,9 @@ impl<T: Clone + DeserializeOwned> OpDelta for TcpOp<T> {
             }
             Poll::Ready(Some(Ok(bytes))) => {
                 match serde_json::from_slice(&*bytes) {
-                    Ok(val) => {
-                        let val = Hide::new(Single(val));
-                        Poll::Ready(Some(val))
+                    Ok(item) => {
+                        let item = Hide::new(Single(item));
+                        Poll::Ready(Some(item))
                     }
                     Err(err) => {
                         println!("!!!1 {:?}", err);

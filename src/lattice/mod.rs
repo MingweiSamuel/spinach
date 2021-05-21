@@ -17,7 +17,7 @@ pub trait Merge<Delta: LatticeRepr>: LatticeRepr<Lattice = Delta::Lattice> {
     fn merge(this: &mut Self::Repr, delta: Delta::Repr) -> bool;
 
     fn merge_hide<Y: Qualifier, Z: Qualifier>(this: &mut Hide<Y, Self>, delta: Hide<Z, Delta>) -> bool {
-        Self::merge(this.as_reveal_mut(), delta.into_reveal())
+        Self::merge(this.reveal_mut(), delta.into_reveal())
     }
 }
 

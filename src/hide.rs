@@ -27,19 +27,12 @@ impl<Y: Qualifier, Lr: LatticeRepr + ?Sized> Hide<Y, Lr> {
         self.value
     }
 
-    pub fn as_reveal(&self) -> &Lr::Repr {
+    pub fn reveal_ref(&self) -> &Lr::Repr {
         &self.value
     }
 
-    pub fn as_reveal_mut(&mut self) -> &mut Lr::Repr {
+    pub fn reveal_mut(&mut self) -> &mut Lr::Repr {
         &mut self.value
-    }
-
-    pub fn into_reveal_value(self) -> Hide<Value, Lr> {
-        Hide {
-            value: self.value,
-            _phantom: std::marker::PhantomData,
-        }
     }
 
     pub fn into_delta(self) -> Hide<Delta, Lr> {

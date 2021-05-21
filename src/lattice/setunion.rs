@@ -150,7 +150,7 @@ mod fns {
         <SetUnionRepr<Tag, T> as LatticeRepr>::Repr: Collection<T, ()>,
     {
         pub fn len(&self) -> Hide<Value, MaxRepr<usize>> {
-            Hide::new(self.as_reveal().len())
+            Hide::new(self.reveal_ref().len())
         }
     }
 
@@ -160,7 +160,7 @@ mod fns {
         <SetUnionRepr<Tag, T> as LatticeRepr>::Repr: Collection<T, ()>,
     {
         pub fn contains(&self, val: &T) -> Hide<Value, MaxRepr<bool>> {
-            Hide::new(self.as_reveal().get(val).is_some())
+            Hide::new(self.reveal_ref().get(val).is_some())
         }
     }
 

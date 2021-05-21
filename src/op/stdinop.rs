@@ -13,13 +13,13 @@ use crate::metadata::Order;
 use super::*;
 
 pub struct StdinOp {
-    reader: RefCell<Pin<Box<Lines<BufReader<Stdin>>>>>,
+    reader: RefCell<Lines<BufReader<Stdin>>>,
 }
 
 impl StdinOp {
     pub fn new() -> Self {
         Self {
-            reader: RefCell::new(Box::pin(BufReader::new(tokio::io::stdin()).lines()))
+            reader: RefCell::new(BufReader::new(tokio::io::stdin()).lines()),
         }
     }
 }
@@ -33,7 +33,7 @@ impl OpDelta for StdinOp {
 
     fn poll_delta(&self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
         loop {
-            match self.reader.borrow_mut().as_mut().poll_next_line(ctx) {
+            match Pin::new(&mut *self.reader.borrow_mut()).as_mut().poll_next_line(ctx) {
                 Poll::Pending => return Poll::Pending,
                 Poll::Ready(Result::Ok(opt)) => return Poll::Ready(opt.map(|x| Hide::new(Single(x)))),
                 Poll::Ready(Result::Err(err)) => println!("ERROR: {}", err),
