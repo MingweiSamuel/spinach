@@ -55,7 +55,7 @@
     <span class="kw">fn</span> <span class="ident">merge</span>(<span class="ident">this</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span><span class="ident">::Repr</span>, <span class="ident">delta</span>: <span class="ident">Delta::Repr</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span>;
 
     <span class="kw">fn</span> <span class="ident">merge_hide</span><span class="op">&lt;</span><span class="ident">Y</span>: <span class="ident">Qualifier</span>, <span class="ident">Z</span>: <span class="ident">Qualifier</span><span class="op">&gt;</span>(<span class="ident">this</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">delta</span>: <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Z</span>, <span class="ident">Delta</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
-        <span class="self">Self</span><span class="ident">::merge</span>(<span class="ident">this</span>.<span class="ident">as_reveal_mut</span>(), <span class="ident">delta</span>.<span class="ident">into_reveal</span>())
+        <span class="self">Self</span><span class="ident">::merge</span>(<span class="ident">this</span>.<span class="ident">reveal_mut</span>(), <span class="ident">delta</span>.<span class="ident">into_reveal</span>())
     }
 }
 

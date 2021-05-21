@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["DebugComp",""]]});
+initSidebarItems({"struct":[["DebugComp",""],["TcpComp",""]]});

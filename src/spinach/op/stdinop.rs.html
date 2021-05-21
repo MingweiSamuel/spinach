@@ -63,13 +63,13 @@
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">StdinOp</span> {
-    <span class="ident">reader</span>: <span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">Pin</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Lines</span><span class="op">&lt;</span><span class="ident">BufReader</span><span class="op">&lt;</span><span class="ident">Stdin</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">reader</span>: <span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">Lines</span><span class="op">&lt;</span><span class="ident">BufReader</span><span class="op">&lt;</span><span class="ident">Stdin</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">StdinOp</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> {
-            <span class="ident">reader</span>: <span class="ident">RefCell::new</span>(<span class="ident">Box::pin</span>(<span class="ident">BufReader::new</span>(<span class="ident">tokio::io::stdin</span>()).<span class="ident">lines</span>()))
+            <span class="ident">reader</span>: <span class="ident">RefCell::new</span>(<span class="ident">BufReader::new</span>(<span class="ident">tokio::io::stdin</span>()).<span class="ident">lines</span>()),
         }
     }
 }
@@ -83,7 +83,7 @@
 
     <span class="kw">fn</span> <span class="ident">poll_delta</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Delta</span>, <span class="self">Self</span><span class="ident">::LatRepr</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">loop</span> {
-            <span class="kw">match</span> <span class="self">self</span>.<span class="ident">reader</span>.<span class="ident">borrow_mut</span>().<span class="ident">as_mut</span>().<span class="ident">poll_next_line</span>(<span class="ident">ctx</span>) {
+            <span class="kw">match</span> <span class="ident">Pin::new</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">reader</span>.<span class="ident">borrow_mut</span>()).<span class="ident">as_mut</span>().<span class="ident">poll_next_line</span>(<span class="ident">ctx</span>) {
                 <span class="ident">Poll::Pending</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="ident">Poll::Pending</span>,
                 <span class="ident">Poll::Ready</span>(<span class="ident">Result::Ok</span>(<span class="ident">opt</span>)) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="ident">Poll::Ready</span>(<span class="ident">opt</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">Hide::new</span>(<span class="ident">Single</span>(<span class="ident">x</span>)))),
                 <span class="ident">Poll::Ready</span>(<span class="ident">Result::Err</span>(<span class="ident">err</span>)) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">println!</span>(<span class="string">&quot;ERROR: {}&quot;</span>, <span class="ident">err</span>),
