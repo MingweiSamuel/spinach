@@ -14,7 +14,6 @@ pub trait OpDelta: Op {
     type Ord: Order;
 
     fn poll_delta(&self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>>;
-
 }
 
 pub trait OpValue: Op {
