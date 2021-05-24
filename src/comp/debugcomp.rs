@@ -1,9 +1,10 @@
 use std::fmt::Debug;
+use std::future::Future;
 
 use crate::lattice::LatticeRepr;
 use crate::op::OpDelta;
 
-use super::Next;
+use super::{Comp, Next};
 
 pub struct DebugComp<O: OpDelta>
 where
@@ -19,20 +20,33 @@ where
     pub fn new(op: O) -> Self {
         Self { op }
     }
+}
 
-    pub async fn tick(&self) -> Result<(), ()> {
-        if let Some(hide) = (Next { op: &self.op }).await {
-            println!("{:?}", hide.into_reveal());
-            Ok(())
-        }
-        else {
-            Err(())
+impl<O: OpDelta> Comp for DebugComp<O>
+where
+    <O::LatRepr as LatticeRepr>::Repr: Debug,
+{
+    type Error = ();
+
+    type TickFuture<'s> = impl Future<Output = Result<(), Self::Error>>;
+    fn tick(&self) -> Self::TickFuture<'_> {
+        async move {
+            if let Some(hide) = (Next { op: &self.op }).await {
+                println!("{:?}", hide.into_reveal());
+                Ok(())
+            }
+            else {
+                Err(())
+            }
         }
     }
 
-    pub async fn run(&self) -> Result<!, ()> {
-        loop {
-            self.tick().await?;
+    type RunFuture<'s> = impl Future<Output = Result<!, Self::Error>>;
+    fn run(&self) -> Self::RunFuture<'_> {
+        async move {
+            loop {
+                self.tick().await?;
+            }
         }
     }
 }
