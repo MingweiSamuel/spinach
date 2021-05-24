@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["DebugComp",""],["TcpComp",""]]});
+initSidebarItems({"struct":[["CompRunFuture",""],["DebugComp",""],["TcpComp",""]],"trait":[["Comp",""],["CompExt",""]]});
