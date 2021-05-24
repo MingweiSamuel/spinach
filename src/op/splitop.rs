@@ -52,21 +52,26 @@ impl<'s, O: OpValue + OpDelta> OpDelta for SplitOp<'s, O> {
         let mut splits = self.splitter.splits.borrow_mut();
 
         // Check if we have a value waiting.
-        let split = &mut splits[self.index];
-        match split.delta.take() {
-            Some(polled) => {
-                return Poll::Ready(Some(polled));
-            }
-            None => {
-                split.waker.replace(ctx.waker().clone());
+        {
+            let split = &mut splits[self.index];
+            match split.delta.take() {
+                Some(polled) => {
+                    return Poll::Ready(Some(polled));
+                }
+                None => {
+                    split.waker.replace(ctx.waker().clone());
+                }
             }
         }
 
-        // Check if other splits are ready to receive a value.
-        for (i, split) in splits.iter().enumerate() {
-            if self.index == i { continue; }
+        // Iterate in circular order, so each successive split checks the next split.
+        let (splits_before, splits_after) = splits.split_at_mut(self.index);
+        let splits_after = &mut splits_after[1..]; // Skip self.
 
+        // Check if other splits are ready to receive a value.
+        for split in splits_after.iter().chain(splits_before.iter()) {
             if let Some(_) = split.delta {
+                // If any split has it's value filled, wake it up and return pending.
                 if let Some(waker) = &split.waker {
                     waker.wake_by_ref();
                 }
@@ -76,9 +81,7 @@ impl<'s, O: OpValue + OpDelta> OpDelta for SplitOp<'s, O> {
 
         match self.splitter.op.poll_delta(ctx) {
             Poll::Ready(Some(delta)) => {
-                for (i, split) in splits.iter_mut().enumerate() {
-                    if self.index == i { continue; }
-
+                for split in splits_after.iter_mut().chain(splits_before.iter_mut()) {
                     let old_delta_opt = split.delta.replace(delta.clone());
                     assert!(old_delta_opt.is_none());
 
