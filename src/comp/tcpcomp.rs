@@ -5,22 +5,26 @@ use serde::ser::Serialize;
 use tokio::io::{AsyncWriteExt};
 use tokio::net::tcp::OwnedWriteHalf;
 
+use crate::collections::Collection;
 use crate::lattice::LatticeRepr;
+use crate::lattice::setunion::{SetUnion};
 use crate::op::OpDelta;
 
 use super::Next;
 
-pub struct TcpComp<O: OpDelta>
+pub struct TcpComp<O: OpDelta, T: Clone + Serialize>
 where
-    <O::LatRepr as LatticeRepr>::Repr: Serialize,
+    O::LatRepr: LatticeRepr<Lattice = SetUnion<T>>,
+    <O::LatRepr as LatticeRepr>::Repr: Collection<T, ()>,
 {
     op: O,
     tcp_write: RefCell<OwnedWriteHalf>,
 }
 
-impl<O: OpDelta> TcpComp<O>
+impl<O: OpDelta, T: Clone + Serialize> TcpComp<O, T>
 where
-    <O::LatRepr as LatticeRepr>::Repr: Serialize,
+    O::LatRepr: LatticeRepr<Lattice = SetUnion<T>>,
+    <O::LatRepr as LatticeRepr>::Repr: Collection<T, ()>,
 {
     pub fn new(op: O, tcp_write: OwnedWriteHalf) -> Self {
         Self {
@@ -31,11 +35,13 @@ where
 
     pub async fn tick(&self) -> tokio::io::Result<()> {
         if let Some(hide) = (Next { op: &self.op }).await {
-            let bytes = serde_json::to_vec(hide.reveal_ref())?;
-            let mut tcp_write_mut = self.tcp_write.borrow_mut();
-            let len = bytes.len().try_into().unwrap_or_else(|_| panic!("Message too long! {}", bytes.len()));
-            tcp_write_mut.write_u16(len).await?;
-            tcp_write_mut.write_all(&*bytes).await?;
+            for item in hide.reveal_ref().keys() {
+                let bytes = serde_json::to_vec(item)?;
+                let mut tcp_write_mut = self.tcp_write.borrow_mut();
+                let len = bytes.len().try_into().unwrap_or_else(|_| panic!("Message too long! {}", bytes.len()));
+                tcp_write_mut.write_u16(len).await?;
+                tcp_write_mut.write_all(&*bytes).await?;
+            }
             Ok(())
         }
         else {

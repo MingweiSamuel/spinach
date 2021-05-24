@@ -87,6 +87,50 @@ impl<K: 'static + Eq> Collection<K, ()> for Vec<K> {
     }
 }
 
+impl<K: 'static + Eq> Collection<K, ()> for Option<K> {
+    fn get(&self, key: &K) -> Option<&()> {
+        bool_to_option(Some(key) == self.as_ref())
+    }
+    fn get_mut(&mut self, key: &K) -> Option<&mut ()> {
+        bool_to_option_mut(Some(key) == self.as_ref())
+    }
+    fn len(&self) -> usize {
+        self.is_some().into()
+    }
+
+    type Keys<'s> = std::option::Iter<'s, K>;
+    fn keys(&self) -> Self::Keys<'_> {
+        self.iter()
+    }
+
+    type Entries<'s> = impl Iterator<Item = (&'s K, &'s ())>;
+    fn entries(&self) -> Self::Entries<'_> {
+        self.keys().map(|k| (k, &()))
+    }
+}
+
+impl<K: 'static + Eq> Collection<K, ()> for Single<K> {
+    fn get(&self, key: &K) -> Option<&()> {
+        bool_to_option(key == &self.0)
+    }
+    fn get_mut(&mut self, key: &K) -> Option<&mut ()> {
+        bool_to_option_mut(key == &self.0)
+    }
+    fn len(&self) -> usize {
+        1
+    }
+
+    type Keys<'s> = std::iter::Once<&'s K>;
+    fn keys(&self) -> Self::Keys<'_> {
+        std::iter::once(&self.0)
+    }
+
+    type Entries<'s> = impl Iterator<Item = (&'s K, &'s ())>;
+    fn entries(&self) -> Self::Entries<'_> {
+        self.keys().map(|k| (k, &()))
+    }
+}
+
 impl<K: 'static + Eq, const N: usize> Collection<K, ()> for Array<K, N> {
     fn get(&self, key: &K) -> Option<&()> {
         bool_to_option(self.0.contains(key))

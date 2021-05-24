@@ -12,6 +12,9 @@ pub use constop::*;
 mod onceop;
 pub use onceop::*;
 
+mod debugop;
+pub use debugop::*;
+
 mod latticeop;
 pub use latticeop::*;
 
@@ -32,3 +35,6 @@ pub use zipop::*;
 
 mod tcpop;
 pub use tcpop::*;
+
+mod batchconvertop;
+pub use batchconvertop::*;
