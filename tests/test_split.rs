@@ -1,5 +1,5 @@
 use spinach::collections::Array;
-use spinach::comp::{Comp, DebugComp};
+use spinach::comp::{CompExt, DebugComp};
 use spinach::func::Morphism;
 use spinach::hide::{Hide, Qualifier};
 use spinach::lattice::setunion::SetUnionRepr;

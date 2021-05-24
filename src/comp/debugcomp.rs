@@ -40,13 +40,4 @@ where
             }
         }
     }
-
-    type RunFuture<'s> = impl Future<Output = Result<!, Self::Error>>;
-    fn run(&self) -> Self::RunFuture<'_> {
-        async move {
-            loop {
-                self.tick().await?;
-            }
-        }
-    }
 }

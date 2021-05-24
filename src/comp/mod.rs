@@ -17,15 +17,8 @@ impl<O: OpDelta> Future for Next<'_, O> {
     }
 }
 
-pub trait Comp {
-    type Error;
-
-    type TickFuture<'s>: Future<Output = Result<(), Self::Error>>;
-    fn tick(&self) -> Self::TickFuture<'_>;
-
-    type RunFuture<'s>: Future<Output = Result<!, Self::Error>>;
-    fn run(&self) -> Self::RunFuture<'_>;
-}
+mod comptrait;
+pub use comptrait::*;
 
 mod debugcomp;
 pub use debugcomp::*;

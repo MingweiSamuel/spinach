@@ -6,6 +6,7 @@
 #![feature(array_map)]
 #![feature(array_methods)]
 #![feature(array_zip)]
+#![feature(associated_type_defaults)]
 #![feature(cell_update)]
 #![feature(drain_filter)]
 #![feature(generic_associated_types)]
