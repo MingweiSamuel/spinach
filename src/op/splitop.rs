@@ -19,6 +19,7 @@ impl<O: OpValue> Splitter<O> {
         }
     }
 
+    #[must_use]
     pub fn add_split(&self) -> SplitOp<'_, O> {
         let mut splits = self.splits.borrow_mut();
         let index = splits.len();

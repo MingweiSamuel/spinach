@@ -2,6 +2,8 @@ use std::future::Future;
 use std::task::{Context, Poll};
 use std::pin::Pin;
 
+use crate::op::Op;
+
 pub struct CompRunFuture<'s, C: Comp + ?Sized> {
     comp: &'s C,
     future: Pin<Box<C::TickFuture<'s>>>,
@@ -39,3 +41,12 @@ pub trait CompExt: Comp {
     }
 }
 impl<C: Comp> CompExt for C {}
+
+
+pub trait CompConnector<O: Op> {
+    type Comp: Comp;
+
+    #[must_use]
+    fn connect(&self, op: O) -> Self::Comp;
+}
+

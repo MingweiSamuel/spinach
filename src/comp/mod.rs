@@ -26,5 +26,5 @@ pub use debugcomp::*;
 mod tcpcomp;
 pub use tcpcomp::*;
 
-// mod dynsplitcomp;
-// pub use dynsplitcomp::*;
+mod dynsplitcomp;
+pub use dynsplitcomp::*;
