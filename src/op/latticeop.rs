@@ -7,9 +7,6 @@ use crate::hide::{Hide, Delta, Value};
 use super::*;
 
 /// A state-accumulating lattice op.
-///
-/// Input is owned `F::Domain` values as [`Df`] dataflow,
-/// output is reference `&F::Domain` values as [`Rx`] reactive.
 pub struct LatticeOp<O: Op, Lr: LatticeRepr + Merge<O::LatRepr>>
 where
     O::LatRepr: Convert<Lr>,

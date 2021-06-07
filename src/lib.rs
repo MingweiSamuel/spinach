@@ -1,7 +1,7 @@
 #![allow(clippy::redundant_closure)]
 #![allow(incomplete_features)]
 
-#![doc(include = "../README.md")]
+#![doc = include_str!("../README.md")]
 
 #![feature(array_map)]
 #![feature(array_methods)]
@@ -13,7 +13,6 @@
 #![feature(try_blocks)]
 #![feature(min_type_alias_impl_trait)]
 #![feature(never_type)]
-#![feature(external_doc)]
 
 #![forbid(unsafe_code)]
 
