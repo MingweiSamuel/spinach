@@ -83,54 +83,55 @@ where
         let mut out = Vec::new();
         let mut hashmaps = self.hashmaps.borrow_mut();
 
-        // Poll from A.
-        let eos = match self.op_a.poll_delta(ctx) {
-            Poll::Ready(Some(delta)) => {
-                let delta = delta.into_reveal();
-                for ((k, va), _) in delta.entries() {
-                    hashmaps.a.entry(k.clone())
-                        .or_default()
-                        .insert(va.clone());
-                }
-                for ((k, va), _) in delta.entries() {
-                    if let Some(vbs) = hashmaps.b.get(&k) {
-                        out.extend(
-                            vbs.iter().cloned()
-                                .map(|vb| (k.clone(), va.clone(), vb))
-                        );
-                    }
-                }
-                false
-            },
-            Poll::Ready(None) => true,
-            Poll::Pending => false,
-        };
+        // Poll both A and B.
+        let polls = (self.op_a.poll_delta(ctx), self.op_b.poll_delta(ctx));
 
-        match self.op_b.poll_delta(ctx) {
-            Poll::Ready(Some(delta)) => {
-                let delta = delta.into_reveal();
-                for ((k, vb), _) in delta.entries() {
-                    hashmaps.b.entry(k.clone())
-                        .or_default()
-                        .insert(vb.clone());
-                }
-                for ((k, vb), _) in delta.entries() {
-                    if let Some(vas) = hashmaps.a.get(&k) {
-                        out.extend(
-                            vas.iter().cloned()
-                                .map(|va| (k.clone(), va, vb.clone()))
-                        );
-                    }
-                }
-            },
-            Poll::Ready(None) => {
-                if eos {
-                    return Poll::Ready(None);
-                }
-            },
-            Poll::Pending => {},
-        };
+        // If both streams are EOS, we are EOS.
+        if let (Poll::Ready(None), Poll::Ready(None)) = polls {
+            return Poll::Ready(None);
+        }
 
+        // Handle new A values.
+        if let Poll::Ready(Some(delta_a)) = polls.0 {
+            // Build-into A hashmap.
+            let delta_a = delta_a.into_reveal();
+            for ((k, va), _) in delta_a.entries() {
+                hashmaps.a.entry(k.clone())
+                    .or_default()
+                    .insert(va.clone());
+            }
+            // Probe B hashmap.
+            for ((k, va), _) in delta_a.entries() {
+                if let Some(vbs) = hashmaps.b.get(&k) {
+                    out.extend(
+                        vbs.iter().cloned()
+                            .map(|vb| (k.clone(), va.clone(), vb))
+                    );
+                }
+            }
+        }
+
+        // Handle new B values.
+        if let Poll::Ready(Some(delta_b)) = polls.1 {
+            // Build-into B hashmap.
+            let delta_b = delta_b.into_reveal();
+            for ((k, vb), _) in delta_b.entries() {
+                hashmaps.b.entry(k.clone())
+                    .or_default()
+                    .insert(vb.clone());
+            }
+            // Probe A hashmap.
+            for ((k, vb), _) in delta_b.entries() {
+                if let Some(vas) = hashmaps.a.get(&k) {
+                    out.extend(
+                        vas.iter().cloned()
+                            .map(|va| (k.clone(), va, vb.clone()))
+                    );
+                }
+            }
+        }
+
+        // Return new tuples in the vec.
         if !out.is_empty() {
             Poll::Ready(Some(Hide::new(out)))
         }
