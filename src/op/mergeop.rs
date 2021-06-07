@@ -51,6 +51,9 @@ where
     }
 }
 
+pub struct MergeOrder<A: Order, B: Order>(std::marker::PhantomData<(A, B)>);
+impl<A: Order, B: Order> Order for MergeOrder<A, B> {}
+
 impl<A: OpValue, B: OpValue> OpValue for MergeOp<A, B>
 where
     A::LatRepr: LatticeRepr<Lattice = <B::LatRepr as LatticeRepr>::Lattice>,
@@ -62,6 +65,3 @@ where
         val
     }
 }
-
-pub struct MergeOrder<A: Order, B: Order>(std::marker::PhantomData<(A, B)>);
-impl<A: Order, B: Order> Order for MergeOrder<A, B> {}

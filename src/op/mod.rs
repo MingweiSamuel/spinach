@@ -38,3 +38,6 @@ pub use tcpop::*;
 
 mod batchconvertop;
 pub use batchconvertop::*;
+
+mod symhashjoinop;
+pub use symhashjoinop::*;
