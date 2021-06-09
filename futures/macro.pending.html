@@ -6,7 +6,7 @@
 }</pre></div>
 </div><details class="rustdoc-toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>A macro which yields to the event loop once.</p>
 <p>This is equivalent to returning <a href="task/enum.Poll.html"><code>Poll::Pending</code></a>
-from a <a href="prelude/trait.Future.html#tymethod.poll"><code>Future::poll</code></a> implementation.
+from a <a href="future/trait.Future.html#tymethod.poll"><code>Future::poll</code></a> implementation.
 Similarly, when using this macro, it must be ensured that <a href="task/struct.Waker.html#method.wake"><code>wake</code></a>
 is called somewhere when further progress can be made.</p>
 <p>This macro is only usable inside of async functions, closures, and blocks.
