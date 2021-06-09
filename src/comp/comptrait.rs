@@ -26,7 +26,7 @@ impl<'s, C: Comp + ?Sized> Future for CompRunFuture<'s, C> {
 }
 
 pub trait Comp {
-    type Error;
+    type Error: std::fmt::Debug;
 
     type TickFuture<'s>: Future<Output = Result<(), Self::Error>>;
     fn tick(&self) -> Self::TickFuture<'_>;

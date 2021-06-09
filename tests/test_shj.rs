@@ -10,6 +10,7 @@ pub async fn test_sym_hash_join() -> Result<(), String> {
     type MyLatRepr = SetUnionRepr<tag::SINGLE, (&'static str, &'static str)>;
 
     let op_a = IterOp::<MyLatRepr, _>::new(vec![
+        Single(("P", "Pranav")),
         Single(("M", "Matthew")),
         Single(("M", "Mingwei")),
         Single(("J", "Joseph")),
