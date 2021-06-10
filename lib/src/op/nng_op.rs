@@ -12,14 +12,14 @@ use crate::tag;
 
 use super::*;
 
-pub struct NngOp<const N: usize> {
+pub struct NngOp {
     receiver: RefCell<mpsc::UnboundedReceiver<Message>>,
-    _ctxs: [nng::Context; N],
-    _aios: [Aio; N],
+    _ctxs: Vec<nng::Context>,
+    _aios: Vec<Aio>,
 }
 
-impl<const N: usize> NngOp<N> {
-    pub fn new(url: &str) -> Self {
+impl NngOp {
+    pub fn new(url: &str, workers: usize) -> Self {
         // Create the tokio channel.
         let (sender, receiver) = mpsc::unbounded_channel();
 
@@ -27,12 +27,14 @@ impl<const N: usize> NngOp<N> {
         let socket = Socket::new(Protocol::Rep0).unwrap();
 
         // Create all of the worker contexts.
-        let ctxs = [(); N].map(|_| nng::Context::new(&socket).unwrap());
-        let aios = ctxs.each_ref().map(|ctx| {
-            let ctx_clone = ctx.clone();
-            let sender_clone = sender.clone();
-            Aio::new(move |aio, res| Self::worker_callback(aio, res, &ctx_clone, &sender_clone)).unwrap()
-        });
+        let ctxs: Vec<_> = (0..workers).map(|_| nng::Context::new(&socket).unwrap()).collect();
+        let aios: Vec<_> = ctxs.iter()
+            .map(|ctx| {
+                let ctx_clone = ctx.clone();
+                let sender_clone = sender.clone();
+                Aio::new(move |aio, res| Self::worker_callback(aio, res, &ctx_clone, &sender_clone)).unwrap()
+            })
+            .collect();
 
         // Only after we have the workers do we start listening.
         socket.listen(url).unwrap();
@@ -74,14 +76,14 @@ impl<const N: usize> NngOp<N> {
     }
 }
 
-impl<const N: usize> Op for NngOp<N> {
+impl Op for NngOp {
     type LatRepr = SetUnionRepr<tag::SINGLE, Message>;
 }
 
 pub enum NngOrder {}
 impl Order for NngOrder {}
 
-impl<const N: usize> OpDelta for NngOp<N> {
+impl OpDelta for NngOp {
     type Ord = NngOrder;
 
     fn poll_delta(&self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
