@@ -8,9 +8,9 @@
 //! reply.
 use nng::{Aio, AioResult, Context, Message, Protocol, Socket};
 use std::{
-    convert::TryInto,
     env, process, thread,
     time::{Duration, Instant},
+    io::Write,
 };
 
 /// Number of outstanding requests that we can handle at a given time.
@@ -31,7 +31,7 @@ fn main() -> Result<(), nng::Error> {
 
     match &args[..] {
         [_, t, url] if t == "server" => server(url),
-        [_, t, url, count] if t == "client" => client(url, count.parse().unwrap()),
+        [_, t, url, name] if t == "client" => client(url, name),
         _ => {
             println!("Usage:\nasync server <url>\n  or\nasync client <url> <ms>");
             process::exit(1);
@@ -40,35 +40,44 @@ fn main() -> Result<(), nng::Error> {
 }
 
 /// Run the client portion of the program.
-fn client(url: &str, ms: u64) -> Result<(), nng::Error> {
-    let s = Socket::new(Protocol::Req0)?;
+fn client(url: &str, name: &str) -> Result<(), nng::Error> {
+    let s = Socket::new(Protocol::Rep0)?;
     s.dial(url)?;
 
-    let start = Instant::now();
-    s.send(ms.to_le_bytes())?;
-    s.recv()?;
+    loop {
+        let start = Instant::now();
+        let msg = s.recv()?;
+        let msg_str = std::str::from_utf8(&msg).expect("invalid UTF-8 message");
+        println!("{:?}", msg_str);
 
-    let dur = Instant::now().duration_since(start);
-    let subsecs: u64 = dur.subsec_millis().into();
-    println!(
-        "Request took {} milliseconds",
-        dur.as_secs() * 1000 + subsecs
-    );
+        std::thread::sleep(Duration::from_millis(1000));
 
-    Ok(())
+        let mut msg = Message::new();
+        write!(msg, "Hello from {}", name).expect("failed to write to message");
+        s.send(msg)?;
+
+        let dur = Instant::now().duration_since(start);
+        let subsecs: u64 = dur.subsec_millis().into();
+        println!(
+            "Request took {} milliseconds",
+            dur.as_secs() * 1000 + subsecs
+        );
+    }
+
+    // Ok(())
 }
 
 /// Run the server portion of the program.
 fn server(url: &str) -> Result<(), nng::Error> {
     // Create the socket
-    let s = Socket::new(Protocol::Rep0)?;
+    let s = Socket::new(Protocol::Req0)?;
 
     // Create all of the worker contexts
     let workers: Vec<_> = (0..PARALLEL)
-        .map(|_| {
+        .map(|idx| {
             let ctx = Context::new(&s)?;
             let ctx_clone = ctx.clone();
-            let aio = Aio::new(move |aio, res| worker_callback(aio, &ctx_clone, res))?;
+            let aio = Aio::new(move |aio, res| worker_callback(aio, res, idx, &ctx_clone))?;
             Ok((aio, ctx))
         })
         .collect::<Result<_, nng::Error>>()?;
@@ -78,7 +87,9 @@ fn server(url: &str) -> Result<(), nng::Error> {
 
     // Now start all of the workers listening.
     for (a, c) in &workers {
-        c.recv(a)?;
+        let mut msg = Message::new();
+        write!(msg, "Hello World").expect("failed to write to message");
+        c.send(a, msg)?;
     }
 
     println!("Workers started!");
@@ -89,25 +100,32 @@ fn server(url: &str) -> Result<(), nng::Error> {
 }
 
 /// Callback function for workers.
-fn worker_callback(aio: Aio, ctx: &Context, res: AioResult) {
+fn worker_callback(aio: Aio, res: AioResult, idx: usize, ctx: &Context) {
     match res {
-        // We successfully sent the message, wait for a new one.
-        AioResult::Send(Ok(_)) => ctx.recv(&aio).unwrap(),
+        // We successfully sent the message.
+        AioResult::Send(Ok(_)) => {
+            // Wait for the response.
+            ctx.recv(&aio).unwrap()
+        }
 
-        // We successfully received a message.
-        AioResult::Recv(Ok(m)) => {
-            let ms = u64::from_le_bytes(m[..].try_into().unwrap());
-            aio.sleep(Duration::from_millis(ms)).unwrap();
+        // We successfully received a response.
+        AioResult::Recv(Ok(msg)) => {
+            let msg_str = std::str::from_utf8(&msg).expect("invalid UTF-8 message");
+            println!("AIO {}: {}", idx, msg_str);
+            aio.sleep(Duration::from_millis(1)).unwrap();
         }
 
         // We successfully slept.
         AioResult::Sleep(Ok(_)) => {
-            ctx.send(&aio, Message::new()).unwrap();
+            // Send a new msg.
+            let mut msg = Message::new();
+            write!(msg, "Hello World 2").expect("failed to write to message");
+            ctx.send(&aio, msg).unwrap();
         }
 
         // Anything else is an error and we will just panic.
-        AioResult::Send(Err((_, e))) | AioResult::Recv(Err(e)) | AioResult::Sleep(Err(e)) => {
-            panic!("Error: {}", e)
+        res => {
+            panic!("Error: {:?}", res)
         }
     }
 }
