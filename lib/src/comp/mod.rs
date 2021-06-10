@@ -28,6 +28,3 @@ pub use tcpcomp::*;
 
 mod dynsplitcomp;
 pub use dynsplitcomp::*;
-
-#[cfg(feature = "messaging")]
-pub mod nng_comp;

@@ -44,6 +44,3 @@ pub use batchconvertop::*;
 
 mod symhashjoinop;
 pub use symhashjoinop::*;
-
-#[cfg(feature = "messaging")]
-pub mod nng_op;
