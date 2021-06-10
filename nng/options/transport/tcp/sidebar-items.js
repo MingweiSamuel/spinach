@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["BoundPort","Get the local TCP port number."],["KeepAlive","Enable the sending of keep-alive messages on the underlying TCP stream."],["NoDelay","Disable (or enable) the use of Nagle’s algorithm for TCP connections."]]});

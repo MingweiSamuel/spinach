@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["main",""]]});
+initSidebarItems({"constant":[["PARALLEL","Number of outstanding requests that we can handle at a given time."]],"fn":[["client","Run the client portion of the program."],["main","Entry point of the application."],["server","Run the server portion of the program."],["worker_callback","Callback function for workers."]]});

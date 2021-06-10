@@ -106,8 +106,11 @@
     <span class="kw">type</span> <span class="ident">LatRepr</span> <span class="op">=</span> <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::SINGLE</span>, <span class="ident">T</span><span class="op">&gt;</span>;
 }
 
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">TcpOrder</span> {}
+<span class="kw">impl</span> <span class="ident">Order</span> <span class="kw">for</span> <span class="ident">TcpOrder</span> {}
+
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span><span class="op">&gt;</span> <span class="ident">OpDelta</span> <span class="kw">for</span> <span class="ident">TcpOp</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="kw">type</span> <span class="ident">Ord</span> <span class="op">=</span> <span class="ident">TcpOrderInvalid</span>;
+    <span class="kw">type</span> <span class="ident">Ord</span> <span class="op">=</span> <span class="ident">TcpOrder</span>;
 
     <span class="kw">fn</span> <span class="ident">poll_delta</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Delta</span>, <span class="self">Self</span><span class="ident">::LatRepr</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="ident">Pin::new</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">framed_read</span>.<span class="ident">borrow_mut</span>()).<span class="ident">poll_next</span>(<span class="ident">ctx</span>) {
@@ -132,8 +135,5 @@
         }
     }
 }
-
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">TcpOrderInvalid</span> {}
-<span class="kw">impl</span> <span class="ident">Order</span> <span class="kw">for</span> <span class="ident">TcpOrderInvalid</span> {}
 </pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="spinach" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div><script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>
