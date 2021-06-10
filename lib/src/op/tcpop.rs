@@ -36,8 +36,11 @@ impl<T: Clone + DeserializeOwned> Op for TcpOp<T> {
     type LatRepr = SetUnionRepr<tag::SINGLE, T>;
 }
 
+pub enum TcpOrder {}
+impl Order for TcpOrder {}
+
 impl<T: Clone + DeserializeOwned> OpDelta for TcpOp<T> {
-    type Ord = TcpOrderInvalid;
+    type Ord = TcpOrder;
 
     fn poll_delta(&self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
         match Pin::new(&mut *self.framed_read.borrow_mut()).poll_next(ctx) {
@@ -62,6 +65,3 @@ impl<T: Clone + DeserializeOwned> OpDelta for TcpOp<T> {
         }
     }
 }
-
-pub enum TcpOrderInvalid {}
-impl Order for TcpOrderInvalid {}
