@@ -51,15 +51,11 @@
 <span id="49">49</span>
 <span id="50">50</span>
 <span id="51">51</span>
-<span id="52">52</span>
-<span id="53">53</span>
-<span id="54">54</span>
-<span id="55">55</span>
 </pre><pre class="rust">
 <span class="kw">use</span> <span class="ident">std::net::SocketAddr</span>;
 <span class="kw">use</span> <span class="ident">std::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 
-<span class="kw">use</span> <span class="ident">serde::de::DeserializeOwned</span>;
+<span class="kw">use</span> <span class="ident">bytes::BytesMut</span>;
 
 <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::collections</span>::{<span class="ident">Single</span>};
 <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::hide</span>::{<span class="ident">Hide</span>, <span class="ident">Delta</span>};
@@ -70,28 +66,24 @@
 
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TcpServerOp</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TcpServerOp</span> {
     <span class="ident">tcp_pool</span>: <span class="ident">TcpServer</span>,
-    <span class="ident">_phantom</span>: <span class="ident">std::marker::PhantomData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span><span class="op">&gt;</span> <span class="ident">TcpServerOp</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+<span class="kw">impl</span> <span class="ident">TcpServerOp</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">tcp_pool</span>: <span class="ident">TcpServer</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="self">Self</span> {
-            <span class="ident">tcp_pool</span>,
-            <span class="ident">_phantom</span>: <span class="ident">std::marker::PhantomData</span>,
-        }
+        <span class="self">Self</span> { <span class="ident">tcp_pool</span> }
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span><span class="op">&gt;</span> <span class="ident">Op</span> <span class="kw">for</span> <span class="ident">TcpServerOp</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="kw">type</span> <span class="ident">LatRepr</span> <span class="op">=</span> <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::SINGLE</span>, (<span class="ident">SocketAddr</span>, <span class="ident">T</span>)<span class="op">&gt;</span>;
+<span class="kw">impl</span> <span class="ident">Op</span> <span class="kw">for</span> <span class="ident">TcpServerOp</span> {
+    <span class="kw">type</span> <span class="ident">LatRepr</span> <span class="op">=</span> <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::SINGLE</span>, (<span class="ident">SocketAddr</span>, <span class="ident">BytesMut</span>)<span class="op">&gt;</span>;
 }
 
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">TcpOrder</span> {}
 <span class="kw">impl</span> <span class="ident">Order</span> <span class="kw">for</span> <span class="ident">TcpOrder</span> {}
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span><span class="op">&gt;</span> <span class="ident">OpDelta</span> <span class="kw">for</span> <span class="ident">TcpServerOp</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+<span class="kw">impl</span> <span class="ident">OpDelta</span> <span class="kw">for</span> <span class="ident">TcpServerOp</span> {
     <span class="kw">type</span> <span class="ident">Ord</span> <span class="op">=</span> <span class="ident">TcpOrder</span>;
 
     <span class="kw">fn</span> <span class="ident">poll_delta</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Context</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Delta</span>, <span class="self">Self</span><span class="ident">::LatRepr</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> {

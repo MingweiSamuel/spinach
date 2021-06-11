@@ -63,16 +63,68 @@
 <span id="61">61</span>
 <span id="62">62</span>
 <span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
+<span id="86">86</span>
+<span id="87">87</span>
+<span id="88">88</span>
+<span id="89">89</span>
+<span id="90">90</span>
 </pre><pre class="rust">
 <span class="attribute">#![<span class="ident">feature</span>(<span class="ident">never_type</span>)]</span>
 
 <span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">env</span>, <span class="ident">process</span>};
+<span class="kw">use</span> <span class="ident">std::net::SocketAddr</span>;
 
-<span class="kw">use</span> <span class="ident">tokio::net::TcpStream</span>;
+<span class="kw">use</span> <span class="ident">spinach::bytes</span>::{<span class="ident">Bytes</span>, <span class="ident">BytesMut</span>};
+<span class="kw">use</span> <span class="ident">spinach::tokio</span>;
+<span class="kw">use</span> <span class="ident">spinach::tokio::net::TcpStream</span>;
 
-<span class="kw">use</span> <span class="ident">spinach::tcp_server::TcpServer</span>;
-<span class="kw">use</span> <span class="ident">spinach::op</span>::{<span class="ident">DebugOp</span>, <span class="ident">StdinOp</span>, <span class="ident">TcpOp</span>, <span class="ident">TcpServerOp</span>};
 <span class="kw">use</span> <span class="ident">spinach::comp</span>::{<span class="ident">CompExt</span>, <span class="ident">DebugComp</span>, <span class="ident">TcpComp</span>, <span class="ident">TcpServerComp</span>};
+<span class="kw">use</span> <span class="ident">spinach::func::Morphism</span>;
+<span class="kw">use</span> <span class="ident">spinach::hide</span>::{<span class="ident">Hide</span>, <span class="ident">Qualifier</span>};
+<span class="kw">use</span> <span class="ident">spinach::lattice::setunion::SetUnionRepr</span>;
+<span class="kw">use</span> <span class="ident">spinach::op</span>::{<span class="ident">DebugOp</span>, <span class="ident">MorphismOp</span>, <span class="ident">StdinOp</span>, <span class="ident">TcpOp</span>, <span class="ident">TcpServerOp</span>};
+<span class="kw">use</span> <span class="ident">spinach::tag</span>;
+<span class="kw">use</span> <span class="ident">spinach::tcp_server::TcpServer</span>;
+
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">AddrBytesFreeze</span>;
+<span class="kw">impl</span> <span class="ident">Morphism</span> <span class="kw">for</span> <span class="ident">AddrBytesFreeze</span> {
+    <span class="kw">type</span> <span class="ident">InLatRepr</span>  <span class="op">=</span> <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::SINGLE</span>, (<span class="ident">SocketAddr</span>, <span class="ident">BytesMut</span>)<span class="op">&gt;</span>;
+    <span class="kw">type</span> <span class="ident">OutLatRepr</span> <span class="op">=</span> <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::SINGLE</span>, (<span class="ident">SocketAddr</span>, <span class="ident">Bytes</span>)<span class="op">&gt;</span>;
+    <span class="kw">fn</span> <span class="ident">call</span><span class="op">&lt;</span><span class="ident">Y</span>: <span class="ident">Qualifier</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">item</span>: <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="self">Self</span><span class="ident">::InLatRepr</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="self">Self</span><span class="ident">::OutLatRepr</span><span class="op">&gt;</span> {
+        <span class="ident">item</span>.<span class="ident">map_single</span>(<span class="op">|</span>(<span class="ident">addr</span>, <span class="ident">bytes</span>)<span class="op">|</span> (<span class="ident">addr</span>, <span class="ident">bytes</span>.<span class="ident">freeze</span>()))
+    }
+}
+
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">StringToBytes</span>;
+<span class="kw">impl</span> <span class="ident">Morphism</span> <span class="kw">for</span> <span class="ident">StringToBytes</span> {
+    <span class="kw">type</span> <span class="ident">InLatRepr</span>  <span class="op">=</span> <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::SINGLE</span>, <span class="ident">String</span><span class="op">&gt;</span>;
+    <span class="kw">type</span> <span class="ident">OutLatRepr</span> <span class="op">=</span> <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::SINGLE</span>, <span class="ident">Bytes</span><span class="op">&gt;</span>;
+    <span class="kw">fn</span> <span class="ident">call</span><span class="op">&lt;</span><span class="ident">Y</span>: <span class="ident">Qualifier</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">item</span>: <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="self">Self</span><span class="ident">::InLatRepr</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="self">Self</span><span class="ident">::OutLatRepr</span><span class="op">&gt;</span> {
+        <span class="ident">item</span>.<span class="ident">map_single</span>(<span class="op">|</span><span class="ident">string</span><span class="op">|</span> <span class="ident">string</span>.<span class="ident">into</span>())
+    }
+}
 
 <span class="doccomment">/// Entry point of the application.</span>
 <span class="attribute">#[<span class="ident">tokio::main</span>(<span class="ident">flavor</span> <span class="op">=</span> <span class="string">&quot;current_thread&quot;</span>)]</span>
@@ -95,8 +147,9 @@
 <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">server</span>(<span class="ident">url</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="op">!</span>, <span class="ident">String</span><span class="op">&gt;</span> {
 
     <span class="kw">let</span> <span class="ident">pool</span> <span class="op">=</span> <span class="ident">TcpServer::bind</span>(<span class="ident">url</span>).<span class="kw">await</span>.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">e</span>.<span class="ident">to_string</span>())<span class="question-mark">?</span>;
-    <span class="kw">let</span> <span class="ident">op</span> <span class="op">=</span> <span class="ident">TcpServerOp</span>::<span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="ident">pool</span>.<span class="ident">clone</span>());
+    <span class="kw">let</span> <span class="ident">op</span> <span class="op">=</span> <span class="ident">TcpServerOp::new</span>(<span class="ident">pool</span>.<span class="ident">clone</span>());
     <span class="kw">let</span> <span class="ident">op</span> <span class="op">=</span> <span class="ident">DebugOp::new</span>(<span class="ident">op</span>, <span class="string">&quot;server&quot;</span>);
+    <span class="kw">let</span> <span class="ident">op</span> <span class="op">=</span> <span class="ident">MorphismOp::new</span>(<span class="ident">op</span>, <span class="ident">AddrBytesFreeze</span>);
     <span class="kw">let</span> <span class="ident">comp</span> <span class="op">=</span> <span class="ident">TcpServerComp::new</span>(<span class="ident">op</span>, <span class="ident">pool</span>);
 
     <span class="ident">comp</span>.<span class="ident">run</span>().<span class="kw">await</span>.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">e</span>.<span class="ident">to_string</span>())<span class="question-mark">?</span>;
@@ -108,10 +161,11 @@
     <span class="kw">let</span> (<span class="ident">read</span>, <span class="ident">write</span>) <span class="op">=</span> <span class="ident">TcpStream::connect</span>(<span class="ident">url</span>).<span class="kw">await</span>.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">e</span>.<span class="ident">to_string</span>())<span class="question-mark">?</span>
         .<span class="ident">into_split</span>();
 
-    <span class="kw">let</span> <span class="ident">read_op</span> <span class="op">=</span> <span class="ident">TcpOp</span>::<span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="ident">read</span>);
+    <span class="kw">let</span> <span class="ident">read_op</span> <span class="op">=</span> <span class="ident">TcpOp::new</span>(<span class="ident">read</span>);
     <span class="kw">let</span> <span class="ident">read_comp</span> <span class="op">=</span> <span class="ident">DebugComp::new</span>(<span class="ident">read_op</span>);
 
     <span class="kw">let</span> <span class="ident">write_op</span> <span class="op">=</span> <span class="ident">StdinOp::new</span>();
+    <span class="kw">let</span> <span class="ident">write_op</span> <span class="op">=</span> <span class="ident">MorphismOp::new</span>(<span class="ident">write_op</span>, <span class="ident">StringToBytes</span>);
     <span class="kw">let</span> <span class="ident">write_comp</span> <span class="op">=</span> <span class="ident">TcpComp::new</span>(<span class="ident">write_op</span>, <span class="ident">write</span>);
 
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">unreachable_code</span>)]</span>

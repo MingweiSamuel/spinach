@@ -56,14 +56,12 @@
 <span id="54">54</span>
 <span id="55">55</span>
 <span id="56">56</span>
-<span id="57">57</span>
 </pre><pre class="rust">
 <span class="kw">use</span> <span class="ident">std::future::Future</span>;
 <span class="kw">use</span> <span class="ident">std::net::SocketAddr</span>;
 
-<span class="kw">use</span> <span class="ident">serde::ser::Serialize</span>;
+<span class="kw">use</span> <span class="ident">bytes::Bytes</span>;
 
-<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::collections::Collection</span>;
 <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::lattice::LatticeRepr</span>;
 <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::lattice::setunion</span>::{<span class="ident">SetUnion</span>};
 <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::op::OpDelta</span>;
@@ -71,32 +69,32 @@
 
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">Comp</span>, <span class="ident">Next</span>};
 
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TcpServerComp</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">OpDelta</span>, <span class="ident">T</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">Serialize</span><span class="op">&gt;</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TcpServerComp</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">OpDelta</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">O::LatRepr</span>: <span class="ident">LatticeRepr</span><span class="op">&lt;</span><span class="ident">Lattice</span> <span class="op">=</span> <span class="ident">SetUnion</span><span class="op">&lt;</span>(<span class="ident">SocketAddr</span>, <span class="ident">T</span>)<span class="op">&gt;</span><span class="op">&gt;</span>,
-    <span class="op">&lt;</span><span class="ident">O::LatRepr</span> <span class="kw">as</span> <span class="ident">LatticeRepr</span><span class="op">&gt;</span><span class="ident">::Repr</span>: <span class="ident">Collection</span><span class="op">&lt;</span>(<span class="ident">SocketAddr</span>, <span class="ident">T</span>), ()<span class="op">&gt;</span>,
+    <span class="ident">O::LatRepr</span>: <span class="ident">LatticeRepr</span><span class="op">&lt;</span><span class="ident">Lattice</span> <span class="op">=</span> <span class="ident">SetUnion</span><span class="op">&lt;</span>(<span class="ident">SocketAddr</span>, <span class="ident">Bytes</span>)<span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="op">&lt;</span><span class="ident">O::LatRepr</span> <span class="kw">as</span> <span class="ident">LatticeRepr</span><span class="op">&gt;</span><span class="ident">::Repr</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> (<span class="ident">SocketAddr</span>, <span class="ident">Bytes</span>)<span class="op">&gt;</span>,
 {
     <span class="ident">op</span>: <span class="ident">O</span>,
-    <span class="ident">tcp_pool</span>: <span class="ident">TcpServer</span>,
+    <span class="ident">tcp_server</span>: <span class="ident">TcpServer</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">OpDelta</span>, <span class="ident">T</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">Serialize</span><span class="op">&gt;</span> <span class="ident">TcpServerComp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">T</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">OpDelta</span><span class="op">&gt;</span> <span class="ident">TcpServerComp</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">O::LatRepr</span>: <span class="ident">LatticeRepr</span><span class="op">&lt;</span><span class="ident">Lattice</span> <span class="op">=</span> <span class="ident">SetUnion</span><span class="op">&lt;</span>(<span class="ident">SocketAddr</span>, <span class="ident">T</span>)<span class="op">&gt;</span><span class="op">&gt;</span>,
-    <span class="op">&lt;</span><span class="ident">O::LatRepr</span> <span class="kw">as</span> <span class="ident">LatticeRepr</span><span class="op">&gt;</span><span class="ident">::Repr</span>: <span class="ident">Collection</span><span class="op">&lt;</span>(<span class="ident">SocketAddr</span>, <span class="ident">T</span>), ()<span class="op">&gt;</span>,
+    <span class="ident">O::LatRepr</span>: <span class="ident">LatticeRepr</span><span class="op">&lt;</span><span class="ident">Lattice</span> <span class="op">=</span> <span class="ident">SetUnion</span><span class="op">&lt;</span>(<span class="ident">SocketAddr</span>, <span class="ident">Bytes</span>)<span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="op">&lt;</span><span class="ident">O::LatRepr</span> <span class="kw">as</span> <span class="ident">LatticeRepr</span><span class="op">&gt;</span><span class="ident">::Repr</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> (<span class="ident">SocketAddr</span>, <span class="ident">Bytes</span>)<span class="op">&gt;</span>,
 {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">op</span>: <span class="ident">O</span>, <span class="ident">tcp_pool</span>: <span class="ident">TcpServer</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">op</span>: <span class="ident">O</span>, <span class="ident">tcp_server</span>: <span class="ident">TcpServer</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> {
             <span class="ident">op</span>,
-            <span class="ident">tcp_pool</span>,
+            <span class="ident">tcp_server</span>,
         }
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">OpDelta</span>, <span class="ident">T</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">Serialize</span><span class="op">&gt;</span> <span class="ident">Comp</span> <span class="kw">for</span> <span class="ident">TcpServerComp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">T</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">OpDelta</span><span class="op">&gt;</span> <span class="ident">Comp</span> <span class="kw">for</span> <span class="ident">TcpServerComp</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">O::LatRepr</span>: <span class="ident">LatticeRepr</span><span class="op">&lt;</span><span class="ident">Lattice</span> <span class="op">=</span> <span class="ident">SetUnion</span><span class="op">&lt;</span>(<span class="ident">SocketAddr</span>, <span class="ident">T</span>)<span class="op">&gt;</span><span class="op">&gt;</span>,
-    <span class="op">&lt;</span><span class="ident">O::LatRepr</span> <span class="kw">as</span> <span class="ident">LatticeRepr</span><span class="op">&gt;</span><span class="ident">::Repr</span>: <span class="ident">Collection</span><span class="op">&lt;</span>(<span class="ident">SocketAddr</span>, <span class="ident">T</span>), ()<span class="op">&gt;</span>,
+    <span class="ident">O::LatRepr</span>: <span class="ident">LatticeRepr</span><span class="op">&lt;</span><span class="ident">Lattice</span> <span class="op">=</span> <span class="ident">SetUnion</span><span class="op">&lt;</span>(<span class="ident">SocketAddr</span>, <span class="ident">Bytes</span>)<span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="op">&lt;</span><span class="ident">O::LatRepr</span> <span class="kw">as</span> <span class="ident">LatticeRepr</span><span class="op">&gt;</span><span class="ident">::Repr</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> (<span class="ident">SocketAddr</span>, <span class="ident">Bytes</span>)<span class="op">&gt;</span>,
 {
     <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">tokio::io::Error</span>;
 
@@ -104,8 +102,8 @@
     <span class="kw">fn</span> <span class="ident">tick</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span><span class="ident">::TickFuture</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span> {
         <span class="kw">async</span> <span class="kw">move</span> {
             <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">hide</span>) <span class="op">=</span> (<span class="ident">Next</span> { <span class="ident">op</span>: <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">op</span> }).<span class="kw">await</span> {
-                <span class="kw">for</span> (<span class="ident">addr</span>, <span class="ident">item</span>) <span class="kw">in</span> <span class="ident">hide</span>.<span class="ident">reveal_ref</span>().<span class="ident">keys</span>() {
-                    <span class="self">self</span>.<span class="ident">tcp_pool</span>.<span class="ident">write</span>(<span class="kw-2">*</span><span class="ident">addr</span>, <span class="ident">item</span>).<span class="kw">await</span><span class="question-mark">?</span>;
+                <span class="kw">for</span> (<span class="ident">addr</span>, <span class="ident">item</span>) <span class="kw">in</span> <span class="ident">hide</span>.<span class="ident">into_reveal</span>().<span class="ident">into_iter</span>() {
+                    <span class="self">self</span>.<span class="ident">tcp_server</span>.<span class="ident">write</span>(<span class="ident">addr</span>, <span class="ident">item</span>).<span class="kw">await</span><span class="question-mark">?</span>;
                 }
                 <span class="prelude-val">Ok</span>(())
             }
