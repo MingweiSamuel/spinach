@@ -44,7 +44,7 @@ impl TcpPool {
             })
     }
 
-    pub async fn write<T: Clone + Serialize + DeserializeOwned>(
+    pub async fn write<T: Clone + Serialize>(
         &self, addr: SocketAddr, item: &T
     )
         -> Result<()>
@@ -87,7 +87,7 @@ impl TcpPool {
         }
     }
 
-    pub fn poll_read<T: Clone + Serialize + DeserializeOwned>(
+    pub fn poll_read<T: Clone + DeserializeOwned>(
         &self, ctx: &mut Context<'_>
     )
         -> Poll<Option<(SocketAddr, T)>>
