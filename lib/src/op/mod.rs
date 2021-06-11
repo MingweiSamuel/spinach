@@ -39,6 +39,9 @@ pub use zipop::*;
 mod tcpop;
 pub use tcpop::*;
 
+mod tcppoolop;
+pub use tcppoolop::*;
+
 mod batchconvertop;
 pub use batchconvertop::*;
 
