@@ -169,6 +169,14 @@ mod fns {
         Tag::Bind: Clone,
         <SetUnionRepr<Tag, T> as LatticeRepr>::Repr: IntoIterator<Item = T>,
     {
+        pub fn filter_map<U, TargetTag: SetTag<U>>(self, f: impl Fn(T) -> Option<U>) -> Hide<Y, SetUnionRepr<TargetTag, U>>
+        where
+            SetUnionRepr<TargetTag, U>: LatticeRepr<Lattice = SetUnion<U>>,
+            <SetUnionRepr<TargetTag, U> as LatticeRepr>::Repr: FromIterator<U>,
+        {
+            Hide::new(self.into_reveal().into_iter().filter_map(f).collect())
+        }
+
         pub fn map<U, TargetTag: SetTag<U>>(self, f: impl Fn(T) -> U) -> Hide<Y, SetUnionRepr<TargetTag, U>>
         where
             SetUnionRepr<TargetTag, U>: LatticeRepr<Lattice = SetUnion<U>>,

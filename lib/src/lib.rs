@@ -16,6 +16,14 @@
 
 #![forbid(unsafe_code)]
 
+// Rexports
+
+pub use tokio;
+pub use serde;
+pub use serde_json;
+
+// Modules
+
 pub mod collections;
 
 pub mod func;
@@ -33,3 +41,4 @@ pub mod comp;
 pub mod metadata;
 
 pub mod tcp_server;
+
