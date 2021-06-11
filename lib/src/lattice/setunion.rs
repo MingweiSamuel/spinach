@@ -164,6 +164,19 @@ mod fns {
         }
     }
 
+    impl<Y: Qualifier, T> Hide<Y, SetUnionRepr<tag::SINGLE, T>>
+    where
+        T: Clone,
+    {
+        pub fn map_single<U: Clone>(self, f: impl Fn(T) -> U) -> Hide<Y, SetUnionRepr<tag::SINGLE, U>> {
+            Hide::new(crate::collections::Single((f)(self.into_reveal().0)))
+        }
+
+        pub fn filter_map_single<U: Clone>(self, f: impl Fn(T) -> Option<U>) -> Hide<Y, SetUnionRepr<tag::OPTION, U>> {
+            Hide::new((f)(self.into_reveal().0))
+        }
+    }
+
     impl<Y: Qualifier, Tag: SetTag<T>, T> Hide<Y, SetUnionRepr<Tag, T>>
     where
         Tag::Bind: Clone,

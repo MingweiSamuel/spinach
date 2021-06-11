@@ -3,8 +3,11 @@
 use std::{env, process};
 use std::net::SocketAddr;
 
-use tokio::net::TcpStream;
 use serde::{Deserialize, Serialize};
+
+use spinach::tokio;
+use spinach::tokio::net::TcpStream;
+use spinach::bytes::{BufMut, Bytes, BytesMut};
 
 use spinach::comp::{CompExt, DebugComp, TcpComp, TcpServerComp};
 use spinach::func::Morphism;
@@ -23,12 +26,12 @@ pub enum KvsOperation {
 
 pub struct DeserializeKvsOperation;
 impl Morphism for DeserializeKvsOperation {
-    type InLatRepr  = SetUnionRepr<tag::SINGLE, (SocketAddr, String)>;
+    type InLatRepr  = SetUnionRepr<tag::SINGLE, (SocketAddr, BytesMut)>;
     type OutLatRepr = SetUnionRepr<tag::VEC, (SocketAddr, KvsOperation)>;
     fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
         item
-            .filter_map(|(addr, string)| {
-                match ron::de::from_str(&string) {
+            .filter_map(|(addr, bytes)| {
+                match ron::de::from_bytes(&*bytes) {
                     Ok(string) => Some((addr, string)),
                     Err(err) => {
                         println!("Failed to parse msg: {}", err);
@@ -69,14 +72,47 @@ impl Morphism for SplitWrites {
     }
 }
 
-pub struct SwapAddr;
-impl Morphism for SwapAddr {
+pub struct ServerSerialize;
+impl Morphism for ServerSerialize {
     type InLatRepr  = SetUnionRepr<tag::VEC, (String, SocketAddr, String)>;
-    type OutLatRepr = SetUnionRepr<tag::VEC, (SocketAddr, (String, String))>;
+    type OutLatRepr = SetUnionRepr<tag::VEC, (SocketAddr, Bytes)>;
     fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
         item
-            // .map(|(key, addr)| (addr, (key.clone(), key)))
-            .map(|(key, addr, value)| (addr, (key, value)))
+            .map(|(key, addr, value)| {
+                let item = (key, value);
+
+                let mut writer = BytesMut::new().writer();
+                ron::ser::to_writer(&mut writer, &item).expect("Failed to serialize");
+                let bytes = writer.into_inner().freeze();
+
+                (addr, bytes)
+            })
+    }
+}
+
+pub struct BytesToString;
+impl Morphism for BytesToString {
+    type InLatRepr  = SetUnionRepr<tag::SINGLE, BytesMut>;
+    type OutLatRepr = SetUnionRepr<tag::OPTION, String>;
+    fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
+        item.filter_map_single(|bytes| {
+            match String::from_utf8(bytes.to_vec()) {
+                Ok(string) => Some(string),
+                Err(err) => {
+                    eprintln!("Failed to parse bytes as utf8 string. Error: {}, bytes: {:?}", err, bytes);
+                    None
+                }
+            }
+        })
+    }
+}
+
+pub struct StringToBytes;
+impl Morphism for StringToBytes {
+    type InLatRepr  = SetUnionRepr<tag::SINGLE, String>;
+    type OutLatRepr = SetUnionRepr<tag::SINGLE, Bytes>;
+    fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
+        item.map_single(|string| string.into())
     }
 }
 
@@ -101,7 +137,7 @@ async fn main() -> Result<!, String> {
 async fn server(url: &str) -> Result<!, String> {
 
     let pool = TcpServer::bind(url).await.map_err(|e| e.to_string())?;
-    let op = TcpServerOp::<String>::new(pool.clone());
+    let op = TcpServerOp::new(pool.clone());
     let op = DebugOp::new(op, "ingress");
     let op = MorphismOp::new(op, DeserializeKvsOperation);
 
@@ -111,7 +147,7 @@ async fn server(url: &str) -> Result<!, String> {
     let op_writes = MorphismOp::new(splitter.add_split(), SplitWrites);
     let op = SymHashJoinOp::new(op_reads, op_writes);
 
-    let op = MorphismOp::new(op, SwapAddr);
+    let op = MorphismOp::new(op, ServerSerialize);
 
     let comp = TcpServerComp::new(op, pool);
     comp.run().await.map_err(|e| e.to_string())?;
@@ -123,10 +159,12 @@ async fn client(url: &str, name: &str) -> Result<!, String> {
     let (read, write) = TcpStream::connect(url).await.map_err(|e| e.to_string())?
         .into_split();
 
-    let read_op = TcpOp::<(String, String)>::new(read);
+    let read_op = TcpOp::new(read);
+    let read_op = MorphismOp::new(read_op, BytesToString);
     let read_comp = DebugComp::new(read_op);
 
     let write_op = StdinOp::new();
+    let write_op = MorphismOp::new(write_op, StringToBytes);
     let write_comp = TcpComp::new(write_op, write);
 
     #[allow(unreachable_code)]

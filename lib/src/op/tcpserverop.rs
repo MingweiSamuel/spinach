@@ -1,7 +1,7 @@
 use std::net::SocketAddr;
 use std::task::{Context, Poll};
 
-use serde::de::DeserializeOwned;
+use bytes::BytesMut;
 
 use crate::collections::{Single};
 use crate::hide::{Hide, Delta};
@@ -12,28 +12,24 @@ use crate::tcp_server::TcpServer;
 
 use super::*;
 
-pub struct TcpServerOp<T: Clone + DeserializeOwned> {
+pub struct TcpServerOp {
     tcp_pool: TcpServer,
-    _phantom: std::marker::PhantomData<T>,
 }
 
-impl<T: Clone + DeserializeOwned> TcpServerOp<T> {
+impl TcpServerOp {
     pub fn new(tcp_pool: TcpServer) -> Self {
-        Self {
-            tcp_pool,
-            _phantom: std::marker::PhantomData,
-        }
+        Self { tcp_pool }
     }
 }
 
-impl<T: Clone + DeserializeOwned> Op for TcpServerOp<T> {
-    type LatRepr = SetUnionRepr<tag::SINGLE, (SocketAddr, T)>;
+impl Op for TcpServerOp {
+    type LatRepr = SetUnionRepr<tag::SINGLE, (SocketAddr, BytesMut)>;
 }
 
 pub enum TcpOrder {}
 impl Order for TcpOrder {}
 
-impl<T: Clone + DeserializeOwned> OpDelta for TcpServerOp<T> {
+impl OpDelta for TcpServerOp {
     type Ord = TcpOrder;
 
     fn poll_delta(&self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {

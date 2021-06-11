@@ -4,10 +4,8 @@ use std::sync::{Arc, Mutex};
 use std::task::{Poll, Context};
 use std::net::SocketAddr;
 
-use bytes::{BufMut, BytesMut};
+use bytes::{Bytes, BytesMut};
 use futures::sink::SinkExt;
-use serde::ser::Serialize;
-use serde::de::DeserializeOwned;
 use tokio::io::{Result};
 use tokio::net::{TcpListener, TcpStream, ToSocketAddrs};
 use tokio_util::codec::{Framed, LengthDelimitedCodec};
@@ -44,20 +42,16 @@ impl TcpServer {
             })
     }
 
-    pub async fn write<T: Clone + Serialize>(
-        &self, addr: SocketAddr, item: &T
-    )
-        -> Result<()>
-    {
-        let mut writer = BytesMut::new().writer();
-        serde_json::to_writer(&mut writer, item)?;
-        let bytes = writer.into_inner().freeze();
+    pub async fn write(&self, addr: SocketAddr, item: Bytes) -> Result<()> {
+        // let mut writer = BytesMut::new().writer();
+        // serde_json::to_writer(&mut writer, item)?;
+        // let bytes = writer.into_inner().freeze();
 
         {
             let mut streams = self.handle.streams.lock().expect("Poisoned");
             match streams.get_mut(&addr) {
                 Some(stream) => {
-                    stream.send(bytes).await?;
+                    stream.send(item).await?;
                     Ok(())
                 }
                 None => Err(std::io::Error::new(
@@ -87,11 +81,7 @@ impl TcpServer {
         }
     }
 
-    pub fn poll_read<T: Clone + DeserializeOwned>(
-        &self, ctx: &mut Context<'_>
-    )
-        -> Poll<Option<(SocketAddr, T)>>
-    {
+    pub fn poll_read(&self, ctx: &mut Context<'_>) -> Poll<Option<(SocketAddr, BytesMut)>> {
         let mut item = None;
         {
             let mut streams = self.handle.streams.lock().expect("Poisoned");
@@ -117,16 +107,8 @@ impl TcpServer {
         }
 
         match item {
-            Some((addr, bytes)) => {
-                match serde_json::from_slice(&*bytes) {
-                    Ok(item) => Poll::Ready(Some((addr, item))),
-                    Err(err) => {
-                        eprintln!("SERDE DE ERR !!!1 {:?}", err);
-                        Poll::Pending
-                    }
-                }
-            }
-            None => Poll::Pending
+            Some((addr, bytes)) => Poll::Ready(Some((addr, bytes))),
+            None => Poll::Pending,
         }
     }
 }

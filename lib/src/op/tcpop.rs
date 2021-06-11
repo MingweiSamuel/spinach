@@ -2,8 +2,8 @@ use std::cell::RefCell;
 use std::task::{Context, Poll};
 use std::pin::Pin;
 
+use bytes::BytesMut;
 use futures_core::stream::Stream;
-use serde::de::DeserializeOwned;
 use tokio::net::tcp::OwnedReadHalf;
 use tokio_util::codec::{FramedRead, LengthDelimitedCodec};
 
@@ -15,31 +15,29 @@ use crate::tag;
 
 use super::*;
 
-pub struct TcpOp<T: Clone + DeserializeOwned> {
-    _phantom: std::marker::PhantomData<T>,
+pub struct TcpOp {
     framed_read: RefCell<FramedRead<OwnedReadHalf, LengthDelimitedCodec>>,
 }
 
-impl<T: Clone + DeserializeOwned> TcpOp<T> {
+impl TcpOp {
     pub fn new(tcp_read: OwnedReadHalf) -> Self {
         let framed_read = LengthDelimitedCodec::builder()
             .length_field_length(2)
             .new_read(tcp_read);
         Self {
-            _phantom: std::marker::PhantomData,
             framed_read: RefCell::new(framed_read),
         }
     }
 }
 
-impl<T: Clone + DeserializeOwned> Op for TcpOp<T> {
-    type LatRepr = SetUnionRepr<tag::SINGLE, T>;
+impl Op for TcpOp {
+    type LatRepr = SetUnionRepr<tag::SINGLE, BytesMut>;
 }
 
 pub enum TcpOrder {}
 impl Order for TcpOrder {}
 
-impl<T: Clone + DeserializeOwned> OpDelta for TcpOp<T> {
+impl OpDelta for TcpOp {
     type Ord = TcpOrder;
 
     fn poll_delta(&self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
@@ -50,16 +48,8 @@ impl<T: Clone + DeserializeOwned> OpDelta for TcpOp<T> {
                 Poll::Pending
             }
             Poll::Ready(Some(Ok(bytes))) => {
-                match serde_json::from_slice(&*bytes) {
-                    Ok(item) => {
-                        let item = Hide::new(Single(item));
-                        Poll::Ready(Some(item))
-                    }
-                    Err(err) => {
-                        println!("!!!1 {:?}", err);
-                        Poll::Pending
-                    }
-                }
+                let item = Hide::new(Single(bytes));
+                Poll::Ready(Some(item))
             }
             Poll::Pending => Poll::Pending
         }
