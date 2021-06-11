@@ -7,25 +7,25 @@ use crate::collections::Collection;
 use crate::lattice::LatticeRepr;
 use crate::lattice::setunion::{SetUnion};
 use crate::op::OpDelta;
-use crate::tcp_pool::TcpPool;
+use crate::tcp_server::TcpServer;
 
 use super::{Comp, Next};
 
-pub struct TcpPoolComp<O: OpDelta, T: Clone + Serialize>
+pub struct TcpServerComp<O: OpDelta, T: Clone + Serialize>
 where
     O::LatRepr: LatticeRepr<Lattice = SetUnion<(SocketAddr, T)>>,
     <O::LatRepr as LatticeRepr>::Repr: Collection<(SocketAddr, T), ()>,
 {
     op: O,
-    tcp_pool: TcpPool,
+    tcp_pool: TcpServer,
 }
 
-impl<O: OpDelta, T: Clone + Serialize> TcpPoolComp<O, T>
+impl<O: OpDelta, T: Clone + Serialize> TcpServerComp<O, T>
 where
     O::LatRepr: LatticeRepr<Lattice = SetUnion<(SocketAddr, T)>>,
     <O::LatRepr as LatticeRepr>::Repr: Collection<(SocketAddr, T), ()>,
 {
-    pub fn new(op: O, tcp_pool: TcpPool) -> Self {
+    pub fn new(op: O, tcp_pool: TcpServer) -> Self {
         Self {
             op,
             tcp_pool,
@@ -33,7 +33,7 @@ where
     }
 }
 
-impl<O: OpDelta, T: Clone + Serialize> Comp for TcpPoolComp<O, T>
+impl<O: OpDelta, T: Clone + Serialize> Comp for TcpServerComp<O, T>
 where
     O::LatRepr: LatticeRepr<Lattice = SetUnion<(SocketAddr, T)>>,
     <O::LatRepr as LatticeRepr>::Repr: Collection<(SocketAddr, T), ()>,

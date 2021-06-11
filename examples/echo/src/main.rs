@@ -4,9 +4,9 @@ use std::{env, process};
 
 use tokio::net::TcpStream;
 
-use spinach::tcp_pool::TcpPool;
-use spinach::op::{DebugOp, StdinOp, TcpOp, TcpPoolOp};
-use spinach::comp::{CompExt, DebugComp, TcpComp, TcpPoolComp};
+use spinach::tcp_server::TcpServer;
+use spinach::op::{DebugOp, StdinOp, TcpOp, TcpServerOp};
+use spinach::comp::{CompExt, DebugComp, TcpComp, TcpServerComp};
 
 /// Entry point of the application.
 #[tokio::main(flavor = "current_thread")]
@@ -28,10 +28,10 @@ async fn main() -> Result<!, String> {
 /// Run the server portion of the program.
 async fn server(url: &str) -> Result<!, String> {
 
-    let pool = TcpPool::bind(url).await.map_err(|e| e.to_string())?;
-    let op = TcpPoolOp::<String>::new(pool.clone());
+    let pool = TcpServer::bind(url).await.map_err(|e| e.to_string())?;
+    let op = TcpServerOp::<String>::new(pool.clone());
     let op = DebugOp::new(op, "server");
-    let comp = TcpPoolComp::new(op, pool);
+    let comp = TcpServerComp::new(op, pool);
 
     comp.run().await.map_err(|e| e.to_string())?;
 }

@@ -14,16 +14,16 @@ use tokio_util::codec::{Framed, LengthDelimitedCodec};
 use tokio_stream::Stream;
 
 
-struct TcpPoolInternal {
+struct TcpServerInternal {
     listener: TcpListener,
     streams: Mutex<HashMap<SocketAddr, Framed<TcpStream, LengthDelimitedCodec>>>,
 }
 
-pub struct TcpPool {
-    handle: Arc<TcpPoolInternal>,
+pub struct TcpServer {
+    handle: Arc<TcpServerInternal>,
 }
 
-impl Clone for TcpPool {
+impl Clone for TcpServer {
     fn clone(&self) -> Self {
         Self {
             handle: self.handle.clone(),
@@ -31,12 +31,12 @@ impl Clone for TcpPool {
     }
 }
 
-impl TcpPool {
+impl TcpServer {
     pub async fn bind(addr: impl ToSocketAddrs) -> Result<Self> {
         let result_listener = TcpListener::bind(addr).await;
         result_listener
             .map(|listener| {
-                let handle = Arc::new(TcpPoolInternal {
+                let handle = Arc::new(TcpServerInternal {
                     listener,
                     streams: Default::default(),
                 });

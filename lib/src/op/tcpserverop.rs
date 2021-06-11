@@ -8,17 +8,17 @@ use crate::hide::{Hide, Delta};
 use crate::lattice::setunion::{SetUnionRepr};
 use crate::metadata::Order;
 use crate::tag;
-use crate::tcp_pool::TcpPool;
+use crate::tcp_server::TcpServer;
 
 use super::*;
 
-pub struct TcpPoolOp<T: Clone + DeserializeOwned> {
-    tcp_pool: TcpPool,
+pub struct TcpServerOp<T: Clone + DeserializeOwned> {
+    tcp_pool: TcpServer,
     _phantom: std::marker::PhantomData<T>,
 }
 
-impl<T: Clone + DeserializeOwned> TcpPoolOp<T> {
-    pub fn new(tcp_pool: TcpPool) -> Self {
+impl<T: Clone + DeserializeOwned> TcpServerOp<T> {
+    pub fn new(tcp_pool: TcpServer) -> Self {
         Self {
             tcp_pool,
             _phantom: std::marker::PhantomData,
@@ -26,14 +26,14 @@ impl<T: Clone + DeserializeOwned> TcpPoolOp<T> {
     }
 }
 
-impl<T: Clone + DeserializeOwned> Op for TcpPoolOp<T> {
+impl<T: Clone + DeserializeOwned> Op for TcpServerOp<T> {
     type LatRepr = SetUnionRepr<tag::SINGLE, (SocketAddr, T)>;
 }
 
 pub enum TcpOrder {}
 impl Order for TcpOrder {}
 
-impl<T: Clone + DeserializeOwned> OpDelta for TcpPoolOp<T> {
+impl<T: Clone + DeserializeOwned> OpDelta for TcpServerOp<T> {
     type Ord = TcpOrder;
 
     fn poll_delta(&self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {

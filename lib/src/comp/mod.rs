@@ -26,8 +26,8 @@ pub use debugcomp::*;
 mod tcpcomp;
 pub use tcpcomp::*;
 
-mod tcppoolcomp;
-pub use tcppoolcomp::*;
+mod tcpservercomp;
+pub use tcpservercomp::*;
 
 mod dynsplitcomp;
 pub use dynsplitcomp::*;
