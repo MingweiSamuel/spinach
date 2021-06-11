@@ -85,11 +85,17 @@ where
 
         while out.is_empty() {
             // Poll both A and B.
+
+            // (Poll<Option<Hide<Delta, A::LatRepr>>>, Poll<Option<Hide<Delta, B::LatRepr>>>)
             let polls = (self.op_a.poll_delta(ctx), self.op_b.poll_delta(ctx));
 
             // If both streams are EOS, we are EOS.
             if let (Poll::Ready(None), Poll::Ready(None)) = polls {
-                return Poll::Ready(None);
+                return Poll::Ready(None)
+            }
+            // If both streams are pending, we are pending.
+            if let (Poll::Pending, Poll::Pending) = polls {
+                return Poll::Pending
             }
 
             // Handle new A values.
