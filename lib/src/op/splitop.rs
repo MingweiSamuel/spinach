@@ -6,12 +6,12 @@ use crate::hide::{Hide, Delta, Value};
 
 use super::*;
 
-pub struct Splitter<O: OpValue> {
+pub struct Splitter<O: Op> {
     op: O,
     closed: Cell<bool>,
     splits: RefCell<Vec<Weak<RefCell<SplitState<O>>>>>,
 }
-impl<O: OpValue> Splitter<O> {
+impl<O: Op> Splitter<O> {
     pub fn new(op: O) -> Self {
         Self {
             op,
@@ -33,16 +33,16 @@ impl<O: OpValue> Splitter<O> {
     }
 }
 
-pub struct SplitOp<'s, O: OpValue> {
+pub struct SplitOp<'s, O: Op> {
     splitter: &'s Splitter<O>,
     split: Rc<RefCell<SplitState<O>>>,
 }
 
-impl<'s, O: OpValue> Op for SplitOp<'s, O> {
+impl<'s, O: Op> Op for SplitOp<'s, O> {
     type LatRepr = O::LatRepr;
 }
 
-impl<'s, O: OpValue + OpDelta> OpDelta for SplitOp<'s, O> {
+impl<'s, O: OpDelta> OpDelta for SplitOp<'s, O> {
     type Ord = O::Ord;
 
     fn poll_delta(&self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
@@ -132,12 +132,12 @@ impl<'s, O: OpValue> OpValue for SplitOp<'s, O> {
 
 
 
-struct SplitState<O: OpValue> {
+struct SplitState<O: Op> {
     waker: Option<Waker>,
     delta: Option<Hide<Delta, O::LatRepr>>,
 }
 
-impl<O: OpValue> Default for SplitState<O> {
+impl<O: Op> Default for SplitState<O> {
     fn default() -> Self {
         Self {
             waker: None,
