@@ -142,6 +142,12 @@
 <span id="140">140</span>
 <span id="141">141</span>
 <span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
 </pre><pre class="rust">
 <span class="kw">use</span> <span class="ident">std::collections</span>::{<span class="ident">HashMap</span>, <span class="ident">HashSet</span>};
 <span class="kw">use</span> <span class="ident">std::cell::RefCell</span>;
@@ -230,11 +236,17 @@
 
         <span class="kw">while</span> <span class="ident">out</span>.<span class="ident">is_empty</span>() {
             <span class="comment">// Poll both A and B.</span>
+
+            <span class="comment">// (Poll&lt;Option&lt;Hide&lt;Delta, A::LatRepr&gt;&gt;&gt;, Poll&lt;Option&lt;Hide&lt;Delta, B::LatRepr&gt;&gt;&gt;)</span>
             <span class="kw">let</span> <span class="ident">polls</span> <span class="op">=</span> (<span class="self">self</span>.<span class="ident">op_a</span>.<span class="ident">poll_delta</span>(<span class="ident">ctx</span>), <span class="self">self</span>.<span class="ident">op_b</span>.<span class="ident">poll_delta</span>(<span class="ident">ctx</span>));
 
             <span class="comment">// If both streams are EOS, we are EOS.</span>
             <span class="kw">if</span> <span class="kw">let</span> (<span class="ident">Poll::Ready</span>(<span class="prelude-val">None</span>), <span class="ident">Poll::Ready</span>(<span class="prelude-val">None</span>)) <span class="op">=</span> <span class="ident">polls</span> {
-                <span class="kw">return</span> <span class="ident">Poll::Ready</span>(<span class="prelude-val">None</span>);
+                <span class="kw">return</span> <span class="ident">Poll::Ready</span>(<span class="prelude-val">None</span>)
+            }
+            <span class="comment">// If both streams are pending, we are pending.</span>
+            <span class="kw">if</span> <span class="kw">let</span> (<span class="ident">Poll::Pending</span>, <span class="ident">Poll::Pending</span>) <span class="op">=</span> <span class="ident">polls</span> {
+                <span class="kw">return</span> <span class="ident">Poll::Pending</span>
             }
 
             <span class="comment">// Handle new A values.</span>
