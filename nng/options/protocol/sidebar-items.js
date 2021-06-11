@@ -1,1 +1,0 @@
-initSidebarItems({"mod":[["pair","Options dealing with the PAIR protocol."],["pubsub","Options dealing with the PUBSUB protocol."],["reqrep","Options dealing with the REQREP protocol."],["survey","Options dealing with the survey protocol."]]});

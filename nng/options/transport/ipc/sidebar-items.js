@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["PeerGid","Returns the peer primary group ID from a pipe."],["PeerPid","Returns the process ID of the peer."],["PeerUid","Returns the peer user ID from a pipe."],["Permissions","Configures the permissions used on the UNIX domain socket."]]});

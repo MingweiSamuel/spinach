@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["ResendTime","Amount of time to wait before sending a new request."]]});

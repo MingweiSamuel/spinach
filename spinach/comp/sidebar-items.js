@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["CompRunFuture",""],["DebugComp",""],["DynSplitComp",""],["TcpComp",""]],"trait":[["Comp",""],["CompConnector",""],["CompExt",""]]});
+initSidebarItems({"struct":[["CompRunFuture",""],["DebugComp",""],["DynSplitComp",""],["TcpComp",""],["TcpServerComp",""]],"trait":[["Comp",""],["CompConnector",""],["CompExt",""]]});

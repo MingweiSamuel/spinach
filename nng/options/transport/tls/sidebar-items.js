@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["CaFile","Used to load certificates associated associated private key from a file."],["CertKeyFile","Used to load the local certificate and associated private key from a file."],["Verified","Indicates whether the remote peer has been properly verified using TLS authentication."]]});
