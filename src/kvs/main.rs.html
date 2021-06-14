@@ -198,7 +198,7 @@
 <span class="kw">use</span> <span class="ident">spinach::func::Morphism</span>;
 <span class="kw">use</span> <span class="ident">spinach::hide</span>::{<span class="ident">Hide</span>, <span class="ident">Qualifier</span>};
 <span class="kw">use</span> <span class="ident">spinach::lattice::setunion::SetUnionRepr</span>;
-<span class="kw">use</span> <span class="ident">spinach::op</span>::{<span class="ident">DebugOp</span>, <span class="ident">MorphismOp</span>, <span class="ident">Splitter</span>, <span class="ident">StdinOp</span>, <span class="ident">SymHashJoinOp</span>, <span class="ident">TcpOp</span>, <span class="ident">TcpServerOp</span>};
+<span class="kw">use</span> <span class="ident">spinach::op</span>::{<span class="ident">DebugOp</span>, <span class="ident">MorphismOp</span>, <span class="ident">Splitter</span>, <span class="ident">ReadOp</span>, <span class="ident">SymHashJoinOp</span>, <span class="ident">TcpOp</span>, <span class="ident">TcpServerOp</span>};
 <span class="kw">use</span> <span class="ident">spinach::tag</span>;
 <span class="kw">use</span> <span class="ident">spinach::tcp_server::TcpServer</span>;
 
@@ -348,7 +348,7 @@
     <span class="kw">let</span> <span class="ident">read_op</span> <span class="op">=</span> <span class="ident">MorphismOp::new</span>(<span class="ident">read_op</span>, <span class="ident">BytesToString</span>);
     <span class="kw">let</span> <span class="ident">read_comp</span> <span class="op">=</span> <span class="ident">DebugComp::new</span>(<span class="ident">read_op</span>);
 
-    <span class="kw">let</span> <span class="ident">write_op</span> <span class="op">=</span> <span class="ident">StdinOp::new</span>();
+    <span class="kw">let</span> <span class="ident">write_op</span> <span class="op">=</span> <span class="ident">ReadOp::new_stdin</span>();
     <span class="kw">let</span> <span class="ident">write_op</span> <span class="op">=</span> <span class="ident">MorphismOp::new</span>(<span class="ident">write_op</span>, <span class="ident">StringToBytes</span>);
     <span class="kw">let</span> <span class="ident">write_comp</span> <span class="op">=</span> <span class="ident">TcpComp::new</span>(<span class="ident">write_op</span>, <span class="ident">write</span>);
 
