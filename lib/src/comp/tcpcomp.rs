@@ -46,9 +46,9 @@ where
     type TickFuture<'s> = impl Future<Output = Result<(), Self::Error>>;
     fn tick(&self) -> Self::TickFuture<'_> {
         async move {
+            let mut tcp_write_mut = self.tcp_write.borrow_mut();
             if let Some(hide) = (Next { op: &self.op }).await {
                 for bytes in hide.reveal_ref().keys() {
-                    let mut tcp_write_mut = self.tcp_write.borrow_mut();
                     // TODO use the encoder.
                     let len = bytes.len().try_into().unwrap_or_else(|_| panic!("Message too long! {}", bytes.len()));
                     tcp_write_mut.write_u16(len).await?;
@@ -57,7 +57,8 @@ where
                 Ok(())
             }
             else {
-                Err(tokio::io::Error::new(std::io::ErrorKind::UnexpectedEof, "End of stream."))
+                tcp_write_mut.shutdown().await?;
+                Err(tokio::io::Error::new(std::io::ErrorKind::UnexpectedEof, "End of stream, write half closed successfuly."))
             }
         }
     }
