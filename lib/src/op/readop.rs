@@ -1,8 +1,9 @@
 use std::cell::RefCell;
 use std::pin::Pin;
+use std::marker::Unpin;
 use std::task::{Context, Poll};
 
-use tokio::io::{Stdin, BufReader, Lines, AsyncBufReadExt};
+use tokio::io::{AsyncRead, Stdin, BufReader, Lines, AsyncBufReadExt};
 
 use crate::collections::Single;
 use crate::hide::{Hide, Delta};
@@ -12,23 +13,37 @@ use crate::metadata::Order;
 
 use super::*;
 
-pub struct StdinOp {
-    reader: RefCell<Lines<BufReader<Stdin>>>,
+pub struct ReadOp<R: AsyncRead + Unpin> {
+    reader: RefCell<Lines<BufReader<R>>>,
 }
 
-impl StdinOp {
-    pub fn new() -> Self {
+impl ReadOp<Stdin> {
+    pub fn new_stdin() -> Self {
         Self {
             reader: RefCell::new(BufReader::new(tokio::io::stdin()).lines()),
         }
     }
 }
 
-impl Op for StdinOp {
+impl<R: AsyncRead + Unpin> ReadOp<R> {
+    pub fn new(read: R) -> Self {
+        Self {
+            reader: RefCell::new(BufReader::new(read).lines()),
+        }
+    }
+
+    pub fn from_buf(buf_read: BufReader<R>) -> Self {
+        Self {
+            reader: RefCell::new(buf_read.lines()),
+        }
+    }
+}
+
+impl<R: AsyncRead + Unpin> Op for ReadOp<R> {
     type LatRepr = SetUnionRepr<SINGLE, String>;
 }
 
-impl OpDelta for StdinOp {
+impl<R: AsyncRead + Unpin> OpDelta for ReadOp<R> {
     type Ord = UserInputOrder;
 
     fn poll_delta(&self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {

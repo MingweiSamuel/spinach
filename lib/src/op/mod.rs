@@ -30,8 +30,8 @@ pub use mergeop::*;
 mod morphop;
 pub use morphop::*;
 
-mod stdinop;
-pub use stdinop::*;
+mod readop;
+pub use readop::*;
 
 mod zipop;
 pub use zipop::*;

@@ -11,7 +11,7 @@ use spinach::comp::{CompExt, DebugComp, TcpComp, TcpServerComp};
 use spinach::func::Morphism;
 use spinach::hide::{Hide, Qualifier};
 use spinach::lattice::setunion::SetUnionRepr;
-use spinach::op::{DebugOp, MorphismOp, StdinOp, TcpOp, TcpServerOp};
+use spinach::op::{DebugOp, MorphismOp, ReadOp, TcpOp, TcpServerOp};
 use spinach::tag;
 use spinach::tcp_server::TcpServer;
 
@@ -71,7 +71,7 @@ async fn client(url: &str, name: &str) -> Result<!, String> {
     let read_op = TcpOp::new(read);
     let read_comp = DebugComp::new(read_op);
 
-    let write_op = StdinOp::new();
+    let write_op = ReadOp::new_stdin();
     let write_op = MorphismOp::new(write_op, StringToBytes);
     let write_comp = TcpComp::new(write_op, write);
 
