@@ -359,7 +359,7 @@
     <span class="kw">let</span> <span class="ident">op</span> <span class="op">=</span> <span class="ident">MorphismOp::new</span>(<span class="ident">op</span>, <span class="ident">ServerSerialize</span>);
 
     <span class="kw">let</span> <span class="ident">comp</span> <span class="op">=</span> <span class="ident">TcpServerComp::new</span>(<span class="ident">op</span>, <span class="ident">pool</span>);
-    <span class="ident">comp</span>.<span class="ident">run</span>().<span class="kw">await</span>.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">e</span>.<span class="ident">to_string</span>())<span class="question-mark">?</span>;
+    <span class="ident">comp</span>.<span class="ident">run</span>().<span class="kw">await</span>.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="macro">format!</span>(<span class="string">&quot;TcpComp error: {:?}&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
 }
 
 <span class="doccomment">/// Run the client portion of the program.</span>
@@ -377,7 +377,7 @@
     <span class="kw">let</span> <span class="ident">write_comp</span> <span class="op">=</span> <span class="ident">TcpComp::new</span>(<span class="ident">write_op</span>, <span class="ident">write</span>);
 
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">unreachable_code</span>)]</span>
-    <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="macro">tokio::try_join!</span>(
+    <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="macro">tokio::join!</span>(
         <span class="kw">async</span> {
             <span class="ident">read_comp</span>.<span class="ident">run</span>().<span class="kw">await</span>.<span class="ident">map_err</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="macro">format!</span>(<span class="string">&quot;Read failed.&quot;</span>))
         },
@@ -386,8 +386,8 @@
         },
     );
 
-    <span class="ident">result</span><span class="question-mark">?</span>;
-    <span class="macro">unreachable!</span>();
+    <span class="prelude-val">Err</span>(<span class="macro">format!</span>(<span class="string">&quot;Read error: {:?}, Write error: {:?}&quot;</span>,
+        <span class="ident">result</span>.<span class="number">0</span>.<span class="ident">unwrap_err</span>(), <span class="ident">result</span>.<span class="number">1</span>.<span class="ident">unwrap_err</span>()))
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="kvs" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>

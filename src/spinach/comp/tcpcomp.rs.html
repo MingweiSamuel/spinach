@@ -125,7 +125,7 @@
                 <span class="prelude-val">Ok</span>(())
             }
             <span class="kw">else</span> {
-                <span class="ident">tcp_write_mut</span>.<span class="ident">shutdown</span>().<span class="kw">await</span><span class="question-mark">?</span>;
+                <span class="comment">// tcp_write_mut.shutdown().await?;</span>
                 <span class="prelude-val">Err</span>(<span class="ident">tokio::io::Error::new</span>(<span class="ident">std::io::ErrorKind::UnexpectedEof</span>, <span class="string">&quot;End of stream, write half closed successfuly.&quot;</span>))
             }
         }
