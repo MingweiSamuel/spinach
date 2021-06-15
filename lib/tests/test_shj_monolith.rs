@@ -5,7 +5,7 @@ use spinach::op::{IterOp, SymHashJoinOp};
 use spinach::tag;
 
 #[tokio::test]
-pub async fn test_sym_hash_join() -> Result<(), String> {
+pub async fn test_shj_monolith() -> Result<(), String> {
 
     type MyLatRepr = SetUnionRepr<tag::SINGLE, (&'static str, &'static str)>;
 

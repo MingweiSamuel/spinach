@@ -17,6 +17,36 @@ where
     O::Repr: FromIterator<(AItem, BItem)>,
 ;
 
+impl<A, AItem, B, BItem, O> CartesianProduct<A, AItem, B, BItem, O>
+where
+    A: LatticeRepr<Lattice = SetUnion<AItem>>,
+    B: LatticeRepr<Lattice = SetUnion<BItem>>,
+    A::Repr: IntoIterator<Item = AItem>,
+    B::Repr: IntoIterator<Item = BItem>,
+    AItem: Clone,
+    O: LatticeRepr<Lattice = SetUnion<(AItem, BItem)>>,
+    O::Repr: FromIterator<(AItem, BItem)>,
+{
+    pub fn new() -> Self {
+        Self(std::marker::PhantomData)
+    }
+}
+
+impl<A, AItem, B, BItem, O> Default for CartesianProduct<A, AItem, B, BItem, O>
+where
+    A: LatticeRepr<Lattice = SetUnion<AItem>>,
+    B: LatticeRepr<Lattice = SetUnion<BItem>>,
+    A::Repr: IntoIterator<Item = AItem>,
+    B::Repr: IntoIterator<Item = BItem>,
+    AItem: Clone,
+    O: LatticeRepr<Lattice = SetUnion<(AItem, BItem)>>,
+    O::Repr: FromIterator<(AItem, BItem)>,
+{
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<A, AItem, B, BItem, O> BinaryMorphism for CartesianProduct<A, AItem, B, BItem, O>
 where
     A: LatticeRepr<Lattice = SetUnion<AItem>>,

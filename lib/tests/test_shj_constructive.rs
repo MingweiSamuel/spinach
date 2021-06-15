@@ -1,15 +1,17 @@
 use spinach::collections::Single;
 use spinach::comp::{CompExt, DebugComp};
+use spinach::func::binary::{CartesianProduct, HashPartitioned};
 use spinach::lattice::mapunion::MapUnionRepr;
 use spinach::lattice::setunion::SetUnionRepr;
-use spinach::op::{IterOp, LatticeOp, SymHashJoinOp};
+use spinach::op::{BinaryOp, IterOp, LatticeOp};
 use spinach::tag;
 
 #[tokio::test]
-pub async fn test_sym_hash_join() -> Result<(), String> {
+pub async fn test_shj_constructive() -> Result<(), String> {
 
     type InputLatRepr = MapUnionRepr<tag::SINGLE, &'static str, SetUnionRepr<tag::SINGLE, &'static str>>;
     type LatticeLatRepr = MapUnionRepr<tag::HASH_MAP, &'static str, SetUnionRepr<tag::HASH_SET, &'static str>>;
+    type JoinedInnerLatRepr = SetUnionRepr<tag::HASH_SET, (&'static str, &'static str)>;
 
     let op_a = IterOp::<InputLatRepr, _>::new(vec![
         Single(("P", Single("Pranav"))),
@@ -28,10 +30,13 @@ pub async fn test_sym_hash_join() -> Result<(), String> {
     ]);
     let op_b = LatticeOp::<_, LatticeLatRepr>::new_default(op_b);
 
-    // let op = SymHashJoinOp::new(op_a, op_b);
-    // let comp = DebugComp::new(op);
+    let binary_func = HashPartitioned::new(CartesianProduct::<_, _, _, _, JoinedInnerLatRepr>::new());
+    let op = BinaryOp::new(op_a, op_b, binary_func);
 
-    // comp.run().await.unwrap_err();
+    // let op = SymHashJoinOp::new(op_a, op_b);
+    let comp = DebugComp::new(op);
+
+    comp.run().await.unwrap_err();
 
     Ok(())
 }
