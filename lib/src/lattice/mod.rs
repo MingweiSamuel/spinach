@@ -3,6 +3,7 @@ use crate::hide::{Hide, Qualifier};
 pub mod setunion;
 pub mod mapunion;
 pub mod ord;
+pub mod pair;
 pub mod dompair;
 
 pub trait Lattice {}
