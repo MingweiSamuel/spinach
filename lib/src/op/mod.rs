@@ -30,6 +30,9 @@ pub use mergeop::*;
 mod morphop;
 pub use morphop::*;
 
+mod binaryop;
+pub use binaryop::*;
+
 mod readop;
 pub use readop::*;
 
