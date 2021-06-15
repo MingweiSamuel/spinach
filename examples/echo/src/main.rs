@@ -53,7 +53,6 @@ async fn main() -> Result<!, String> {
                     process::exit(2);
                 }
             }
-            
         }
         _ => {
             eprintln!("Usage:\n{0} server <url>\n  or\n{0} client <url> [input_file]", args[0]);
@@ -87,8 +86,7 @@ async fn client<R: tokio::io::AsyncRead + std::marker::Unpin>(url: &str, input_r
     let write_op = MorphismOp::new(write_op, StringToBytes);
     let write_comp = TcpComp::new(write_op, write);
 
-    #[allow(unreachable_code)]
-    let result = tokio::try_join!(
+    let result = tokio::join!(
         async {
             read_comp.run().await.map_err(|_| format!("Read failed."))
         },
@@ -97,6 +95,6 @@ async fn client<R: tokio::io::AsyncRead + std::marker::Unpin>(url: &str, input_r
         },
     );
 
-    result?;
-    unreachable!();
+    Err(format!("Read error: {:?}, Write error: {:?}",
+        result.0.unwrap_err(), result.1.unwrap_err()))
 }
