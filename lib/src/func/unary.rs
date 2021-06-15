@@ -1,5 +1,3 @@
-//! Function traits.
-
 use crate::lattice::LatticeRepr;
 use crate::hide::{Hide, Qualifier, Value};
 

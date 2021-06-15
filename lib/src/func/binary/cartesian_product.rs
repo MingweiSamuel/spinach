@@ -1,0 +1,52 @@
+use std::iter::FromIterator;
+
+use crate::lattice::LatticeRepr;
+use crate::lattice::setunion::SetUnion;
+use crate::hide::{Hide, Qualifier};
+
+use super::BinaryMorphism;
+
+pub struct CartesianProduct<A, AItem, B, BItem, O>(std::marker::PhantomData<(A, AItem, B, BItem, O)>)
+where
+    A: LatticeRepr<Lattice = SetUnion<AItem>>,
+    B: LatticeRepr<Lattice = SetUnion<BItem>>,
+    A::Repr: IntoIterator<Item = AItem>,
+    B::Repr: IntoIterator<Item = BItem>,
+    AItem: Clone,
+    O: LatticeRepr<Lattice = SetUnion<(AItem, BItem)>>,
+    O::Repr: FromIterator<(AItem, BItem)>,
+;
+
+impl<A, AItem, B, BItem, O> BinaryMorphism for CartesianProduct<A, AItem, B, BItem, O>
+where
+    A: LatticeRepr<Lattice = SetUnion<AItem>>,
+    B: LatticeRepr<Lattice = SetUnion<BItem>>,
+    A::Repr: IntoIterator<Item = AItem>,
+    B::Repr: IntoIterator<Item = BItem>,
+    AItem: Clone,
+    O: LatticeRepr<Lattice = SetUnion<(AItem, BItem)>>,
+    O::Repr: FromIterator<(AItem, BItem)>,
+{
+    type InLatReprA = A;
+    type InLatReprB = B;
+    type OutLatRepr = O;
+
+    fn call<Y: Qualifier>(
+        &self,
+        item_a: Hide<Y, Self::InLatReprA>, item_b: Hide<Y, Self::InLatReprB>
+    )
+        -> Hide<Y, Self::OutLatRepr>
+    {
+        let out = item_a
+            .into_reveal()
+            .into_iter()
+            .flat_map(|a| {
+                item_b.clone()
+                    .into_reveal()
+                    .into_iter()
+                    .map(move |b| (a.clone(), b))
+            })
+            .collect();
+        Hide::new(out)
+    }
+}
