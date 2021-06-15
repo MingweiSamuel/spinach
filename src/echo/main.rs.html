@@ -100,8 +100,6 @@
 <span id="98"> 98</span>
 <span id="99"> 99</span>
 <span id="100">100</span>
-<span id="101">101</span>
-<span id="102">102</span>
 </pre><pre class="rust">
 <span class="attribute">#![<span class="ident">feature</span>(<span class="ident">never_type</span>)]</span>
 
@@ -113,7 +111,7 @@
 <span class="kw">use</span> <span class="ident">spinach::tokio::net::TcpStream</span>;
 
 <span class="kw">use</span> <span class="ident">spinach::comp</span>::{<span class="ident">CompExt</span>, <span class="ident">DebugComp</span>, <span class="ident">TcpComp</span>, <span class="ident">TcpServerComp</span>};
-<span class="kw">use</span> <span class="ident">spinach::func::Morphism</span>;
+<span class="kw">use</span> <span class="ident">spinach::func::unary::Morphism</span>;
 <span class="kw">use</span> <span class="ident">spinach::hide</span>::{<span class="ident">Hide</span>, <span class="ident">Qualifier</span>};
 <span class="kw">use</span> <span class="ident">spinach::lattice::setunion::SetUnionRepr</span>;
 <span class="kw">use</span> <span class="ident">spinach::op</span>::{<span class="ident">DebugOp</span>, <span class="ident">MorphismOp</span>, <span class="ident">ReadOp</span>, <span class="ident">TcpOp</span>, <span class="ident">TcpServerOp</span>};
@@ -158,7 +156,6 @@
                     <span class="ident">process::exit</span>(<span class="number">2</span>);
                 }
             }
-            
         }
         <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> {
             <span class="macro">eprintln!</span>(<span class="string">&quot;Usage:\n{0} server &lt;url&gt;\n  or\n{0} client &lt;url&gt; [input_file]&quot;</span>, <span class="ident">args</span>[<span class="number">0</span>]);
@@ -192,8 +189,7 @@
     <span class="kw">let</span> <span class="ident">write_op</span> <span class="op">=</span> <span class="ident">MorphismOp::new</span>(<span class="ident">write_op</span>, <span class="ident">StringToBytes</span>);
     <span class="kw">let</span> <span class="ident">write_comp</span> <span class="op">=</span> <span class="ident">TcpComp::new</span>(<span class="ident">write_op</span>, <span class="ident">write</span>);
 
-    <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">unreachable_code</span>)]</span>
-    <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="macro">tokio::try_join!</span>(
+    <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="macro">tokio::join!</span>(
         <span class="kw">async</span> {
             <span class="ident">read_comp</span>.<span class="ident">run</span>().<span class="kw">await</span>.<span class="ident">map_err</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="macro">format!</span>(<span class="string">&quot;Read failed.&quot;</span>))
         },
@@ -202,8 +198,8 @@
         },
     );
 
-    <span class="ident">result</span><span class="question-mark">?</span>;
-    <span class="macro">unreachable!</span>();
+    <span class="prelude-val">Err</span>(<span class="macro">format!</span>(<span class="string">&quot;Read error: {:?}, Write error: {:?}&quot;</span>,
+        <span class="ident">result</span>.<span class="number">0</span>.<span class="ident">unwrap_err</span>(), <span class="ident">result</span>.<span class="number">1</span>.<span class="ident">unwrap_err</span>()))
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="echo" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>

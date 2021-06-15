@@ -1,1 +1,1 @@
-initSidebarItems({"trait":[["Monotone",""],["Morphism",""]]});
+initSidebarItems({"mod":[["binary",""],["unary",""]]});

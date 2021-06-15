@@ -100,6 +100,9 @@
     <span class="kw">type</span> <span class="ident">LatRepr</span> <span class="op">=</span> <span class="ident">A::LatRepr</span>;
 }
 
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MergeOrder</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Order</span>, <span class="ident">B</span>: <span class="ident">Order</span><span class="op">&gt;</span>(<span class="ident">std::marker::PhantomData</span><span class="op">&lt;</span>(<span class="ident">A</span>, <span class="ident">B</span>)<span class="op">&gt;</span>);
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Order</span>, <span class="ident">B</span>: <span class="ident">Order</span><span class="op">&gt;</span> <span class="ident">Order</span> <span class="kw">for</span> <span class="ident">MergeOrder</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span> {}
+
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">OpDelta</span>, <span class="ident">B</span>: <span class="ident">OpDelta</span><span class="op">&gt;</span> <span class="ident">OpDelta</span> <span class="kw">for</span> <span class="ident">MergeOp</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">A::LatRepr</span>: <span class="ident">LatticeRepr</span><span class="op">&lt;</span><span class="ident">Lattice</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">B::LatRepr</span> <span class="kw">as</span> <span class="ident">LatticeRepr</span><span class="op">&gt;</span><span class="ident">::Lattice</span><span class="op">&gt;</span>,
@@ -120,9 +123,6 @@
         }
     }
 }
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MergeOrder</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Order</span>, <span class="ident">B</span>: <span class="ident">Order</span><span class="op">&gt;</span>(<span class="ident">std::marker::PhantomData</span><span class="op">&lt;</span>(<span class="ident">A</span>, <span class="ident">B</span>)<span class="op">&gt;</span>);
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Order</span>, <span class="ident">B</span>: <span class="ident">Order</span><span class="op">&gt;</span> <span class="ident">Order</span> <span class="kw">for</span> <span class="ident">MergeOrder</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span> {}
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">OpValue</span>, <span class="ident">B</span>: <span class="ident">OpValue</span><span class="op">&gt;</span> <span class="ident">OpValue</span> <span class="kw">for</span> <span class="ident">MergeOp</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span>
 <span class="kw">where</span>

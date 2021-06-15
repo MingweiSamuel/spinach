@@ -68,6 +68,19 @@
 <span id="66">66</span>
 <span id="67">67</span>
 <span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
 </pre><pre class="rust">
 <span class="kw">use</span> <span class="ident">std::cell::RefCell</span>;
 <span class="kw">use</span> <span class="ident">std::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
@@ -94,6 +107,19 @@
         <span class="self">Self</span> {
             <span class="ident">op</span>,
             <span class="ident">state</span>: <span class="ident">RefCell::new</span>(<span class="ident">Hide::new</span>(<span class="ident">bottom</span>)),
+        }
+    }
+}
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">Op</span>, <span class="ident">Lr</span>: <span class="ident">LatticeRepr</span> <span class="op">+</span> <span class="ident">Merge</span><span class="op">&lt;</span><span class="ident">O::LatRepr</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">LatticeOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">Lr</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="ident">O::LatRepr</span>: <span class="ident">Convert</span><span class="op">&lt;</span><span class="ident">Lr</span><span class="op">&gt;</span>,
+    <span class="ident">Lr::Repr</span>: <span class="ident">Default</span>,
+{
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_default</span>(<span class="ident">op</span>: <span class="ident">O</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="self">Self</span> {
+            <span class="ident">op</span>,
+            <span class="ident">state</span>: <span class="ident">RefCell::new</span>(<span class="ident">Hide::new</span>(<span class="ident">Default::default</span>())),
         }
     }
 }
