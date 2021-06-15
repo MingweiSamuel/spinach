@@ -98,3 +98,31 @@ fn __assert_merges() {
         Merge<ArraySetArraySet>,
     );
 }
+
+mod fns {
+    use std::iter::FromIterator;
+
+    use crate::hide::{Hide, Qualifier};
+    use crate::lattice::setunion::{SetUnionRepr, SetTag};
+
+    use super::*;
+
+    impl<Y: Qualifier, LA: LatticeRepr, LB: LatticeRepr> Hide<Y, PairRepr<LA, LB>>
+    where
+        LA::Repr: IntoIterator,
+        LB::Repr: Clone,
+    {
+        pub fn partial_cartesian_product<TargetTag>(self) -> Hide<Y, SetUnionRepr<TargetTag, (<LA::Repr as IntoIterator>::Item, LB::Repr)>>
+        where
+            TargetTag: SetTag<(<LA::Repr as IntoIterator>::Item, LB::Repr)>,
+            TargetTag::Bind: Clone,
+            <SetUnionRepr<TargetTag, (<LA::Repr as IntoIterator>::Item, LB::Repr)> as LatticeRepr>::Repr: FromIterator<(<LA::Repr as IntoIterator>::Item, LB::Repr)>,
+        {
+            let (a, b) = self.into_reveal();
+            let out = a.into_iter()
+                .map(|item_a| (item_a, b.clone()))
+                .collect();
+            Hide::new(out)
+        }
+    }
+}
