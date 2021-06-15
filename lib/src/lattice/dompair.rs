@@ -17,6 +17,7 @@ impl<RA: LatticeRepr, RB: LatticeRepr> LatticeRepr for DomPairRepr<RA, RB> {
     type Repr = (RA::Repr, RB::Repr);
 }
 
+
 impl<SelfRA, SelfRB, DeltaRA, DeltaRB, LA, LB> Merge<DomPairRepr<DeltaRA, DeltaRB>> for DomPairRepr<SelfRA, SelfRB>
 where
     LA: Lattice,
@@ -53,6 +54,13 @@ where
 }
 
 
+impl<RA: LatticeRepr, RB: LatticeRepr> Convert<DomPairRepr<RA, RB>> for DomPairRepr<RA, RB> {
+    fn convert(this: <DomPairRepr<RA, RB> as LatticeRepr>::Repr) -> <DomPairRepr<RA, RB> as LatticeRepr>::Repr {
+        this
+    }
+}
+
+
 impl<SelfRA, SelfRB, DeltaRA, DeltaRB, LA, LB> Compare<DomPairRepr<DeltaRA, DeltaRB>> for DomPairRepr<SelfRA, SelfRB>
 where
     LA: Lattice,
@@ -70,9 +78,10 @@ where
     }
 }
 
+
 fn __assert_merges() {
     use static_assertions::{assert_impl_all, assert_not_impl_any};
-    
+
     use super::setunion::{SetUnionRepr};
 
     type HashSetHashSet   = DomPairRepr<SetUnionRepr<tag::HASH_SET, u32>, SetUnionRepr<tag::HASH_SET, u32>>;

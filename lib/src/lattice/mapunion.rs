@@ -148,6 +148,30 @@ where
     }
 }
 
+// mod fns {
+//     use std::iter::IntoIterator;
+
+//     use crate::collections::Single;
+//     use crate::hide::{Hide, Qualifier};
+//     use crate::lattice::setunion::{SetUnionRepr};
+
+//     use super::*;
+
+//     impl<Y: Qualifier, Tag: MapTag<K, Single<V>>, K: Clone, V: Clone> Hide<Y, MapUnionRepr<Tag, K, SetUnionRepr<tag::SINGLE, V>>>
+//     where
+//         Tag::Bind: Clone,
+//     {
+//         pub fn fold<TargetTag: MapTag<K, Single<V>>>(self) -> Hide<Y, MapUnionRepr<TargetTag, K, SetUnionRepr<tag::SINGLE, V>>>
+//         where
+//             TargetTag::Bind: Clone,
+//             <MapUnionRepr<TargetTag, K, SetUnionRepr<tag::SINGLE, V>> as LatticeRepr>::Repr: IntoIterator<Item = (K, Single<V>)>,
+//         {
+//             self.into_reveal()
+//                 .into_iter()
+//         }
+//     }
+// }
+
 fn __assert_merges() {
     use static_assertions::{assert_impl_all, assert_not_impl_any};
 

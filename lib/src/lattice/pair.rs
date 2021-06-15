@@ -115,8 +115,8 @@ mod fns {
         pub fn partial_cartesian_product<TargetTag>(self) -> Hide<Y, SetUnionRepr<TargetTag, (<LA::Repr as IntoIterator>::Item, LB::Repr)>>
         where
             TargetTag: SetTag<(<LA::Repr as IntoIterator>::Item, LB::Repr)>,
-            TargetTag::Bind: Clone,
-            <SetUnionRepr<TargetTag, (<LA::Repr as IntoIterator>::Item, LB::Repr)> as LatticeRepr>::Repr: FromIterator<(<LA::Repr as IntoIterator>::Item, LB::Repr)>,
+            SetUnionRepr<TargetTag, (<LA::Repr as IntoIterator>::Item, LB::Repr)>: LatticeRepr,
+            <SetUnionRepr<TargetTag, (<LA::Repr as IntoIterator>::Item, LB::Repr)> as LatticeRepr>::Repr: Clone + FromIterator<(<LA::Repr as IntoIterator>::Item, LB::Repr)>,
         {
             let (a, b) = self.into_reveal();
             let out = a.into_iter()

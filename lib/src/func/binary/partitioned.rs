@@ -20,7 +20,7 @@ impl<K: Eq + Hash + Clone, F: BinaryMorphism> HashPartitioned<K, F> {
     }
 }
 
-impl<K: Eq + Hash + Clone, F: BinaryMorphism + Default> BinaryMorphism for HashPartitioned<K, F> {
+impl<K: Eq + Hash + Clone, F: BinaryMorphism> BinaryMorphism for HashPartitioned<K, F> {
     type InLatReprA = MapUnionRepr<tag::HASH_MAP, K, F::InLatReprA>;
     type InLatReprB = MapUnionRepr<tag::HASH_MAP, K, F::InLatReprB>;
     type OutLatRepr = MapUnionRepr<tag::HASH_MAP, K, F::OutLatRepr>;

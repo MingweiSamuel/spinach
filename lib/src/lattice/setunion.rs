@@ -139,7 +139,9 @@ fn __assert_merges() {
 }
 
 mod fns {
+    use crate::collections::Single;
     use crate::hide::{Hide, Qualifier, Delta, Value};
+    use crate::lattice::mapunion::{MapTag, MapUnionRepr};
 
     use super::*;
     use super::ord::MaxRepr;
@@ -168,11 +170,11 @@ mod fns {
     where
         T: Clone,
     {
-        pub fn map_single<U: Clone>(self, f: impl Fn(T) -> U) -> Hide<Y, SetUnionRepr<tag::SINGLE, U>> {
+        pub fn map_single<U: Clone, F: Fn(T) -> U>(self, f: F) -> Hide<Y, SetUnionRepr<tag::SINGLE, U>> {
             Hide::new(crate::collections::Single((f)(self.into_reveal().0)))
         }
 
-        pub fn filter_map_single<U: Clone>(self, f: impl Fn(T) -> Option<U>) -> Hide<Y, SetUnionRepr<tag::OPTION, U>> {
+        pub fn filter_map_single<U: Clone, F: Fn(T) -> Option<U>>(self, f: F) -> Hide<Y, SetUnionRepr<tag::OPTION, U>> {
             Hide::new((f)(self.into_reveal().0))
         }
     }
@@ -182,7 +184,7 @@ mod fns {
         Tag::Bind: Clone,
         <SetUnionRepr<Tag, T> as LatticeRepr>::Repr: IntoIterator<Item = T>,
     {
-        pub fn filter_map<U, TargetTag: SetTag<U>>(self, f: impl Fn(T) -> Option<U>) -> Hide<Y, SetUnionRepr<TargetTag, U>>
+        pub fn filter_map<U, TargetTag: SetTag<U>, F: Fn(T) -> Option<U>>(self, f: F) -> Hide<Y, SetUnionRepr<TargetTag, U>>
         where
             SetUnionRepr<TargetTag, U>: LatticeRepr<Lattice = SetUnion<U>>,
             <SetUnionRepr<TargetTag, U> as LatticeRepr>::Repr: FromIterator<U>,
@@ -190,7 +192,7 @@ mod fns {
             Hide::new(self.into_reveal().into_iter().filter_map(f).collect())
         }
 
-        pub fn map<U, TargetTag: SetTag<U>>(self, f: impl Fn(T) -> U) -> Hide<Y, SetUnionRepr<TargetTag, U>>
+        pub fn map<U, TargetTag: SetTag<U>, F: Fn(T) -> U>(self, f: F) -> Hide<Y, SetUnionRepr<TargetTag, U>>
         where
             SetUnionRepr<TargetTag, U>: LatticeRepr<Lattice = SetUnion<U>>,
             <SetUnionRepr<TargetTag, U> as LatticeRepr>::Repr: FromIterator<U>,
@@ -198,7 +200,7 @@ mod fns {
             Hide::new(self.into_reveal().into_iter().map(f).collect())
         }
 
-        pub fn filter<TargetTag: SetTag<T>>(self, f: impl Fn(&T) -> bool) -> Hide<Y, SetUnionRepr<TargetTag, T>>
+        pub fn filter<TargetTag: SetTag<T>, F: Fn(&T) -> bool>(self, f: F) -> Hide<Y, SetUnionRepr<TargetTag, T>>
         where
             SetUnionRepr<TargetTag, T>: LatticeRepr<Lattice = SetUnion<T>>,
             <SetUnionRepr<TargetTag, T> as LatticeRepr>::Repr: FromIterator<T>,
@@ -215,6 +217,47 @@ mod fns {
             Hide::new(self.into_reveal().into_iter().flatten().collect())
         }
     }
+
+    impl<Y: Qualifier, Tag: SetTag<(K, V)>, K: Clone, V: Clone> Hide<Y, SetUnionRepr<Tag, (K, V)>>
+    where
+        SetUnionRepr<Tag, (K, V)>: LatticeRepr,
+        <SetUnionRepr<Tag, (K, V)> as LatticeRepr>::Repr: IntoIterator<Item = (K, V)>,
+    {
+        pub fn into_map<TargetTag: MapTag<K, Single<V>>>(self) -> Hide<Y, MapUnionRepr<TargetTag, K, SetUnionRepr<tag::SINGLE, V>>>
+        where
+            TargetTag::Bind: Clone,
+            <MapUnionRepr<TargetTag, K, SetUnionRepr<tag::SINGLE, V>> as LatticeRepr>::Repr: FromIterator<(K, Single<V>)>,
+        {
+            let out = self.into_reveal().into_iter()
+                .map(|(k, v)| (k, Single(v)))
+                .collect();
+            Hide::new(out)
+        }
+    }
+
+    // impl<Y: Qualifier, Tag: SetTag<(K, V)>, K: Clone, V: Clone> Hide<Y, SetUnionRepr<Tag, (K, V)>>
+    // where
+    //     SetUnionRepr<Tag, (K, V)>: LatticeRepr,
+    //     <SetUnionRepr<Tag, (K, V)> as LatticeRepr>::Repr: IntoIterator<Item = (K, V)>,
+    // {
+    //     pub fn fold_into_map<TargetTag: MapTag<K, Single<V>>, ValRepr, TargetValRepr>(self) -> Hide<Y, TargetRepr>
+    //     where
+    //         ValRepr: LatticeRepr<Repr = V>,
+    //         TargetTag::Bind: Clone,
+    //         MapUnionRepr<TargetTag, K, TargetValRepr>: Merge<MapUnionRepr<tag::SINGLE, K, V>>,
+    //         // <MapUnionRepr<TargetTag, K, TargetValRepr> as LatticeRepr>::Repr: Default,
+
+    //         TargetValRepr: LatticeRepr + Merge<ValRepr>,
+    //         TargetValRepr::Repr: Default,
+    //     {
+    //         let mut lattice: <MapUnionRepr<TargetTag, K, TargetValRepr> as LatticeRepr>::Repr = Default::default();
+    //         // let mut lattice: TargetValRepr::Repr = Default::default();
+    //         for (key, item) in self.into_reveal().into_iter() {
+    //             <TargetValRepr as Merge<ValRepr>>::merge(&mut lattice, item);
+    //         }
+    //         Hide::new(lattice)
+    //     }
+    // }
 
 
     fn __test_things() {
