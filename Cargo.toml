@@ -2,5 +2,6 @@
 members = [
     "lib",
     "examples/echo",
-    "examples/kvs"
+    "examples/kvs",
+    "examples/workload"
 ]

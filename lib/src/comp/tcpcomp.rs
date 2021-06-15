@@ -57,7 +57,7 @@ where
                 Ok(())
             }
             else {
-                tcp_write_mut.shutdown().await?;
+                // tcp_write_mut.shutdown().await?;
                 Err(tokio::io::Error::new(std::io::ErrorKind::UnexpectedEof, "End of stream, write half closed successfuly."))
             }
         }

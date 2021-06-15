@@ -162,7 +162,7 @@ async fn server(url: &str) -> Result<!, String> {
     let op = MorphismOp::new(op, ServerSerialize);
 
     let comp = TcpServerComp::new(op, pool);
-    comp.run().await.map_err(|e| e.to_string())?;
+    comp.run().await.map_err(|e| format!("TcpComp error: {:?}", e))?;
 }
 
 /// Run the client portion of the program.
@@ -180,7 +180,7 @@ async fn client<R: tokio::io::AsyncRead + std::marker::Unpin>(url: &str, input_r
     let write_comp = TcpComp::new(write_op, write);
 
     #[allow(unreachable_code)]
-    let result = tokio::try_join!(
+    let result = tokio::join!(
         async {
             read_comp.run().await.map_err(|_| format!("Read failed."))
         },
@@ -189,6 +189,6 @@ async fn client<R: tokio::io::AsyncRead + std::marker::Unpin>(url: &str, input_r
         },
     );
 
-    result?;
-    unreachable!();
+    Err(format!("Read error: {:?}, Write error: {:?}",
+        result.0.unwrap_err(), result.1.unwrap_err()))
 }
