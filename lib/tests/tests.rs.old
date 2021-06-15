@@ -4,7 +4,7 @@ use std::time::Duration;
 
 use spinach::comp::*;
 use spinach::flow::*;
-use spinach::func::*;
+use spinach::func::unary::*;
 use spinach::lattice::{DominatingPair, Hide, Lattice, MapUnion, Max};
 use spinach::monotonic::MapProject;
 use spinach::op::*;

@@ -6,7 +6,7 @@ use tokio::net::UdpSocket;
 use spinach::lattice::*;
 use spinach::comp::*;
 use spinach::op::*;
-use spinach::func::*;
+use spinach::func::unary::*;
 
 #[tokio::test]
 pub async fn test_chat() -> Result<(), String> {

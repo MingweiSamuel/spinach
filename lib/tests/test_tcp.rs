@@ -3,7 +3,7 @@ use tokio::net::{TcpListener, TcpStream};
 
 use spinach::collections::Single;
 use spinach::comp::{Comp, TcpComp};
-use spinach::func::Morphism;
+use spinach::func::unary::Morphism;
 use spinach::hide::{Hide, Qualifier};
 use spinach::lattice::setunion::SetUnionRepr;
 use spinach::op::{OnceOp, MergeOp, MorphismOp, TcpOp, BatchConvertOp, DebugOp};

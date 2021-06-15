@@ -1,6 +1,6 @@
 use spinach::collections::Array;
 use spinach::comp::{CompExt, DebugComp};
-use spinach::func::Morphism;
+use spinach::func::unary::Morphism;
 use spinach::hide::{Hide, Qualifier};
 use spinach::lattice::setunion::SetUnionRepr;
 use spinach::op::{OnceOp, LatticeOp, Splitter, MergeOp, MorphismOp};

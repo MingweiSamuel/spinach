@@ -8,7 +8,7 @@ use spinach::tokio;
 use spinach::tokio::net::TcpStream;
 
 use spinach::comp::{CompExt, DebugComp, TcpComp, TcpServerComp};
-use spinach::func::Morphism;
+use spinach::func::unary::Morphism;
 use spinach::hide::{Hide, Qualifier};
 use spinach::lattice::setunion::SetUnionRepr;
 use spinach::op::{DebugOp, MorphismOp, ReadOp, TcpOp, TcpServerOp};
