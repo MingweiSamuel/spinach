@@ -27,6 +27,19 @@ where
     }
 }
 
+impl<O: Op, Lr: LatticeRepr + Merge<O::LatRepr>> LatticeOp<O, Lr>
+where
+    O::LatRepr: Convert<Lr>,
+    Lr::Repr: Default,
+{
+    pub fn new_default(op: O) -> Self {
+        Self {
+            op,
+            state: RefCell::new(Hide::new(Default::default())),
+        }
+    }
+}
+
 impl<O: Op, Lr: LatticeRepr + Merge<O::LatRepr>> Op for LatticeOp<O, Lr>
 where
     O::LatRepr: Convert<Lr>,

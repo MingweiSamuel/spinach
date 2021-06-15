@@ -1,3 +1,4 @@
+use std::iter::FromIterator;
 use std::cmp::Ordering;
 
 use super::*;
@@ -63,6 +64,24 @@ where
             .collect();
         this.extend(iter);
         changed
+    }
+}
+
+impl<K, SelfInner: LatticeRepr, SelfTag, TargetInner: LatticeRepr, TargetTag> Convert<MapUnionRepr<TargetTag, K, TargetInner>> for MapUnionRepr<SelfTag, K, SelfInner>
+where
+    SelfTag: MapTag<K, SelfInner::Repr>,
+    TargetTag: MapTag<K, TargetInner::Repr>,
+    SelfInner: LatticeRepr<Lattice = TargetInner::Lattice>,
+    SelfInner: Convert<TargetInner>,
+    MapUnionRepr<SelfTag,   K, SelfInner>:   LatticeRepr<Lattice = MapUnion<K, SelfInner::Lattice>>,
+    MapUnionRepr<TargetTag, K, TargetInner>: LatticeRepr<Lattice = MapUnion<K, TargetInner::Lattice>>,
+    <MapUnionRepr<SelfTag,   K, SelfInner>   as LatticeRepr>::Repr: IntoIterator<Item = (K, SelfInner::Repr)>,
+    <MapUnionRepr<TargetTag, K, TargetInner> as LatticeRepr>::Repr: FromIterator<(K, TargetInner::Repr)>,
+{
+    fn convert(this: <MapUnionRepr<SelfTag, K, SelfInner> as LatticeRepr>::Repr) -> <MapUnionRepr<TargetTag, K, TargetInner> as LatticeRepr>::Repr {
+        this.into_iter()
+            .map(|(k, val)| (k, <SelfInner as Convert<TargetInner>>::convert(val)))
+            .collect()
     }
 }
 
