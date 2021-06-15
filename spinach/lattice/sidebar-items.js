@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["dompair",""],["mapunion",""],["ord",""],["setunion",""]],"trait":[["Compare",""],["Convert",""],["Lattice",""],["LatticeRepr",""],["Merge",""]]});
+initSidebarItems({"mod":[["dompair",""],["mapunion",""],["ord",""],["pair",""],["setunion",""]],"trait":[["Compare",""],["Convert",""],["Lattice",""],["LatticeRepr",""],["Merge",""]]});
