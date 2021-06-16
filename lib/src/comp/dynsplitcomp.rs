@@ -10,27 +10,27 @@ use crate::lattice::setunion::SetUnion;
 
 use super::{Comp, CompConnector, Next};
 
-pub struct DynSplitComp<'a, O: OpValue + OpDelta, P, C>
+pub struct DynSplitComp<O: OpValue + OpDelta, P, C>
 where
     P: OpDelta,
     P::LatRepr: LatticeRepr<Lattice = SetUnion<C>>,
     <P::LatRepr as LatticeRepr>::Repr: IntoIterator<Item = C>,
-    C: CompConnector<SplitOp<'a, O>>,
+    C: CompConnector<SplitOp<O>>,
 {
-    splitter: &'a Splitter<O>,
+    splitter: Splitter<O>,
     pipe_op: P,
 
     splits: RefCell<Vec<C::Comp>>,
 }
 
-impl<'a, O: OpValue + OpDelta, P, C> DynSplitComp<'a, O, P, C>
+impl<O: OpValue + OpDelta, P, C> DynSplitComp<O, P, C>
 where
     P: OpDelta,
     P::LatRepr: LatticeRepr<Lattice = SetUnion<C>>,
     <P::LatRepr as LatticeRepr>::Repr: IntoIterator<Item = C>,
-    C: CompConnector<SplitOp<'a, O>>,
+    C: CompConnector<SplitOp<O>>,
 {
-    pub fn new(splitter: &'a Splitter<O>, pipe_op: P) -> Self {
+    pub fn new(splitter: Splitter<O>, pipe_op: P) -> Self {
         Self {
             splitter,
             pipe_op,
@@ -40,12 +40,12 @@ where
     }
 }
 
-impl<'a, O: OpValue + OpDelta, P, C> Comp for DynSplitComp<'a, O, P, C>
+impl<O: OpValue + OpDelta, P, C> Comp for DynSplitComp<O, P, C>
 where
     P: OpDelta,
     P::LatRepr: LatticeRepr<Lattice = SetUnion<C>>,
     <P::LatRepr as LatticeRepr>::Repr: IntoIterator<Item = C>,
-    C: CompConnector<SplitOp<'a, O>>,
+    C: CompConnector<SplitOp<O>>,
 {
     type Error = <C::Comp as Comp>::Error;
 

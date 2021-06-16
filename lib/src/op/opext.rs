@@ -27,6 +27,17 @@ pub trait OpExt: Sized + Op {
         MorphismOp::new(self, func)
     }
 
+    fn fixed_split<const N: usize>(self) -> [SplitOp<Self>; N] {
+        fixed_split(self)
+    }
+
+    fn dyn_split(self) -> Splitter<Self>
+    where
+        Self: OpValue,
+    {
+        Splitter::new(self)
+    }
+
     fn debug_comp(self, tag: &'static str) -> DebugComp<Self>
     where
         Self: OpDelta,

@@ -6,43 +6,74 @@ use crate::hide::{Hide, Delta, Value};
 
 use super::*;
 
-pub struct Splitter<O: Op> {
+
+pub fn fixed_split<O: Op, const N: usize>(op: O) -> [SplitOp<O>; N] {
+    let splitter = Splitter::new(op);
+    [(); N].map(|_| splitter.internal_add_split_reveal())
+}
+
+
+struct SplitterState<O: Op> {
     op: O,
     closed: Cell<bool>,
     splits: RefCell<Vec<Weak<RefCell<SplitState<O>>>>>,
 }
+
+pub struct Splitter<O: Op> {
+    state: Rc<SplitterState<O>>,
+}
+
 impl<O: Op> Splitter<O> {
     pub fn new(op: O) -> Self {
-        Self {
+        let state = Rc::new(SplitterState {
             op,
             closed: Cell::new(false),
             splits: Default::default(),
-        }
+        });
+        Self { state }
     }
 
     #[must_use]
-    pub fn add_split(&self) -> SplitOp<'_, O> {
-        let mut splits = self.splits.borrow_mut();
+    pub(crate) fn internal_add_split_reveal(&self) -> SplitOp<O> {
+        let mut splits = self.state.splits.borrow_mut();
         let split = Rc::new(RefCell::default());
         splits.push(Rc::downgrade(&split));
 
         SplitOp {
-            splitter: &self,
+            splitter: self.state.clone(),
             split,
         }
     }
 }
 
-pub struct SplitOp<'s, O: Op> {
-    splitter: &'s Splitter<O>,
+impl<O: OpValue> Splitter<O> {
+    #[must_use]
+    pub fn add_split(&self) -> SplitOp<O> {
+        self.internal_add_split_reveal()
+    }
+}
+
+impl<O: Op> Clone for Splitter<O> {
+    fn clone(&self) -> Self {
+        Self {
+            state: self.state.clone(),
+        }
+    }
+}
+
+
+
+
+pub struct SplitOp<O: Op> {
+    splitter: Rc<SplitterState<O>>,
     split: Rc<RefCell<SplitState<O>>>,
 }
 
-impl<'s, O: Op> Op for SplitOp<'s, O> {
+impl<O: Op> Op for SplitOp<O> {
     type LatRepr = O::LatRepr;
 }
 
-impl<'s, O: OpDelta> OpDelta for SplitOp<'s, O> {
+impl<O: OpDelta> OpDelta for SplitOp<O> {
     type Ord = O::Ord;
 
     fn poll_delta(&self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
@@ -124,7 +155,7 @@ impl<'s, O: OpDelta> OpDelta for SplitOp<'s, O> {
     }
 }
 
-impl<'s, O: OpValue> OpValue for SplitOp<'s, O> {
+impl<O: OpValue> OpValue for SplitOp<O> {
     fn get_value(&self) -> Hide<Value, Self::LatRepr> {
         self.splitter.op.get_value()
     }

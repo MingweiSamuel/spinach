@@ -18,7 +18,7 @@ use spinach::lattice::mapunion::MapUnionRepr;
 use spinach::lattice::setunion::SetUnionRepr;
 use spinach::lattice::dompair::DomPairRepr;
 use spinach::lattice::ord::MaxRepr;
-use spinach::op::{OpExt, BinaryOp, DebugOp, LatticeOp, MorphismOp, ReadOp, Splitter, TcpOp, TcpServerOp};
+use spinach::op::{self, OpExt, BinaryOp, DebugOp, LatticeOp, MorphismOp, ReadOp, TcpOp, TcpServerOp};
 use spinach::tag;
 use spinach::tcp_server::TcpServer;
 
@@ -166,13 +166,13 @@ async fn server(url: &str) -> Result<!, String> {
         // .debug("ingress")
         .morphism(DeserializeKvsOperation);
 
-    let splitter = Splitter::new(op);
+    let [op_reads, op_writes] = op::fixed_split(op);
 
-    let op_reads = MorphismOp::new(splitter.add_split(), SplitReads);
+    let op_reads = MorphismOp::new(op_reads, SplitReads);
     type ReadsLatRepr = MapUnionRepr<tag::HASH_MAP, String, SetUnionRepr<tag::HASH_SET, SocketAddr>>;
     let op_reads = LatticeOp::<_, ReadsLatRepr>::new_default(op_reads);
 
-    let op_writes = MorphismOp::new(splitter.add_split(), SplitWrites);
+    let op_writes = MorphismOp::new(op_writes, SplitWrites);
     type WritesLatRepr = MapUnionRepr<tag::HASH_MAP, String, ValueLatRepr>;
     let op_writes = LatticeOp::<_, WritesLatRepr>::new_default(op_writes);
 
