@@ -4,27 +4,27 @@ use super::*;
 
 use crate::tag;
 
-pub struct Pair<LA: Lattice, LB: Lattice> {
-    _phantom: std::marker::PhantomData<(LA, LB)>,
+pub struct Pair<La: Lattice, Lb: Lattice> {
+    _phantom: std::marker::PhantomData<(La, Lb)>,
 }
-impl<LA: Lattice, LB: Lattice> Lattice for Pair<LA, LB> {}
+impl<La: Lattice, Lb: Lattice> Lattice for Pair<La, Lb> {}
 
-pub struct PairRepr<RA: LatticeRepr, RB: LatticeRepr> {
-    _phantom: std::marker::PhantomData<(RA, RB)>,
+pub struct PairRepr<Ra: LatticeRepr, Rb: LatticeRepr> {
+    _phantom: std::marker::PhantomData<(Ra, Rb)>,
 }
-impl<RA: LatticeRepr, RB: LatticeRepr> LatticeRepr for PairRepr<RA, RB> {
-    type Lattice = Pair<RA::Lattice, RB::Lattice>;
-    type Repr = (RA::Repr, RB::Repr);
+impl<Ra: LatticeRepr, Rb: LatticeRepr> LatticeRepr for PairRepr<Ra, Rb> {
+    type Lattice = Pair<Ra::Lattice, Rb::Lattice>;
+    type Repr = (Ra::Repr, Rb::Repr);
 }
 
-impl<SelfRA, SelfRB, DeltaRA, DeltaRB, LA, LB> Merge<PairRepr<DeltaRA, DeltaRB>> for PairRepr<SelfRA, SelfRB>
+impl<SelfRA, SelfRB, DeltaRA, DeltaRB, La, Lb> Merge<PairRepr<DeltaRA, DeltaRB>> for PairRepr<SelfRA, SelfRB>
 where
-    LA: Lattice,
-    LB: Lattice,
-    SelfRA:  LatticeRepr<Lattice = LA>,
-    SelfRB:  LatticeRepr<Lattice = LB>,
-    DeltaRA: LatticeRepr<Lattice = LA>,
-    DeltaRB: LatticeRepr<Lattice = LB>,
+    La: Lattice,
+    Lb: Lattice,
+    SelfRA:  LatticeRepr<Lattice = La>,
+    SelfRB:  LatticeRepr<Lattice = Lb>,
+    DeltaRA: LatticeRepr<Lattice = La>,
+    DeltaRB: LatticeRepr<Lattice = Lb>,
     SelfRA:  Merge<DeltaRA>,
     SelfRB:  Merge<DeltaRB>,
     DeltaRA: Convert<SelfRA>,
@@ -37,14 +37,14 @@ where
 }
 
 
-impl<SelfRA, SelfRB, DeltaRA, DeltaRB, LA, LB> Compare<PairRepr<DeltaRA, DeltaRB>> for PairRepr<SelfRA, SelfRB>
+impl<SelfRA, SelfRB, DeltaRA, DeltaRB, La, Lb> Compare<PairRepr<DeltaRA, DeltaRB>> for PairRepr<SelfRA, SelfRB>
 where
-    LA: Lattice,
-    LB: Lattice,
-    SelfRA:  LatticeRepr<Lattice = LA>,
-    SelfRB:  LatticeRepr<Lattice = LB>,
-    DeltaRA: LatticeRepr<Lattice = LA>,
-    DeltaRB: LatticeRepr<Lattice = LB>,
+    La: Lattice,
+    Lb: Lattice,
+    SelfRA:  LatticeRepr<Lattice = La>,
+    SelfRB:  LatticeRepr<Lattice = Lb>,
+    DeltaRA: LatticeRepr<Lattice = La>,
+    DeltaRB: LatticeRepr<Lattice = Lb>,
     SelfRA:  Compare<DeltaRA>,
     SelfRB:  Compare<DeltaRB>,
 {
@@ -107,16 +107,23 @@ mod fns {
 
     use super::*;
 
-    impl<Y: Qualifier, LA: LatticeRepr, LB: LatticeRepr> Hide<Y, PairRepr<LA, LB>>
+    impl<Y: Qualifier, Ra: LatticeRepr, Rb: LatticeRepr> Hide<Y, PairRepr<Ra, Rb>> {
+        pub fn split(self) -> (Hide<Y, Ra>, Hide<Y, Rb>) {
+            let (a, b) = self.into_reveal();
+            (Hide::new(a), Hide::new(b))
+        }
+    }
+
+    impl<Y: Qualifier, Ra: LatticeRepr, Rb: LatticeRepr> Hide<Y, PairRepr<Ra, Rb>>
     where
-        LA::Repr: IntoIterator,
-        LB::Repr: Clone,
+        Ra::Repr: IntoIterator,
+        Rb::Repr: Clone,
     {
-        pub fn partial_cartesian_product<TargetTag>(self) -> Hide<Y, SetUnionRepr<TargetTag, (<LA::Repr as IntoIterator>::Item, LB::Repr)>>
+        pub fn partial_cartesian_product<TargetTag>(self) -> Hide<Y, SetUnionRepr<TargetTag, (<Ra::Repr as IntoIterator>::Item, Rb::Repr)>>
         where
-            TargetTag: SetTag<(<LA::Repr as IntoIterator>::Item, LB::Repr)>,
-            SetUnionRepr<TargetTag, (<LA::Repr as IntoIterator>::Item, LB::Repr)>: LatticeRepr,
-            <SetUnionRepr<TargetTag, (<LA::Repr as IntoIterator>::Item, LB::Repr)> as LatticeRepr>::Repr: Clone + FromIterator<(<LA::Repr as IntoIterator>::Item, LB::Repr)>,
+            TargetTag: SetTag<(<Ra::Repr as IntoIterator>::Item, Rb::Repr)>,
+            SetUnionRepr<TargetTag, (<Ra::Repr as IntoIterator>::Item, Rb::Repr)>: LatticeRepr,
+            <SetUnionRepr<TargetTag, (<Ra::Repr as IntoIterator>::Item, Rb::Repr)> as LatticeRepr>::Repr: Clone + FromIterator<(<Ra::Repr as IntoIterator>::Item, Rb::Repr)>,
         {
             let (a, b) = self.into_reveal();
             let out = a.into_iter()

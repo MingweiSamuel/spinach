@@ -29,6 +29,9 @@ pub use latticeop::*;
 mod splitop;
 pub use splitop::*;
 
+mod switchop;
+pub use switchop::*;
+
 mod mergeop;
 pub use mergeop::*;
 

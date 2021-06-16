@@ -16,7 +16,7 @@ pub fn fixed_split<O: Op, const N: usize>(op: O) -> [SplitOp<O>; N] {
 struct SplitterState<O: Op> {
     op: O,
     closed: Cell<bool>,
-    splits: RefCell<Vec<Weak<RefCell<SplitState<O>>>>>,
+    splits: RefCell<Vec<Weak<RefCell<SplitOpState<O>>>>>,
 }
 
 pub struct Splitter<O: Op> {
@@ -66,7 +66,7 @@ impl<O: Op> Clone for Splitter<O> {
 
 pub struct SplitOp<O: Op> {
     splitter: Rc<SplitterState<O>>,
-    split: Rc<RefCell<SplitState<O>>>,
+    split: Rc<RefCell<SplitOpState<O>>>,
 }
 
 impl<O: Op> Op for SplitOp<O> {
@@ -133,6 +133,7 @@ impl<O: OpDelta> OpDelta for SplitOp<O> {
             }
         }
 
+        // Poll upstream.
         match self.splitter.op.poll_delta(ctx) {
             Poll::Ready(Some(delta)) => {
                 for split in splits_after.iter_mut().chain(splits_before.iter_mut()) {
@@ -145,11 +146,11 @@ impl<O: OpDelta> OpDelta for SplitOp<O> {
                     }
                 }
                 Poll::Ready(Some(delta))
-            },
+            }
             Poll::Ready(None) => {
                 self.splitter.closed.replace(true);
                 Poll::Ready(None)
-            },
+            }
             Poll::Pending => Poll::Pending,
         }
     }
@@ -163,12 +164,12 @@ impl<O: OpValue> OpValue for SplitOp<O> {
 
 
 
-struct SplitState<O: Op> {
+struct SplitOpState<O: Op> {
     waker: Option<Waker>,
     delta: Option<Hide<Delta, O::LatRepr>>,
 }
 
-impl<O: Op> Default for SplitState<O> {
+impl<O: Op> Default for SplitOpState<O> {
     fn default() -> Self {
         Self {
             waker: None,
