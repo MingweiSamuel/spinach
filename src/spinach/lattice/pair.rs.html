@@ -100,6 +100,34 @@
 <span id="98"> 98</span>
 <span id="99"> 99</span>
 <span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
 </pre><pre class="rust">
 <span class="kw">use</span> <span class="ident">std::cmp::Ordering</span>;
 
@@ -200,6 +228,34 @@
         <span class="ident">Merge</span><span class="op">&lt;</span><span class="ident">ArraySetHashSet</span><span class="op">&gt;</span>,
         <span class="ident">Merge</span><span class="op">&lt;</span><span class="ident">ArraySetArraySet</span><span class="op">&gt;</span>,
     );
+}
+
+<span class="kw">mod</span> <span class="ident">fns</span> {
+    <span class="kw">use</span> <span class="ident">std::iter::FromIterator</span>;
+
+    <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::hide</span>::{<span class="ident">Hide</span>, <span class="ident">Qualifier</span>};
+    <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::lattice::setunion</span>::{<span class="ident">SetUnionRepr</span>, <span class="ident">SetTag</span>};
+
+    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+
+    <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Y</span>: <span class="ident">Qualifier</span>, <span class="ident">LA</span>: <span class="ident">LatticeRepr</span>, <span class="ident">LB</span>: <span class="ident">LatticeRepr</span><span class="op">&gt;</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="ident">PairRepr</span><span class="op">&lt;</span><span class="ident">LA</span>, <span class="ident">LB</span><span class="op">&gt;</span><span class="op">&gt;</span>
+    <span class="kw">where</span>
+        <span class="ident">LA::Repr</span>: <span class="ident">IntoIterator</span>,
+        <span class="ident">LB::Repr</span>: <span class="ident">Clone</span>,
+    {
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">partial_cartesian_product</span><span class="op">&lt;</span><span class="ident">TargetTag</span><span class="op">&gt;</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">TargetTag</span>, (<span class="op">&lt;</span><span class="ident">LA::Repr</span> <span class="kw">as</span> <span class="ident">IntoIterator</span><span class="op">&gt;</span><span class="ident">::Item</span>, <span class="ident">LB::Repr</span>)<span class="op">&gt;</span><span class="op">&gt;</span>
+        <span class="kw">where</span>
+            <span class="ident">TargetTag</span>: <span class="ident">SetTag</span><span class="op">&lt;</span>(<span class="op">&lt;</span><span class="ident">LA::Repr</span> <span class="kw">as</span> <span class="ident">IntoIterator</span><span class="op">&gt;</span><span class="ident">::Item</span>, <span class="ident">LB::Repr</span>)<span class="op">&gt;</span>,
+            <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">TargetTag</span>, (<span class="op">&lt;</span><span class="ident">LA::Repr</span> <span class="kw">as</span> <span class="ident">IntoIterator</span><span class="op">&gt;</span><span class="ident">::Item</span>, <span class="ident">LB::Repr</span>)<span class="op">&gt;</span>: <span class="ident">LatticeRepr</span>,
+            <span class="op">&lt;</span><span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">TargetTag</span>, (<span class="op">&lt;</span><span class="ident">LA::Repr</span> <span class="kw">as</span> <span class="ident">IntoIterator</span><span class="op">&gt;</span><span class="ident">::Item</span>, <span class="ident">LB::Repr</span>)<span class="op">&gt;</span> <span class="kw">as</span> <span class="ident">LatticeRepr</span><span class="op">&gt;</span><span class="ident">::Repr</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">FromIterator</span><span class="op">&lt;</span>(<span class="op">&lt;</span><span class="ident">LA::Repr</span> <span class="kw">as</span> <span class="ident">IntoIterator</span><span class="op">&gt;</span><span class="ident">::Item</span>, <span class="ident">LB::Repr</span>)<span class="op">&gt;</span>,
+        {
+            <span class="kw">let</span> (<span class="ident">a</span>, <span class="ident">b</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">into_reveal</span>();
+            <span class="kw">let</span> <span class="ident">out</span> <span class="op">=</span> <span class="ident">a</span>.<span class="ident">into_iter</span>()
+                .<span class="ident">map</span>(<span class="op">|</span><span class="ident">item_a</span><span class="op">|</span> (<span class="ident">item_a</span>, <span class="ident">b</span>.<span class="ident">clone</span>()))
+                .<span class="ident">collect</span>();
+            <span class="ident">Hide::new</span>(<span class="ident">out</span>)
+        }
+    }
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="spinach" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div><script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>

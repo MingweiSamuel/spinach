@@ -192,6 +192,59 @@
 <span id="190">190</span>
 <span id="191">191</span>
 <span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
+<span id="242">242</span>
+<span id="243">243</span>
+<span id="244">244</span>
+<span id="245">245</span>
 </pre><pre class="rust">
 <span class="attribute">#![<span class="ident">feature</span>(<span class="ident">never_type</span>)]</span>
 
@@ -205,27 +258,34 @@
 <span class="kw">use</span> <span class="ident">spinach::bytes</span>::{<span class="ident">BufMut</span>, <span class="ident">Bytes</span>, <span class="ident">BytesMut</span>};
 
 <span class="kw">use</span> <span class="ident">spinach::comp</span>::{<span class="ident">CompExt</span>, <span class="ident">DebugComp</span>, <span class="ident">TcpComp</span>, <span class="ident">TcpServerComp</span>};
+<span class="kw">use</span> <span class="ident">spinach::func::binary</span>::{<span class="ident">BinaryMorphism</span>, <span class="ident">HashPartitioned</span>};
 <span class="kw">use</span> <span class="ident">spinach::func::unary::Morphism</span>;
 <span class="kw">use</span> <span class="ident">spinach::hide</span>::{<span class="ident">Hide</span>, <span class="ident">Qualifier</span>};
+<span class="kw">use</span> <span class="ident">spinach::lattice::LatticeRepr</span>;
+<span class="kw">use</span> <span class="ident">spinach::lattice::mapunion::MapUnionRepr</span>;
 <span class="kw">use</span> <span class="ident">spinach::lattice::setunion::SetUnionRepr</span>;
-<span class="kw">use</span> <span class="ident">spinach::op</span>::{<span class="ident">DebugOp</span>, <span class="ident">MorphismOp</span>, <span class="ident">Splitter</span>, <span class="ident">ReadOp</span>, <span class="ident">SymHashJoinOp</span>, <span class="ident">TcpOp</span>, <span class="ident">TcpServerOp</span>};
+<span class="kw">use</span> <span class="ident">spinach::lattice::dompair::DomPairRepr</span>;
+<span class="kw">use</span> <span class="ident">spinach::lattice::ord::MaxRepr</span>;
+<span class="kw">use</span> <span class="ident">spinach::op</span>::{<span class="ident">BinaryOp</span>, <span class="ident">DebugOp</span>, <span class="ident">LatticeOp</span>, <span class="ident">MorphismOp</span>, <span class="ident">ReadOp</span>, <span class="ident">Splitter</span>, <span class="ident">TcpOp</span>, <span class="ident">TcpServerOp</span>};
 <span class="kw">use</span> <span class="ident">spinach::tag</span>;
 <span class="kw">use</span> <span class="ident">spinach::tcp_server::TcpServer</span>;
+
+<span class="kw">type</span> <span class="ident">ValueLatRepr</span> <span class="op">=</span> <span class="ident">DomPairRepr</span><span class="op">&lt;</span><span class="ident">MaxRepr</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>, <span class="ident">MaxRepr</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">PartialOrd</span>, <span class="ident">Ord</span>, <span class="ident">Hash</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">KvsOperation</span> {
     <span class="ident">Read</span>(<span class="ident">String</span>),
-    <span class="ident">Write</span>(<span class="ident">String</span>, <span class="ident">String</span>),
+    <span class="ident">Write</span>(<span class="ident">String</span>, <span class="op">&lt;</span><span class="ident">ValueLatRepr</span> <span class="kw">as</span> <span class="ident">LatticeRepr</span><span class="op">&gt;</span><span class="ident">::Repr</span>),
 }
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DeserializeKvsOperation</span>;
 <span class="kw">impl</span> <span class="ident">Morphism</span> <span class="kw">for</span> <span class="ident">DeserializeKvsOperation</span> {
     <span class="kw">type</span> <span class="ident">InLatRepr</span>  <span class="op">=</span> <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::SINGLE</span>, (<span class="ident">SocketAddr</span>, <span class="ident">BytesMut</span>)<span class="op">&gt;</span>;
-    <span class="kw">type</span> <span class="ident">OutLatRepr</span> <span class="op">=</span> <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::VEC</span>, (<span class="ident">SocketAddr</span>, <span class="ident">KvsOperation</span>)<span class="op">&gt;</span>;
+    <span class="kw">type</span> <span class="ident">OutLatRepr</span> <span class="op">=</span> <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::OPTION</span>, (<span class="ident">SocketAddr</span>, <span class="ident">KvsOperation</span>)<span class="op">&gt;</span>;
     <span class="kw">fn</span> <span class="ident">call</span><span class="op">&lt;</span><span class="ident">Y</span>: <span class="ident">Qualifier</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">item</span>: <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="self">Self</span><span class="ident">::InLatRepr</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="self">Self</span><span class="ident">::OutLatRepr</span><span class="op">&gt;</span> {
         <span class="ident">item</span>
-            .<span class="ident">filter_map</span>(<span class="op">|</span>(<span class="ident">addr</span>, <span class="ident">bytes</span>)<span class="op">|</span> {
+            .<span class="ident">filter_map_single</span>(<span class="op">|</span>(<span class="ident">addr</span>, <span class="ident">bytes</span>)<span class="op">|</span> {
                 <span class="kw">match</span> <span class="ident">ron::de::from_bytes</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">bytes</span>) {
                     <span class="prelude-val">Ok</span>(<span class="ident">string</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>((<span class="ident">addr</span>, <span class="ident">string</span>)),
                     <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=</span><span class="op">&gt;</span> {
@@ -239,49 +299,36 @@
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SplitReads</span>;
 <span class="kw">impl</span> <span class="ident">Morphism</span> <span class="kw">for</span> <span class="ident">SplitReads</span> {
-    <span class="kw">type</span> <span class="ident">InLatRepr</span>  <span class="op">=</span> <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::VEC</span>, (<span class="ident">SocketAddr</span>, <span class="ident">KvsOperation</span>)<span class="op">&gt;</span>;
-    <span class="kw">type</span> <span class="ident">OutLatRepr</span> <span class="op">=</span> <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::VEC</span>, (<span class="ident">String</span>, <span class="ident">SocketAddr</span>)<span class="op">&gt;</span>;
+    <span class="kw">type</span> <span class="ident">InLatRepr</span>  <span class="op">=</span> <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::OPTION</span>, (<span class="ident">SocketAddr</span>, <span class="ident">KvsOperation</span>)<span class="op">&gt;</span>;
+    <span class="kw">type</span> <span class="ident">OutLatRepr</span> <span class="op">=</span> <span class="ident">MapUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::VEC</span>, <span class="ident">String</span>, <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::SINGLE</span>, <span class="ident">SocketAddr</span><span class="op">&gt;</span><span class="op">&gt;</span>;
     <span class="kw">fn</span> <span class="ident">call</span><span class="op">&lt;</span><span class="ident">Y</span>: <span class="ident">Qualifier</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">item</span>: <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="self">Self</span><span class="ident">::InLatRepr</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="self">Self</span><span class="ident">::OutLatRepr</span><span class="op">&gt;</span> {
         <span class="ident">item</span>
-            .<span class="ident">filter_map</span>(<span class="op">|</span>(<span class="ident">addr</span>, <span class="ident">operation</span>)<span class="op">|</span> {
+            .<span class="ident">filter_map</span>::<span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">tag::VEC</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="op">|</span>(<span class="ident">addr</span>, <span class="ident">operation</span>)<span class="op">|</span> {
                 <span class="kw">match</span> <span class="ident">operation</span> {
                     <span class="ident">KvsOperation::Read</span>(<span class="ident">key</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>((<span class="ident">key</span>, <span class="ident">addr</span>)),
                     <span class="ident">KvsOperation::Write</span>(<span class="kw">_</span>, <span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,
                 }
             })
+            .<span class="ident">into_map</span>()
     }
 }
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SplitWrites</span>;
 <span class="kw">impl</span> <span class="ident">Morphism</span> <span class="kw">for</span> <span class="ident">SplitWrites</span> {
-    <span class="kw">type</span> <span class="ident">InLatRepr</span>  <span class="op">=</span> <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::VEC</span>, (<span class="ident">SocketAddr</span>, <span class="ident">KvsOperation</span>)<span class="op">&gt;</span>;
-    <span class="kw">type</span> <span class="ident">OutLatRepr</span> <span class="op">=</span> <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::VEC</span>, (<span class="ident">String</span>, <span class="ident">String</span>)<span class="op">&gt;</span>;
+    <span class="kw">type</span> <span class="ident">InLatRepr</span>  <span class="op">=</span> <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::OPTION</span>, (<span class="ident">SocketAddr</span>, <span class="ident">KvsOperation</span>)<span class="op">&gt;</span>;
+    <span class="kw">type</span> <span class="ident">OutLatRepr</span> <span class="op">=</span> <span class="ident">MapUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::OPTION</span>, <span class="ident">String</span>, <span class="ident">ValueLatRepr</span><span class="op">&gt;</span>;
     <span class="kw">fn</span> <span class="ident">call</span><span class="op">&lt;</span><span class="ident">Y</span>: <span class="ident">Qualifier</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">item</span>: <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="self">Self</span><span class="ident">::InLatRepr</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="self">Self</span><span class="ident">::OutLatRepr</span><span class="op">&gt;</span> {
-        <span class="ident">item</span>
-            .<span class="ident">filter_map</span>(<span class="op">|</span>(<span class="ident">_addr</span>, <span class="ident">operation</span>)<span class="op">|</span> {
+        <span class="comment">// TODO!!! REVEAL!!!!</span>
+        <span class="kw">let</span> <span class="ident">out</span> <span class="op">=</span> <span class="ident">item</span>.<span class="ident">into_reveal</span>()
+            .<span class="ident">and_then</span>(<span class="op">|</span>(<span class="ident">_addr</span>, <span class="ident">operation</span>)<span class="op">|</span> {
                 <span class="kw">match</span> <span class="ident">operation</span> {
                     <span class="ident">KvsOperation::Read</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,
-                    <span class="ident">KvsOperation::Write</span>(<span class="ident">key</span>, <span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>((<span class="ident">key</span>, <span class="ident">val</span>)),
+                    <span class="ident">KvsOperation::Write</span>(<span class="ident">key</span>, <span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span> {
+                        <span class="prelude-val">Some</span>((<span class="ident">key</span>, <span class="ident">val</span>))
+                    }
                 }
-            })
-    }
-}
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ServerSerialize</span>;
-<span class="kw">impl</span> <span class="ident">Morphism</span> <span class="kw">for</span> <span class="ident">ServerSerialize</span> {
-    <span class="kw">type</span> <span class="ident">InLatRepr</span>  <span class="op">=</span> <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::VEC</span>, (<span class="ident">String</span>, <span class="ident">SocketAddr</span>, <span class="ident">String</span>)<span class="op">&gt;</span>;
-    <span class="kw">type</span> <span class="ident">OutLatRepr</span> <span class="op">=</span> <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::VEC</span>, (<span class="ident">SocketAddr</span>, <span class="ident">Bytes</span>)<span class="op">&gt;</span>;
-    <span class="kw">fn</span> <span class="ident">call</span><span class="op">&lt;</span><span class="ident">Y</span>: <span class="ident">Qualifier</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">item</span>: <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="self">Self</span><span class="ident">::InLatRepr</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="self">Self</span><span class="ident">::OutLatRepr</span><span class="op">&gt;</span> {
-        <span class="ident">item</span>
-            .<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">key</span>, <span class="ident">addr</span>, <span class="ident">value</span>)<span class="op">|</span> {
-                <span class="kw">let</span> <span class="ident">item</span> <span class="op">=</span> (<span class="ident">key</span>, <span class="ident">value</span>);
-
-                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">writer</span> <span class="op">=</span> <span class="ident">BytesMut::new</span>().<span class="ident">writer</span>();
-                <span class="ident">ron::ser::to_writer</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">writer</span>, <span class="kw-2">&amp;</span><span class="ident">item</span>).<span class="ident">expect</span>(<span class="string">&quot;Failed to serialize&quot;</span>);
-                <span class="kw">let</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="ident">writer</span>.<span class="ident">into_inner</span>().<span class="ident">freeze</span>();
-
-                (<span class="ident">addr</span>, <span class="ident">bytes</span>)
-            })
+            });
+        <span class="ident">Hide::new</span>(<span class="ident">out</span>)
     }
 }
 
@@ -311,31 +358,51 @@
     }
 }
 
-<span class="doccomment">/// Entry point of the application.</span>
-<span class="attribute">#[<span class="ident">tokio::main</span>(<span class="ident">flavor</span> <span class="op">=</span> <span class="string">&quot;current_thread&quot;</span>)]</span>
-<span class="kw">async</span> <span class="kw">fn</span> <span class="ident">main</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="op">!</span>, <span class="ident">String</span><span class="op">&gt;</span> {
-    <span class="comment">// Begin by parsing the arguments. We are either a server or a client, and</span>
-    <span class="comment">// we need an address and potentially a sleep duration.</span>
-    <span class="kw">let</span> <span class="ident">args</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">env::args</span>().<span class="ident">collect</span>();
-
-    <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="ident">args</span>[..] {
-        [<span class="kw">_</span>, <span class="ident">mode</span>, <span class="ident">url</span>]             <span class="kw">if</span> <span class="ident">mode</span> <span class="op">=</span><span class="op">=</span> <span class="string">&quot;server&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">server</span>(<span class="ident">url</span>).<span class="kw">await</span><span class="question-mark">?</span>,
-        [<span class="kw">_</span>, <span class="ident">mode</span>, <span class="ident">url</span>]             <span class="kw">if</span> <span class="ident">mode</span> <span class="op">=</span><span class="op">=</span> <span class="string">&quot;server&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="ident">client</span>(<span class="ident">url</span>, <span class="ident">tokio::io::stdin</span>()).<span class="kw">await</span><span class="question-mark">?</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CreateReplies</span>;
+<span class="kw">impl</span> <span class="ident">BinaryMorphism</span> <span class="kw">for</span> <span class="ident">CreateReplies</span> {
+    <span class="kw">type</span> <span class="ident">InLatReprA</span> <span class="op">=</span> <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::HASH_SET</span>, <span class="ident">SocketAddr</span><span class="op">&gt;</span>;
+    <span class="kw">type</span> <span class="ident">InLatReprB</span> <span class="op">=</span> <span class="ident">ValueLatRepr</span>;
+    <span class="kw">type</span> <span class="ident">OutLatRepr</span> <span class="op">=</span> <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::VEC</span>, (<span class="ident">SocketAddr</span>, (<span class="ident">usize</span>, <span class="ident">String</span>))<span class="op">&gt;</span>;
+    <span class="kw">fn</span> <span class="ident">call</span><span class="op">&lt;</span><span class="ident">Y</span>: <span class="ident">Qualifier</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">item_a</span>: <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="self">Self</span><span class="ident">::InLatReprA</span><span class="op">&gt;</span>, <span class="ident">item_b</span>: <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="self">Self</span><span class="ident">::InLatReprB</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="self">Self</span><span class="ident">::OutLatRepr</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">out</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
+        <span class="kw">for</span> <span class="ident">addr</span> <span class="kw">in</span> <span class="ident">item_a</span>.<span class="ident">into_reveal</span>() { <span class="comment">// TODO!! REVEAL!!!</span>
+            <span class="ident">out</span>.<span class="ident">push</span>((<span class="ident">addr</span>, <span class="ident">item_b</span>.<span class="ident">reveal_ref</span>().<span class="ident">clone</span>()));
         }
-        [<span class="kw">_</span>, <span class="ident">mode</span>, <span class="ident">url</span>, <span class="ident">input_file</span>] <span class="kw">if</span> <span class="ident">mode</span> <span class="op">=</span><span class="op">=</span> <span class="string">&quot;client&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="kw">match</span> <span class="ident">tokio::fs::File::open</span>(<span class="ident">input_file</span>).<span class="kw">await</span> {
-                <span class="prelude-val">Ok</span>(<span class="ident">file</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">client</span>(<span class="ident">url</span>, <span class="ident">file</span>).<span class="kw">await</span><span class="question-mark">?</span>,
-                <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="macro">eprintln!</span>(<span class="string">&quot;Failed to open inpu_file: \&quot;{}\&quot;, error: {}&quot;</span>, <span class="ident">input_file</span>, <span class="ident">err</span>);
-                    <span class="ident">process::exit</span>(<span class="number">2</span>);
-                }
+        <span class="ident">Hide::new</span>(<span class="ident">out</span>)
+    }
+}
+
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ServerSerialize</span>;
+<span class="kw">impl</span> <span class="ident">Morphism</span> <span class="kw">for</span> <span class="ident">ServerSerialize</span> {
+    <span class="kw">type</span> <span class="ident">InLatRepr</span>  <span class="op">=</span> <span class="ident">MapUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::HASH_MAP</span>, <span class="ident">String</span>, <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::VEC</span>, (<span class="ident">SocketAddr</span>, (<span class="ident">usize</span>, <span class="ident">String</span>))<span class="op">&gt;</span><span class="op">&gt;</span>;
+    <span class="kw">type</span> <span class="ident">OutLatRepr</span> <span class="op">=</span> <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::VEC</span>, (<span class="ident">SocketAddr</span>, <span class="ident">Bytes</span>)<span class="op">&gt;</span>;
+    <span class="kw">fn</span> <span class="ident">call</span><span class="op">&lt;</span><span class="ident">Y</span>: <span class="ident">Qualifier</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">item</span>: <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="self">Self</span><span class="ident">::InLatRepr</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="self">Self</span><span class="ident">::OutLatRepr</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">out</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
+
+        <span class="kw">for</span> (<span class="ident">k</span>, <span class="ident">vals</span>) <span class="kw">in</span> <span class="ident">item</span>.<span class="ident">into_reveal</span>() { <span class="comment">// TODO! REVEAL!</span>
+            <span class="kw">for</span> (<span class="ident">addr</span>, <span class="ident">val</span>) <span class="kw">in</span> <span class="ident">vals</span> {
+                <span class="kw">let</span> <span class="ident">item</span> <span class="op">=</span> (<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">k</span>, <span class="ident">val</span>);
+
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">writer</span> <span class="op">=</span> <span class="ident">BytesMut::new</span>().<span class="ident">writer</span>();
+                <span class="ident">ron::ser::to_writer</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">writer</span>, <span class="kw-2">&amp;</span><span class="ident">item</span>).<span class="ident">expect</span>(<span class="string">&quot;Failed to serialize&quot;</span>);
+                <span class="kw">let</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="ident">writer</span>.<span class="ident">into_inner</span>().<span class="ident">freeze</span>();
+
+                <span class="ident">out</span>.<span class="ident">push</span>((<span class="ident">addr</span>, <span class="ident">bytes</span>));
             }
         }
-        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="macro">eprintln!</span>(<span class="string">&quot;Usage:\n{0} server &lt;url&gt;\n  or\n{0} client &lt;url&gt; [input_file]&quot;</span>, <span class="ident">args</span>[<span class="number">0</span>]);
-            <span class="ident">process::exit</span>(<span class="number">1</span>);
-        }
+
+        <span class="ident">Hide::new</span>(<span class="ident">out</span>)
+
+        <span class="comment">// item</span>
+        <span class="comment">//     .map(|(key, addr, value)| {</span>
+        <span class="comment">//         let item = (key, value);</span>
+
+        <span class="comment">//         let mut writer = BytesMut::new().writer();</span>
+        <span class="comment">//         ron::ser::to_writer(&amp;mut writer, &amp;item).expect(&quot;Failed to serialize&quot;);</span>
+        <span class="comment">//         let bytes = writer.into_inner().freeze();</span>
+
+        <span class="comment">//         (addr, bytes)</span>
+        <span class="comment">//     })</span>
     }
 }
 
@@ -350,10 +417,21 @@
     <span class="kw">let</span> <span class="ident">splitter</span> <span class="op">=</span> <span class="ident">Splitter::new</span>(<span class="ident">op</span>);
 
     <span class="kw">let</span> <span class="ident">op_reads</span> <span class="op">=</span> <span class="ident">MorphismOp::new</span>(<span class="ident">splitter</span>.<span class="ident">add_split</span>(), <span class="ident">SplitReads</span>);
+    <span class="kw">type</span> <span class="ident">ReadsLatRepr</span> <span class="op">=</span> <span class="ident">MapUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::HASH_MAP</span>, <span class="ident">String</span>, <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::HASH_SET</span>, <span class="ident">SocketAddr</span><span class="op">&gt;</span><span class="op">&gt;</span>;
+    <span class="kw">let</span> <span class="ident">op_reads</span> <span class="op">=</span> <span class="ident">LatticeOp</span>::<span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">ReadsLatRepr</span><span class="op">&gt;</span><span class="ident">::new_default</span>(<span class="ident">op_reads</span>);
+
     <span class="kw">let</span> <span class="ident">op_writes</span> <span class="op">=</span> <span class="ident">MorphismOp::new</span>(<span class="ident">splitter</span>.<span class="ident">add_split</span>(), <span class="ident">SplitWrites</span>);
-    <span class="kw">let</span> <span class="ident">op</span> <span class="op">=</span> <span class="ident">SymHashJoinOp::new</span>(<span class="ident">op_reads</span>, <span class="ident">op_writes</span>);
+    <span class="kw">type</span> <span class="ident">WritesLatRepr</span> <span class="op">=</span> <span class="ident">MapUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::HASH_MAP</span>, <span class="ident">String</span>, <span class="ident">ValueLatRepr</span><span class="op">&gt;</span>;
+    <span class="kw">let</span> <span class="ident">op_writes</span> <span class="op">=</span> <span class="ident">LatticeOp</span>::<span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">WritesLatRepr</span><span class="op">&gt;</span><span class="ident">::new_default</span>(<span class="ident">op_writes</span>);
+
+    <span class="kw">let</span> <span class="ident">binary_func</span> <span class="op">=</span> <span class="ident">HashPartitioned::new</span>(<span class="ident">CreateReplies</span>);
+    <span class="kw">let</span> <span class="ident">op</span> <span class="op">=</span> <span class="ident">BinaryOp::new</span>(<span class="ident">op_reads</span>, <span class="ident">op_writes</span>, <span class="ident">binary_func</span>);
 
     <span class="kw">let</span> <span class="ident">op</span> <span class="op">=</span> <span class="ident">MorphismOp::new</span>(<span class="ident">op</span>, <span class="ident">ServerSerialize</span>);
+
+    <span class="comment">// let op = SymHashJoinOp::new(op_reads, op_writes);</span>
+
+    <span class="comment">// let op = MorphismOp::new(op, ServerSerialize);</span>
 
     <span class="kw">let</span> <span class="ident">comp</span> <span class="op">=</span> <span class="ident">TcpServerComp::new</span>(<span class="ident">op</span>, <span class="ident">pool</span>);
     <span class="ident">comp</span>.<span class="ident">run</span>().<span class="kw">await</span>.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="macro">format!</span>(<span class="string">&quot;TcpComp error: {:?}&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
@@ -384,6 +462,34 @@
 
     <span class="prelude-val">Err</span>(<span class="macro">format!</span>(<span class="string">&quot;Read error: {:?}, Write error: {:?}&quot;</span>,
         <span class="ident">result</span>.<span class="number">0</span>.<span class="ident">unwrap_err</span>(), <span class="ident">result</span>.<span class="number">1</span>.<span class="ident">unwrap_err</span>()))
+}
+
+<span class="doccomment">/// Entry point of the application.</span>
+<span class="attribute">#[<span class="ident">tokio::main</span>(<span class="ident">flavor</span> <span class="op">=</span> <span class="string">&quot;current_thread&quot;</span>)]</span>
+<span class="kw">async</span> <span class="kw">fn</span> <span class="ident">main</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="op">!</span>, <span class="ident">String</span><span class="op">&gt;</span> {
+    <span class="comment">// Begin by parsing the arguments. We are either a server or a client, and</span>
+    <span class="comment">// we need an address and potentially a sleep duration.</span>
+    <span class="kw">let</span> <span class="ident">args</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">env::args</span>().<span class="ident">collect</span>();
+
+    <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="ident">args</span>[..] {
+        [<span class="kw">_</span>, <span class="ident">mode</span>, <span class="ident">url</span>]             <span class="kw">if</span> <span class="ident">mode</span> <span class="op">=</span><span class="op">=</span> <span class="string">&quot;server&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">server</span>(<span class="ident">url</span>).<span class="kw">await</span><span class="question-mark">?</span>,
+        [<span class="kw">_</span>, <span class="ident">mode</span>, <span class="ident">url</span>]             <span class="kw">if</span> <span class="ident">mode</span> <span class="op">=</span><span class="op">=</span> <span class="string">&quot;client&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">client</span>(<span class="ident">url</span>, <span class="ident">tokio::io::stdin</span>()).<span class="kw">await</span><span class="question-mark">?</span>
+        }
+        [<span class="kw">_</span>, <span class="ident">mode</span>, <span class="ident">url</span>, <span class="ident">input_file</span>] <span class="kw">if</span> <span class="ident">mode</span> <span class="op">=</span><span class="op">=</span> <span class="string">&quot;client&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="kw">match</span> <span class="ident">tokio::fs::File::open</span>(<span class="ident">input_file</span>).<span class="kw">await</span> {
+                <span class="prelude-val">Ok</span>(<span class="ident">file</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">client</span>(<span class="ident">url</span>, <span class="ident">file</span>).<span class="kw">await</span><span class="question-mark">?</span>,
+                <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="macro">eprintln!</span>(<span class="string">&quot;Failed to open inpu_file: \&quot;{}\&quot;, error: {}&quot;</span>, <span class="ident">input_file</span>, <span class="ident">err</span>);
+                    <span class="ident">process::exit</span>(<span class="number">2</span>);
+                }
+            }
+        }
+        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="macro">eprintln!</span>(<span class="string">&quot;Usage:\n{0} server &lt;url&gt;\n  or\n{0} client &lt;url&gt; [input_file]&quot;</span>, <span class="ident">args</span>[<span class="number">0</span>]);
+            <span class="ident">process::exit</span>(<span class="number">1</span>);
+        }
+    }
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="kvs" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>
