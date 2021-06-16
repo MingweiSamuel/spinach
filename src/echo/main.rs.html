@@ -112,11 +112,11 @@
 <span class="kw">use</span> <span class="ident">spinach::tokio</span>;
 <span class="kw">use</span> <span class="ident">spinach::tokio::net::TcpStream</span>;
 
-<span class="kw">use</span> <span class="ident">spinach::comp</span>::{<span class="ident">CompExt</span>, <span class="ident">DebugComp</span>, <span class="ident">TcpComp</span>, <span class="ident">TcpServerComp</span>};
+<span class="kw">use</span> <span class="ident">spinach::comp</span>::{<span class="ident">CompExt</span>};
 <span class="kw">use</span> <span class="ident">spinach::func::unary::Morphism</span>;
 <span class="kw">use</span> <span class="ident">spinach::hide</span>::{<span class="ident">Hide</span>, <span class="ident">Qualifier</span>};
 <span class="kw">use</span> <span class="ident">spinach::lattice::setunion::SetUnionRepr</span>;
-<span class="kw">use</span> <span class="ident">spinach::op</span>::{<span class="ident">OpExt</span>, <span class="ident">DebugOp</span>, <span class="ident">MorphismOp</span>, <span class="ident">ReadOp</span>, <span class="ident">TcpOp</span>, <span class="ident">TcpServerOp</span>};
+<span class="kw">use</span> <span class="ident">spinach::op</span>::{<span class="ident">OpExt</span>, <span class="ident">ReadOp</span>, <span class="ident">TcpOp</span>, <span class="ident">TcpServerOp</span>};
 <span class="kw">use</span> <span class="ident">spinach::tag</span>;
 <span class="kw">use</span> <span class="ident">spinach::tcp_server::TcpServer</span>;
 
@@ -174,7 +174,7 @@
     <span class="ident">TcpServerOp::new</span>(<span class="ident">pool</span>.<span class="ident">clone</span>())
         .<span class="ident">debug</span>(<span class="string">&quot;server&quot;</span>)
         .<span class="ident">morphism</span>(<span class="ident">AddrBytesFreeze</span>)
-        .<span class="ident">tcp_server_comp</span>(<span class="ident">pool</span>)
+        .<span class="ident">comp_tcp_server</span>(<span class="ident">pool</span>)
         .<span class="ident">run</span>()
         .<span class="kw">await</span>
         .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">e</span>.<span class="ident">to_string</span>())<span class="question-mark">?</span>;
@@ -187,11 +187,11 @@
         .<span class="ident">into_split</span>();
 
     <span class="kw">let</span> <span class="ident">read_comp</span> <span class="op">=</span> <span class="ident">TcpOp::new</span>(<span class="ident">read</span>)
-        .<span class="ident">debug_comp</span>(<span class="string">&quot;read&quot;</span>);
+        .<span class="ident">comp_debug</span>(<span class="string">&quot;read&quot;</span>);
 
     <span class="kw">let</span> <span class="ident">write_comp</span> <span class="op">=</span> <span class="ident">ReadOp::new</span>(<span class="ident">input_read</span>)
         .<span class="ident">morphism</span>(<span class="ident">StringToBytes</span>)
-        .<span class="ident">tcp_comp</span>(<span class="ident">write</span>);
+        .<span class="ident">comp_tcp</span>(<span class="ident">write</span>);
 
     <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="macro">tokio::join!</span>(
         <span class="kw">async</span> {

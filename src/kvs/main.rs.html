@@ -248,8 +248,6 @@
 <span id="246">246</span>
 <span id="247">247</span>
 <span id="248">248</span>
-<span id="249">249</span>
-<span id="250">250</span>
 </pre><pre class="rust">
 <span class="attribute">#![<span class="ident">feature</span>(<span class="ident">never_type</span>)]</span>
 
@@ -262,7 +260,7 @@
 <span class="kw">use</span> <span class="ident">spinach::tokio::net::TcpStream</span>;
 <span class="kw">use</span> <span class="ident">spinach::bytes</span>::{<span class="ident">BufMut</span>, <span class="ident">Bytes</span>, <span class="ident">BytesMut</span>};
 
-<span class="kw">use</span> <span class="ident">spinach::comp</span>::{<span class="ident">CompExt</span>, <span class="ident">NullComp</span>, <span class="ident">TcpComp</span>, <span class="ident">TcpServerComp</span>};
+<span class="kw">use</span> <span class="ident">spinach::comp</span>::{<span class="ident">CompExt</span>};
 <span class="kw">use</span> <span class="ident">spinach::func::binary</span>::{<span class="ident">BinaryMorphism</span>, <span class="ident">HashPartitioned</span>};
 <span class="kw">use</span> <span class="ident">spinach::func::unary::Morphism</span>;
 <span class="kw">use</span> <span class="ident">spinach::hide</span>::{<span class="ident">Hide</span>, <span class="ident">Qualifier</span>};
@@ -271,7 +269,7 @@
 <span class="kw">use</span> <span class="ident">spinach::lattice::setunion::SetUnionRepr</span>;
 <span class="kw">use</span> <span class="ident">spinach::lattice::dompair::DomPairRepr</span>;
 <span class="kw">use</span> <span class="ident">spinach::lattice::ord::MaxRepr</span>;
-<span class="kw">use</span> <span class="ident">spinach::op</span>::{<span class="ident">OpExt</span>, <span class="ident">BinaryOp</span>, <span class="ident">DebugOp</span>, <span class="ident">LatticeOp</span>, <span class="ident">MorphismOp</span>, <span class="ident">ReadOp</span>, <span class="ident">Splitter</span>, <span class="ident">TcpOp</span>, <span class="ident">TcpServerOp</span>};
+<span class="kw">use</span> <span class="ident">spinach::op</span>::{<span class="ident">OpExt</span>, <span class="ident">ReadOp</span>, <span class="ident">TcpOp</span>, <span class="ident">TcpServerOp</span>};
 <span class="kw">use</span> <span class="ident">spinach::tag</span>;
 <span class="kw">use</span> <span class="ident">spinach::tcp_server::TcpServer</span>;
 
@@ -415,31 +413,29 @@
 <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">server</span>(<span class="ident">url</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="op">!</span>, <span class="ident">String</span><span class="op">&gt;</span> {
 
     <span class="kw">let</span> <span class="ident">pool</span> <span class="op">=</span> <span class="ident">TcpServer::bind</span>(<span class="ident">url</span>).<span class="kw">await</span>.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">e</span>.<span class="ident">to_string</span>())<span class="question-mark">?</span>;
-    <span class="kw">let</span> <span class="ident">op</span> <span class="op">=</span> <span class="ident">TcpServerOp::new</span>(<span class="ident">pool</span>.<span class="ident">clone</span>())
+    <span class="kw">let</span> [<span class="ident">op_reads</span>, <span class="ident">op_writes</span>] <span class="op">=</span> <span class="ident">TcpServerOp::new</span>(<span class="ident">pool</span>.<span class="ident">clone</span>())
         <span class="comment">// .debug(&quot;ingress&quot;)</span>
-        .<span class="ident">morphism</span>(<span class="ident">DeserializeKvsOperation</span>);
+        .<span class="ident">morphism</span>(<span class="ident">DeserializeKvsOperation</span>)
+        .<span class="ident">fixed_split</span>();
 
-    <span class="kw">let</span> <span class="ident">splitter</span> <span class="op">=</span> <span class="ident">Splitter::new</span>(<span class="ident">op</span>);
-
-    <span class="kw">let</span> <span class="ident">op_reads</span> <span class="op">=</span> <span class="ident">MorphismOp::new</span>(<span class="ident">splitter</span>.<span class="ident">add_split</span>(), <span class="ident">SplitReads</span>);
     <span class="kw">type</span> <span class="ident">ReadsLatRepr</span> <span class="op">=</span> <span class="ident">MapUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::HASH_MAP</span>, <span class="ident">String</span>, <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::HASH_SET</span>, <span class="ident">SocketAddr</span><span class="op">&gt;</span><span class="op">&gt;</span>;
-    <span class="kw">let</span> <span class="ident">op_reads</span> <span class="op">=</span> <span class="ident">LatticeOp</span>::<span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">ReadsLatRepr</span><span class="op">&gt;</span><span class="ident">::new_default</span>(<span class="ident">op_reads</span>);
+    <span class="kw">let</span> <span class="ident">op_reads</span> <span class="op">=</span> <span class="ident">op_reads</span>
+        .<span class="ident">morphism</span>(<span class="ident">SplitReads</span>)
+        .<span class="ident">lattice_default</span>::<span class="op">&lt;</span><span class="ident">ReadsLatRepr</span><span class="op">&gt;</span>();
 
-    <span class="kw">let</span> <span class="ident">op_writes</span> <span class="op">=</span> <span class="ident">MorphismOp::new</span>(<span class="ident">splitter</span>.<span class="ident">add_split</span>(), <span class="ident">SplitWrites</span>);
     <span class="kw">type</span> <span class="ident">WritesLatRepr</span> <span class="op">=</span> <span class="ident">MapUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::HASH_MAP</span>, <span class="ident">String</span>, <span class="ident">ValueLatRepr</span><span class="op">&gt;</span>;
-    <span class="kw">let</span> <span class="ident">op_writes</span> <span class="op">=</span> <span class="ident">LatticeOp</span>::<span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">WritesLatRepr</span><span class="op">&gt;</span><span class="ident">::new_default</span>(<span class="ident">op_writes</span>);
+    <span class="kw">let</span> <span class="ident">op_writes</span> <span class="op">=</span> <span class="ident">op_writes</span>
+        .<span class="ident">morphism</span>(<span class="ident">SplitWrites</span>)
+        .<span class="ident">lattice_default</span>::<span class="op">&lt;</span><span class="ident">WritesLatRepr</span><span class="op">&gt;</span>();
 
     <span class="kw">let</span> <span class="ident">binary_func</span> <span class="op">=</span> <span class="ident">HashPartitioned::new</span>(<span class="ident">CreateReplies</span>);
-    <span class="kw">let</span> <span class="ident">op</span> <span class="op">=</span> <span class="ident">BinaryOp::new</span>(<span class="ident">op_reads</span>, <span class="ident">op_writes</span>, <span class="ident">binary_func</span>);
-
-    <span class="kw">let</span> <span class="ident">op</span> <span class="op">=</span> <span class="ident">MorphismOp::new</span>(<span class="ident">op</span>, <span class="ident">ServerSerialize</span>);
-
-    <span class="comment">// let op = SymHashJoinOp::new(op_reads, op_writes);</span>
-
-    <span class="comment">// let op = MorphismOp::new(op, ServerSerialize);</span>
-
-    <span class="kw">let</span> <span class="ident">comp</span> <span class="op">=</span> <span class="ident">TcpServerComp::new</span>(<span class="ident">op</span>, <span class="ident">pool</span>);
-    <span class="ident">comp</span>.<span class="ident">run</span>().<span class="kw">await</span>.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="macro">format!</span>(<span class="string">&quot;TcpComp error: {:?}&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
+    <span class="ident">op_reads</span>
+        .<span class="ident">binary</span>(<span class="ident">op_writes</span>, <span class="ident">binary_func</span>)
+        .<span class="ident">morphism</span>(<span class="ident">ServerSerialize</span>)
+        .<span class="ident">comp_tcp_server</span>(<span class="ident">pool</span>)
+        .<span class="ident">run</span>()
+        .<span class="kw">await</span>
+        .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="macro">format!</span>(<span class="string">&quot;TcpComp error: {:?}&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
 }
 
 <span class="doccomment">/// Run the client portion of the program.</span>
@@ -448,13 +444,13 @@
     <span class="kw">let</span> (<span class="ident">read</span>, <span class="ident">write</span>) <span class="op">=</span> <span class="ident">TcpStream::connect</span>(<span class="ident">url</span>).<span class="kw">await</span>.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">e</span>.<span class="ident">to_string</span>())<span class="question-mark">?</span>
         .<span class="ident">into_split</span>();
 
-    <span class="kw">let</span> <span class="ident">read_op</span> <span class="op">=</span> <span class="ident">TcpOp::new</span>(<span class="ident">read</span>);
-    <span class="kw">let</span> <span class="ident">read_op</span> <span class="op">=</span> <span class="ident">MorphismOp::new</span>(<span class="ident">read_op</span>, <span class="ident">BytesToString</span>);
-    <span class="kw">let</span> <span class="ident">read_comp</span> <span class="op">=</span> <span class="ident">NullComp::new</span>(<span class="ident">read_op</span>);
+    <span class="kw">let</span> <span class="ident">read_comp</span> <span class="op">=</span> <span class="ident">TcpOp::new</span>(<span class="ident">read</span>)
+        .<span class="ident">morphism</span>(<span class="ident">BytesToString</span>)
+        .<span class="ident">comp_null</span>();
 
-    <span class="kw">let</span> <span class="ident">write_op</span> <span class="op">=</span> <span class="ident">ReadOp::new</span>(<span class="ident">input_read</span>);
-    <span class="kw">let</span> <span class="ident">write_op</span> <span class="op">=</span> <span class="ident">MorphismOp::new</span>(<span class="ident">write_op</span>, <span class="ident">StringToBytes</span>);
-    <span class="kw">let</span> <span class="ident">write_comp</span> <span class="op">=</span> <span class="ident">TcpComp::new</span>(<span class="ident">write_op</span>, <span class="ident">write</span>);
+    <span class="kw">let</span> <span class="ident">write_comp</span> <span class="op">=</span> <span class="ident">ReadOp::new</span>(<span class="ident">input_read</span>)
+        .<span class="ident">morphism</span>(<span class="ident">StringToBytes</span>)
+        .<span class="ident">comp_tcp</span>(<span class="ident">write</span>);
 
     <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="macro">tokio::try_join!</span>(
         <span class="kw">async</span> {
