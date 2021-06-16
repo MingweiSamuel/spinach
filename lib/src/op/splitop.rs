@@ -34,7 +34,7 @@ impl<O: Op> Splitter<O> {
     }
 
     #[must_use]
-    pub(crate) fn internal_add_split_reveal(&self) -> SplitOp<O> {
+    fn internal_add_split_reveal(&self) -> SplitOp<O> {
         let mut splits = self.state.splits.borrow_mut();
         let split = Rc::new(RefCell::default());
         splits.push(Rc::downgrade(&split));

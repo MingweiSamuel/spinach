@@ -7,11 +7,11 @@ use spinach::bytes::{Bytes, BytesMut};
 use spinach::tokio;
 use spinach::tokio::net::TcpStream;
 
-use spinach::comp::{CompExt, DebugComp, TcpComp, TcpServerComp};
+use spinach::comp::{CompExt};
 use spinach::func::unary::Morphism;
 use spinach::hide::{Hide, Qualifier};
 use spinach::lattice::setunion::SetUnionRepr;
-use spinach::op::{OpExt, DebugOp, MorphismOp, ReadOp, TcpOp, TcpServerOp};
+use spinach::op::{OpExt, ReadOp, TcpOp, TcpServerOp};
 use spinach::tag;
 use spinach::tcp_server::TcpServer;
 
@@ -69,7 +69,7 @@ async fn server(url: &str) -> Result<!, String> {
     TcpServerOp::new(pool.clone())
         .debug("server")
         .morphism(AddrBytesFreeze)
-        .tcp_server_comp(pool)
+        .comp_tcp_server(pool)
         .run()
         .await
         .map_err(|e| e.to_string())?;
@@ -82,11 +82,11 @@ async fn client<R: tokio::io::AsyncRead + std::marker::Unpin>(url: &str, input_r
         .into_split();
 
     let read_comp = TcpOp::new(read)
-        .debug_comp("read");
+        .comp_debug("read");
 
     let write_comp = ReadOp::new(input_read)
         .morphism(StringToBytes)
-        .tcp_comp(write);
+        .comp_tcp(write);
 
     let result = tokio::join!(
         async {

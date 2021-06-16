@@ -9,7 +9,7 @@ use spinach::tokio;
 use spinach::tokio::net::TcpStream;
 use spinach::bytes::{BufMut, Bytes, BytesMut};
 
-use spinach::comp::{CompExt, NullComp, TcpComp, TcpServerComp};
+use spinach::comp::{CompExt};
 use spinach::func::binary::{BinaryMorphism, HashPartitioned};
 use spinach::func::unary::Morphism;
 use spinach::hide::{Hide, Qualifier};
@@ -18,7 +18,7 @@ use spinach::lattice::mapunion::MapUnionRepr;
 use spinach::lattice::setunion::SetUnionRepr;
 use spinach::lattice::dompair::DomPairRepr;
 use spinach::lattice::ord::MaxRepr;
-use spinach::op::{self, OpExt, BinaryOp, DebugOp, LatticeOp, MorphismOp, ReadOp, TcpOp, TcpServerOp};
+use spinach::op::{OpExt, ReadOp, TcpOp, TcpServerOp};
 use spinach::tag;
 use spinach::tcp_server::TcpServer;
 
@@ -162,31 +162,29 @@ impl Morphism for ServerSerialize {
 async fn server(url: &str) -> Result<!, String> {
 
     let pool = TcpServer::bind(url).await.map_err(|e| e.to_string())?;
-    let op = TcpServerOp::new(pool.clone())
+    let [op_reads, op_writes] = TcpServerOp::new(pool.clone())
         // .debug("ingress")
-        .morphism(DeserializeKvsOperation);
+        .morphism(DeserializeKvsOperation)
+        .fixed_split();
 
-    let [op_reads, op_writes] = op::fixed_split(op);
-
-    let op_reads = MorphismOp::new(op_reads, SplitReads);
     type ReadsLatRepr = MapUnionRepr<tag::HASH_MAP, String, SetUnionRepr<tag::HASH_SET, SocketAddr>>;
-    let op_reads = LatticeOp::<_, ReadsLatRepr>::new_default(op_reads);
+    let op_reads = op_reads
+        .morphism(SplitReads)
+        .lattice_default::<ReadsLatRepr>();
 
-    let op_writes = MorphismOp::new(op_writes, SplitWrites);
     type WritesLatRepr = MapUnionRepr<tag::HASH_MAP, String, ValueLatRepr>;
-    let op_writes = LatticeOp::<_, WritesLatRepr>::new_default(op_writes);
+    let op_writes = op_writes
+        .morphism(SplitWrites)
+        .lattice_default::<WritesLatRepr>();
 
     let binary_func = HashPartitioned::new(CreateReplies);
-    let op = BinaryOp::new(op_reads, op_writes, binary_func);
-
-    let op = MorphismOp::new(op, ServerSerialize);
-
-    // let op = SymHashJoinOp::new(op_reads, op_writes);
-
-    // let op = MorphismOp::new(op, ServerSerialize);
-
-    let comp = TcpServerComp::new(op, pool);
-    comp.run().await.map_err(|e| format!("TcpComp error: {:?}", e))?;
+    op_reads
+        .binary(op_writes, binary_func)
+        .morphism(ServerSerialize)
+        .comp_tcp_server(pool)
+        .run()
+        .await
+        .map_err(|e| format!("TcpComp error: {:?}", e))?;
 }
 
 /// Run the client portion of the program.
@@ -195,13 +193,13 @@ async fn client<R: tokio::io::AsyncRead + std::marker::Unpin>(url: &str, input_r
     let (read, write) = TcpStream::connect(url).await.map_err(|e| e.to_string())?
         .into_split();
 
-    let read_op = TcpOp::new(read);
-    let read_op = MorphismOp::new(read_op, BytesToString);
-    let read_comp = NullComp::new(read_op);
+    let read_comp = TcpOp::new(read)
+        .morphism(BytesToString)
+        .comp_null();
 
-    let write_op = ReadOp::new(input_read);
-    let write_op = MorphismOp::new(write_op, StringToBytes);
-    let write_comp = TcpComp::new(write_op, write);
+    let write_comp = ReadOp::new(input_read)
+        .morphism(StringToBytes)
+        .comp_tcp(write);
 
     let result = tokio::try_join!(
         async {

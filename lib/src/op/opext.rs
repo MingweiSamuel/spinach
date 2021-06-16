@@ -5,9 +5,10 @@ use bytes::Bytes;
 use tokio::net::tcp::OwnedWriteHalf;
 
 use crate::collections::Collection;
-use crate::comp::{DebugComp, TcpComp, TcpServerComp};
+use crate::comp::{DebugComp, NullComp, TcpComp, TcpServerComp};
 use crate::func::unary::Morphism;
-use crate::lattice::LatticeRepr;
+use crate::func::binary::BinaryMorphism;
+use crate::lattice::{Convert, LatticeRepr, Merge};
 use crate::lattice::setunion::SetUnion;
 use crate::tcp_server::TcpServer;
 
@@ -27,6 +28,29 @@ pub trait OpExt: Sized + Op {
         MorphismOp::new(self, func)
     }
 
+    fn lattice<Lr: LatticeRepr + Merge<Self::LatRepr>>(self, bottom: Lr::Repr) -> LatticeOp<Self, Lr>
+    where
+        Self::LatRepr: Convert<Lr>,
+    {
+        LatticeOp::new(self, bottom)
+    }
+
+    fn binary<F, O: OpValue>(self, op: O, func: F) -> BinaryOp<Self, O, F>
+    where
+        Self: OpValue,
+        F: BinaryMorphism<InLatReprA = Self::LatRepr, InLatReprB = O::LatRepr>,
+    {
+        BinaryOp::new(self, op, func)
+    }
+
+    fn lattice_default<Lr: LatticeRepr + Merge<Self::LatRepr>>(self) -> LatticeOp<Self, Lr>
+    where
+        Self::LatRepr: Convert<Lr>,
+        Lr::Repr: Default,
+    {
+        LatticeOp::new_default(self)
+    }
+
     fn fixed_split<const N: usize>(self) -> [SplitOp<Self>; N] {
         fixed_split(self)
     }
@@ -38,7 +62,7 @@ pub trait OpExt: Sized + Op {
         Splitter::new(self)
     }
 
-    fn debug_comp(self, tag: &'static str) -> DebugComp<Self>
+    fn comp_debug(self, tag: &'static str) -> DebugComp<Self>
     where
         Self: OpDelta,
         <Self::LatRepr as LatticeRepr>::Repr: std::fmt::Debug,
@@ -46,7 +70,14 @@ pub trait OpExt: Sized + Op {
         DebugComp::new(self, tag)
     }
 
-    fn tcp_comp(self, tcp_write: OwnedWriteHalf) -> TcpComp<Self>
+    fn comp_null(self) -> NullComp<Self>
+    where
+        Self: OpDelta,
+    {
+        NullComp::new(self)
+    }
+
+    fn comp_tcp(self, tcp_write: OwnedWriteHalf) -> TcpComp<Self>
     where
         Self: OpDelta,
         Self::LatRepr: LatticeRepr<Lattice = SetUnion<Bytes>>,
@@ -55,7 +86,7 @@ pub trait OpExt: Sized + Op {
         TcpComp::new(self, tcp_write)
     }
 
-    fn tcp_server_comp(self, tcp_server: TcpServer) -> TcpServerComp<Self>
+    fn comp_tcp_server(self, tcp_server: TcpServer) -> TcpServerComp<Self>
     where
         Self: OpDelta,
         Self::LatRepr: LatticeRepr<Lattice = SetUnion<(SocketAddr, Bytes)>>,
