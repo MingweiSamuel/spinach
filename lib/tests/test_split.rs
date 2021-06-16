@@ -44,7 +44,7 @@ pub async fn test_split_merge() -> Result<(), String> {
 
     let merge = MergeOp::new(split0, split1);
 
-    let comp = DebugComp::new(merge);
+    let comp = DebugComp::new(merge, "output");
 
     comp.run().await.unwrap_err();
 

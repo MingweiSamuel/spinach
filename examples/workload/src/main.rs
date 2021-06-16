@@ -5,7 +5,7 @@ use rand::distributions::Distribution;
 use sha1::{Sha1, Digest};
 use zipf::ZipfDistribution;
 
-const SIZE: usize = 10_000;
+const SIZE: usize = 1_000_000;
 const READ_PCT: f64 = 0.75;
 
 const ZIPF_N: usize = 10_000;
@@ -25,13 +25,13 @@ pub fn hash(val: u64) -> String {
 pub fn main() {
     let mut rng = rand::thread_rng();
     let zipf = ZipfDistribution::new(ZIPF_N, ZIPF_COEF).unwrap();
-    for _ in 0..SIZE {
+    for i in 0..SIZE {
         let key = hash(zipf.sample(&mut rng) as u64);
         if rng.gen_bool(READ_PCT) {
             println!("Read({:?})", key);
         }
         else {
-            println!("Write({:?}, {:?})", key, hash(rng.next_u64()));
+            println!("Write({:?}, ({}, {:?}))", key, i, hash(rng.next_u64()));
         }
     }
 }

@@ -9,7 +9,7 @@ use spinach::tokio;
 use spinach::tokio::net::TcpStream;
 use spinach::bytes::{BufMut, Bytes, BytesMut};
 
-use spinach::comp::{CompExt, DebugComp, TcpComp, TcpServerComp};
+use spinach::comp::{CompExt, NullComp, TcpComp, TcpServerComp};
 use spinach::func::binary::{BinaryMorphism, HashPartitioned};
 use spinach::func::unary::Morphism;
 use spinach::hide::{Hide, Qualifier};
@@ -18,7 +18,7 @@ use spinach::lattice::mapunion::MapUnionRepr;
 use spinach::lattice::setunion::SetUnionRepr;
 use spinach::lattice::dompair::DomPairRepr;
 use spinach::lattice::ord::MaxRepr;
-use spinach::op::{BinaryOp, DebugOp, LatticeOp, MorphismOp, ReadOp, Splitter, TcpOp, TcpServerOp};
+use spinach::op::{OpExt, BinaryOp, DebugOp, LatticeOp, MorphismOp, ReadOp, Splitter, TcpOp, TcpServerOp};
 use spinach::tag;
 use spinach::tcp_server::TcpServer;
 
@@ -162,9 +162,9 @@ impl Morphism for ServerSerialize {
 async fn server(url: &str) -> Result<!, String> {
 
     let pool = TcpServer::bind(url).await.map_err(|e| e.to_string())?;
-    let op = TcpServerOp::new(pool.clone());
-    let op = DebugOp::new(op, "ingress");
-    let op = MorphismOp::new(op, DeserializeKvsOperation);
+    let op = TcpServerOp::new(pool.clone())
+        // .debug("ingress")
+        .morphism(DeserializeKvsOperation);
 
     let splitter = Splitter::new(op);
 
@@ -197,23 +197,28 @@ async fn client<R: tokio::io::AsyncRead + std::marker::Unpin>(url: &str, input_r
 
     let read_op = TcpOp::new(read);
     let read_op = MorphismOp::new(read_op, BytesToString);
-    let read_comp = DebugComp::new(read_op);
+    let read_comp = NullComp::new(read_op);
 
     let write_op = ReadOp::new(input_read);
     let write_op = MorphismOp::new(write_op, StringToBytes);
     let write_comp = TcpComp::new(write_op, write);
 
-    let result = tokio::join!(
+    let result = tokio::try_join!(
         async {
             read_comp.run().await.map_err(|_| format!("Read failed."))
         },
         async {
-            write_comp.run().await.map_err(|e| e.to_string())
+            let err = write_comp.run().await.map_err(|e| e.to_string());
+            tokio::time::sleep(std::time::Duration::from_secs(5)).await;
+            err
         },
     );
 
-    Err(format!("Read error: {:?}, Write error: {:?}",
-        result.0.unwrap_err(), result.1.unwrap_err()))
+    result?;
+    unreachable!();
+
+    // Err(format!("Read error: {:?}, Write error: {:?}",
+    //     result.0.unwrap_err(), result.1.unwrap_err()))
 }
 
 /// Entry point of the application.

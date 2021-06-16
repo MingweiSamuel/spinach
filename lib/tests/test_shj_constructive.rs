@@ -34,7 +34,7 @@ pub async fn test_shj_constructive() -> Result<(), String> {
     let op = BinaryOp::new(op_a, op_b, binary_func);
 
     // let op = SymHashJoinOp::new(op_a, op_b);
-    let comp = DebugComp::new(op);
+    let comp = DebugComp::new(op, "output");
 
     comp.run().await.unwrap_err();
 

@@ -20,6 +20,9 @@ impl<O: OpDelta> Future for Next<'_, O> {
 mod comptrait;
 pub use comptrait::*;
 
+mod nullcomp;
+pub use nullcomp::*;
+
 mod debugcomp;
 pub use debugcomp::*;
 

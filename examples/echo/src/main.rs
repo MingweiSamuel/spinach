@@ -11,7 +11,7 @@ use spinach::comp::{CompExt, DebugComp, TcpComp, TcpServerComp};
 use spinach::func::unary::Morphism;
 use spinach::hide::{Hide, Qualifier};
 use spinach::lattice::setunion::SetUnionRepr;
-use spinach::op::{DebugOp, MorphismOp, ReadOp, TcpOp, TcpServerOp};
+use spinach::op::{OpExt, DebugOp, MorphismOp, ReadOp, TcpOp, TcpServerOp};
 use spinach::tag;
 use spinach::tcp_server::TcpServer;
 
@@ -65,12 +65,14 @@ async fn main() -> Result<!, String> {
 async fn server(url: &str) -> Result<!, String> {
 
     let pool = TcpServer::bind(url).await.map_err(|e| e.to_string())?;
-    let op = TcpServerOp::new(pool.clone());
-    let op = DebugOp::new(op, "server");
-    let op = MorphismOp::new(op, AddrBytesFreeze);
-    let comp = TcpServerComp::new(op, pool);
 
-    comp.run().await.map_err(|e| e.to_string())?;
+    TcpServerOp::new(pool.clone())
+        .debug("server")
+        .morphism(AddrBytesFreeze)
+        .tcp_server_comp(pool)
+        .run()
+        .await
+        .map_err(|e| e.to_string())?;
 }
 
 /// Run the client portion of the program.
@@ -79,12 +81,12 @@ async fn client<R: tokio::io::AsyncRead + std::marker::Unpin>(url: &str, input_r
     let (read, write) = TcpStream::connect(url).await.map_err(|e| e.to_string())?
         .into_split();
 
-    let read_op = TcpOp::new(read);
-    let read_comp = DebugComp::new(read_op);
+    let read_comp = TcpOp::new(read)
+        .debug_comp("read");
 
-    let write_op = ReadOp::new(input_read);
-    let write_op = MorphismOp::new(write_op, StringToBytes);
-    let write_comp = TcpComp::new(write_op, write);
+    let write_comp = ReadOp::new(input_read)
+        .morphism(StringToBytes)
+        .tcp_comp(write);
 
     let result = tokio::join!(
         async {

@@ -25,7 +25,7 @@ pub async fn test_shj_monolith() -> Result<(), String> {
     ]);
 
     let op = SymHashJoinOp::new(op_a, op_b);
-    let comp = DebugComp::new(op);
+    let comp = DebugComp::new(op, "output");
 
     comp.run().await.unwrap_err();
 
