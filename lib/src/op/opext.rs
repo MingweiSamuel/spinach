@@ -6,12 +6,13 @@ use tokio::net::tcp::OwnedWriteHalf;
 
 use crate::collections::Collection;
 use crate::comp::{DebugComp, NullComp, TcpComp, TcpServerComp};
-use crate::func::unary::Morphism;
+use crate::func::unary::{Morphism, ClosureMorphism};
 use crate::func::binary::BinaryMorphism;
 use crate::lattice::{Convert, LatticeRepr, Merge};
 use crate::lattice::setunion::SetUnion;
 use crate::lattice::pair::PairRepr;
 use crate::tcp_server::TcpServer;
+use crate::hide::{Hide, Delta};
 
 use super::*;
 
@@ -27,6 +28,13 @@ pub trait OpExt: Sized + Op {
 
     fn morphism<F: Morphism<InLatRepr = Self::LatRepr>>(self, func: F) -> MorphismOp<Self, F> {
         MorphismOp::new(self, func)
+    }
+
+    fn morphism_closure<Out: LatticeRepr, F>(self, func: F) -> MorphismOp<Self, ClosureMorphism<Self::LatRepr, Out, F>>
+    where
+        F: Fn(Hide<Delta, Self::LatRepr>) -> Hide<Delta, Out>,
+    {
+        MorphismOp::new(self, ClosureMorphism::new(func))
     }
 
     fn lattice<Lr: LatticeRepr + Merge<Self::LatRepr>>(self, bottom: Lr::Repr) -> LatticeOp<Self, Lr>

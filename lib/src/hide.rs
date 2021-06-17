@@ -36,10 +36,11 @@ impl<Y: Qualifier, Lr: LatticeRepr + ?Sized> Hide<Y, Lr> {
     }
 
     pub fn into_delta(self) -> Hide<Delta, Lr> {
-        Hide {
-            value: self.value,
-            _phantom: std::marker::PhantomData,
-        }
+        Hide::new(self.value)
+    }
+
+    pub fn into_qualifier_reveal<Z: Qualifier>(self) -> Hide<Z, Lr> {
+        Hide::new(self.value)
     }
 }
 
