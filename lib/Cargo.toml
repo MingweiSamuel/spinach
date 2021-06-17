@@ -12,6 +12,7 @@ bytes = "1.0"
 futures-core = "0.3"
 futures = "0.3"
 ref-cast = "1.0"
+split-iter = "0.1"
 static_assertions = "1.1.0"
 tokio = { version = "1", features = [ "io-std", "io-util", "macros", "net", "rt", "sync", "time", "fs" ] }
 tokio-stream = "0.1"

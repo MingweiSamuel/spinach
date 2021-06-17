@@ -216,6 +216,16 @@ mod fns {
         {
             Hide::new(self.into_reveal().into_iter().flatten().collect())
         }
+
+        pub fn switch<TargetTag: SetTag<T>, F: Fn(&T) -> bool>(self, f: F) -> (Hide<Y, SetUnionRepr<TargetTag, T>>, Hide<Y, SetUnionRepr<TargetTag, T>>)
+        where
+            SetUnionRepr<TargetTag, T>: LatticeRepr<Lattice = SetUnion<T>>,
+            <SetUnionRepr<TargetTag, T> as LatticeRepr>::Repr: FromIterator<T>,
+        {
+            use split_iter::Splittable;
+            let (iter_a, iter_b) = self.into_reveal().into_iter().split(f);
+            (Hide::new(iter_a.collect()), Hide::new(iter_b.collect()))
+        }
     }
 
     impl<Y: Qualifier, Tag: SetTag<(K, V)>, K: Clone, V: Clone> Hide<Y, SetUnionRepr<Tag, (K, V)>>

@@ -5,7 +5,6 @@ use std::rc::{Rc};
 use crate::lattice::LatticeRepr;
 use crate::lattice::pair::PairRepr;
 use crate::hide::{Hide, Qualifier, Delta, Value};
-use crate::metadata::Order;
 
 use super::*;
 
@@ -72,13 +71,24 @@ mod private {
     }
 }
 
-pub trait SwitchMode<Ra: LatticeRepr, Rb: LatticeRepr>: private::SwitchModePrivate<Ra, Rb> {}
+pub mod switch {
+    use crate::lattice::LatticeRepr;
+    use crate::metadata::Order;
 
-pub enum SwitchModeA {}
-impl<Ra: LatticeRepr, Rb: LatticeRepr> SwitchMode<Ra, Rb> for SwitchModeA {}
+    use super::private;
 
-pub enum SwitchModeB {}
-impl<Ra: LatticeRepr, Rb: LatticeRepr> SwitchMode<Ra, Rb> for SwitchModeB {}
+    pub trait SwitchMode<Ra: LatticeRepr, Rb: LatticeRepr>: private::SwitchModePrivate<Ra, Rb> {}
+
+    pub enum SwitchModeA {}
+    impl<Ra: LatticeRepr, Rb: LatticeRepr> SwitchMode<Ra, Rb> for SwitchModeA {}
+
+    pub enum SwitchModeB {}
+    impl<Ra: LatticeRepr, Rb: LatticeRepr> SwitchMode<Ra, Rb> for SwitchModeB {}
+
+    pub struct SwitchOrder<O: Order, S>(std::marker::PhantomData<(O, S)>);
+    impl<O: Order, S> Order for SwitchOrder<O, S> {}
+}
+use switch::*;
 
 
 
@@ -123,10 +133,6 @@ where
 {
     type LatRepr = S::ThisLatRepr;
 }
-
-
-pub struct SwitchOrder<O: Order, S>(std::marker::PhantomData<(O, S)>);
-impl<O: Order, S> Order for SwitchOrder<O, S> {}
 
 impl<O: OpDelta, Ra: LatticeRepr, Rb: LatticeRepr, S: SwitchMode<Ra, Rb>> OpDelta for SwitchOp<O, Ra, Rb, S>
 where

@@ -10,6 +10,7 @@ use crate::func::unary::Morphism;
 use crate::func::binary::BinaryMorphism;
 use crate::lattice::{Convert, LatticeRepr, Merge};
 use crate::lattice::setunion::SetUnion;
+use crate::lattice::pair::PairRepr;
 use crate::tcp_server::TcpServer;
 
 use super::*;
@@ -60,6 +61,13 @@ pub trait OpExt: Sized + Op {
         Self: OpValue,
     {
         Splitter::new(self)
+    }
+
+    fn switch<Ra: LatticeRepr, Rb: LatticeRepr>(self) -> (SwitchOp<Self, Ra, Rb, switch::SwitchModeA>, SwitchOp<Self, Ra, Rb, switch::SwitchModeB>)
+    where
+        Self: Op<LatRepr = PairRepr<Ra, Rb>>,
+    {
+        SwitchOp::new(self)
     }
 
     fn comp_debug(self, tag: &'static str) -> DebugComp<Self>
