@@ -178,6 +178,7 @@
 <span id="176">176</span>
 <span id="177">177</span>
 <span id="178">178</span>
+<span id="179">179</span>
 </pre><pre class="rust">
 <span class="kw">use</span> <span class="ident">std::cell</span>::{<span class="ident">Cell</span>, <span class="ident">RefCell</span>};
 <span class="kw">use</span> <span class="ident">std::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>, <span class="ident">Waker</span>};
@@ -197,7 +198,7 @@
 <span class="kw">struct</span> <span class="ident">SplitterState</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">Op</span><span class="op">&gt;</span> {
     <span class="ident">op</span>: <span class="ident">O</span>,
     <span class="ident">closed</span>: <span class="ident">Cell</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span>,
-    <span class="ident">splits</span>: <span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Weak</span><span class="op">&lt;</span><span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">SplitState</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">splits</span>: <span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Weak</span><span class="op">&lt;</span><span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">SplitOpState</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Splitter</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">Op</span><span class="op">&gt;</span> {
@@ -247,7 +248,7 @@
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SplitOp</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">Op</span><span class="op">&gt;</span> {
     <span class="ident">splitter</span>: <span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">SplitterState</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-    <span class="ident">split</span>: <span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">SplitState</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">split</span>: <span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">SplitOpState</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">Op</span><span class="op">&gt;</span> <span class="ident">Op</span> <span class="kw">for</span> <span class="ident">SplitOp</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span> {
@@ -314,6 +315,7 @@
             }
         }
 
+        <span class="comment">// Poll upstream.</span>
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">splitter</span>.<span class="ident">op</span>.<span class="ident">poll_delta</span>(<span class="ident">ctx</span>) {
             <span class="ident">Poll::Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">delta</span>)) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">for</span> <span class="ident">split</span> <span class="kw">in</span> <span class="ident">splits_after</span>.<span class="ident">iter_mut</span>().<span class="ident">chain</span>(<span class="ident">splits_before</span>.<span class="ident">iter_mut</span>()) {
@@ -326,11 +328,11 @@
                     }
                 }
                 <span class="ident">Poll::Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">delta</span>))
-            },
+            }
             <span class="ident">Poll::Ready</span>(<span class="prelude-val">None</span>) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="self">self</span>.<span class="ident">splitter</span>.<span class="ident">closed</span>.<span class="ident">replace</span>(<span class="bool-val">true</span>);
                 <span class="ident">Poll::Ready</span>(<span class="prelude-val">None</span>)
-            },
+            }
             <span class="ident">Poll::Pending</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Poll::Pending</span>,
         }
     }
@@ -344,12 +346,12 @@
 
 
 
-<span class="kw">struct</span> <span class="ident">SplitState</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">Op</span><span class="op">&gt;</span> {
+<span class="kw">struct</span> <span class="ident">SplitOpState</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">Op</span><span class="op">&gt;</span> {
     <span class="ident">waker</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Waker</span><span class="op">&gt;</span>,
     <span class="ident">delta</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Delta</span>, <span class="ident">O::LatRepr</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">Op</span><span class="op">&gt;</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">SplitState</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">Op</span><span class="op">&gt;</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">SplitOpState</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> {
             <span class="ident">waker</span>: <span class="prelude-val">None</span>,
