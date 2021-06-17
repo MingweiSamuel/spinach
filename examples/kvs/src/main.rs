@@ -18,6 +18,7 @@ use spinach::lattice::mapunion::MapUnionRepr;
 use spinach::lattice::setunion::SetUnionRepr;
 use spinach::lattice::dompair::DomPairRepr;
 use spinach::lattice::ord::MaxRepr;
+use spinach::lattice::pair::PairRepr;
 use spinach::op::{OpExt, ReadOp, TcpOp, TcpServerOp};
 use spinach::tag;
 use spinach::tcp_server::TcpServer;
@@ -37,7 +38,7 @@ impl Morphism for DeserializeKvsOperation {
     type OutLatRepr = SetUnionRepr<tag::OPTION, (SocketAddr, KvsOperation)>;
     fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
         item
-            .filter_map_single(|(addr, bytes)| {
+            .filter_map_one(|(addr, bytes)| {
                 match ron::de::from_bytes(&*bytes) {
                     Ok(string) => Some((addr, string)),
                     Err(err) => {
@@ -49,29 +50,27 @@ impl Morphism for DeserializeKvsOperation {
     }
 }
 
-pub struct SplitReads;
-impl Morphism for SplitReads {
+pub struct Split;
+impl Morphism for Split {
     type InLatRepr  = SetUnionRepr<tag::OPTION, (SocketAddr, KvsOperation)>;
-    type OutLatRepr = MapUnionRepr<tag::VEC, String, SetUnionRepr<tag::SINGLE, SocketAddr>>;
+    type OutLatRepr = PairRepr<
+        MapUnionRepr<tag::VEC, String, SetUnionRepr<tag::SINGLE, SocketAddr>>,
+        MapUnionRepr<tag::OPTION, String, ValueLatRepr>,
+    >;
     fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
-        item
+        let (reads, writes) = item.switch_one(|(_addr, operation)| match operation { KvsOperation::Read(_) => true, KvsOperation::Write(_, _) => false });
+
+        let reads = reads
             .filter_map::<_, tag::VEC, _>(|(addr, operation)| {
                 match operation {
                     KvsOperation::Read(key) => Some((key, addr)),
                     KvsOperation::Write(_, _) => None,
                 }
             })
-            .into_map()
-    }
-}
+            .into_map();
 
-pub struct SplitWrites;
-impl Morphism for SplitWrites {
-    type InLatRepr  = SetUnionRepr<tag::OPTION, (SocketAddr, KvsOperation)>;
-    type OutLatRepr = MapUnionRepr<tag::OPTION, String, ValueLatRepr>;
-    fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
-        // TODO!!! REVEAL!!!!
-        let out = item.into_reveal()
+        // TODO REVEAL!!
+        let writes = writes.into_reveal()
             .and_then(|(_addr, operation)| {
                 match operation {
                     KvsOperation::Read(_) => None,
@@ -80,16 +79,52 @@ impl Morphism for SplitWrites {
                     }
                 }
             });
-        Hide::new(out)
+
+        Hide::zip(reads, Hide::new(writes))
     }
 }
+
+// pub struct SplitReads;
+// impl Morphism for SplitReads {
+//     type InLatRepr  = SetUnionRepr<tag::OPTION, (SocketAddr, KvsOperation)>;
+//     type OutLatRepr = MapUnionRepr<tag::VEC, String, SetUnionRepr<tag::SINGLE, SocketAddr>>;
+//     fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
+//         item
+//             .filter_map::<_, tag::VEC, _>(|(addr, operation)| {
+//                 match operation {
+//                     KvsOperation::Read(key) => Some((key, addr)),
+//                     KvsOperation::Write(_, _) => None,
+//                 }
+//             })
+//             .into_map()
+//     }
+// }
+
+// pub struct SplitWrites;
+// impl Morphism for SplitWrites {
+//     type InLatRepr  = SetUnionRepr<tag::OPTION, (SocketAddr, KvsOperation)>;
+//     type OutLatRepr = MapUnionRepr<tag::OPTION, String, ValueLatRepr>;
+//     fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
+//         // TODO!!! REVEAL!!!!
+//         let out = item.into_reveal()
+//             .and_then(|(_addr, operation)| {
+//                 match operation {
+//                     KvsOperation::Read(_) => None,
+//                     KvsOperation::Write(key, val) => {
+//                         Some((key, val))
+//                     }
+//                 }
+//             });
+//         Hide::new(out)
+//     }
+// }
 
 pub struct BytesToString;
 impl Morphism for BytesToString {
     type InLatRepr  = SetUnionRepr<tag::SINGLE, BytesMut>;
     type OutLatRepr = SetUnionRepr<tag::OPTION, String>;
     fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
-        item.filter_map_single(|bytes| {
+        item.filter_map_one(|bytes| {
             match String::from_utf8(bytes.to_vec()) {
                 Ok(string) => Some(string),
                 Err(err) => {
@@ -106,7 +141,7 @@ impl Morphism for StringToBytes {
     type InLatRepr  = SetUnionRepr<tag::SINGLE, String>;
     type OutLatRepr = SetUnionRepr<tag::SINGLE, Bytes>;
     fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
-        item.map_single(|string| string.into())
+        item.map_one(|string| string.into())
     }
 }
 
@@ -162,24 +197,27 @@ impl Morphism for ServerSerialize {
 async fn server(url: &str) -> Result<!, String> {
 
     let pool = TcpServer::bind(url).await.map_err(|e| e.to_string())?;
-    let [op_reads, op_writes] = TcpServerOp::new(pool.clone())
+    let (op_reads, op_writes) = TcpServerOp::new(pool.clone())
         // .debug("ingress")
         .morphism(DeserializeKvsOperation)
-        .fixed_split();
+        .morphism(Split)
+        // .debug("split")
+        .switch();
 
     type ReadsLatRepr = MapUnionRepr<tag::HASH_MAP, String, SetUnionRepr<tag::HASH_SET, SocketAddr>>;
     let op_reads = op_reads
-        .morphism(SplitReads)
+        // .debug("read")
         .lattice_default::<ReadsLatRepr>();
 
     type WritesLatRepr = MapUnionRepr<tag::HASH_MAP, String, ValueLatRepr>;
     let op_writes = op_writes
-        .morphism(SplitWrites)
+        // .debug("write")
         .lattice_default::<WritesLatRepr>();
 
     let binary_func = HashPartitioned::new(CreateReplies);
     op_reads
         .binary(op_writes, binary_func)
+        // .debug("after binop")
         .morphism(ServerSerialize)
         .comp_tcp_server(pool)
         .run()
@@ -195,7 +233,7 @@ async fn client<R: tokio::io::AsyncRead + std::marker::Unpin>(url: &str, input_r
 
     let read_comp = TcpOp::new(read)
         .morphism(BytesToString)
-        .comp_null();
+        .comp_debug("read");
 
     let write_comp = ReadOp::new(input_read)
         .morphism(StringToBytes)

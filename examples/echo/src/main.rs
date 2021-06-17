@@ -20,7 +20,7 @@ impl Morphism for AddrBytesFreeze {
     type InLatRepr  = SetUnionRepr<tag::SINGLE, (SocketAddr, BytesMut)>;
     type OutLatRepr = SetUnionRepr<tag::SINGLE, (SocketAddr, Bytes)>;
     fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
-        item.map_single(|(addr, bytes)| (addr, bytes.freeze()))
+        item.map_one(|(addr, bytes)| (addr, bytes.freeze()))
     }
 }
 
@@ -29,7 +29,7 @@ impl Morphism for StringToBytes {
     type InLatRepr  = SetUnionRepr<tag::SINGLE, String>;
     type OutLatRepr = SetUnionRepr<tag::SINGLE, Bytes>;
     fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
-        item.map_single(|string| string.into())
+        item.map_one(|string| string.into())
     }
 }
 

@@ -170,12 +170,49 @@ mod fns {
     where
         T: Clone,
     {
-        pub fn map_single<U: Clone, F: Fn(T) -> U>(self, f: F) -> Hide<Y, SetUnionRepr<tag::SINGLE, U>> {
+        pub fn map_one<U: Clone, F: Fn(T) -> U>(self, f: F) -> Hide<Y, SetUnionRepr<tag::SINGLE, U>> {
             Hide::new(crate::collections::Single((f)(self.into_reveal().0)))
         }
 
-        pub fn filter_map_single<U: Clone, F: Fn(T) -> Option<U>>(self, f: F) -> Hide<Y, SetUnionRepr<tag::OPTION, U>> {
+        pub fn filter_map_one<U: Clone, F: Fn(T) -> Option<U>>(self, f: F) -> Hide<Y, SetUnionRepr<tag::OPTION, U>> {
             Hide::new((f)(self.into_reveal().0))
+        }
+
+        pub fn switch_one<F: Fn(&T) -> bool>(self, f: F) -> (Hide<Y, SetUnionRepr<tag::OPTION, T>>, Hide<Y, SetUnionRepr<tag::OPTION, T>>) {
+            let item = self.into_reveal().0;
+            if (f)(&item) {
+                (Hide::new(Some(item)), Hide::new(None))
+            }
+            else {
+                (Hide::new(None), Hide::new(Some(item)))
+            }
+        }
+    }
+
+    impl<Y: Qualifier, T> Hide<Y, SetUnionRepr<tag::OPTION, T>>
+    where
+        T: Clone,
+    {
+        pub fn map_one<U: Clone, F: Fn(T) -> U>(self, f: F) -> Hide<Y, SetUnionRepr<tag::OPTION, U>> {
+            Hide::new(self.into_reveal().map(f))
+        }
+
+        pub fn filter_map_one<U: Clone, F: Fn(T) -> Option<U>>(self, f: F) -> Hide<Y, SetUnionRepr<tag::OPTION, U>> {
+            Hide::new(self.into_reveal().and_then(f))
+        }
+
+        pub fn switch_one<F: Fn(&T) -> bool>(self, f: F) -> (Hide<Y, SetUnionRepr<tag::OPTION, T>>, Hide<Y, SetUnionRepr<tag::OPTION, T>>) {
+            if let Some(item) = self.into_reveal() {
+                if (f)(&item) {
+                    (Hide::new(Some(item)), Hide::new(None))
+                }
+                else {
+                    (Hide::new(None), Hide::new(Some(item)))
+                }
+            }
+            else {
+                (Hide::new(None), Hide::new(None))
+            }
         }
     }
 
