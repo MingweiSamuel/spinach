@@ -241,7 +241,7 @@ async fn main() -> Result<!, String> {
     // we need an address and potentially a sleep duration.
     let args: Vec<_> = env::args().collect();
 
-    match &args[..] {
+    match &*args {
         [_, mode, url]             if mode == "server" => server(url).await?,
         [_, mode, url]             if mode == "client" => client(url, tokio::io::stdin()).await?,
         [_, mode, url, input_file] if mode == "client" => {
