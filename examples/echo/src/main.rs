@@ -58,14 +58,12 @@ async fn main() -> Result<!, String> {
 
     match &args[..] {
         [_, mode, url]             if mode == "server" => server(url).await?,
-        [_, mode, url]             if mode == "client" => {
-            client(url, tokio::io::stdin()).await?
-        }
+        [_, mode, url]             if mode == "client" => client(url, tokio::io::stdin()).await?,
         [_, mode, url, input_file] if mode == "client" => {
             match tokio::fs::File::open(input_file).await {
                 Ok(file) => client(url, file).await?,
                 Err(err) => {
-                    eprintln!("Failed to open inpu_file: \"{}\", error: {}", input_file, err);
+                    eprintln!("Failed to open input_file: \"{}\", error: {}", input_file, err);
                     process::exit(2);
                 }
             }
