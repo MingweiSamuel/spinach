@@ -196,8 +196,8 @@ impl Morphism for ServerSerialize {
 /// Run the server portion of the program.
 async fn server(url: &str) -> Result<!, String> {
 
-    let pool = TcpServer::bind(url).await.map_err(|e| e.to_string())?;
-    let (op_reads, op_writes) = TcpServerOp::new(pool.clone())
+    let server = TcpServer::bind(url).await.map_err(|e| e.to_string())?;
+    let (op_reads, op_writes) = TcpServerOp::new(server.clone())
         // .debug("ingress")
         .morphism(DeserializeKvsOperation)
         .morphism(Split)
@@ -219,7 +219,7 @@ async fn server(url: &str) -> Result<!, String> {
         .binary(op_writes, binary_func)
         // .debug("after binop")
         .morphism(ServerSerialize)
-        .comp_tcp_server(pool)
+        .comp_tcp_server(server)
         .run()
         .await
         .map_err(|e| format!("TcpComp error: {:?}", e))?;

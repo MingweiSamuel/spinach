@@ -64,12 +64,12 @@ async fn main() -> Result<!, String> {
 /// Run the server portion of the program.
 async fn server(url: &str) -> Result<!, String> {
 
-    let pool = TcpServer::bind(url).await.map_err(|e| e.to_string())?;
+    let server = TcpServer::bind(url).await.map_err(|e| e.to_string())?;
 
-    TcpServerOp::new(pool.clone())
+    TcpServerOp::new(server.clone())
         .debug("server")
         .morphism(AddrBytesFreeze)
-        .comp_tcp_server(pool)
+        .comp_tcp_server(server)
         .run()
         .await
         .map_err(|e| e.to_string())?;

@@ -13,12 +13,12 @@ use crate::tcp_server::TcpServer;
 use super::*;
 
 pub struct TcpServerOp {
-    tcp_pool: TcpServer,
+    tcp_server: TcpServer,
 }
 
 impl TcpServerOp {
-    pub fn new(tcp_pool: TcpServer) -> Self {
-        Self { tcp_pool }
+    pub fn new(tcp_server: TcpServer) -> Self {
+        Self { tcp_server }
     }
 }
 
@@ -34,13 +34,13 @@ impl OpDelta for TcpServerOp {
 
     fn poll_delta(&self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
 
-        match self.tcp_pool.poll_accept(ctx) {
+        match self.tcp_server.poll_accept(ctx) {
             Poll::Ready(Ok(addr)) => println!("New client! {}", addr),
             Poll::Ready(Err(err)) => eprintln!("Accept err! {}", err),
             Poll::Pending => (),
         }
 
-        match self.tcp_pool.poll_read(ctx) {
+        match self.tcp_server.poll_read(ctx) {
             Poll::Ready(Some(pair)) => {
                 let hide = Hide::new(Single(pair));
                 Poll::Ready(Some(hide))
