@@ -187,6 +187,12 @@
 <span id="185">185</span>
 <span id="186">186</span>
 <span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
+<span id="192">192</span>
+<span id="193">193</span>
 </pre><pre class="rust">
 <span class="kw">use</span> <span class="ident">std::cell</span>::{<span class="ident">RefCell</span>};
 <span class="kw">use</span> <span class="ident">std::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>, <span class="ident">Waker</span>};
@@ -195,7 +201,6 @@
 <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::lattice::LatticeRepr</span>;
 <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::lattice::pair::PairRepr</span>;
 <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::hide</span>::{<span class="ident">Hide</span>, <span class="ident">Qualifier</span>, <span class="ident">Delta</span>, <span class="ident">Value</span>};
-<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::metadata::Order</span>;
 
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
@@ -262,13 +267,24 @@
     }
 }
 
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">SwitchMode</span><span class="op">&lt;</span><span class="ident">Ra</span>: <span class="ident">LatticeRepr</span>, <span class="ident">Rb</span>: <span class="ident">LatticeRepr</span><span class="op">&gt;</span>: <span class="ident">private::SwitchModePrivate</span><span class="op">&lt;</span><span class="ident">Ra</span>, <span class="ident">Rb</span><span class="op">&gt;</span> {}
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">switch</span> {
+    <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::lattice::LatticeRepr</span>;
+    <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::metadata::Order</span>;
 
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">SwitchModeA</span> {}
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Ra</span>: <span class="ident">LatticeRepr</span>, <span class="ident">Rb</span>: <span class="ident">LatticeRepr</span><span class="op">&gt;</span> <span class="ident">SwitchMode</span><span class="op">&lt;</span><span class="ident">Ra</span>, <span class="ident">Rb</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">SwitchModeA</span> {}
+    <span class="kw">use</span> <span class="kw">super</span><span class="ident">::private</span>;
 
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">SwitchModeB</span> {}
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Ra</span>: <span class="ident">LatticeRepr</span>, <span class="ident">Rb</span>: <span class="ident">LatticeRepr</span><span class="op">&gt;</span> <span class="ident">SwitchMode</span><span class="op">&lt;</span><span class="ident">Ra</span>, <span class="ident">Rb</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">SwitchModeB</span> {}
+    <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">SwitchMode</span><span class="op">&lt;</span><span class="ident">Ra</span>: <span class="ident">LatticeRepr</span>, <span class="ident">Rb</span>: <span class="ident">LatticeRepr</span><span class="op">&gt;</span>: <span class="ident">private::SwitchModePrivate</span><span class="op">&lt;</span><span class="ident">Ra</span>, <span class="ident">Rb</span><span class="op">&gt;</span> {}
+
+    <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">SwitchModeA</span> {}
+    <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Ra</span>: <span class="ident">LatticeRepr</span>, <span class="ident">Rb</span>: <span class="ident">LatticeRepr</span><span class="op">&gt;</span> <span class="ident">SwitchMode</span><span class="op">&lt;</span><span class="ident">Ra</span>, <span class="ident">Rb</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">SwitchModeA</span> {}
+
+    <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">SwitchModeB</span> {}
+    <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Ra</span>: <span class="ident">LatticeRepr</span>, <span class="ident">Rb</span>: <span class="ident">LatticeRepr</span><span class="op">&gt;</span> <span class="ident">SwitchMode</span><span class="op">&lt;</span><span class="ident">Ra</span>, <span class="ident">Rb</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">SwitchModeB</span> {}
+
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SwitchOrder</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">Order</span>, <span class="ident">S</span><span class="op">&gt;</span>(<span class="ident">std::marker::PhantomData</span><span class="op">&lt;</span>(<span class="ident">O</span>, <span class="ident">S</span>)<span class="op">&gt;</span>);
+    <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">Order</span>, <span class="ident">S</span><span class="op">&gt;</span> <span class="ident">Order</span> <span class="kw">for</span> <span class="ident">SwitchOrder</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">S</span><span class="op">&gt;</span> {}
+}
+<span class="kw">use</span> <span class="ident">switch</span>::<span class="kw-2">*</span>;
 
 
 
@@ -313,10 +329,6 @@
 {
     <span class="kw">type</span> <span class="ident">LatRepr</span> <span class="op">=</span> <span class="ident">S::ThisLatRepr</span>;
 }
-
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SwitchOrder</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">Order</span>, <span class="ident">S</span><span class="op">&gt;</span>(<span class="ident">std::marker::PhantomData</span><span class="op">&lt;</span>(<span class="ident">O</span>, <span class="ident">S</span>)<span class="op">&gt;</span>);
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">Order</span>, <span class="ident">S</span><span class="op">&gt;</span> <span class="ident">Order</span> <span class="kw">for</span> <span class="ident">SwitchOrder</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">S</span><span class="op">&gt;</span> {}
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">OpDelta</span>, <span class="ident">Ra</span>: <span class="ident">LatticeRepr</span>, <span class="ident">Rb</span>: <span class="ident">LatticeRepr</span>, <span class="ident">S</span>: <span class="ident">SwitchMode</span><span class="op">&lt;</span><span class="ident">Ra</span>, <span class="ident">Rb</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">OpDelta</span> <span class="kw">for</span> <span class="ident">SwitchOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">Ra</span>, <span class="ident">Rb</span>, <span class="ident">S</span><span class="op">&gt;</span>
 <span class="kw">where</span>
