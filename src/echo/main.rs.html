@@ -169,12 +169,12 @@
 <span class="doccomment">/// Run the server portion of the program.</span>
 <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">server</span>(<span class="ident">url</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="op">!</span>, <span class="ident">String</span><span class="op">&gt;</span> {
 
-    <span class="kw">let</span> <span class="ident">pool</span> <span class="op">=</span> <span class="ident">TcpServer::bind</span>(<span class="ident">url</span>).<span class="kw">await</span>.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">e</span>.<span class="ident">to_string</span>())<span class="question-mark">?</span>;
+    <span class="kw">let</span> <span class="ident">server</span> <span class="op">=</span> <span class="ident">TcpServer::bind</span>(<span class="ident">url</span>).<span class="kw">await</span>.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">e</span>.<span class="ident">to_string</span>())<span class="question-mark">?</span>;
 
-    <span class="ident">TcpServerOp::new</span>(<span class="ident">pool</span>.<span class="ident">clone</span>())
+    <span class="ident">TcpServerOp::new</span>(<span class="ident">server</span>.<span class="ident">clone</span>())
         .<span class="ident">debug</span>(<span class="string">&quot;server&quot;</span>)
         .<span class="ident">morphism</span>(<span class="ident">AddrBytesFreeze</span>)
-        .<span class="ident">comp_tcp_server</span>(<span class="ident">pool</span>)
+        .<span class="ident">comp_tcp_server</span>(<span class="ident">server</span>)
         .<span class="ident">run</span>()
         .<span class="kw">await</span>
         .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">e</span>.<span class="ident">to_string</span>())<span class="question-mark">?</span>;
