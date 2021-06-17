@@ -201,6 +201,7 @@ async fn client<R: tokio::io::AsyncRead + std::marker::Unpin>(url: &str, input_r
         .morphism(StringToBytes)
         .comp_tcp(write);
 
+    #[allow(unreachable_code)]
     let result = tokio::try_join!(
         async {
             read_comp.run().await.map_err(|_| format!("Read failed."))

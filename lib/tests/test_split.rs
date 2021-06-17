@@ -48,13 +48,5 @@ pub async fn test_split_merge() -> Result<(), String> {
 
     comp.run().await.unwrap_err();
 
-    // comp.tick().await.unwrap();
-    // comp.tick().await.unwrap();
-    // comp.tick().await.unwrap();
-    // comp.tick().await.unwrap();
-    // comp.tick().await.unwrap();
-    // comp.tick().await.unwrap();
-    // comp.tick().await.unwrap();
-
     Ok(())
 }

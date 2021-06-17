@@ -112,6 +112,10 @@ mod fns {
             let (a, b) = self.into_reveal();
             (Hide::new(a), Hide::new(b))
         }
+
+        pub fn zip(a: Hide<Y, Ra>, b: Hide<Y, Rb>) -> Self {
+            Hide::new((a.into_reveal(), b.into_reveal()))
+        }
     }
 
     impl<Y: Qualifier, Ra: LatticeRepr, Rb: LatticeRepr> Hide<Y, PairRepr<Ra, Rb>>
