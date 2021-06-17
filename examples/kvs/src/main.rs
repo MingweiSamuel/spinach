@@ -94,7 +94,9 @@ impl BinaryMorphism for CreateReplies {
     type InLatReprA = SetUnionRepr<tag::HASH_SET, SocketAddr>;
     type InLatReprB = ValueLatRepr;
     type OutLatRepr = SetUnionRepr<tag::VEC, (SocketAddr, (usize, String))>;
+
     fn call<Y: Qualifier>(&self, item_a: Hide<Y, Self::InLatReprA>, item_b: Hide<Y, Self::InLatReprB>) -> Hide<Y, Self::OutLatRepr> {
+        // TODO!!!! NOT MONOTONIC!!!!
         let mut out = Vec::new();
         for addr in item_a.into_reveal() { // TODO!! REVEAL!!!
             out.push((addr, item_b.reveal_ref().clone()));
