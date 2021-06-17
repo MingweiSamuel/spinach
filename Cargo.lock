@@ -188,6 +188,7 @@ dependencies = [
  "ron",
  "serde",
  "spinach",
+ "static_assertions",
 ]
 
 [[package]]

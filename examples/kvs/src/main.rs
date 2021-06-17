@@ -9,6 +9,7 @@ use spinach::tokio;
 use spinach::tokio::net::TcpStream;
 use spinach::bytes::{BufMut, Bytes, BytesMut};
 
+use spinach::collections::Single;
 use spinach::comp::{CompExt};
 use spinach::func::binary::{BinaryMorphism, HashPartitioned};
 use spinach::func::unary::Morphism;
@@ -50,98 +51,41 @@ impl Morphism for DeserializeKvsOperation {
     }
 }
 
-pub struct Split;
-impl Morphism for Split {
+pub struct Switch;
+impl Morphism for Switch {
     type InLatRepr  = SetUnionRepr<tag::OPTION, (SocketAddr, KvsOperation)>;
     type OutLatRepr = PairRepr<
-        MapUnionRepr<tag::VEC, String, SetUnionRepr<tag::SINGLE, SocketAddr>>,
-        MapUnionRepr<tag::OPTION, String, ValueLatRepr>,
+        MapUnionRepr<tag::VEC, String, SetUnionRepr<tag::VEC, SocketAddr>>,
+        MapUnionRepr<tag::VEC, String, ValueLatRepr>,
     >;
+
     fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
-        let (reads, writes) = item.switch_one(|(_addr, operation)| match operation { KvsOperation::Read(_) => true, KvsOperation::Write(_, _) => false });
+        let (reads, writes) = item.switch_one(|(_addr, operation)| {
+            match operation {
+                KvsOperation::Read(_) => true,
+                KvsOperation::Write(_, _) => false,
+            }
+        });
 
         let reads = reads
             .filter_map::<_, tag::VEC, _>(|(addr, operation)| {
                 match operation {
-                    KvsOperation::Read(key) => Some((key, addr)),
-                    KvsOperation::Write(_, _) => None,
+                    KvsOperation::Read(key) => Some((key, Single(addr))),
+                    KvsOperation::Write(_, _) => panic!(),
                 }
             })
-            .into_map();
+            .fold_into_map::<_, SetUnionRepr<tag::SINGLE, SocketAddr>, _>();
 
-        // TODO REVEAL!!
-        let writes = writes.into_reveal()
-            .and_then(|(_addr, operation)| {
-                match operation {
-                    KvsOperation::Read(_) => None,
-                    KvsOperation::Write(key, val) => {
-                        Some((key, val))
+        let writes = writes
+            .filter_map::<_, tag::VEC, _>(|(_addr, operation)| {
+                    match operation {
+                        KvsOperation::Read(_) => panic!(),
+                        KvsOperation::Write(key, val) => Some((key, val)),
                     }
-                }
-            });
+            })
+            .fold_into_map();
 
-        Hide::zip(reads, Hide::new(writes))
-    }
-}
-
-// pub struct SplitReads;
-// impl Morphism for SplitReads {
-//     type InLatRepr  = SetUnionRepr<tag::OPTION, (SocketAddr, KvsOperation)>;
-//     type OutLatRepr = MapUnionRepr<tag::VEC, String, SetUnionRepr<tag::SINGLE, SocketAddr>>;
-//     fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
-//         item
-//             .filter_map::<_, tag::VEC, _>(|(addr, operation)| {
-//                 match operation {
-//                     KvsOperation::Read(key) => Some((key, addr)),
-//                     KvsOperation::Write(_, _) => None,
-//                 }
-//             })
-//             .into_map()
-//     }
-// }
-
-// pub struct SplitWrites;
-// impl Morphism for SplitWrites {
-//     type InLatRepr  = SetUnionRepr<tag::OPTION, (SocketAddr, KvsOperation)>;
-//     type OutLatRepr = MapUnionRepr<tag::OPTION, String, ValueLatRepr>;
-//     fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
-//         // TODO!!! REVEAL!!!!
-//         let out = item.into_reveal()
-//             .and_then(|(_addr, operation)| {
-//                 match operation {
-//                     KvsOperation::Read(_) => None,
-//                     KvsOperation::Write(key, val) => {
-//                         Some((key, val))
-//                     }
-//                 }
-//             });
-//         Hide::new(out)
-//     }
-// }
-
-pub struct BytesToString;
-impl Morphism for BytesToString {
-    type InLatRepr  = SetUnionRepr<tag::SINGLE, BytesMut>;
-    type OutLatRepr = SetUnionRepr<tag::OPTION, String>;
-    fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
-        item.filter_map_one(|bytes| {
-            match String::from_utf8(bytes.to_vec()) {
-                Ok(string) => Some(string),
-                Err(err) => {
-                    eprintln!("Failed to parse bytes as utf8 string. Error: {}, bytes: {:?}", err, bytes);
-                    None
-                }
-            }
-        })
-    }
-}
-
-pub struct StringToBytes;
-impl Morphism for StringToBytes {
-    type InLatRepr  = SetUnionRepr<tag::SINGLE, String>;
-    type OutLatRepr = SetUnionRepr<tag::SINGLE, Bytes>;
-    fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
-        item.map_one(|string| string.into())
+        Hide::zip(reads, writes)
     }
 }
 
@@ -200,7 +144,7 @@ async fn server(url: &str) -> Result<!, String> {
     let (op_reads, op_writes) = TcpServerOp::new(server.clone())
         // .debug("ingress")
         .morphism(DeserializeKvsOperation)
-        .morphism(Split)
+        .morphism(Switch)
         // .debug("split")
         .switch();
 
@@ -223,6 +167,34 @@ async fn server(url: &str) -> Result<!, String> {
         .run()
         .await
         .map_err(|e| format!("TcpComp error: {:?}", e))?;
+}
+
+
+
+pub struct BytesToString;
+impl Morphism for BytesToString {
+    type InLatRepr  = SetUnionRepr<tag::SINGLE, BytesMut>;
+    type OutLatRepr = SetUnionRepr<tag::OPTION, String>;
+    fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
+        item.filter_map_one(|bytes| {
+            match String::from_utf8(bytes.to_vec()) {
+                Ok(string) => Some(string),
+                Err(err) => {
+                    eprintln!("Failed to parse bytes as utf8 string. Error: {}, bytes: {:?}", err, bytes);
+                    None
+                }
+            }
+        })
+    }
+}
+
+pub struct StringToBytes;
+impl Morphism for StringToBytes {
+    type InLatRepr  = SetUnionRepr<tag::SINGLE, String>;
+    type OutLatRepr = SetUnionRepr<tag::SINGLE, Bytes>;
+    fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
+        item.map_one(|string| string.into())
+    }
 }
 
 /// Run the client portion of the program.
@@ -257,6 +229,8 @@ async fn client<R: tokio::io::AsyncRead + std::marker::Unpin>(url: &str, input_r
     // Err(format!("Read error: {:?}, Write error: {:?}",
     //     result.0.unwrap_err(), result.1.unwrap_err()))
 }
+
+
 
 /// Entry point of the application.
 #[tokio::main(flavor = "current_thread")]
