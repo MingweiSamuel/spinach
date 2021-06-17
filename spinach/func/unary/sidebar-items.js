@@ -1,1 +1,1 @@
-initSidebarItems({"trait":[["Monotone",""],["Morphism",""]]});
+initSidebarItems({"struct":[["ClosureMorphism",""]],"trait":[["Monotone",""],["Morphism",""]]});

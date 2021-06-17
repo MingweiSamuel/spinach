@@ -53,6 +53,7 @@
 <span id="51">51</span>
 <span id="52">52</span>
 <span id="53">53</span>
+<span id="54">54</span>
 </pre><pre class="rust">
 <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::lattice::LatticeRepr</span>;
 
@@ -92,10 +93,11 @@
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_delta</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Delta</span>, <span class="ident">Lr</span><span class="op">&gt;</span> {
-        <span class="ident">Hide</span> {
-            <span class="ident">value</span>: <span class="self">self</span>.<span class="ident">value</span>,
-            <span class="ident">_phantom</span>: <span class="ident">std::marker::PhantomData</span>,
-        }
+        <span class="ident">Hide::new</span>(<span class="self">self</span>.<span class="ident">value</span>)
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_qualifier_reveal</span><span class="op">&lt;</span><span class="ident">Z</span>: <span class="ident">Qualifier</span><span class="op">&gt;</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Z</span>, <span class="ident">Lr</span><span class="op">&gt;</span> {
+        <span class="ident">Hide::new</span>(<span class="self">self</span>.<span class="ident">value</span>)
     }
 }
 
