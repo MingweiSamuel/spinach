@@ -7,12 +7,12 @@ use serde::{Deserialize, Serialize};
 
 use spinach::tokio;
 use spinach::tokio::net::TcpStream;
-use spinach::bytes::{BufMut, Bytes, BytesMut};
+use spinach::bytes::{BufMut, BytesMut};
 
 use spinach::collections::Single;
 use spinach::comp::{CompExt};
-use spinach::func::binary::{BinaryMorphism, HashPartitioned};
-use spinach::func::unary::Morphism;
+use spinach::func::binary::{self, BinaryMorphism};
+use spinach::func::unary::{self, Morphism};
 use spinach::hide::{Hide, Qualifier};
 use spinach::lattice::LatticeRepr;
 use spinach::lattice::map_union::MapUnionRepr;
@@ -20,9 +20,11 @@ use spinach::lattice::set_union::SetUnionRepr;
 use spinach::lattice::dom_pair::DomPairRepr;
 use spinach::lattice::ord::MaxRepr;
 use spinach::lattice::pair::PairRepr;
+use spinach::lattice::bytes::BytesRepr;
 use spinach::op::{OpExt, ReadOp, TcpOp, TcpServerOp};
 use spinach::tag;
 use spinach::tcp_server::TcpServer;
+use spinach::util;
 
 type ValueLatRepr = DomPairRepr<MaxRepr<usize>, MaxRepr<String>>;
 
@@ -33,34 +35,48 @@ pub enum KvsOperation {
     Write(String, <ValueLatRepr as LatticeRepr>::Repr),
 }
 
+type ReqLatRepr = BytesRepr<SetUnionRepr<tag::SINGLE, KvsOperation>>;
+type RepLatRepr = BytesRepr<MapUnionRepr<tag::SINGLE, String, ValueLatRepr>>;
+
+use std::any::TypeId;
+
 pub struct DeserializeKvsOperation;
 impl Morphism for DeserializeKvsOperation {
-    type InLatRepr  = SetUnionRepr<tag::SINGLE, (SocketAddr, BytesMut)>;
-    type OutLatRepr = SetUnionRepr<tag::OPTION, (SocketAddr, KvsOperation)>;
+    type InLatRepr  = ReqLatRepr;
+    type OutLatRepr = SetUnionRepr<tag::OPTION, KvsOperation>;
     fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
-        item
-            .filter_map_one(|(addr, bytes)| {
-                match ron::de::from_bytes(&*bytes) {
-                    Ok(string) => Some((addr, string)),
-                    Err(err) => {
-                        println!("Failed to parse msg: {}", err);
-                        None
-                    }
+        let bytes = item.into_reveal(); // TODO REVEAL!!
+
+        let out = match ron::de::from_bytes::<'_, (u64, <SetUnionRepr<tag::SINGLE, KvsOperation> as LatticeRepr>::Repr)>(&*bytes) {
+            Ok((tid, repr)) => {
+                let expected_tid = util::tid_to_u64(TypeId::of::<Self::InLatRepr>());
+                if expected_tid == tid {
+                    Some(repr.0)
                 }
-            })
+                else {
+                    eprintln!("Invalid TypeId, expected: {}, found: {}.", expected_tid, tid);
+                    None
+                }
+            }
+            Err(err) => {
+                eprintln!("Failed to parse msg: {:?}, error: {}", bytes, err);
+                None
+            }
+        };
+        Hide::new(out)
     }
 }
 
 pub struct Switch;
 impl Morphism for Switch {
-    type InLatRepr  = SetUnionRepr<tag::OPTION, (SocketAddr, KvsOperation)>;
+    type InLatRepr  = SetUnionRepr<tag::VEC, (SocketAddr, KvsOperation)>;
     type OutLatRepr = PairRepr<
         MapUnionRepr<tag::VEC, String, SetUnionRepr<tag::VEC, SocketAddr>>,
         MapUnionRepr<tag::VEC, String, ValueLatRepr>,
     >;
 
     fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
-        let (reads, writes) = item.switch_one(|(_addr, operation)| {
+        let (reads, writes) = item.switch::<tag::VEC, _>(|(_addr, operation)| {
             match operation {
                 KvsOperation::Read(_) => true,
                 KvsOperation::Write(_, _) => false,
@@ -105,16 +121,16 @@ impl BinaryMorphism for CreateReplies {
     }
 }
 
-pub struct ServerSerialize;
-impl Morphism for ServerSerialize {
+pub struct SerializeValues;
+impl Morphism for SerializeValues {
     type InLatRepr  = MapUnionRepr<tag::HASH_MAP, String, SetUnionRepr<tag::VEC, (SocketAddr, (usize, String))>>;
-    type OutLatRepr = SetUnionRepr<tag::VEC, (SocketAddr, Bytes)>;
+    type OutLatRepr = MapUnionRepr<tag::VEC, SocketAddr, RepLatRepr>;
     fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
         let mut out = Vec::new();
-
         for (k, vals) in item.into_reveal() { // TODO! REVEAL!
             for (addr, val) in vals {
-                let item = (&*k, val);
+                let tid = util::tid_to_u64(TypeId::of::<RepLatRepr>());
+                let item = (tid, (&*k, val));
 
                 let mut writer = BytesMut::new().writer();
                 ron::ser::to_writer(&mut writer, &item).expect("Failed to serialize");
@@ -123,19 +139,7 @@ impl Morphism for ServerSerialize {
                 out.push((addr, bytes));
             }
         }
-
         Hide::new(out)
-
-        // item
-        //     .map(|(key, addr, value)| {
-        //         let item = (key, value);
-
-        //         let mut writer = BytesMut::new().writer();
-        //         ron::ser::to_writer(&mut writer, &item).expect("Failed to serialize");
-        //         let bytes = writer.into_inner().freeze();
-
-        //         (addr, bytes)
-        //     })
     }
 }
 
@@ -143,9 +147,10 @@ impl Morphism for ServerSerialize {
 async fn server(url: &str) -> Result<!, String> {
 
     let server = TcpServer::bind(url).await.map_err(|e| e.to_string())?;
-    let (op_reads, op_writes) = TcpServerOp::new(server.clone())
+    let (op_reads, op_writes) = TcpServerOp::<ReqLatRepr>::new(server.clone())
         // .debug("ingress")
-        .morphism(DeserializeKvsOperation)
+        .morphism(unary::HashPartitioned::new(DeserializeKvsOperation))
+        .morphism_closure(|item| item.flatten_keyed::<tag::VEC>())
         .morphism(Switch)
         // .debug("split")
         .switch();
@@ -160,11 +165,11 @@ async fn server(url: &str) -> Result<!, String> {
         // .debug("write")
         .lattice_default::<WritesLatRepr>();
 
-    let binary_func = HashPartitioned::new(CreateReplies);
+    let binary_func = binary::HashPartitioned::<String, _>::new(CreateReplies);
     let comp = op_reads
         .binary(op_writes, binary_func)
         // .debug("after binop")
-        .morphism(ServerSerialize)
+        .morphism(SerializeValues)
         .comp_tcp_server(server);
 
     comp
@@ -175,29 +180,54 @@ async fn server(url: &str) -> Result<!, String> {
 
 
 
-pub struct BytesToString;
-impl Morphism for BytesToString {
-    type InLatRepr  = SetUnionRepr<tag::SINGLE, BytesMut>;
-    type OutLatRepr = SetUnionRepr<tag::OPTION, String>;
+pub struct DeserializeValue;
+impl Morphism for DeserializeValue {
+    type InLatRepr  = RepLatRepr;
+    type OutLatRepr = MapUnionRepr::<tag::SINGLE, String, ValueLatRepr>;
     fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
-        item.filter_map_one(|bytes| {
-            match String::from_utf8(bytes.to_vec()) {
-                Ok(string) => Some(string),
-                Err(err) => {
-                    eprintln!("Failed to parse bytes as utf8 string. Error: {}, bytes: {:?}", err, bytes);
-                    None
+        let bytes = item.into_reveal(); // TODO REVEAL!!
+
+        match ron::de::from_bytes::<'_, (u64, <MapUnionRepr<tag::SINGLE, String, ValueLatRepr> as LatticeRepr>::Repr)>(&*bytes) {
+            Ok((tid, repr)) => {
+                let expected_tid = util::tid_to_u64(TypeId::of::<Self::InLatRepr>());
+                if expected_tid == tid {
+                    Hide::new(repr)
+                }
+                else {
+                    panic!("Invalid TypeId, expected: {}, found: {}.", expected_tid, tid);
                 }
             }
-        })
+            Err(err) => {
+                panic!("Failed to parse msg: {:?}, error: {}", bytes, err);
+            }
+        }
     }
 }
 
-pub struct StringToBytes;
-impl Morphism for StringToBytes {
+pub struct SerializeKvsOperation;
+impl Morphism for SerializeKvsOperation {
     type InLatRepr  = SetUnionRepr<tag::SINGLE, String>;
-    type OutLatRepr = SetUnionRepr<tag::SINGLE, Bytes>;
+    type OutLatRepr = ReqLatRepr;
     fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
-        item.map_one(|string| string.into())
+        // TODO! REVEAL!!
+        // TODO! Doesn't actually validate!
+
+        match ron::de::from_str::<KvsOperation>(&item.reveal_ref().0) {
+            Ok(operation) => {
+                let tid = util::tid_to_u64(TypeId::of::<Self::OutLatRepr>());
+                let item = (tid, operation);
+
+                let mut writer = BytesMut::new().writer();
+                ron::ser::to_writer(&mut writer, &item).expect("Failed to serialize");
+                let bytes = writer.into_inner().freeze();
+
+                Hide::new(bytes)
+            },
+            Err(err) => {
+                panic!("Failed to parse operation, error: {}", err);
+                // TODO NOT PANIC!!
+            }
+        }
     }
 }
 
@@ -208,11 +238,11 @@ async fn client<R: tokio::io::AsyncRead + std::marker::Unpin>(url: &str, input_r
         .into_split();
 
     let read_comp = TcpOp::new(read)
-        .morphism(BytesToString)
+        .morphism(DeserializeValue)
         .comp_debug("read");
 
     let write_comp = ReadOp::new(input_read)
-        .morphism(StringToBytes)
+        .morphism(SerializeKvsOperation)
         .comp_tcp(write);
 
     #[allow(unreachable_code)]

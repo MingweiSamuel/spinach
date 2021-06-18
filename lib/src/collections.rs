@@ -335,6 +335,17 @@ impl<T> IntoIterator for Single<T> {
     }
 }
 
+impl<T: serde::Serialize> serde::Serialize for Single<T> {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        self.0.serialize(serializer)
+    }
+}
+impl<'de, T: serde::Deserialize<'de>> serde::Deserialize<'de> for Single<T> {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        T::deserialize(deserializer).map(Single)
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Array<T, const N: usize>(pub [T; N]);

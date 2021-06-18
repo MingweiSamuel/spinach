@@ -10,6 +10,7 @@
 #![feature(cell_update)]
 #![feature(drain_filter)]
 #![feature(generic_associated_types)]
+#![feature(slice_as_chunks)]
 #![feature(try_blocks)]
 #![feature(min_type_alias_impl_trait)]
 #![feature(never_type)]
@@ -40,4 +41,6 @@ pub mod comp;
 pub mod metadata;
 
 pub mod tcp_server;
+
+pub mod util;
 

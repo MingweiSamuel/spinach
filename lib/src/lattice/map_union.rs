@@ -148,29 +148,45 @@ where
     }
 }
 
-// mod fns {
-//     use std::iter::IntoIterator;
+mod fns {
+    use crate::hide::{Hide, Qualifier};
+    use crate::lattice::set_union::{SetTag, SetUnionRepr};
 
-//     use crate::collections::Single;
-//     use crate::hide::{Hide, Qualifier};
-//     use crate::lattice::set_union::{SetUnionRepr};
+    use super::*;
 
-//     use super::*;
+    // impl<Y: Qualifier, K: Clone, V: Clone, Tag, Lr: LatticeRepr> Hide<Y, MapUnionRepr<Tag, K, Lr>>
+    // where
+    // {
+    //     pub fn map<TargetTag>(self) -> Hide<Y, SetUnionRepr<TargetTag, (K, V)>>
+    //     where
+    //     {
+    //     }
+    // }
 
-//     impl<Y: Qualifier, Tag: MapTag<K, Single<V>>, K: Clone, V: Clone> Hide<Y, MapUnionRepr<Tag, K, SetUnionRepr<tag::SINGLE, V>>>
-//     where
-//         Tag::Bind: Clone,
-//     {
-//         pub fn fold<TargetTag: MapTag<K, Single<V>>>(self) -> Hide<Y, MapUnionRepr<TargetTag, K, SetUnionRepr<tag::SINGLE, V>>>
-//         where
-//             TargetTag::Bind: Clone,
-//             <MapUnionRepr<TargetTag, K, SetUnionRepr<tag::SINGLE, V>> as LatticeRepr>::Repr: IntoIterator<Item = (K, Single<V>)>,
-//         {
-//             self.into_reveal()
-//                 .into_iter()
-//         }
-//     }
-// }
+    impl<Y: Qualifier, K: Clone, V: Clone, Tag, InnerTag: SetTag<V>> Hide<Y, MapUnionRepr<Tag, K, SetUnionRepr<InnerTag, V>>>
+    where
+        Tag: MapTag<K, <SetUnionRepr<InnerTag, V> as LatticeRepr>::Repr>,
+        SetUnionRepr<InnerTag, V>: LatticeRepr,
+        <SetUnionRepr<InnerTag, V> as LatticeRepr>::Repr: IntoIterator<Item = V>,
+        MapUnionRepr<Tag, K, SetUnionRepr<InnerTag, V>>: LatticeRepr,
+        <MapUnionRepr<Tag, K, SetUnionRepr<InnerTag, V>> as LatticeRepr>::Repr: IntoIterator<Item = (K, <SetUnionRepr<InnerTag, V> as LatticeRepr>::Repr)>,
+    {
+        pub fn flatten_keyed<TargetTag>(self) -> Hide<Y, SetUnionRepr<TargetTag, (K, V)>>
+        where
+            TargetTag: SetTag<(K, V)>,
+            SetUnionRepr<TargetTag, (K, V)>: LatticeRepr + Merge<SetUnionRepr<tag::SINGLE, (K, V)>>,
+            <SetUnionRepr<TargetTag, (K, V)> as LatticeRepr>::Repr: Default,
+        {
+            let mut out = <<SetUnionRepr<TargetTag, (K, V)> as LatticeRepr>::Repr as Default>::default();
+            for (key, vals) in self.into_reveal().into_iter() {
+                for val in vals.into_iter() {
+                    <SetUnionRepr<TargetTag, (K, V)> as Merge<SetUnionRepr<tag::SINGLE, (K, V)>>>::merge(&mut out, Single((key.clone(), val)));
+                }
+            }
+            Hide::new(out)
+        }
+    }
+}
 
 fn __assert_merges() {
     use static_assertions::{assert_impl_all, assert_not_impl_any};

@@ -218,7 +218,7 @@ mod fns {
 
     impl<Y: Qualifier, Tag: SetTag<T>, T> Hide<Y, SetUnionRepr<Tag, T>>
     where
-        Tag::Bind: Clone,
+        SetUnionRepr<Tag, T>: LatticeRepr,
         <SetUnionRepr<Tag, T> as LatticeRepr>::Repr: IntoIterator<Item = T>,
     {
         pub fn filter_map<U, TargetTag: SetTag<U>, F: Fn(T) -> Option<U>>(self, f: F) -> Hide<Y, SetUnionRepr<TargetTag, U>>
@@ -256,12 +256,19 @@ mod fns {
 
         pub fn switch<TargetTag: SetTag<T>, F: Fn(&T) -> bool>(self, f: F) -> (Hide<Y, SetUnionRepr<TargetTag, T>>, Hide<Y, SetUnionRepr<TargetTag, T>>)
         where
-            SetUnionRepr<TargetTag, T>: LatticeRepr<Lattice = SetUnion<T>>,
-            <SetUnionRepr<TargetTag, T> as LatticeRepr>::Repr: FromIterator<T>,
+            T: Clone,
+            SetUnionRepr<TargetTag, T>: LatticeRepr<Lattice = SetUnion<T>> + Merge<SetUnionRepr<tag::SINGLE, T>>,
+            <SetUnionRepr<TargetTag, T> as LatticeRepr>::Repr: Default,
         {
-            use split_iter::Splittable;
-            let (iter_a, iter_b) = self.into_reveal().into_iter().split(f);
-            (Hide::new(iter_a.collect()), Hide::new(iter_b.collect()))
+            let mut out_a = <<SetUnionRepr<TargetTag, T> as LatticeRepr>::Repr as Default>::default();
+            let mut out_b = <<SetUnionRepr<TargetTag, T> as LatticeRepr>::Repr as Default>::default();
+
+            for item in self.into_reveal().into_iter() {
+                let target = if (f)(&item) { &mut out_a } else { &mut out_b };
+                <SetUnionRepr<TargetTag, T> as Merge<SetUnionRepr<tag::SINGLE, T>>>::merge(target, Single(item));
+            }
+
+            (Hide::new(out_a), Hide::new(out_b))
         }
     }
 
