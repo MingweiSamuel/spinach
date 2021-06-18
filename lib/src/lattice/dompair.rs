@@ -4,28 +4,28 @@ use super::*;
 
 use crate::tag;
 
-pub struct DomPair<LA: Lattice, LB: Lattice> {
-    _phantom: std::marker::PhantomData<(LA, LB)>,
+pub struct DomPair<La: Lattice, Lb: Lattice> {
+    _phantom: std::marker::PhantomData<(La, Lb)>,
 }
-impl<LA: Lattice, LB: Lattice> Lattice for DomPair<LA, LB> {}
+impl<La: Lattice, Lb: Lattice> Lattice for DomPair<La, Lb> {}
 
-pub struct DomPairRepr<RA: LatticeRepr, RB: LatticeRepr> {
-    _phantom: std::marker::PhantomData<(RA, RB)>,
+pub struct DomPairRepr<Ra: LatticeRepr, Rb: LatticeRepr> {
+    _phantom: std::marker::PhantomData<(Ra, Rb)>,
 }
-impl<RA: LatticeRepr, RB: LatticeRepr> LatticeRepr for DomPairRepr<RA, RB> {
-    type Lattice = DomPair<RA::Lattice, RB::Lattice>;
-    type Repr = (RA::Repr, RB::Repr);
+impl<Ra: LatticeRepr, Rb: LatticeRepr> LatticeRepr for DomPairRepr<Ra, Rb> {
+    type Lattice = DomPair<Ra::Lattice, Rb::Lattice>;
+    type Repr = (Ra::Repr, Rb::Repr);
 }
 
 
-impl<SelfRA, SelfRB, DeltaRA, DeltaRB, LA, LB> Merge<DomPairRepr<DeltaRA, DeltaRB>> for DomPairRepr<SelfRA, SelfRB>
+impl<SelfRA, SelfRB, DeltaRA, DeltaRB, La, Lb> Merge<DomPairRepr<DeltaRA, DeltaRB>> for DomPairRepr<SelfRA, SelfRB>
 where
-    LA: Lattice,
-    LB: Lattice,
-    SelfRA:  LatticeRepr<Lattice = LA>,
-    SelfRB:  LatticeRepr<Lattice = LB>,
-    DeltaRA: LatticeRepr<Lattice = LA>,
-    DeltaRB: LatticeRepr<Lattice = LB>,
+    La: Lattice,
+    Lb: Lattice,
+    SelfRA:  LatticeRepr<Lattice = La>,
+    SelfRB:  LatticeRepr<Lattice = Lb>,
+    DeltaRA: LatticeRepr<Lattice = La>,
+    DeltaRB: LatticeRepr<Lattice = Lb>,
     SelfRA:  Merge<DeltaRA> + Compare<DeltaRA>,
     SelfRB:  Merge<DeltaRB> + Compare<DeltaRB>,
     DeltaRA: Convert<SelfRA>,
@@ -54,21 +54,21 @@ where
 }
 
 
-impl<RA: LatticeRepr, RB: LatticeRepr> Convert<DomPairRepr<RA, RB>> for DomPairRepr<RA, RB> {
-    fn convert(this: <DomPairRepr<RA, RB> as LatticeRepr>::Repr) -> <DomPairRepr<RA, RB> as LatticeRepr>::Repr {
+impl<Ra: LatticeRepr, Rb: LatticeRepr> Convert<DomPairRepr<Ra, Rb>> for DomPairRepr<Ra, Rb> {
+    fn convert(this: <DomPairRepr<Ra, Rb> as LatticeRepr>::Repr) -> <DomPairRepr<Ra, Rb> as LatticeRepr>::Repr {
         this
     }
 }
 
 
-impl<SelfRA, SelfRB, DeltaRA, DeltaRB, LA, LB> Compare<DomPairRepr<DeltaRA, DeltaRB>> for DomPairRepr<SelfRA, SelfRB>
+impl<SelfRA, SelfRB, DeltaRA, DeltaRB, La, Lb> Compare<DomPairRepr<DeltaRA, DeltaRB>> for DomPairRepr<SelfRA, SelfRB>
 where
-    LA: Lattice,
-    LB: Lattice,
-    SelfRA:  LatticeRepr<Lattice = LA>,
-    SelfRB:  LatticeRepr<Lattice = LB>,
-    DeltaRA: LatticeRepr<Lattice = LA>,
-    DeltaRB: LatticeRepr<Lattice = LB>,
+    La: Lattice,
+    Lb: Lattice,
+    SelfRA:  LatticeRepr<Lattice = La>,
+    SelfRB:  LatticeRepr<Lattice = Lb>,
+    DeltaRA: LatticeRepr<Lattice = La>,
+    DeltaRB: LatticeRepr<Lattice = Lb>,
     SelfRA:  Compare<DeltaRA>,
     SelfRB:  Compare<DeltaRB>,
 {
