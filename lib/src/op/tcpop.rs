@@ -2,42 +2,42 @@ use std::cell::RefCell;
 use std::task::{Context, Poll};
 use std::pin::Pin;
 
-use bytes::BytesMut;
+use bytes::{Bytes};
 use futures_core::stream::Stream;
 use tokio::net::tcp::OwnedReadHalf;
 use tokio_util::codec::{FramedRead, LengthDelimitedCodec};
 
-use crate::collections::{Single};
 use crate::hide::{Hide, Delta};
-use crate::lattice::set_union::{SetUnionRepr};
+use crate::lattice::LatticeRepr;
 use crate::metadata::Order;
-use crate::tag;
 
-use super::*;
+use super::optrait::*;
 
-pub struct TcpOp {
+pub struct TcpOp<Lr: LatticeRepr<Repr = Bytes>> {
     framed_read: RefCell<FramedRead<OwnedReadHalf, LengthDelimitedCodec>>,
+    _phantom: std::marker::PhantomData<Lr>,
 }
 
-impl TcpOp {
+impl<Lr: LatticeRepr<Repr = Bytes>> TcpOp<Lr> {
     pub fn new(tcp_read: OwnedReadHalf) -> Self {
         let framed_read = LengthDelimitedCodec::builder()
             .length_field_length(2)
             .new_read(tcp_read);
         Self {
             framed_read: RefCell::new(framed_read),
+            _phantom: std::marker::PhantomData,
         }
     }
 }
 
-impl Op for TcpOp {
-    type LatRepr = SetUnionRepr<tag::SINGLE, BytesMut>;
+impl<Lr: LatticeRepr<Repr = Bytes>> Op for TcpOp<Lr> {
+    type LatRepr = Lr;
 }
 
 pub enum TcpOrder {}
 impl Order for TcpOrder {}
 
-impl OpDelta for TcpOp {
+impl<Lr: LatticeRepr<Repr = Bytes>> OpDelta for TcpOp<Lr> {
     type Ord = TcpOrder;
 
     fn poll_delta(&self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
@@ -47,8 +47,8 @@ impl OpDelta for TcpOp {
                 println!("!!!0 {:?}", err);
                 Poll::Pending
             }
-            Poll::Ready(Some(Ok(bytes))) => {
-                let item = Hide::new(Single(bytes));
+            Poll::Ready(Some(Ok(bytes_mut))) => {
+                let item = Hide::new(bytes_mut.freeze());
                 Poll::Ready(Some(item))
             }
             Poll::Pending => Poll::Pending

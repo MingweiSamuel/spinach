@@ -4,12 +4,11 @@ use bytes::Bytes;
 
 use tokio::net::tcp::OwnedWriteHalf;
 
-use crate::collections::Collection;
 use crate::comp::{DebugComp, NullComp, TcpComp, TcpServerComp};
 use crate::func::unary::{Morphism, ClosureMorphism};
 use crate::func::binary::BinaryMorphism;
-use crate::lattice::{Convert, LatticeRepr, Merge};
-use crate::lattice::set_union::SetUnion;
+use crate::lattice::{Convert, Lattice, LatticeRepr, Merge};
+use crate::lattice::map_union::MapUnion;
 use crate::lattice::pair::PairRepr;
 use crate::tcp_server::TcpServer;
 use crate::hide::{Hide, Delta};
@@ -96,16 +95,15 @@ pub trait OpExt: Sized + Op {
     fn comp_tcp(self, tcp_write: OwnedWriteHalf) -> TcpComp<Self>
     where
         Self: OpDelta,
-        Self::LatRepr: LatticeRepr<Lattice = SetUnion<Bytes>>,
-        <Self::LatRepr as LatticeRepr>::Repr: Collection<Bytes, ()>,
+        Self::LatRepr: LatticeRepr<Repr = Bytes>,
     {
         TcpComp::new(self, tcp_write)
     }
 
-    fn comp_tcp_server(self, tcp_server: TcpServer) -> TcpServerComp<Self>
+    fn comp_tcp_server<L: Lattice>(self, tcp_server: TcpServer) -> TcpServerComp<Self, L>
     where
         Self: OpDelta,
-        Self::LatRepr: LatticeRepr<Lattice = SetUnion<(SocketAddr, Bytes)>>,
+        Self::LatRepr: LatticeRepr<Lattice = MapUnion<SocketAddr, L>>,
         <Self::LatRepr as LatticeRepr>::Repr: IntoIterator<Item = (SocketAddr, Bytes)>,
     {
         TcpServerComp::new(self, tcp_server)

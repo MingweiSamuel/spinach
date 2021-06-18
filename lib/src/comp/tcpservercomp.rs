@@ -3,25 +3,25 @@ use std::net::SocketAddr;
 
 use bytes::Bytes;
 
-use crate::lattice::LatticeRepr;
-use crate::lattice::set_union::{SetUnion};
+use crate::lattice::{Lattice, LatticeRepr};
+use crate::lattice::map_union::{MapUnion};
 use crate::op::OpDelta;
 use crate::tcp_server::TcpServer;
 
 use super::{Comp, Next};
 
-pub struct TcpServerComp<O: OpDelta>
+pub struct TcpServerComp<O: OpDelta, L: Lattice>
 where
-    O::LatRepr: LatticeRepr<Lattice = SetUnion<(SocketAddr, Bytes)>>,
+    O::LatRepr: LatticeRepr<Lattice = MapUnion<SocketAddr, L>>,
     <O::LatRepr as LatticeRepr>::Repr: IntoIterator<Item = (SocketAddr, Bytes)>,
 {
     op: O,
     tcp_server: TcpServer,
 }
 
-impl<O: OpDelta> TcpServerComp<O>
+impl<O: OpDelta, L: Lattice> TcpServerComp<O, L>
 where
-    O::LatRepr: LatticeRepr<Lattice = SetUnion<(SocketAddr, Bytes)>>,
+    O::LatRepr: LatticeRepr<Lattice = MapUnion<SocketAddr, L>>,
     <O::LatRepr as LatticeRepr>::Repr: IntoIterator<Item = (SocketAddr, Bytes)>,
 {
     pub fn new(op: O, tcp_server: TcpServer) -> Self {
@@ -32,9 +32,9 @@ where
     }
 }
 
-impl<O: OpDelta> Comp for TcpServerComp<O>
+impl<O: OpDelta, L: Lattice> Comp for TcpServerComp<O, L>
 where
-    O::LatRepr: LatticeRepr<Lattice = SetUnion<(SocketAddr, Bytes)>>,
+    O::LatRepr: LatticeRepr<Lattice = MapUnion<SocketAddr, L>>,
     <O::LatRepr as LatticeRepr>::Repr: IntoIterator<Item = (SocketAddr, Bytes)>,
 {
     type Error = tokio::io::Error;
