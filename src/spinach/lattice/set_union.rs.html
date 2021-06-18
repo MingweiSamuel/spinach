@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `lib/src/lattice/setunion.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>setunion.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings"></script><script src="../../../storage.js"></script><script src="../../../crates.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `lib/src/lattice/set_union.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>set_union.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings"></script><script src="../../../storage.js"></script><script src="../../../crates.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
 <link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png">
 <link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../../spinach/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img src="../../../brush.svg" width="18" height="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../settings.html" title="settings"><img src="../../../wheel.svg" width="18" height="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
@@ -302,27 +302,6 @@
 <span id="300">300</span>
 <span id="301">301</span>
 <span id="302">302</span>
-<span id="303">303</span>
-<span id="304">304</span>
-<span id="305">305</span>
-<span id="306">306</span>
-<span id="307">307</span>
-<span id="308">308</span>
-<span id="309">309</span>
-<span id="310">310</span>
-<span id="311">311</span>
-<span id="312">312</span>
-<span id="313">313</span>
-<span id="314">314</span>
-<span id="315">315</span>
-<span id="316">316</span>
-<span id="317">317</span>
-<span id="318">318</span>
-<span id="319">319</span>
-<span id="320">320</span>
-<span id="321">321</span>
-<span id="322">322</span>
-<span id="323">323</span>
 </pre><pre class="rust">
 <span class="kw">use</span> <span class="ident">std::iter::FromIterator</span>;
 <span class="kw">use</span> <span class="ident">std::cmp::Ordering</span>;
@@ -467,7 +446,7 @@
 <span class="kw">mod</span> <span class="ident">fns</span> {
     <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::collections::Single</span>;
     <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::hide</span>::{<span class="ident">Hide</span>, <span class="ident">Qualifier</span>, <span class="ident">Delta</span>, <span class="ident">Value</span>};
-    <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::lattice::mapunion</span>::{<span class="ident">MapTag</span>, <span class="ident">MapUnionRepr</span>};
+    <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::lattice::map_union</span>::{<span class="ident">MapTag</span>, <span class="ident">MapUnionRepr</span>};
 
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
     <span class="kw">use</span> <span class="kw">super</span><span class="ident">::ord::MaxRepr</span>;
@@ -596,41 +575,20 @@
         <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">Tag</span>, (<span class="ident">K</span>, <span class="ident">V</span>)<span class="op">&gt;</span>: <span class="ident">LatticeRepr</span>,
         <span class="op">&lt;</span><span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">Tag</span>, (<span class="ident">K</span>, <span class="ident">V</span>)<span class="op">&gt;</span> <span class="kw">as</span> <span class="ident">LatticeRepr</span><span class="op">&gt;</span><span class="ident">::Repr</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> (<span class="ident">K</span>, <span class="ident">V</span>)<span class="op">&gt;</span>,
     {
-        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_map</span><span class="op">&lt;</span><span class="ident">TargetTag</span>: <span class="ident">MapTag</span><span class="op">&lt;</span><span class="ident">K</span>, <span class="ident">Single</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="ident">MapUnionRepr</span><span class="op">&lt;</span><span class="ident">TargetTag</span>, <span class="ident">K</span>, <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::SINGLE</span>, <span class="ident">V</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">fold_into_map</span><span class="op">&lt;</span><span class="ident">TargetTag</span>: <span class="ident">MapTag</span><span class="op">&lt;</span><span class="ident">K</span>, <span class="ident">TargetValRepr::Repr</span><span class="op">&gt;</span>, <span class="ident">ValRepr</span>, <span class="ident">TargetValRepr</span><span class="op">&gt;</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="ident">MapUnionRepr</span><span class="op">&lt;</span><span class="ident">TargetTag</span>, <span class="ident">K</span>, <span class="ident">TargetValRepr</span><span class="op">&gt;</span><span class="op">&gt;</span>
         <span class="kw">where</span>
-            <span class="ident">TargetTag::Bind</span>: <span class="ident">Clone</span>,
-            <span class="op">&lt;</span><span class="ident">MapUnionRepr</span><span class="op">&lt;</span><span class="ident">TargetTag</span>, <span class="ident">K</span>, <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::SINGLE</span>, <span class="ident">V</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">as</span> <span class="ident">LatticeRepr</span><span class="op">&gt;</span><span class="ident">::Repr</span>: <span class="ident">FromIterator</span><span class="op">&lt;</span>(<span class="ident">K</span>, <span class="ident">Single</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>)<span class="op">&gt;</span>,
+            <span class="ident">ValRepr</span>: <span class="ident">LatticeRepr</span><span class="op">&lt;</span><span class="ident">Repr</span> <span class="op">=</span> <span class="ident">V</span><span class="op">&gt;</span>,
+            <span class="ident">TargetValRepr</span>: <span class="ident">LatticeRepr</span>,
+            <span class="ident">MapUnionRepr</span><span class="op">&lt;</span><span class="ident">TargetTag</span>, <span class="ident">K</span>, <span class="ident">TargetValRepr</span><span class="op">&gt;</span>: <span class="ident">Merge</span><span class="op">&lt;</span><span class="ident">MapUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::SINGLE</span>, <span class="ident">K</span>, <span class="ident">ValRepr</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+            <span class="op">&lt;</span><span class="ident">MapUnionRepr</span><span class="op">&lt;</span><span class="ident">TargetTag</span>, <span class="ident">K</span>, <span class="ident">TargetValRepr</span><span class="op">&gt;</span> <span class="kw">as</span> <span class="ident">LatticeRepr</span><span class="op">&gt;</span><span class="ident">::Repr</span>: <span class="ident">Default</span>,
         {
-            <span class="kw">let</span> <span class="ident">out</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">into_reveal</span>().<span class="ident">into_iter</span>()
-                .<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">k</span>, <span class="ident">v</span>)<span class="op">|</span> (<span class="ident">k</span>, <span class="ident">Single</span>(<span class="ident">v</span>)))
-                .<span class="ident">collect</span>();
-            <span class="ident">Hide::new</span>(<span class="ident">out</span>)
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">out</span> <span class="op">=</span> <span class="ident">Hide::new</span>(<span class="ident">Default::default</span>());
+            <span class="kw">for</span> <span class="ident">kv</span> <span class="kw">in</span> <span class="self">self</span>.<span class="ident">into_reveal</span>().<span class="ident">into_iter</span>() {
+                <span class="op">&lt;</span><span class="ident">MapUnionRepr</span><span class="op">&lt;</span><span class="ident">TargetTag</span>, <span class="ident">K</span>, <span class="ident">TargetValRepr</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::merge_hide</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">out</span>, <span class="ident">Hide</span>::<span class="op">&lt;</span><span class="ident">Delta</span>, <span class="kw">_</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="ident">Single</span>(<span class="ident">kv</span>)));
+            }
+            <span class="ident">out</span>
         }
     }
-
-    <span class="comment">// impl&lt;Y: Qualifier, Tag: SetTag&lt;(K, V)&gt;, K: Clone, V: Clone&gt; Hide&lt;Y, SetUnionRepr&lt;Tag, (K, V)&gt;&gt;</span>
-    <span class="comment">// where</span>
-    <span class="comment">//     SetUnionRepr&lt;Tag, (K, V)&gt;: LatticeRepr,</span>
-    <span class="comment">//     &lt;SetUnionRepr&lt;Tag, (K, V)&gt; as LatticeRepr&gt;::Repr: IntoIterator&lt;Item = (K, V)&gt;,</span>
-    <span class="comment">// {</span>
-    <span class="comment">//     pub fn fold_into_map&lt;TargetTag: MapTag&lt;K, Single&lt;V&gt;&gt;, ValRepr, TargetValRepr&gt;(self) -&gt; Hide&lt;Y, TargetRepr&gt;</span>
-    <span class="comment">//     where</span>
-    <span class="comment">//         ValRepr: LatticeRepr&lt;Repr = V&gt;,</span>
-    <span class="comment">//         TargetTag::Bind: Clone,</span>
-    <span class="comment">//         MapUnionRepr&lt;TargetTag, K, TargetValRepr&gt;: Merge&lt;MapUnionRepr&lt;tag::SINGLE, K, V&gt;&gt;,</span>
-    <span class="comment">//         // &lt;MapUnionRepr&lt;TargetTag, K, TargetValRepr&gt; as LatticeRepr&gt;::Repr: Default,</span>
-
-    <span class="comment">//         TargetValRepr: LatticeRepr + Merge&lt;ValRepr&gt;,</span>
-    <span class="comment">//         TargetValRepr::Repr: Default,</span>
-    <span class="comment">//     {</span>
-    <span class="comment">//         let mut lattice: &lt;MapUnionRepr&lt;TargetTag, K, TargetValRepr&gt; as LatticeRepr&gt;::Repr = Default::default();</span>
-    <span class="comment">//         // let mut lattice: TargetValRepr::Repr = Default::default();</span>
-    <span class="comment">//         for (key, item) in self.into_reveal().into_iter() {</span>
-    <span class="comment">//             &lt;TargetValRepr as Merge&lt;ValRepr&gt;&gt;::merge(&amp;mut lattice, item);</span>
-    <span class="comment">//         }</span>
-    <span class="comment">//         Hide::new(lattice)</span>
-    <span class="comment">//     }</span>
-    <span class="comment">// }</span>
 
 
     <span class="kw">fn</span> <span class="ident">__test_things</span>() {
