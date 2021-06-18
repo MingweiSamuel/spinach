@@ -5,7 +5,7 @@ use spinach::collections::Single;
 use spinach::comp::{Comp, TcpComp};
 use spinach::func::unary::Morphism;
 use spinach::hide::{Hide, Qualifier};
-use spinach::lattice::setunion::SetUnionRepr;
+use spinach::lattice::set_union::SetUnionRepr;
 use spinach::op::{OnceOp, MergeOp, MorphismOp, TcpOp, BatchConvertOp, DebugOp};
 use spinach::tag;
 

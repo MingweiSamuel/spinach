@@ -3,7 +3,7 @@ use std::task::{Context, Poll};
 
 use crate::hide::{Hide, Delta};
 use crate::lattice::{LatticeRepr};
-use crate::lattice::setunion::{SetUnion, SetUnionRepr};
+use crate::lattice::set_union::{SetUnion, SetUnionRepr};
 use crate::tag;
 
 use super::*;

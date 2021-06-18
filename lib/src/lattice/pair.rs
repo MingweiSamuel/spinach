@@ -63,7 +63,7 @@ where
 fn __assert_merges() {
     use static_assertions::{assert_impl_all, assert_not_impl_any};
 
-    use super::setunion::{SetUnionRepr};
+    use super::set_union::{SetUnionRepr};
 
     type HashSetHashSet   = PairRepr<SetUnionRepr<tag::HASH_SET, u32>, SetUnionRepr<tag::HASH_SET, u32>>;
     type HashSetArraySet  = PairRepr<SetUnionRepr<tag::HASH_SET, u32>, SetUnionRepr<tag::ARRAY<8>, u32>>;
@@ -103,7 +103,7 @@ mod fns {
     use std::iter::FromIterator;
 
     use crate::hide::{Hide, Qualifier};
-    use crate::lattice::setunion::{SetUnionRepr, SetTag};
+    use crate::lattice::set_union::{SetUnionRepr, SetTag};
 
     use super::*;
 

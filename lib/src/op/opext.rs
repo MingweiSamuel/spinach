@@ -9,7 +9,7 @@ use crate::comp::{DebugComp, NullComp, TcpComp, TcpServerComp};
 use crate::func::unary::{Morphism, ClosureMorphism};
 use crate::func::binary::BinaryMorphism;
 use crate::lattice::{Convert, LatticeRepr, Merge};
-use crate::lattice::setunion::SetUnion;
+use crate::lattice::set_union::SetUnion;
 use crate::lattice::pair::PairRepr;
 use crate::tcp_server::TcpServer;
 use crate::hide::{Hide, Delta};

@@ -8,7 +8,7 @@ use tokio::io::{AsyncRead, Stdin, BufReader, Lines, AsyncBufReadExt};
 use crate::collections::Single;
 use crate::hide::{Hide, Delta};
 use crate::tag::{SINGLE};
-use crate::lattice::setunion::{SetUnionRepr};
+use crate::lattice::set_union::{SetUnionRepr};
 use crate::metadata::Order;
 
 use super::*;

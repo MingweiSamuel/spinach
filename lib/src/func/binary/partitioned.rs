@@ -1,7 +1,7 @@
 use std::hash::Hash;
 
 use crate::hide::{Hide, Qualifier};
-use crate::lattice::mapunion::{MapUnionRepr};
+use crate::lattice::map_union::{MapUnionRepr};
 use crate::tag;
 
 use super::BinaryMorphism;

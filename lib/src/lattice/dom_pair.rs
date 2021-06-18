@@ -82,7 +82,7 @@ where
 fn __assert_merges() {
     use static_assertions::{assert_impl_all, assert_not_impl_any};
 
-    use super::setunion::{SetUnionRepr};
+    use super::set_union::{SetUnionRepr};
 
     type HashSetHashSet   = DomPairRepr<SetUnionRepr<tag::HASH_SET, u32>, SetUnionRepr<tag::HASH_SET, u32>>;
     type HashSetArraySet  = DomPairRepr<SetUnionRepr<tag::HASH_SET, u32>, SetUnionRepr<tag::ARRAY<8>, u32>>;

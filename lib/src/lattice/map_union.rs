@@ -153,7 +153,7 @@ where
 
 //     use crate::collections::Single;
 //     use crate::hide::{Hide, Qualifier};
-//     use crate::lattice::setunion::{SetUnionRepr};
+//     use crate::lattice::set_union::{SetUnionRepr};
 
 //     use super::*;
 
@@ -175,7 +175,7 @@ where
 fn __assert_merges() {
     use static_assertions::{assert_impl_all, assert_not_impl_any};
 
-    use super::setunion::{SetUnionRepr};
+    use super::set_union::{SetUnionRepr};
 
     type HashMapHashSet    = MapUnionRepr<tag::HASH_MAP, String, SetUnionRepr<tag::HASH_SET, u32>>;
     type HashMapArraySet   = MapUnionRepr<tag::HASH_MAP, String, SetUnionRepr<tag::ARRAY<8>, u32>>;

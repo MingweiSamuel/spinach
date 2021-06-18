@@ -6,7 +6,7 @@ use futures::future;
 
 use crate::op::{OpDelta, OpValue, Splitter, SplitOp};
 use crate::lattice::LatticeRepr;
-use crate::lattice::setunion::SetUnion;
+use crate::lattice::set_union::SetUnion;
 
 use super::{Comp, CompConnector, Next};
 

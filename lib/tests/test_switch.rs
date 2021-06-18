@@ -2,7 +2,7 @@ use spinach::collections::Array;
 use spinach::comp::{CompExt, NullComp};
 use spinach::func::unary::Morphism;
 use spinach::hide::{Hide, Qualifier};
-use spinach::lattice::setunion::SetUnionRepr;
+use spinach::lattice::set_union::SetUnionRepr;
 use spinach::lattice::pair::PairRepr;
 use spinach::op::{DebugOp, LatticeOp, MergeOp, MorphismOp, OnceOp, SwitchOp};
 use spinach::tag;

@@ -1,10 +1,10 @@
 use crate::hide::{Hide, Qualifier};
 
-pub mod setunion;
-pub mod mapunion;
+pub mod set_union;
+pub mod map_union;
 pub mod ord;
 pub mod pair;
-pub mod dompair;
+pub mod dom_pair;
 pub mod bytes;
 
 pub trait Lattice {}

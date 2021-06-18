@@ -9,7 +9,7 @@ use tokio_util::codec::{FramedRead, LengthDelimitedCodec};
 
 use crate::collections::{Single};
 use crate::hide::{Hide, Delta};
-use crate::lattice::setunion::{SetUnionRepr};
+use crate::lattice::set_union::{SetUnionRepr};
 use crate::metadata::Order;
 use crate::tag;
 

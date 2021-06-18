@@ -4,7 +4,7 @@ use std::net::SocketAddr;
 use bytes::Bytes;
 
 use crate::lattice::LatticeRepr;
-use crate::lattice::setunion::{SetUnion};
+use crate::lattice::set_union::{SetUnion};
 use crate::op::OpDelta;
 use crate::tcp_server::TcpServer;
 

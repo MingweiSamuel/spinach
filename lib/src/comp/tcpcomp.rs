@@ -9,7 +9,7 @@ use tokio::net::tcp::OwnedWriteHalf;
 
 use crate::collections::Collection;
 use crate::lattice::LatticeRepr;
-use crate::lattice::setunion::{SetUnion};
+use crate::lattice::set_union::{SetUnion};
 use crate::op::OpDelta;
 
 use super::{Comp, Next};

@@ -1,7 +1,7 @@
 use std::iter::FromIterator;
 
 use crate::lattice::LatticeRepr;
-use crate::lattice::setunion::SetUnion;
+use crate::lattice::set_union::SetUnion;
 use crate::hide::{Hide, Qualifier};
 
 use super::BinaryMorphism;

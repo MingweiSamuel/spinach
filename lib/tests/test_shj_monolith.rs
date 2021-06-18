@@ -1,6 +1,6 @@
 use spinach::collections::Single;
 use spinach::comp::{CompExt, DebugComp};
-use spinach::lattice::setunion::SetUnionRepr;
+use spinach::lattice::set_union::SetUnionRepr;
 use spinach::op::{IterOp, SymHashJoinOp};
 use spinach::tag;
 

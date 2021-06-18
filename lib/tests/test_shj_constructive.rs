@@ -1,8 +1,8 @@
 use spinach::collections::Single;
 use spinach::comp::{CompExt, DebugComp};
 use spinach::func::binary::{CartesianProduct, HashPartitioned};
-use spinach::lattice::mapunion::MapUnionRepr;
-use spinach::lattice::setunion::SetUnionRepr;
+use spinach::lattice::map_union::MapUnionRepr;
+use spinach::lattice::set_union::SetUnionRepr;
 use spinach::op::{BinaryOp, IterOp, LatticeOp};
 use spinach::tag;
 
