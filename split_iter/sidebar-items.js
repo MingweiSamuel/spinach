@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["Split","One of a pair of iterators. One returns the items for which the predicate returns `false`, the other one returns the items for which the predicate returns `true`."]],"trait":[["Splittable","Provides an iterator adaptor method that splits an iterator into two iterators according to a predicate."]]});

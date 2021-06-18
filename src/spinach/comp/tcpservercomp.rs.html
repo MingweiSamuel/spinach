@@ -62,25 +62,25 @@
 
 <span class="kw">use</span> <span class="ident">bytes::Bytes</span>;
 
-<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::lattice::LatticeRepr</span>;
-<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::lattice::set_union</span>::{<span class="ident">SetUnion</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::lattice</span>::{<span class="ident">Lattice</span>, <span class="ident">LatticeRepr</span>};
+<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::lattice::map_union</span>::{<span class="ident">MapUnion</span>};
 <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::op::OpDelta</span>;
 <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::tcp_server::TcpServer</span>;
 
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">Comp</span>, <span class="ident">Next</span>};
 
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TcpServerComp</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">OpDelta</span><span class="op">&gt;</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TcpServerComp</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">OpDelta</span>, <span class="ident">L</span>: <span class="ident">Lattice</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">O::LatRepr</span>: <span class="ident">LatticeRepr</span><span class="op">&lt;</span><span class="ident">Lattice</span> <span class="op">=</span> <span class="ident">SetUnion</span><span class="op">&lt;</span>(<span class="ident">SocketAddr</span>, <span class="ident">Bytes</span>)<span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">O::LatRepr</span>: <span class="ident">LatticeRepr</span><span class="op">&lt;</span><span class="ident">Lattice</span> <span class="op">=</span> <span class="ident">MapUnion</span><span class="op">&lt;</span><span class="ident">SocketAddr</span>, <span class="ident">L</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="op">&lt;</span><span class="ident">O::LatRepr</span> <span class="kw">as</span> <span class="ident">LatticeRepr</span><span class="op">&gt;</span><span class="ident">::Repr</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> (<span class="ident">SocketAddr</span>, <span class="ident">Bytes</span>)<span class="op">&gt;</span>,
 {
     <span class="ident">op</span>: <span class="ident">O</span>,
     <span class="ident">tcp_server</span>: <span class="ident">TcpServer</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">OpDelta</span><span class="op">&gt;</span> <span class="ident">TcpServerComp</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">OpDelta</span>, <span class="ident">L</span>: <span class="ident">Lattice</span><span class="op">&gt;</span> <span class="ident">TcpServerComp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">L</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">O::LatRepr</span>: <span class="ident">LatticeRepr</span><span class="op">&lt;</span><span class="ident">Lattice</span> <span class="op">=</span> <span class="ident">SetUnion</span><span class="op">&lt;</span>(<span class="ident">SocketAddr</span>, <span class="ident">Bytes</span>)<span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">O::LatRepr</span>: <span class="ident">LatticeRepr</span><span class="op">&lt;</span><span class="ident">Lattice</span> <span class="op">=</span> <span class="ident">MapUnion</span><span class="op">&lt;</span><span class="ident">SocketAddr</span>, <span class="ident">L</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="op">&lt;</span><span class="ident">O::LatRepr</span> <span class="kw">as</span> <span class="ident">LatticeRepr</span><span class="op">&gt;</span><span class="ident">::Repr</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> (<span class="ident">SocketAddr</span>, <span class="ident">Bytes</span>)<span class="op">&gt;</span>,
 {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">op</span>: <span class="ident">O</span>, <span class="ident">tcp_server</span>: <span class="ident">TcpServer</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
@@ -91,9 +91,9 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">OpDelta</span><span class="op">&gt;</span> <span class="ident">Comp</span> <span class="kw">for</span> <span class="ident">TcpServerComp</span><span class="op">&lt;</span><span class="ident">O</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">OpDelta</span>, <span class="ident">L</span>: <span class="ident">Lattice</span><span class="op">&gt;</span> <span class="ident">Comp</span> <span class="kw">for</span> <span class="ident">TcpServerComp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">L</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">O::LatRepr</span>: <span class="ident">LatticeRepr</span><span class="op">&lt;</span><span class="ident">Lattice</span> <span class="op">=</span> <span class="ident">SetUnion</span><span class="op">&lt;</span>(<span class="ident">SocketAddr</span>, <span class="ident">Bytes</span>)<span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">O::LatRepr</span>: <span class="ident">LatticeRepr</span><span class="op">&lt;</span><span class="ident">Lattice</span> <span class="op">=</span> <span class="ident">MapUnion</span><span class="op">&lt;</span><span class="ident">SocketAddr</span>, <span class="ident">L</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="op">&lt;</span><span class="ident">O::LatRepr</span> <span class="kw">as</span> <span class="ident">LatticeRepr</span><span class="op">&gt;</span><span class="ident">::Repr</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> (<span class="ident">SocketAddr</span>, <span class="ident">Bytes</span>)<span class="op">&gt;</span>,
 {
     <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">tokio::io::Error</span>;

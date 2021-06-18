@@ -192,6 +192,22 @@
 <span id="190">190</span>
 <span id="191">191</span>
 <span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
 </pre><pre class="rust">
 <span class="kw">use</span> <span class="ident">std::iter::FromIterator</span>;
 <span class="kw">use</span> <span class="ident">std::cmp::Ordering</span>;
@@ -343,29 +359,45 @@
     }
 }
 
-<span class="comment">// mod fns {</span>
-<span class="comment">//     use std::iter::IntoIterator;</span>
+<span class="kw">mod</span> <span class="ident">fns</span> {
+    <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::hide</span>::{<span class="ident">Hide</span>, <span class="ident">Qualifier</span>};
+    <span class="kw">use</span> <span class="kw">crate</span><span class="ident">::lattice::set_union</span>::{<span class="ident">SetTag</span>, <span class="ident">SetUnionRepr</span>};
 
-<span class="comment">//     use crate::collections::Single;</span>
-<span class="comment">//     use crate::hide::{Hide, Qualifier};</span>
-<span class="comment">//     use crate::lattice::set_union::{SetUnionRepr};</span>
+    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
-<span class="comment">//     use super::*;</span>
+    <span class="comment">// impl&lt;Y: Qualifier, K: Clone, V: Clone, Tag, Lr: LatticeRepr&gt; Hide&lt;Y, MapUnionRepr&lt;Tag, K, Lr&gt;&gt;</span>
+    <span class="comment">// where</span>
+    <span class="comment">// {</span>
+    <span class="comment">//     pub fn map&lt;TargetTag&gt;(self) -&gt; Hide&lt;Y, SetUnionRepr&lt;TargetTag, (K, V)&gt;&gt;</span>
+    <span class="comment">//     where</span>
+    <span class="comment">//     {</span>
+    <span class="comment">//     }</span>
+    <span class="comment">// }</span>
 
-<span class="comment">//     impl&lt;Y: Qualifier, Tag: MapTag&lt;K, Single&lt;V&gt;&gt;, K: Clone, V: Clone&gt; Hide&lt;Y, MapUnionRepr&lt;Tag, K, SetUnionRepr&lt;tag::SINGLE, V&gt;&gt;&gt;</span>
-<span class="comment">//     where</span>
-<span class="comment">//         Tag::Bind: Clone,</span>
-<span class="comment">//     {</span>
-<span class="comment">//         pub fn fold&lt;TargetTag: MapTag&lt;K, Single&lt;V&gt;&gt;&gt;(self) -&gt; Hide&lt;Y, MapUnionRepr&lt;TargetTag, K, SetUnionRepr&lt;tag::SINGLE, V&gt;&gt;&gt;</span>
-<span class="comment">//         where</span>
-<span class="comment">//             TargetTag::Bind: Clone,</span>
-<span class="comment">//             &lt;MapUnionRepr&lt;TargetTag, K, SetUnionRepr&lt;tag::SINGLE, V&gt;&gt; as LatticeRepr&gt;::Repr: IntoIterator&lt;Item = (K, Single&lt;V&gt;)&gt;,</span>
-<span class="comment">//         {</span>
-<span class="comment">//             self.into_reveal()</span>
-<span class="comment">//                 .into_iter()</span>
-<span class="comment">//         }</span>
-<span class="comment">//     }</span>
-<span class="comment">// }</span>
+    <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Y</span>: <span class="ident">Qualifier</span>, <span class="ident">K</span>: <span class="ident">Clone</span>, <span class="ident">V</span>: <span class="ident">Clone</span>, <span class="ident">Tag</span>, <span class="ident">InnerTag</span>: <span class="ident">SetTag</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="ident">MapUnionRepr</span><span class="op">&lt;</span><span class="ident">Tag</span>, <span class="ident">K</span>, <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">InnerTag</span>, <span class="ident">V</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>
+    <span class="kw">where</span>
+        <span class="ident">Tag</span>: <span class="ident">MapTag</span><span class="op">&lt;</span><span class="ident">K</span>, <span class="op">&lt;</span><span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">InnerTag</span>, <span class="ident">V</span><span class="op">&gt;</span> <span class="kw">as</span> <span class="ident">LatticeRepr</span><span class="op">&gt;</span><span class="ident">::Repr</span><span class="op">&gt;</span>,
+        <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">InnerTag</span>, <span class="ident">V</span><span class="op">&gt;</span>: <span class="ident">LatticeRepr</span>,
+        <span class="op">&lt;</span><span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">InnerTag</span>, <span class="ident">V</span><span class="op">&gt;</span> <span class="kw">as</span> <span class="ident">LatticeRepr</span><span class="op">&gt;</span><span class="ident">::Repr</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">V</span><span class="op">&gt;</span>,
+        <span class="ident">MapUnionRepr</span><span class="op">&lt;</span><span class="ident">Tag</span>, <span class="ident">K</span>, <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">InnerTag</span>, <span class="ident">V</span><span class="op">&gt;</span><span class="op">&gt;</span>: <span class="ident">LatticeRepr</span>,
+        <span class="op">&lt;</span><span class="ident">MapUnionRepr</span><span class="op">&lt;</span><span class="ident">Tag</span>, <span class="ident">K</span>, <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">InnerTag</span>, <span class="ident">V</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">as</span> <span class="ident">LatticeRepr</span><span class="op">&gt;</span><span class="ident">::Repr</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> (<span class="ident">K</span>, <span class="op">&lt;</span><span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">InnerTag</span>, <span class="ident">V</span><span class="op">&gt;</span> <span class="kw">as</span> <span class="ident">LatticeRepr</span><span class="op">&gt;</span><span class="ident">::Repr</span>)<span class="op">&gt;</span>,
+    {
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">flatten_keyed</span><span class="op">&lt;</span><span class="ident">TargetTag</span><span class="op">&gt;</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">TargetTag</span>, (<span class="ident">K</span>, <span class="ident">V</span>)<span class="op">&gt;</span><span class="op">&gt;</span>
+        <span class="kw">where</span>
+            <span class="ident">TargetTag</span>: <span class="ident">SetTag</span><span class="op">&lt;</span>(<span class="ident">K</span>, <span class="ident">V</span>)<span class="op">&gt;</span>,
+            <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">TargetTag</span>, (<span class="ident">K</span>, <span class="ident">V</span>)<span class="op">&gt;</span>: <span class="ident">LatticeRepr</span> <span class="op">+</span> <span class="ident">Merge</span><span class="op">&lt;</span><span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::SINGLE</span>, (<span class="ident">K</span>, <span class="ident">V</span>)<span class="op">&gt;</span><span class="op">&gt;</span>,
+            <span class="op">&lt;</span><span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">TargetTag</span>, (<span class="ident">K</span>, <span class="ident">V</span>)<span class="op">&gt;</span> <span class="kw">as</span> <span class="ident">LatticeRepr</span><span class="op">&gt;</span><span class="ident">::Repr</span>: <span class="ident">Default</span>,
+        {
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">out</span> <span class="op">=</span> <span class="op">&lt;</span><span class="op">&lt;</span><span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">TargetTag</span>, (<span class="ident">K</span>, <span class="ident">V</span>)<span class="op">&gt;</span> <span class="kw">as</span> <span class="ident">LatticeRepr</span><span class="op">&gt;</span><span class="ident">::Repr</span> <span class="kw">as</span> <span class="ident">Default</span><span class="op">&gt;</span><span class="ident">::default</span>();
+            <span class="kw">for</span> (<span class="ident">key</span>, <span class="ident">vals</span>) <span class="kw">in</span> <span class="self">self</span>.<span class="ident">into_reveal</span>().<span class="ident">into_iter</span>() {
+                <span class="kw">for</span> <span class="ident">val</span> <span class="kw">in</span> <span class="ident">vals</span>.<span class="ident">into_iter</span>() {
+                    <span class="op">&lt;</span><span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">TargetTag</span>, (<span class="ident">K</span>, <span class="ident">V</span>)<span class="op">&gt;</span> <span class="kw">as</span> <span class="ident">Merge</span><span class="op">&lt;</span><span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::SINGLE</span>, (<span class="ident">K</span>, <span class="ident">V</span>)<span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::merge</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">out</span>, <span class="ident">Single</span>((<span class="ident">key</span>.<span class="ident">clone</span>(), <span class="ident">val</span>)));
+                }
+            }
+            <span class="ident">Hide::new</span>(<span class="ident">out</span>)
+        }
+    }
+}
 
 <span class="kw">fn</span> <span class="ident">__assert_merges</span>() {
     <span class="kw">use</span> <span class="ident">static_assertions</span>::{<span class="ident">assert_impl_all</span>, <span class="ident">assert_not_impl_any</span>};
