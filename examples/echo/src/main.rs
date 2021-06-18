@@ -14,9 +14,11 @@ async fn server(url: &str) -> Result<!, String> {
 
     let server = TcpServer::bind(url).await.map_err(|e| e.to_string())?;
 
+    // SetUnion<(SocketAddr, Bytes)>
     TcpServerOp::new(server.clone())
         .debug("server")
         .morphism_closure(|item| item.map_one(|(addr, bytes)| (addr, bytes.freeze())))
+        // TODO CONVERT: MapUnion<SocketAddr, SetUnion<Bytes>>
         .comp_tcp_server(server)
         .run()
         .await

@@ -161,11 +161,13 @@ async fn server(url: &str) -> Result<!, String> {
         .lattice_default::<WritesLatRepr>();
 
     let binary_func = HashPartitioned::new(CreateReplies);
-    op_reads
+    let comp = op_reads
         .binary(op_writes, binary_func)
         // .debug("after binop")
         .morphism(ServerSerialize)
-        .comp_tcp_server(server)
+        .comp_tcp_server(server);
+
+    comp
         .run()
         .await
         .map_err(|e| format!("TcpComp error: {:?}", e))?;
