@@ -36,7 +36,6 @@ where
     }
 }
 
-
 impl<SelfRA, SelfRB, DeltaRA, DeltaRB, La, Lb> Compare<PairRepr<DeltaRA, DeltaRB>> for PairRepr<SelfRA, SelfRB>
 where
     La: Lattice,
@@ -57,6 +56,12 @@ where
         else {
             None
         }
+    }
+}
+
+impl<Ra: Bottom, Rb: Bottom> Bottom for PairRepr<Ra, Rb> {
+    fn is_bottom(this: &Self::Repr) -> bool {
+        Ra::is_bottom(&this.0) && Rb::is_bottom(&this.1)
     }
 }
 

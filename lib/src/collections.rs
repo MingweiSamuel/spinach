@@ -13,6 +13,9 @@ pub trait Collection<K, V> {
     fn get(&self, key: &K) -> Option<&V>;
     fn get_mut(&mut self, key: &K) -> Option<&mut V>;
     fn len(&self) -> usize;
+    fn is_empty(&self) -> bool {
+        0 == self.len()
+    }
 
     type Keys<'s>: Iterator<Item = &'s K> where K: 's;
     fn keys(&self) -> Self::Keys<'_>;

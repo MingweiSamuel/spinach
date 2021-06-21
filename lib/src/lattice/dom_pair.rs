@@ -79,6 +79,13 @@ where
 }
 
 
+impl<Ra: Bottom, Rb: Bottom> Bottom for DomPairRepr<Ra, Rb> {
+    fn is_bottom(this: &Self::Repr) -> bool {
+        Ra::is_bottom(&this.0) && Rb::is_bottom(&this.1)
+    }
+}
+
+
 fn __assert_merges() {
     use static_assertions::{assert_impl_all, assert_not_impl_any};
 

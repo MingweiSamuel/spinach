@@ -34,3 +34,7 @@ pub trait Convert<Target: LatticeRepr<Lattice = Self::Lattice>>: LatticeRepr {
 pub trait Compare<Other: LatticeRepr<Lattice = Self::Lattice>>: LatticeRepr {
     fn compare(this: &Self::Repr, other: &Other::Repr) -> Option<std::cmp::Ordering>;
 }
+
+pub trait Bottom: LatticeRepr {
+    fn is_bottom(this: &Self::Repr) -> bool;
+}

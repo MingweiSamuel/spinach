@@ -94,6 +94,16 @@ where
     }
 }
 
+impl<Tag: SetTag<T>, T> Bottom for SetUnionRepr<Tag, T>
+where
+    Tag::Bind: Clone,
+    Self::Repr: Collection<T, ()>,
+{
+    fn is_bottom(this: &Self::Repr) -> bool {
+        this.is_empty()
+    }
+}
+
 fn __assert_merges() {
     use static_assertions::{assert_impl_all, assert_not_impl_any};
 
