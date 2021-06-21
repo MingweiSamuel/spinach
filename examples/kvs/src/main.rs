@@ -1,3 +1,4 @@
+#![feature(core_intrinsics)]
 #![feature(never_type)]
 
 use std::{env, process};
@@ -18,13 +19,13 @@ use spinach::lattice::LatticeRepr;
 use spinach::lattice::map_union::MapUnionRepr;
 use spinach::lattice::set_union::SetUnionRepr;
 use spinach::lattice::dom_pair::DomPairRepr;
+use spinach::lattice::bottom::BottomRepr;
 use spinach::lattice::ord::MaxRepr;
 use spinach::lattice::pair::PairRepr;
 use spinach::lattice::bytes::BytesRepr;
 use spinach::op::{OpExt, ReadOp, TcpOp, TcpServerOp};
 use spinach::tag;
 use spinach::tcp_server::TcpServer;
-use spinach::util;
 
 type ValueLatRepr = DomPairRepr<MaxRepr<usize>, MaxRepr<String>>;
 
@@ -35,10 +36,10 @@ pub enum KvsOperation {
     Write(String, <ValueLatRepr as LatticeRepr>::Repr),
 }
 
+type ReqLatRepr2 = SetUnionRepr<tag::SINGLE, KvsOperation>;
+
 type ReqLatRepr = BytesRepr<SetUnionRepr<tag::SINGLE, KvsOperation>>;
 type RepLatRepr = BytesRepr<MapUnionRepr<tag::SINGLE, String, ValueLatRepr>>;
-
-use std::any::TypeId;
 
 pub struct DeserializeKvsOperation;
 impl Morphism for DeserializeKvsOperation {
@@ -49,7 +50,7 @@ impl Morphism for DeserializeKvsOperation {
 
         let out = match ron::de::from_bytes::<'_, (u64, <SetUnionRepr<tag::SINGLE, KvsOperation> as LatticeRepr>::Repr)>(&*bytes) {
             Ok((tid, repr)) => {
-                let expected_tid = util::tid_to_u64(TypeId::of::<Self::InLatRepr>());
+                let expected_tid = std::intrinsics::type_id::<Self::InLatRepr>();
                 if expected_tid == tid {
                     Some(repr.0)
                 }
@@ -129,7 +130,7 @@ impl Morphism for SerializeValues {
         let mut out = Vec::new();
         for (k, vals) in item.into_reveal() { // TODO! REVEAL!
             for (addr, val) in vals {
-                let tid = util::tid_to_u64(TypeId::of::<RepLatRepr>());
+                let tid = std::intrinsics::type_id::<RepLatRepr>();
                 let item = (tid, (&*k, val));
 
                 let mut writer = BytesMut::new().writer();
@@ -147,35 +148,40 @@ impl Morphism for SerializeValues {
 async fn server(url: &str) -> Result<!, String> {
 
     let server = TcpServer::bind(url).await.map_err(|e| e.to_string())?;
-    let (op_reads, op_writes) = TcpServerOp::<ReqLatRepr>::new(server.clone())
+    // let (op_reads, op_writes) = TcpServerOp::<ReqLatRepr>::new(server.clone())
+    TcpServerOp::<ReqLatRepr>::new(server.clone())
         // .debug("ingress")
-        .morphism(unary::HashPartitioned::new(DeserializeKvsOperation))
+        // .morphism(unary::HashPartitioned::new(DeserializeKvsOperation))
+        .morphism(unary::HashPartitioned::new(unary::Deserialize::<ReqLatRepr2>::new()))
+        // .debottom()
         .morphism_closure(|item| item.flatten_keyed::<tag::VEC>())
-        .morphism(Switch)
-        // .debug("split")
-        .switch();
+        // .morphism(Switch)
+        // // .debug("split")
+        // .switch();
 
-    type ReadsLatRepr = MapUnionRepr<tag::HASH_MAP, String, SetUnionRepr<tag::HASH_SET, SocketAddr>>;
-    let op_reads = op_reads
-        // .debug("read")
-        .lattice_default::<ReadsLatRepr>();
+    // type ReadsLatRepr = MapUnionRepr<tag::HASH_MAP, String, SetUnionRepr<tag::HASH_SET, SocketAddr>>;
+    // let op_reads = op_reads
+    //     // .debug("read")
+    //     .lattice_default::<ReadsLatRepr>();
 
-    type WritesLatRepr = MapUnionRepr<tag::HASH_MAP, String, ValueLatRepr>;
-    let op_writes = op_writes
-        // .debug("write")
-        .lattice_default::<WritesLatRepr>();
+    // type WritesLatRepr = MapUnionRepr<tag::HASH_MAP, String, ValueLatRepr>;
+    // let op_writes = op_writes
+    //     // .debug("write")
+    //     .lattice_default::<WritesLatRepr>();
 
-    let binary_func = binary::HashPartitioned::<String, _>::new(CreateReplies);
-    let comp = op_reads
-        .binary(op_writes, binary_func)
-        // .debug("after binop")
-        .morphism(SerializeValues)
-        .comp_tcp_server(server);
+    // let binary_func = binary::HashPartitioned::<String, _>::new(CreateReplies);
+    // let comp = op_reads
+    //     .binary(op_writes, binary_func)
+    //     // .debug("after binop")
+    //     .morphism(SerializeValues)
+    //     .comp_tcp_server(server);
 
-    comp
-        .run()
-        .await
-        .map_err(|e| format!("TcpComp error: {:?}", e))?;
+    // comp
+    //     .run()
+    //     .await
+    //     .map_err(|e| format!("TcpComp error: {:?}", e))?;
+
+    ;unreachable!();
 }
 
 
@@ -189,7 +195,7 @@ impl Morphism for DeserializeValue {
 
         let out = match ron::de::from_bytes::<'_, (u64, <MapUnionRepr<tag::SINGLE, String, ValueLatRepr> as LatticeRepr>::Repr)>(&*bytes) {
             Ok((tid, repr)) => {
-                let expected_tid = util::tid_to_u64(TypeId::of::<Self::InLatRepr>());
+                let expected_tid = std::intrinsics::type_id::<Self::InLatRepr>();
                 if expected_tid == tid {
                     Some(repr.0)
                 }
@@ -211,23 +217,23 @@ impl Morphism for DeserializeValue {
 pub struct SerializeKvsOperation;
 impl Morphism for SerializeKvsOperation {
     type InLatRepr  = SetUnionRepr<tag::SINGLE, String>;
-    type OutLatRepr = ReqLatRepr;
+    type OutLatRepr = BottomRepr<ReqLatRepr>;
     fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
         // TODO! REVEAL!!
         match ron::de::from_str::<KvsOperation>(&item.reveal_ref().0) {
             Ok(operation) => {
-                let tid = util::tid_to_u64(TypeId::of::<Self::OutLatRepr>());
+                let tid = std::intrinsics::type_id::<Self::OutLatRepr>();
                 let item = (tid, operation);
 
                 let mut writer = BytesMut::new().writer();
                 ron::ser::to_writer(&mut writer, &item).expect("Failed to serialize");
                 let bytes = writer.into_inner().freeze();
 
-                Hide::new(bytes)
+                Hide::new(Some(bytes))
             },
             Err(err) => {
-                panic!("Failed to parse operation, error: {}", err);
-                // TODO NOT PANIC!!
+                eprintln!("Failed to parse operation, error: {}", err);
+                Hide::new(None)
             }
         }
     }
@@ -245,6 +251,7 @@ async fn client<R: tokio::io::AsyncRead + std::marker::Unpin>(url: &str, input_r
 
     let write_comp = ReadOp::new(input_read)
         .morphism(SerializeKvsOperation)
+        .debottom()
         .comp_tcp(write);
 
     #[allow(unreachable_code)]

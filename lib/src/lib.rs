@@ -8,6 +8,8 @@
 #![feature(array_zip)]
 #![feature(associated_type_defaults)]
 #![feature(cell_update)]
+#![feature(core_intrinsics)]
+#![feature(const_type_id)]
 #![feature(drain_filter)]
 #![feature(generic_associated_types)]
 #![feature(slice_as_chunks)]
@@ -41,6 +43,4 @@ pub mod comp;
 pub mod metadata;
 
 pub mod tcp_server;
-
-pub mod util;
 

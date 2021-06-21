@@ -26,3 +26,6 @@ pub use closure::*;
 
 mod partitioned;
 pub use partitioned::*;
+
+mod serde;
+pub use self::serde::*;
