@@ -29,6 +29,12 @@ pub use debottomop::*;
 mod latticeop;
 pub use latticeop::*;
 
+mod morphop;
+pub use morphop::*;
+
+mod serdeop;
+pub use serdeop::*;
+
 mod splitop;
 pub use splitop::*;
 
@@ -37,9 +43,6 @@ pub use switchop::*;
 
 mod mergeop;
 pub use mergeop::*;
-
-mod morphop;
-pub use morphop::*;
 
 mod binaryop;
 pub use binaryop::*;

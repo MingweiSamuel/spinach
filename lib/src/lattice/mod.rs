@@ -5,8 +5,8 @@ pub mod map_union;
 pub mod ord;
 pub mod pair;
 pub mod dom_pair;
-pub mod bytes;
 pub mod bottom;
+pub mod serial;
 
 pub trait Lattice {}
 

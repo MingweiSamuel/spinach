@@ -160,7 +160,7 @@ where
 
 mod fns {
     use crate::hide::{Hide, Qualifier};
-    use crate::lattice::set_union::{SetTag, SetUnionRepr};
+    use crate::lattice::set_union::{SetTag, SetUnion, SetUnionRepr};
 
     use super::*;
 
@@ -173,13 +173,13 @@ mod fns {
     //     }
     // }
 
-    impl<Y: Qualifier, K: Clone, V: Clone, Tag, InnerTag: SetTag<V>> Hide<Y, MapUnionRepr<Tag, K, SetUnionRepr<InnerTag, V>>>
+    impl<Y: Qualifier, K: Clone, V: Clone, Tag, SetUnionLr> Hide<Y, MapUnionRepr<Tag, K, SetUnionLr>>
     where
-        Tag: MapTag<K, <SetUnionRepr<InnerTag, V> as LatticeRepr>::Repr>,
-        SetUnionRepr<InnerTag, V>: LatticeRepr,
-        <SetUnionRepr<InnerTag, V> as LatticeRepr>::Repr: IntoIterator<Item = V>,
-        MapUnionRepr<Tag, K, SetUnionRepr<InnerTag, V>>: LatticeRepr,
-        <MapUnionRepr<Tag, K, SetUnionRepr<InnerTag, V>> as LatticeRepr>::Repr: IntoIterator<Item = (K, <SetUnionRepr<InnerTag, V> as LatticeRepr>::Repr)>,
+        SetUnionLr: LatticeRepr<Lattice = SetUnion<V>>,
+        <SetUnionLr as LatticeRepr>::Repr: IntoIterator<Item = V>,
+        Tag: MapTag<K, SetUnionLr::Repr>,
+        MapUnionRepr<Tag, K, SetUnionLr>: LatticeRepr,
+        <MapUnionRepr<Tag, K, SetUnionLr> as LatticeRepr>::Repr: IntoIterator<Item = (K, SetUnionLr::Repr)>,
     {
         pub fn flatten_keyed<TargetTag>(self) -> Hide<Y, SetUnionRepr<TargetTag, (K, V)>>
         where

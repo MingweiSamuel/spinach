@@ -23,6 +23,7 @@
 
 pub use tokio;
 pub use bytes;
+pub use serde;
 
 // Modules
 
