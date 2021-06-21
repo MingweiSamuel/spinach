@@ -1,6 +1,7 @@
 use std::cmp::Ordering;
 
-use super::*;
+use super::{Lattice, LatticeRepr, Merge, Compare, Convert, Debottom};
+use super::bottom::BottomRepr;
 
 use crate::tag;
 
@@ -79,9 +80,17 @@ where
 }
 
 
-impl<Ra: Bottom, Rb: Bottom> Bottom for DomPairRepr<Ra, Rb> {
+impl<Ra: Debottom, Rb: Debottom> Debottom for DomPairRepr<Ra, Rb> {
     fn is_bottom(this: &Self::Repr) -> bool {
         Ra::is_bottom(&this.0) && Rb::is_bottom(&this.1)
+    }
+
+    type DebottomLr = DomPairRepr<BottomRepr<Ra::DebottomLr>, BottomRepr<Rb::DebottomLr>>;
+    fn debottom(this: Self::Repr) -> Option<<Self::DebottomLr as LatticeRepr>::Repr> {
+        match (Ra::debottom(this.0), Rb::debottom(this.1)) {
+            (None, None) => None,
+            somes => Some(somes),
+        }
     }
 }
 

@@ -36,6 +36,9 @@ pub trait Compare<Other: LatticeRepr<Lattice = Self::Lattice>>: LatticeRepr {
     fn compare(this: &Self::Repr, other: &Other::Repr) -> Option<std::cmp::Ordering>;
 }
 
-pub trait Bottom: LatticeRepr {
+pub trait Debottom: LatticeRepr {
     fn is_bottom(this: &Self::Repr) -> bool;
+
+    type DebottomLr: LatticeRepr<Lattice = Self::Lattice>;
+    fn debottom(this: Self::Repr) -> Option<<Self::DebottomLr as LatticeRepr>::Repr>;
 }

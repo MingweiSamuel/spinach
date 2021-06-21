@@ -148,15 +148,15 @@ where
     }
 }
 
-impl<Tag: MapTag<K, B::Repr>, K, B: LatticeRepr> Bottom for MapUnionRepr<Tag, K, B>
-where
-    Tag::Bind: Clone,
-    Self::Repr: Collection<K, B::Repr>,
-{
-    fn is_bottom(this: &Self::Repr) -> bool {
-        this.is_empty()
-    }
-}
+// impl<Tag: MapTag<K, B::Repr>, K, B: LatticeRepr> Bottom for MapUnionRepr<Tag, K, B>
+// where
+//     Tag::Bind: Clone,
+//     Self::Repr: Collection<K, B::Repr>,
+// {
+//     fn is_bottom(this: &Self::Repr) -> bool {
+//         this.is_empty()
+//     }
+// }
 
 mod fns {
     use crate::hide::{Hide, Qualifier};
