@@ -6,6 +6,7 @@ pub mod ord;
 pub mod pair;
 pub mod dom_pair;
 pub mod bytes;
+pub mod bottom;
 
 pub trait Lattice {}
 
