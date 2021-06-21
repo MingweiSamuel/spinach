@@ -309,6 +309,16 @@
 <span id="307">307</span>
 <span id="308">308</span>
 <span id="309">309</span>
+<span id="310">310</span>
+<span id="311">311</span>
+<span id="312">312</span>
+<span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
 </pre><pre class="rust">
 <span class="kw">use</span> <span class="ident">std::iter::FromIterator</span>;
 <span class="kw">use</span> <span class="ident">std::cmp::Ordering</span>;
@@ -403,6 +413,16 @@
                 <span class="prelude-val">None</span>
             }
         }
+    }
+}
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Tag</span>: <span class="ident">SetTag</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Bottom</span> <span class="kw">for</span> <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">Tag</span>, <span class="ident">T</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="ident">Tag::Bind</span>: <span class="ident">Clone</span>,
+    <span class="self">Self</span><span class="ident">::Repr</span>: <span class="ident">Collection</span><span class="op">&lt;</span><span class="ident">T</span>, ()<span class="op">&gt;</span>,
+{
+    <span class="kw">fn</span> <span class="ident">is_bottom</span>(<span class="ident">this</span>: <span class="kw-2">&amp;</span><span class="self">Self</span><span class="ident">::Repr</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+        <span class="ident">this</span>.<span class="ident">is_empty</span>()
     }
 }
 
