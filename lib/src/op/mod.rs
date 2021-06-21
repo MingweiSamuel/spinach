@@ -23,6 +23,9 @@ pub use iterop::*;
 mod debugop;
 pub use debugop::*;
 
+mod debottomop;
+pub use debottomop::*;
+
 mod latticeop;
 pub use latticeop::*;
 

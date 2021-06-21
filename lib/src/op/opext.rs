@@ -7,7 +7,7 @@ use tokio::net::tcp::OwnedWriteHalf;
 use crate::comp::{DebugComp, NullComp, TcpComp, TcpServerComp};
 use crate::func::unary::{Morphism, ClosureMorphism};
 use crate::func::binary::BinaryMorphism;
-use crate::lattice::{Convert, Lattice, LatticeRepr, Merge};
+use crate::lattice::{Convert, Debottom, Lattice, LatticeRepr, Merge};
 use crate::lattice::map_union::MapUnion;
 use crate::lattice::pair::PairRepr;
 use crate::tcp_server::TcpServer;
@@ -23,6 +23,13 @@ pub trait OpExt: Sized + Op {
         <Self::LatRepr as LatticeRepr>::Repr: std::fmt::Debug,
     {
         DebugOp::new(self, tag)
+    }
+
+    fn debottom(self) -> DebottomOp<Self>
+    where
+        Self::LatRepr: Debottom,
+    {
+        DebottomOp::new(self)
     }
 
     fn morphism<F: Morphism<InLatRepr = Self::LatRepr>>(self, func: F) -> MorphismOp<Self, F> {
