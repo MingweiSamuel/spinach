@@ -183,24 +183,28 @@ async fn server(url: &str) -> Result<!, String> {
 pub struct DeserializeValue;
 impl Morphism for DeserializeValue {
     type InLatRepr  = RepLatRepr;
-    type OutLatRepr = MapUnionRepr::<tag::SINGLE, String, ValueLatRepr>;
+    type OutLatRepr = MapUnionRepr::<tag::OPTION, String, ValueLatRepr>;
     fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
         let bytes = item.into_reveal(); // TODO REVEAL!!
 
-        match ron::de::from_bytes::<'_, (u64, <MapUnionRepr<tag::SINGLE, String, ValueLatRepr> as LatticeRepr>::Repr)>(&*bytes) {
+        let out = match ron::de::from_bytes::<'_, (u64, <MapUnionRepr<tag::SINGLE, String, ValueLatRepr> as LatticeRepr>::Repr)>(&*bytes) {
             Ok((tid, repr)) => {
                 let expected_tid = util::tid_to_u64(TypeId::of::<Self::InLatRepr>());
                 if expected_tid == tid {
-                    Hide::new(repr)
+                    Some(repr.0)
                 }
                 else {
-                    panic!("Invalid TypeId, expected: {}, found: {}.", expected_tid, tid);
+                    eprintln!("Invalid TypeId, expected: {}, found: {}.", expected_tid, tid);
+                    None
                 }
             }
             Err(err) => {
-                panic!("Failed to parse msg: {:?}, error: {}", bytes, err);
+                eprintln!("Failed to parse msg: {:?}, error: {}", bytes, err);
+                None
             }
-        }
+        };
+
+        Hide::new(out)
     }
 }
 
@@ -210,8 +214,6 @@ impl Morphism for SerializeKvsOperation {
     type OutLatRepr = ReqLatRepr;
     fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
         // TODO! REVEAL!!
-        // TODO! Doesn't actually validate!
-
         match ron::de::from_str::<KvsOperation>(&item.reveal_ref().0) {
             Ok(operation) => {
                 let tid = util::tid_to_u64(TypeId::of::<Self::OutLatRepr>());
