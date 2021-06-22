@@ -190,21 +190,6 @@
 <span id="190">190</span>
 <span id="191">191</span>
 <span id="192">192</span>
-<span id="193">193</span>
-<span id="194">194</span>
-<span id="195">195</span>
-<span id="196">196</span>
-<span id="197">197</span>
-<span id="198">198</span>
-<span id="199">199</span>
-<span id="200">200</span>
-<span id="201">201</span>
-<span id="202">202</span>
-<span id="203">203</span>
-<span id="204">204</span>
-<span id="205">205</span>
-<span id="206">206</span>
-<span id="207">207</span>
 </pre><pre class="rust">
 <span class="attribute">#![<span class="ident">feature</span>(<span class="ident">core_intrinsics</span>)]</span>
 <span class="attribute">#![<span class="ident">feature</span>(<span class="ident">never_type</span>)]</span>
@@ -219,7 +204,7 @@
 
 <span class="kw">use</span> <span class="ident">spinach::collections::Single</span>;
 <span class="kw">use</span> <span class="ident">spinach::comp</span>::{<span class="ident">CompExt</span>};
-<span class="kw">use</span> <span class="ident">spinach::func::binary</span>::{<span class="self">self</span>, <span class="ident">BinaryMorphism</span>};
+<span class="kw">use</span> <span class="ident">spinach::func::binary</span>::{<span class="ident">HashPartitioned</span>, <span class="ident">TableProduct</span>};
 <span class="kw">use</span> <span class="ident">spinach::func::unary</span>::{<span class="ident">Morphism</span>};
 <span class="kw">use</span> <span class="ident">spinach::hide</span>::{<span class="ident">Hide</span>, <span class="ident">Qualifier</span>};
 <span class="kw">use</span> <span class="ident">spinach::lattice::LatticeRepr</span>;
@@ -282,22 +267,6 @@
     }
 }
 
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CreateReplies</span>;
-<span class="kw">impl</span> <span class="ident">BinaryMorphism</span> <span class="kw">for</span> <span class="ident">CreateReplies</span> {
-    <span class="kw">type</span> <span class="ident">InLatReprA</span> <span class="op">=</span> <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::HASH_SET</span>, <span class="ident">SocketAddr</span><span class="op">&gt;</span>;
-    <span class="kw">type</span> <span class="ident">InLatReprB</span> <span class="op">=</span> <span class="ident">ValueLatRepr</span>;
-    <span class="kw">type</span> <span class="ident">OutLatRepr</span> <span class="op">=</span> <span class="ident">MapUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::VEC</span>, <span class="ident">SocketAddr</span>, <span class="ident">ValueLatRepr</span><span class="op">&gt;</span>;
-
-    <span class="kw">fn</span> <span class="ident">call</span><span class="op">&lt;</span><span class="ident">Y</span>: <span class="ident">Qualifier</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">item_a</span>: <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="self">Self</span><span class="ident">::InLatReprA</span><span class="op">&gt;</span>, <span class="ident">item_b</span>: <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="self">Self</span><span class="ident">::InLatReprB</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="self">Self</span><span class="ident">::OutLatRepr</span><span class="op">&gt;</span> {
-        <span class="comment">// TODO!!!! NOT MONOTONIC!!!!</span>
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">out</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
-        <span class="kw">for</span> <span class="ident">addr</span> <span class="kw">in</span> <span class="ident">item_a</span>.<span class="ident">into_reveal</span>() { <span class="comment">// TODO!! REVEAL!!!</span>
-            <span class="ident">out</span>.<span class="ident">push</span>((<span class="ident">addr</span>, <span class="ident">item_b</span>.<span class="ident">reveal_ref</span>().<span class="ident">clone</span>()));
-        }
-        <span class="ident">Hide::new</span>(<span class="ident">out</span>)
-    }
-}
-
 <span class="doccomment">/// Run the server portion of the program.</span>
 <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">server</span>(<span class="ident">url</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="op">!</span>, <span class="ident">String</span><span class="op">&gt;</span> {
 
@@ -319,14 +288,14 @@
         <span class="comment">// .debug(&quot;write&quot;)</span>
         .<span class="ident">lattice_default</span>::<span class="op">&lt;</span><span class="ident">WritesLatRepr</span><span class="op">&gt;</span>();
 
-    <span class="kw">let</span> <span class="ident">binary_func</span> <span class="op">=</span> <span class="ident">binary::HashPartitioned</span>::<span class="op">&lt;</span><span class="ident">String</span>, <span class="kw">_</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="ident">CreateReplies</span>);
+    <span class="kw">let</span> <span class="ident">binary_func</span> <span class="op">=</span> <span class="ident">HashPartitioned</span>::<span class="op">&lt;</span><span class="ident">String</span>, <span class="kw">_</span><span class="op">&gt;</span><span class="ident">::new</span>(
+        <span class="ident">TableProduct</span>::<span class="op">&lt;</span><span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="ident">MapUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::VEC</span>, <span class="kw">_</span>, <span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::new</span>());
 
     <span class="kw">let</span> <span class="ident">comp</span> <span class="op">=</span> <span class="ident">op_reads</span>
         .<span class="ident">binary</span>(<span class="ident">op_writes</span>, <span class="ident">binary_func</span>)
         <span class="comment">// .debug(&quot;after binop&quot;)</span>
         .<span class="ident">morphism_closure</span>(<span class="op">|</span><span class="ident">item</span><span class="op">|</span> <span class="ident">item</span>.<span class="ident">transpose</span>::<span class="op">&lt;</span><span class="ident">tag::VEC</span>, <span class="ident">tag::VEC</span><span class="op">&gt;</span>())
         .<span class="ident">comp_tcp_server</span>::<span class="op">&lt;</span><span class="ident">ResponseLatRepr</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">server</span>);
-
 
     <span class="ident">comp</span>
         .<span class="ident">run</span>()
@@ -340,16 +309,17 @@
     <span class="kw">type</span> <span class="ident">InLatRepr</span>  <span class="op">=</span> <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::SINGLE</span>, <span class="ident">String</span><span class="op">&gt;</span>;
     <span class="kw">type</span> <span class="ident">OutLatRepr</span> <span class="op">=</span> <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::OPTION</span>, <span class="ident">KvsOperation</span><span class="op">&gt;</span>;
     <span class="kw">fn</span> <span class="ident">call</span><span class="op">&lt;</span><span class="ident">Y</span>: <span class="ident">Qualifier</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">item</span>: <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="self">Self</span><span class="ident">::InLatRepr</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Y</span>, <span class="self">Self</span><span class="ident">::OutLatRepr</span><span class="op">&gt;</span> {
-        <span class="comment">// TODO! REVEAL!!</span>
-        <span class="kw">match</span> <span class="ident">ron::de::from_str</span>::<span class="op">&lt;</span><span class="ident">KvsOperation</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">item</span>.<span class="ident">reveal_ref</span>().<span class="number">0</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">operation</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="ident">Hide::new</span>(<span class="prelude-val">Some</span>(<span class="ident">operation</span>))
-            },
-            <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="macro">eprintln!</span>(<span class="string">&quot;Failed to parse operation, error: {}&quot;</span>, <span class="ident">err</span>);
-                <span class="ident">Hide::new</span>(<span class="prelude-val">None</span>)
+        <span class="ident">item</span>.<span class="ident">filter_map_one</span>(<span class="op">|</span><span class="ident">input</span><span class="op">|</span> {
+            <span class="kw">match</span> <span class="ident">ron::de::from_str</span>::<span class="op">&lt;</span><span class="ident">KvsOperation</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">input</span>) {
+                <span class="prelude-val">Ok</span>(<span class="ident">operation</span>) <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="prelude-val">Some</span>(<span class="ident">operation</span>)
+                },
+                <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="macro">eprintln!</span>(<span class="string">&quot;Failed to parse operation, error: {}&quot;</span>, <span class="ident">err</span>);
+                    <span class="prelude-val">None</span>
+                }
             }
-        }
+        })
     }
 }
 

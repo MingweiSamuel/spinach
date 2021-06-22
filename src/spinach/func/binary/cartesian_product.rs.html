@@ -80,6 +80,10 @@
 <span id="80">80</span>
 <span id="81">81</span>
 <span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
+<span id="86">86</span>
 </pre><pre class="rust">
 <span class="kw">use</span> <span class="ident">std::iter::FromIterator</span>;
 
@@ -89,7 +93,7 @@
 
 <span class="kw">use</span> <span class="kw">super</span><span class="ident">::BinaryMorphism</span>;
 
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CartesianProduct</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">AItem</span>, <span class="ident">B</span>, <span class="ident">BItem</span>, <span class="ident">O</span><span class="op">&gt;</span>(<span class="ident">std::marker::PhantomData</span><span class="op">&lt;</span>(<span class="ident">A</span>, <span class="ident">AItem</span>, <span class="ident">B</span>, <span class="ident">BItem</span>, <span class="ident">O</span>)<span class="op">&gt;</span>)
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CartesianProduct</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">AItem</span>, <span class="ident">B</span>, <span class="ident">BItem</span>, <span class="ident">O</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">A</span>: <span class="ident">LatticeRepr</span><span class="op">&lt;</span><span class="ident">Lattice</span> <span class="op">=</span> <span class="ident">SetUnion</span><span class="op">&lt;</span><span class="ident">AItem</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">B</span>: <span class="ident">LatticeRepr</span><span class="op">&lt;</span><span class="ident">Lattice</span> <span class="op">=</span> <span class="ident">SetUnion</span><span class="op">&lt;</span><span class="ident">BItem</span><span class="op">&gt;</span><span class="op">&gt;</span>,
@@ -98,7 +102,9 @@
     <span class="ident">AItem</span>: <span class="ident">Clone</span>,
     <span class="ident">O</span>: <span class="ident">LatticeRepr</span><span class="op">&lt;</span><span class="ident">Lattice</span> <span class="op">=</span> <span class="ident">SetUnion</span><span class="op">&lt;</span>(<span class="ident">AItem</span>, <span class="ident">BItem</span>)<span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">O::Repr</span>: <span class="ident">FromIterator</span><span class="op">&lt;</span>(<span class="ident">AItem</span>, <span class="ident">BItem</span>)<span class="op">&gt;</span>,
-;
+{
+    <span class="ident">_phantom</span>: <span class="ident">std::marker::PhantomData</span><span class="op">&lt;</span>(<span class="ident">A</span>, <span class="ident">AItem</span>, <span class="ident">B</span>, <span class="ident">BItem</span>, <span class="ident">O</span>)<span class="op">&gt;</span>,
+}
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">AItem</span>, <span class="ident">B</span>, <span class="ident">BItem</span>, <span class="ident">O</span><span class="op">&gt;</span> <span class="ident">CartesianProduct</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">AItem</span>, <span class="ident">B</span>, <span class="ident">BItem</span>, <span class="ident">O</span><span class="op">&gt;</span>
 <span class="kw">where</span>
@@ -111,7 +117,9 @@
     <span class="ident">O::Repr</span>: <span class="ident">FromIterator</span><span class="op">&lt;</span>(<span class="ident">AItem</span>, <span class="ident">BItem</span>)<span class="op">&gt;</span>,
 {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="self">Self</span>(<span class="ident">std::marker::PhantomData</span>)
+        <span class="self">Self</span> {
+            <span class="ident">_phantom</span>: <span class="ident">std::marker::PhantomData</span>
+        }
     }
 }
 
