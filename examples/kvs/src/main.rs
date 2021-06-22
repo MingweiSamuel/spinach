@@ -34,7 +34,7 @@ pub enum KvsOperation {
 }
 
 type RequestLatRepr = SetUnionRepr<tag::SINGLE, KvsOperation>;
-type ResponseLatRepr = ValueLatRepr;
+type ResponseLatRepr = MapUnionRepr<tag::VEC, String, ValueLatRepr>;
 
 pub struct Switch;
 impl Morphism for Switch {
@@ -116,7 +116,7 @@ async fn server(url: &str) -> Result<!, String> {
     let comp = op_reads
         .binary(op_writes, binary_func)
         // .debug("after binop")
-        .morphism_closure(|item| item.fold_values::<MapUnionRepr<tag::VEC, SocketAddr, ValueLatRepr>>())
+        .morphism_closure(|item| item.transpose::<tag::VEC, tag::VEC>())
         .comp_tcp_server::<ResponseLatRepr, _>(server);
 
 
@@ -151,7 +151,7 @@ async fn client<R: tokio::io::AsyncRead + std::marker::Unpin>(url: &str, input_r
     let (read, write) = TcpStream::connect(url).await.map_err(|e| e.to_string())?
         .into_split();
 
-    let read_comp = TcpOp::<ValueLatRepr>::new(read)
+    let read_comp = TcpOp::<ResponseLatRepr>::new(read)
         .comp_debug("read");
 
     let write_comp = ReadOp::new(input_read)

@@ -173,6 +173,40 @@ mod fns {
     //     }
     // }
 
+    impl<Y: Qualifier, K: Clone, InnerK: Clone, Tag, InnerTag, InnermostLr> Hide<Y, MapUnionRepr<Tag, K, MapUnionRepr<InnerTag, InnerK, InnermostLr>>>
+    where
+        InnermostLr: LatticeRepr,
+        InnerTag: MapTag<InnerK, InnermostLr::Repr>,
+        MapUnionRepr<InnerTag, InnerK, InnermostLr>: LatticeRepr,
+        <MapUnionRepr<InnerTag, InnerK, InnermostLr> as LatticeRepr>::Repr: IntoIterator<Item = (InnerK, InnermostLr::Repr)>,
+
+        Tag: MapTag<K, <MapUnionRepr<InnerTag, InnerK, InnermostLr> as LatticeRepr>::Repr>,
+        MapUnionRepr<Tag, K, MapUnionRepr<InnerTag, InnerK, InnermostLr>>: LatticeRepr,
+        <MapUnionRepr<Tag, K, MapUnionRepr<InnerTag, InnerK, InnermostLr>> as LatticeRepr>::Repr: IntoIterator<Item = (K, <MapUnionRepr<InnerTag, InnerK, InnermostLr> as LatticeRepr>::Repr)>,
+    {
+        pub fn transpose<TargetTag, TargetInnerTag>(self) -> Hide<Y, MapUnionRepr<TargetTag, InnerK, MapUnionRepr<TargetInnerTag, K, InnermostLr>>>
+        where
+            TargetInnerTag: MapTag<K, InnermostLr::Repr>,
+            MapUnionRepr<TargetInnerTag, K, InnermostLr>: LatticeRepr,
+
+            TargetTag: MapTag<InnerK, <MapUnionRepr<TargetInnerTag, K, InnermostLr> as LatticeRepr>::Repr>,
+            MapUnionRepr<TargetTag, InnerK, MapUnionRepr<TargetInnerTag, K, InnermostLr>>: LatticeRepr,
+            MapUnionRepr<TargetTag, InnerK, MapUnionRepr<TargetInnerTag, K, InnermostLr>>: Merge<MapUnionRepr<tag::SINGLE, InnerK, MapUnionRepr<tag::SINGLE, K, InnermostLr>>>,
+            <MapUnionRepr<TargetTag, InnerK, MapUnionRepr<TargetInnerTag, K, InnermostLr>> as LatticeRepr>::Repr: Default,
+        {
+            let mut out = <<MapUnionRepr<TargetTag, InnerK, MapUnionRepr<TargetInnerTag, K, InnermostLr>> as LatticeRepr>::Repr as Default>::default();
+
+            for (outer_k, inner_map) in self.into_reveal().into_iter() {
+                for (inner_k, value) in inner_map.into_iter() {
+                    <MapUnionRepr<TargetTag, InnerK, MapUnionRepr<TargetInnerTag, K, InnermostLr>> as Merge<MapUnionRepr<tag::SINGLE, InnerK, MapUnionRepr<tag::SINGLE, K, InnermostLr>>>>
+                        ::merge(&mut out, Single((inner_k, Single((outer_k.clone(), value)))));
+                }
+            }
+
+            Hide::new(out)
+        }
+    }
+
     impl<Y: Qualifier, K: Clone, Tag, InnerLr: LatticeRepr> Hide<Y, MapUnionRepr<Tag, K, InnerLr>>
     where
         Tag: MapTag<K, InnerLr::Repr>,
