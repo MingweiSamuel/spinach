@@ -99,16 +99,15 @@ pub trait OpExt: Sized + Op {
         NullComp::new(self)
     }
 
-    fn comp_tcp(self, tcp_write: OwnedWriteHalf) -> TcpComp<Self>
+    fn comp_tcp<Lr: Any + LatticeRepr>(self, tcp_write: OwnedWriteHalf) -> TcpComp<Self>
     where
-        Self: OpDelta,
-        Self::LatRepr: Any,
-        <Self::LatRepr as LatticeRepr>::Repr: Serialize,
+        Self: OpDelta<LatRepr = Lr>,
+        Lr::Repr: Serialize,
     {
         TcpComp::new(self, tcp_write)
     }
 
-    fn comp_tcp_server<Tag, Lr: Any + LatticeRepr>(self, tcp_server: TcpServer) -> TcpServerComp<Self, Tag, Lr>
+    fn comp_tcp_server<Lr: Any + LatticeRepr, Tag>(self, tcp_server: TcpServer) -> TcpServerComp<Self, Tag, Lr>
     where
         Tag: MapTag<SocketAddr, Lr::Repr>,
         MapUnionRepr<Tag, SocketAddr, Lr>: LatticeRepr,

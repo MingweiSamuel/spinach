@@ -173,6 +173,25 @@ mod fns {
     //     }
     // }
 
+    impl<Y: Qualifier, K: Clone, Tag, InnerLr: LatticeRepr> Hide<Y, MapUnionRepr<Tag, K, InnerLr>>
+    where
+        Tag: MapTag<K, InnerLr::Repr>,
+        MapUnionRepr<Tag, K, InnerLr>: LatticeRepr,
+        <MapUnionRepr<Tag, K, InnerLr> as LatticeRepr>::Repr: IntoIterator<Item = (K, InnerLr::Repr)>,
+    {
+        pub fn fold_values<TargetLr>(self) -> Hide<Y, TargetLr>
+        where
+            TargetLr: LatticeRepr + Merge<InnerLr>,
+            TargetLr::Repr: Default,
+        {
+            let mut out = <TargetLr::Repr as Default>::default();
+            for (_key, val) in self.into_reveal().into_iter() {
+                <TargetLr as Merge<InnerLr>>::merge(&mut out, val);
+            }
+            Hide::new(out)
+        }
+    }
+
     impl<Y: Qualifier, K: Clone, V: Clone, Tag, SetUnionLr> Hide<Y, MapUnionRepr<Tag, K, SetUnionLr>>
     where
         SetUnionLr: LatticeRepr<Lattice = SetUnion<V>>,

@@ -1,7 +1,7 @@
 use std::iter::FromIterator;
 use std::cmp::Ordering;
 
-use super::*;
+use super::{Lattice, LatticeRepr, Merge, Convert, Compare, Debottom};
 
 use crate::tag;
 use crate::collections::Collection;
@@ -94,7 +94,7 @@ where
     }
 }
 
-// impl<Tag: SetTag<T>, T> Bottom for SetUnionRepr<Tag, T>
+// impl<Tag: SetTag<T>, T> Debottom for SetUnionRepr<Tag, T>
 // where
 //     Tag::Bind: Clone,
 //     Self::Repr: Collection<T, ()>,
@@ -103,6 +103,16 @@ where
 //         this.is_empty()
 //     }
 // }
+impl<T: Clone> Debottom for SetUnionRepr<tag::OPTION, T> {
+    fn is_bottom(this: &Self::Repr) -> bool {
+        this.is_none()
+    }
+
+    type DebottomLr = SetUnionRepr<tag::SINGLE, T>;
+    fn debottom(this: Self::Repr) -> Option<<Self::DebottomLr as LatticeRepr>::Repr> {
+        this.map(crate::collections::Single)
+    }
+}
 
 fn __assert_merges() {
     use static_assertions::{assert_impl_all, assert_not_impl_any};
@@ -152,9 +162,9 @@ mod fns {
     use crate::collections::Single;
     use crate::hide::{Hide, Qualifier, Delta, Value};
     use crate::lattice::map_union::{MapTag, MapUnionRepr};
+    use crate::lattice::ord::MaxRepr;
 
     use super::*;
-    use super::ord::MaxRepr;
 
     impl<Tag: SetTag<T>, T> Hide<Value, SetUnionRepr<Tag, T>>
     where
