@@ -246,22 +246,22 @@
         });
 
         <span class="kw">let</span> <span class="ident">reads</span> <span class="op">=</span> <span class="ident">reads</span>
-            .<span class="ident">filter_map</span>::<span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">tag::VEC</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="op">|</span>(<span class="ident">addr</span>, <span class="ident">operation</span>)<span class="op">|</span> {
+            .<span class="ident">map</span>::<span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">tag::VEC</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="op">|</span>(<span class="ident">addr</span>, <span class="ident">operation</span>)<span class="op">|</span> {
                 <span class="kw">match</span> <span class="ident">operation</span> {
-                    <span class="ident">KvsOperation::Read</span>(<span class="ident">key</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>((<span class="ident">key</span>, <span class="ident">Single</span>(<span class="ident">addr</span>))),
+                    <span class="ident">KvsOperation::Read</span>(<span class="ident">key</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Single</span>((<span class="ident">key</span>, <span class="ident">Single</span>(<span class="ident">addr</span>))),
                     <span class="ident">KvsOperation::Write</span>(<span class="kw">_</span>, <span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(),
                 }
             })
-            .<span class="ident">fold_into_map</span>::<span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::SINGLE</span>, <span class="ident">SocketAddr</span><span class="op">&gt;</span>, <span class="kw">_</span><span class="op">&gt;</span>();
+            .<span class="ident">fold</span>::<span class="op">&lt;</span><span class="ident">MapUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::VEC</span>, <span class="ident">String</span>, <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::VEC</span>, <span class="ident">SocketAddr</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">MapUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::SINGLE</span>, <span class="ident">String</span>, <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::SINGLE</span>, <span class="ident">SocketAddr</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>();
 
         <span class="kw">let</span> <span class="ident">writes</span> <span class="op">=</span> <span class="ident">writes</span>
-            .<span class="ident">filter_map</span>::<span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">tag::VEC</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="op">|</span>(<span class="ident">_addr</span>, <span class="ident">operation</span>)<span class="op">|</span> {
+            .<span class="ident">map</span>::<span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">tag::VEC</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="op">|</span>(<span class="ident">_addr</span>, <span class="ident">operation</span>)<span class="op">|</span> {
                     <span class="kw">match</span> <span class="ident">operation</span> {
                         <span class="ident">KvsOperation::Read</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(),
-                        <span class="ident">KvsOperation::Write</span>(<span class="ident">key</span>, <span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>((<span class="ident">key</span>, <span class="ident">val</span>)),
+                        <span class="ident">KvsOperation::Write</span>(<span class="ident">key</span>, <span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Single</span>((<span class="ident">key</span>, <span class="ident">val</span>)),
                     }
             })
-            .<span class="ident">fold_into_map</span>();
+            .<span class="ident">fold</span>::<span class="op">&lt;</span><span class="ident">MapUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::VEC</span>, <span class="ident">String</span>, <span class="ident">ValueLatRepr</span><span class="op">&gt;</span>, <span class="ident">MapUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::SINGLE</span>, <span class="ident">String</span>, <span class="ident">ValueLatRepr</span><span class="op">&gt;</span><span class="op">&gt;</span>();
 
         <span class="ident">Hide::zip</span>(<span class="ident">reads</span>, <span class="ident">writes</span>)
     }
