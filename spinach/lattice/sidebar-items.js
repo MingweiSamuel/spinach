@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["bottom",""],["bytes",""],["dom_pair",""],["map_union",""],["ord",""],["pair",""],["set_union",""]],"trait":[["Bottom",""],["Compare",""],["Convert",""],["Lattice",""],["LatticeRepr",""],["Merge",""]]});
+initSidebarItems({"mod":[["bottom",""],["dom_pair",""],["map_union",""],["ord",""],["pair",""],["set_union",""]],"trait":[["Compare",""],["Convert",""],["Debottom",""],["Lattice",""],["LatticeRepr",""],["Merge",""]]});

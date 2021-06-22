@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["BottomLattice",""],["BottomRepr",""]]});
+initSidebarItems({"struct":[["BottomRepr",""]]});
