@@ -11,7 +11,7 @@ use spinach::tokio::net::TcpStream;
 
 use spinach::collections::Single;
 use spinach::comp::{CompExt};
-use spinach::func::binary::{self, BinaryMorphism};
+use spinach::func::binary::{HashPartitioned, TableProduct};
 use spinach::func::unary::{Morphism};
 use spinach::hide::{Hide, Qualifier};
 use spinach::lattice::LatticeRepr;
@@ -74,22 +74,6 @@ impl Morphism for Switch {
     }
 }
 
-pub struct CreateReplies;
-impl BinaryMorphism for CreateReplies {
-    type InLatReprA = SetUnionRepr<tag::HASH_SET, SocketAddr>;
-    type InLatReprB = ValueLatRepr;
-    type OutLatRepr = MapUnionRepr<tag::VEC, SocketAddr, ValueLatRepr>;
-
-    fn call<Y: Qualifier>(&self, item_a: Hide<Y, Self::InLatReprA>, item_b: Hide<Y, Self::InLatReprB>) -> Hide<Y, Self::OutLatRepr> {
-        // TODO!!!! NOT MONOTONIC!!!!
-        let mut out = Vec::new();
-        for addr in item_a.into_reveal() { // TODO!! REVEAL!!!
-            out.push((addr, item_b.reveal_ref().clone()));
-        }
-        Hide::new(out)
-    }
-}
-
 /// Run the server portion of the program.
 async fn server(url: &str) -> Result<!, String> {
 
@@ -111,14 +95,14 @@ async fn server(url: &str) -> Result<!, String> {
         // .debug("write")
         .lattice_default::<WritesLatRepr>();
 
-    let binary_func = binary::HashPartitioned::<String, _>::new(CreateReplies);
+    let binary_func = HashPartitioned::<String, _>::new(
+        TableProduct::<_, _, _, MapUnionRepr<tag::VEC, _, _>>::new());
 
     let comp = op_reads
         .binary(op_writes, binary_func)
         // .debug("after binop")
         .morphism_closure(|item| item.transpose::<tag::VEC, tag::VEC>())
         .comp_tcp_server::<ResponseLatRepr, _>(server);
-
 
     comp
         .run()
@@ -132,16 +116,17 @@ impl Morphism for ParseKvsOperation {
     type InLatRepr  = SetUnionRepr<tag::SINGLE, String>;
     type OutLatRepr = SetUnionRepr<tag::OPTION, KvsOperation>;
     fn call<Y: Qualifier>(&self, item: Hide<Y, Self::InLatRepr>) -> Hide<Y, Self::OutLatRepr> {
-        // TODO! REVEAL!!
-        match ron::de::from_str::<KvsOperation>(&item.reveal_ref().0) {
-            Ok(operation) => {
-                Hide::new(Some(operation))
-            },
-            Err(err) => {
-                eprintln!("Failed to parse operation, error: {}", err);
-                Hide::new(None)
+        item.filter_map_one(|input| {
+            match ron::de::from_str::<KvsOperation>(&*input) {
+                Ok(operation) => {
+                    Some(operation)
+                },
+                Err(err) => {
+                    eprintln!("Failed to parse operation, error: {}", err);
+                    None
+                }
             }
-        }
+        })
     }
 }
 

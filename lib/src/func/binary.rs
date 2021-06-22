@@ -19,5 +19,8 @@ pub use partitioned::*;
 mod cartesian_product;
 pub use cartesian_product::*;
 
+mod table_product;
+pub use table_product::*;
+
 mod pair;
 pub use pair::*;

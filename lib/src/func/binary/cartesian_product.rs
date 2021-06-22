@@ -6,7 +6,7 @@ use crate::hide::{Hide, Qualifier};
 
 use super::BinaryMorphism;
 
-pub struct CartesianProduct<A, AItem, B, BItem, O>(std::marker::PhantomData<(A, AItem, B, BItem, O)>)
+pub struct CartesianProduct<A, AItem, B, BItem, O>
 where
     A: LatticeRepr<Lattice = SetUnion<AItem>>,
     B: LatticeRepr<Lattice = SetUnion<BItem>>,
@@ -15,7 +15,9 @@ where
     AItem: Clone,
     O: LatticeRepr<Lattice = SetUnion<(AItem, BItem)>>,
     O::Repr: FromIterator<(AItem, BItem)>,
-;
+{
+    _phantom: std::marker::PhantomData<(A, AItem, B, BItem, O)>,
+}
 
 impl<A, AItem, B, BItem, O> CartesianProduct<A, AItem, B, BItem, O>
 where
@@ -28,7 +30,9 @@ where
     O::Repr: FromIterator<(AItem, BItem)>,
 {
     pub fn new() -> Self {
-        Self(std::marker::PhantomData)
+        Self {
+            _phantom: std::marker::PhantomData
+        }
     }
 }
 
