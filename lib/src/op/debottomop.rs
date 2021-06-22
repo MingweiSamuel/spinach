@@ -35,15 +35,17 @@ where
     type Ord = O::Ord;
 
     fn poll_delta(&self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
-        match self.op.poll_delta(ctx) {
-            Poll::Ready(Some(delta)) => {
-                match O::LatRepr::debottom(delta.into_reveal()) {
-                    Some(non_bottom_repr) => Poll::Ready(Some(Hide::new(non_bottom_repr))),
-                    None => Poll::Pending,
+        loop {
+            return match self.op.poll_delta(ctx) {
+                Poll::Ready(Some(delta)) => {
+                    match O::LatRepr::debottom(delta.into_reveal()) {
+                        Some(non_bottom_repr) => Poll::Ready(Some(Hide::new(non_bottom_repr))),
+                        None => continue,
+                    }
                 }
+                Poll::Ready(None) => Poll::Ready(None),
+                Poll::Pending => Poll::Pending,
             }
-            Poll::Ready(None) => Poll::Ready(None),
-            Poll::Pending => Poll::Pending,
         }
     }
 }
