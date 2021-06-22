@@ -161,7 +161,6 @@ fn __assert_merges() {
 mod fns {
     use crate::collections::Single;
     use crate::hide::{Hide, Qualifier, Delta, Value};
-    use crate::lattice::map_union::{MapTag, MapUnionRepr};
     use crate::lattice::ord::MaxRepr;
 
     use super::*;
