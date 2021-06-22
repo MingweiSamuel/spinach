@@ -142,6 +142,7 @@ where
 
     fn poll_delta(&self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
         let (state_this, state_other) = S::swap_state(&self.state_a, &self.state_b);
+
         // Check if we have a value waiting.
         {
             let mut state_this = state_this.borrow_mut();
@@ -152,6 +153,18 @@ where
                 None => {
                     state_this.waker.replace(ctx.waker().clone());
                 }
+            }
+        }
+
+        // Check if other splits are ready to receive a value.
+        {
+            let state_other = state_other.borrow();
+            if let Some(_) = state_other.delta {
+                // Other has it's value filled, wake it up and return pending.
+                if let Some(waker) = &state_other.waker {
+                    waker.wake_by_ref()
+                }
+                return Poll::Pending
             }
         }
 
