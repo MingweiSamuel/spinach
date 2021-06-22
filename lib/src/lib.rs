@@ -22,8 +22,10 @@
 // Rexports
 
 pub use tokio;
+pub use tokio_util;
 pub use bytes;
 pub use serde;
+pub use bincode;
 
 // Modules
 

@@ -32,9 +32,6 @@ pub use latticeop::*;
 mod morphop;
 pub use morphop::*;
 
-mod serdeop;
-pub use serdeop::*;
-
 mod splitop;
 pub use splitop::*;
 

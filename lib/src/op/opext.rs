@@ -1,14 +1,14 @@
+use std::any::Any;
 use std::net::SocketAddr;
 
-use bytes::Bytes;
-
+use serde::ser::Serialize;
 use tokio::net::tcp::OwnedWriteHalf;
 
 use crate::comp::{DebugComp, NullComp, TcpComp, TcpServerComp};
 use crate::func::unary::{Morphism, ClosureMorphism};
 use crate::func::binary::BinaryMorphism;
-use crate::lattice::{Convert, Debottom, Lattice, LatticeRepr, Merge};
-use crate::lattice::map_union::MapUnion;
+use crate::lattice::{Convert, Debottom, LatticeRepr, Merge};
+use crate::lattice::map_union::{MapTag, MapUnionRepr};
 use crate::lattice::pair::PairRepr;
 use crate::tcp_server::TcpServer;
 use crate::hide::{Hide, Delta};
@@ -102,16 +102,19 @@ pub trait OpExt: Sized + Op {
     fn comp_tcp(self, tcp_write: OwnedWriteHalf) -> TcpComp<Self>
     where
         Self: OpDelta,
-        Self::LatRepr: LatticeRepr<Repr = Bytes>,
+        Self::LatRepr: Any,
+        <Self::LatRepr as LatticeRepr>::Repr: Serialize,
     {
         TcpComp::new(self, tcp_write)
     }
 
-    fn comp_tcp_server<L: Lattice>(self, tcp_server: TcpServer) -> TcpServerComp<Self, L>
+    fn comp_tcp_server<Tag, Lr: Any + LatticeRepr>(self, tcp_server: TcpServer) -> TcpServerComp<Self, Tag, Lr>
     where
-        Self: OpDelta,
-        Self::LatRepr: LatticeRepr<Lattice = MapUnion<SocketAddr, L>>,
-        <Self::LatRepr as LatticeRepr>::Repr: IntoIterator<Item = (SocketAddr, Bytes)>,
+        Tag: MapTag<SocketAddr, Lr::Repr>,
+        MapUnionRepr<Tag, SocketAddr, Lr>: LatticeRepr,
+        Self: OpDelta<LatRepr = MapUnionRepr<Tag, SocketAddr, Lr>>,
+        <Self::LatRepr as LatticeRepr>::Repr: IntoIterator<Item = (SocketAddr, Lr::Repr)>,
+        Lr::Repr: Serialize,
     {
         TcpServerComp::new(self, tcp_server)
     }

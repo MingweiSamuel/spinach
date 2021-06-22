@@ -6,7 +6,6 @@ pub mod ord;
 pub mod pair;
 pub mod dom_pair;
 pub mod bottom;
-pub mod serial;
 
 pub trait Lattice {}
 

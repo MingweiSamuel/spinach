@@ -43,21 +43,15 @@ impl TcpServer {
     }
 
     pub async fn write(&self, addr: SocketAddr, item: Bytes) -> Result<()> {
-        // let mut writer = BytesMut::new().writer();
-        // serde_json::to_writer(&mut writer, item)?;
-        // let bytes = writer.into_inner().freeze();
-
-        {
-            let mut streams = self.handle.streams.lock().expect("Poisoned");
-            match streams.get_mut(&addr) {
-                Some(stream) => {
-                    stream.send(item).await?;
-                    Ok(())
-                }
-                None => Err(std::io::Error::new(
-                    std::io::ErrorKind::NotConnected,
-                    format!("Addr not found: {}.", addr)))
+        let mut streams = self.handle.streams.lock().expect("Poisoned");
+        match streams.get_mut(&addr) {
+            Some(stream) => {
+                stream.send(item).await?;
+                Ok(())
             }
+            None => Err(std::io::Error::new(
+                std::io::ErrorKind::NotConnected,
+                format!("Addr not found: {}.", addr)))
         }
     }
 
@@ -110,5 +104,44 @@ impl TcpServer {
             Some((addr, bytes)) => Poll::Ready(Some((addr, bytes))),
             None => Poll::Pending,
         }
+    }
+}
+
+pub(crate) mod serde {
+    use std::any::Any;
+
+    use bincode::{ErrorKind, Result};
+    use bytes::{BufMut, BytesMut};
+    use serde::ser::Serialize;
+    use serde::de::DeserializeOwned;
+
+    use crate::lattice::LatticeRepr;
+
+    pub(crate) fn serialize<Lr: Any + LatticeRepr>(repr: Lr::Repr) -> Result<BytesMut>
+    where
+        Lr::Repr: Serialize,
+    {
+        let expected_tid = std::intrinsics::type_id::<Lr>();
+        let item = (expected_tid, repr);
+
+        let mut writer = BytesMut::new().writer();
+        bincode::serialize_into(&mut writer, &item)
+            .map(|_| writer.into_inner())
+    }
+
+    pub(crate) fn deserialize<Lr: Any + LatticeRepr>(bytes: &[u8]) -> Result<Lr::Repr>
+    where
+        Lr::Repr: DeserializeOwned,
+    {
+        let expected_tid = std::intrinsics::type_id::<Lr>();
+        bincode::deserialize::<(u64, Lr::Repr)>(&*bytes)
+            .and_then(|(tid, repr)| {
+                if expected_tid == tid {
+                    Ok(repr)
+                }
+                else {
+                    Err(Box::new(ErrorKind::Custom(format!("Invalid TypeId, expected: {}, found: {}.", expected_tid, tid))))
+                }
+            })
     }
 }
