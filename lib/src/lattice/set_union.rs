@@ -292,26 +292,24 @@ mod fns {
         }
     }
 
-    impl<Y: Qualifier, Tag: SetTag<(K, V)>, K: Clone, V: Clone> Hide<Y, SetUnionRepr<Tag, (K, V)>>
+    impl<Y: Qualifier, Tag: SetTag<T>, T> Hide<Y, SetUnionRepr<Tag, T>>
     where
-        SetUnionRepr<Tag, (K, V)>: LatticeRepr,
-        <SetUnionRepr<Tag, (K, V)> as LatticeRepr>::Repr: IntoIterator<Item = (K, V)>,
+        SetUnionRepr<Tag, T>: LatticeRepr,
+        <SetUnionRepr<Tag, T> as LatticeRepr>::Repr: IntoIterator<Item = T>,
     {
-        pub fn fold_into_map<TargetTag: MapTag<K, TargetValRepr::Repr>, ValRepr, TargetValRepr>(self) -> Hide<Y, MapUnionRepr<TargetTag, K, TargetValRepr>>
+        pub fn fold<TargetLr, MergeLr>(self) -> Hide<Y, TargetLr>
         where
-            ValRepr: LatticeRepr<Repr = V>,
-            TargetValRepr: LatticeRepr,
-            MapUnionRepr<TargetTag, K, TargetValRepr>: Merge<MapUnionRepr<tag::SINGLE, K, ValRepr>>,
-            <MapUnionRepr<TargetTag, K, TargetValRepr> as LatticeRepr>::Repr: Default,
+            MergeLr: LatticeRepr<Repr = T>,
+            TargetLr: LatticeRepr + Merge<MergeLr>,
+            <TargetLr as LatticeRepr>::Repr: Default,
         {
             let mut out = Hide::new(Default::default());
-            for kv in self.into_reveal().into_iter() {
-                <MapUnionRepr<TargetTag, K, TargetValRepr>>::merge_hide(&mut out, Hide::<Delta, _>::new(Single(kv)));
+            for t in self.into_reveal().into_iter() {
+                <TargetLr as Merge<MergeLr>>::merge_hide(&mut out, Hide::<Delta, _>::new(t));
             }
             out
         }
     }
-
 
     fn __test_things() {
         let my_lattice: Hide<Value, SetUnionRepr<tag::HASH_SET, u32>> =

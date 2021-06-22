@@ -53,22 +53,22 @@ impl Morphism for Switch {
         });
 
         let reads = reads
-            .filter_map::<_, tag::VEC, _>(|(addr, operation)| {
+            .map::<_, tag::VEC, _>(|(addr, operation)| {
                 match operation {
-                    KvsOperation::Read(key) => Some((key, Single(addr))),
+                    KvsOperation::Read(key) => Single((key, Single(addr))),
                     KvsOperation::Write(_, _) => panic!(),
                 }
             })
-            .fold_into_map::<_, SetUnionRepr<tag::SINGLE, SocketAddr>, _>();
+            .fold::<MapUnionRepr<tag::VEC, String, SetUnionRepr<tag::VEC, SocketAddr>>, MapUnionRepr<tag::SINGLE, String, SetUnionRepr<tag::SINGLE, SocketAddr>>>();
 
         let writes = writes
-            .filter_map::<_, tag::VEC, _>(|(_addr, operation)| {
+            .map::<_, tag::VEC, _>(|(_addr, operation)| {
                     match operation {
                         KvsOperation::Read(_) => panic!(),
-                        KvsOperation::Write(key, val) => Some((key, val)),
+                        KvsOperation::Write(key, val) => Single((key, val)),
                     }
             })
-            .fold_into_map();
+            .fold::<MapUnionRepr<tag::VEC, String, ValueLatRepr>, MapUnionRepr<tag::SINGLE, String, ValueLatRepr>>();
 
         Hide::zip(reads, writes)
     }
