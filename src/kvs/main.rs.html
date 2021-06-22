@@ -242,7 +242,7 @@
 }
 
 <span class="kw">type</span> <span class="ident">RequestLatRepr</span> <span class="op">=</span> <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::SINGLE</span>, <span class="ident">KvsOperation</span><span class="op">&gt;</span>;
-<span class="kw">type</span> <span class="ident">ResponseLatRepr</span> <span class="op">=</span> <span class="ident">ValueLatRepr</span>;
+<span class="kw">type</span> <span class="ident">ResponseLatRepr</span> <span class="op">=</span> <span class="ident">MapUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::VEC</span>, <span class="ident">String</span>, <span class="ident">ValueLatRepr</span><span class="op">&gt;</span>;
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Switch</span>;
 <span class="kw">impl</span> <span class="ident">Morphism</span> <span class="kw">for</span> <span class="ident">Switch</span> {
@@ -324,7 +324,7 @@
     <span class="kw">let</span> <span class="ident">comp</span> <span class="op">=</span> <span class="ident">op_reads</span>
         .<span class="ident">binary</span>(<span class="ident">op_writes</span>, <span class="ident">binary_func</span>)
         <span class="comment">// .debug(&quot;after binop&quot;)</span>
-        .<span class="ident">morphism_closure</span>(<span class="op">|</span><span class="ident">item</span><span class="op">|</span> <span class="ident">item</span>.<span class="ident">fold_values</span>::<span class="op">&lt;</span><span class="ident">MapUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::VEC</span>, <span class="ident">SocketAddr</span>, <span class="ident">ValueLatRepr</span><span class="op">&gt;</span><span class="op">&gt;</span>())
+        .<span class="ident">morphism_closure</span>(<span class="op">|</span><span class="ident">item</span><span class="op">|</span> <span class="ident">item</span>.<span class="ident">transpose</span>::<span class="op">&lt;</span><span class="ident">tag::VEC</span>, <span class="ident">tag::VEC</span><span class="op">&gt;</span>())
         .<span class="ident">comp_tcp_server</span>::<span class="op">&lt;</span><span class="ident">ResponseLatRepr</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">server</span>);
 
 
@@ -359,7 +359,7 @@
     <span class="kw">let</span> (<span class="ident">read</span>, <span class="ident">write</span>) <span class="op">=</span> <span class="ident">TcpStream::connect</span>(<span class="ident">url</span>).<span class="kw">await</span>.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">e</span>.<span class="ident">to_string</span>())<span class="question-mark">?</span>
         .<span class="ident">into_split</span>();
 
-    <span class="kw">let</span> <span class="ident">read_comp</span> <span class="op">=</span> <span class="ident">TcpOp</span>::<span class="op">&lt;</span><span class="ident">ValueLatRepr</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="ident">read</span>)
+    <span class="kw">let</span> <span class="ident">read_comp</span> <span class="op">=</span> <span class="ident">TcpOp</span>::<span class="op">&lt;</span><span class="ident">ResponseLatRepr</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="ident">read</span>)
         .<span class="ident">comp_debug</span>(<span class="string">&quot;read&quot;</span>);
 
     <span class="kw">let</span> <span class="ident">write_comp</span> <span class="op">=</span> <span class="ident">ReadOp::new</span>(<span class="ident">input_read</span>)
