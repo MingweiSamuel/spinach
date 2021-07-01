@@ -137,7 +137,8 @@ async fn client<R: tokio::io::AsyncRead + std::marker::Unpin>(url: &str, input_r
         .into_split();
 
     let read_comp = TcpOp::<ResponseLatRepr>::new(read)
-        .comp_debug("read");
+        .comp_null();
+        // .comp_debug("read");
 
     let write_comp = ReadOp::new(input_read)
         .morphism(ParseKvsOperation)

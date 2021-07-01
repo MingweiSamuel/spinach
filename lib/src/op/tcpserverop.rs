@@ -20,6 +20,7 @@ where
     Lr::Repr: DeserializeOwned,
 {
     tcp_server: TcpServer,
+    msgs: std::cell::Cell<usize>,
     _phantom: std::marker::PhantomData<Lr>,
 }
 
@@ -30,6 +31,7 @@ where
     pub fn new(tcp_server: TcpServer) -> Self {
         Self {
             tcp_server,
+            msgs: Default::default(),
             _phantom: std::marker::PhantomData,
         }
     }
@@ -62,7 +64,17 @@ where
         match self.tcp_server.poll_read(ctx) {
             Poll::Ready(Some((addr, bytes_mut))) => {
                 match deserialize::<Lr>(&*bytes_mut) {
-                    Ok(repr) => Poll::Ready(Some(Hide::new(Single((addr, repr))))),
+                    Ok(repr) => {
+                        {
+                            let msgs = self.msgs.get() + 1;
+                            if 1 == msgs || 0 == msgs % 20000 {
+                                let time = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_millis();
+                                println!("{} MESSAGES RECIEVED: {}", time, msgs);
+                            }
+                            self.msgs.set(msgs);
+                        }
+                        Poll::Ready(Some(Hide::new(Single((addr, repr)))))
+                    }
                     Err(err) => {
                         eprintln!("Failed to deserialize: {}", err);
                         Poll::Pending

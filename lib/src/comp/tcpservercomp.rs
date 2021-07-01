@@ -23,6 +23,7 @@ where
 {
     op: O,
     tcp_server: TcpServer,
+    msgs: std::cell::Cell<usize>,
     _phantom: std::marker::PhantomData<(Tag, Lr)>,
 }
 
@@ -38,6 +39,7 @@ where
         Self {
             op,
             tcp_server,
+            msgs: Default::default(),
             _phantom: std::marker::PhantomData,
         }
     }
@@ -60,6 +62,15 @@ where
                 for (addr, repr) in hide.into_reveal().into_iter() {
                     let bytes = serialize::<Lr>(repr)?.freeze();
                     self.tcp_server.write(addr, bytes).await?;
+
+                    {
+                        let msgs = self.msgs.get() + 1;
+                        if 1 == msgs || 0 == msgs % 5000 {
+                            let time = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_millis();
+                            println!("{} MESSAGES SENT: {}", time, msgs);
+                        }
+                        self.msgs.set(msgs);
+                    }
                 }
                 Ok(())
             }
