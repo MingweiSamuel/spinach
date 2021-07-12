@@ -69,6 +69,17 @@
 <span id="69">69</span>
 <span id="70">70</span>
 <span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
 </pre><pre class="rust">
 <span class="kw">use</span> <span class="ident">std::any::Any</span>;
 <span class="kw">use</span> <span class="ident">std::future::Future</span>;
@@ -95,6 +106,7 @@
 {
     <span class="ident">op</span>: <span class="ident">O</span>,
     <span class="ident">tcp_server</span>: <span class="ident">TcpServer</span>,
+    <span class="ident">msgs</span>: <span class="ident">std::cell::Cell</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
     <span class="ident">_phantom</span>: <span class="ident">std::marker::PhantomData</span><span class="op">&lt;</span>(<span class="ident">Tag</span>, <span class="ident">Lr</span>)<span class="op">&gt;</span>,
 }
 
@@ -110,6 +122,7 @@
         <span class="self">Self</span> {
             <span class="ident">op</span>,
             <span class="ident">tcp_server</span>,
+            <span class="ident">msgs</span>: <span class="ident">Default::default</span>(),
             <span class="ident">_phantom</span>: <span class="ident">std::marker::PhantomData</span>,
         }
     }
@@ -132,6 +145,15 @@
                 <span class="kw">for</span> (<span class="ident">addr</span>, <span class="ident">repr</span>) <span class="kw">in</span> <span class="ident">hide</span>.<span class="ident">into_reveal</span>().<span class="ident">into_iter</span>() {
                     <span class="kw">let</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="ident">serialize</span>::<span class="op">&lt;</span><span class="ident">Lr</span><span class="op">&gt;</span>(<span class="ident">repr</span>)<span class="question-mark">?</span>.<span class="ident">freeze</span>();
                     <span class="self">self</span>.<span class="ident">tcp_server</span>.<span class="ident">write</span>(<span class="ident">addr</span>, <span class="ident">bytes</span>).<span class="kw">await</span><span class="question-mark">?</span>;
+
+                    {
+                        <span class="kw">let</span> <span class="ident">msgs</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">msgs</span>.<span class="ident">get</span>() <span class="op">+</span> <span class="number">1</span>;
+                        <span class="kw">if</span> <span class="number">1</span> <span class="op">=</span><span class="op">=</span> <span class="ident">msgs</span> <span class="op">|</span><span class="op">|</span> <span class="number">0</span> <span class="op">=</span><span class="op">=</span> <span class="ident">msgs</span> <span class="op">%</span> <span class="number">5000</span> {
+                            <span class="kw">let</span> <span class="ident">time</span> <span class="op">=</span> <span class="ident">std::time::SystemTime::now</span>().<span class="ident">duration_since</span>(<span class="ident">std::time::UNIX_EPOCH</span>).<span class="ident">unwrap</span>().<span class="ident">as_millis</span>();
+                            <span class="macro">println!</span>(<span class="string">&quot;{} MESSAGES SENT: {}&quot;</span>, <span class="ident">time</span>, <span class="ident">msgs</span>);
+                        }
+                        <span class="self">self</span>.<span class="ident">msgs</span>.<span class="ident">set</span>(<span class="ident">msgs</span>);
+                    }
                 }
                 <span class="prelude-val">Ok</span>(())
             }

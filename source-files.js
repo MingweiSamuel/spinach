@@ -10,6 +10,7 @@ sourcesIndex["const_random_macro"] = {"name":"","files":["lib.rs","span.rs"]};
 sourcesIndex["cpufeatures"] = {"name":"","files":["lib.rs","x86.rs"]};
 sourcesIndex["crunchy"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["digest"] = {"name":"","files":["digest.rs","dyn_digest.rs","errors.rs","fixed.rs","lib.rs","variable.rs","xof.rs"]};
+sourcesIndex["dynamic_graph"] = {"name":"","files":["main.rs"]};
 sourcesIndex["echo"] = {"name":"","files":["main.rs"]};
 sourcesIndex["futures"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["futures_channel"] = {"name":"","dirs":[{"name":"mpsc","files":["mod.rs","queue.rs","sink_impl.rs"]}],"files":["lib.rs","lock.rs","oneshot.rs"]};

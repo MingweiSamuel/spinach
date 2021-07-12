@@ -189,7 +189,6 @@
 <span id="189">189</span>
 <span id="190">190</span>
 <span id="191">191</span>
-<span id="192">192</span>
 </pre><pre class="rust">
 <span class="attribute">#![<span class="ident">feature</span>(<span class="ident">core_intrinsics</span>)]</span>
 <span class="attribute">#![<span class="ident">feature</span>(<span class="ident">never_type</span>)]</span>
@@ -213,7 +212,7 @@
 <span class="kw">use</span> <span class="ident">spinach::lattice::dom_pair::DomPairRepr</span>;
 <span class="kw">use</span> <span class="ident">spinach::lattice::ord::MaxRepr</span>;
 <span class="kw">use</span> <span class="ident">spinach::lattice::pair::PairRepr</span>;
-<span class="kw">use</span> <span class="ident">spinach::op</span>::{<span class="ident">OpExt</span>, <span class="ident">ReadOp</span>, <span class="ident">TcpOp</span>, <span class="ident">TcpServerOp</span>};
+<span class="kw">use</span> <span class="ident">spinach::op</span>::{<span class="ident">BinaryOp</span>, <span class="ident">OpExt</span>, <span class="ident">ReadOp</span>, <span class="ident">TcpOp</span>, <span class="ident">TcpServerOp</span>};
 <span class="kw">use</span> <span class="ident">spinach::tag</span>;
 <span class="kw">use</span> <span class="ident">spinach::tcp_server::TcpServer</span>;
 
@@ -291,9 +290,7 @@
     <span class="kw">let</span> <span class="ident">binary_func</span> <span class="op">=</span> <span class="ident">HashPartitioned</span>::<span class="op">&lt;</span><span class="ident">String</span>, <span class="kw">_</span><span class="op">&gt;</span><span class="ident">::new</span>(
         <span class="ident">TableProduct</span>::<span class="op">&lt;</span><span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="ident">MapUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::VEC</span>, <span class="kw">_</span>, <span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::new</span>());
 
-    <span class="kw">let</span> <span class="ident">comp</span> <span class="op">=</span> <span class="ident">op_reads</span>
-        .<span class="ident">binary</span>(<span class="ident">op_writes</span>, <span class="ident">binary_func</span>)
-        <span class="comment">// .debug(&quot;after binop&quot;)</span>
+    <span class="kw">let</span> <span class="ident">comp</span> <span class="op">=</span> <span class="ident">BinaryOp::new</span>(<span class="ident">op_reads</span>, <span class="ident">op_writes</span>, <span class="ident">binary_func</span>)
         .<span class="ident">morphism_closure</span>(<span class="op">|</span><span class="ident">item</span><span class="op">|</span> <span class="ident">item</span>.<span class="ident">transpose</span>::<span class="op">&lt;</span><span class="ident">tag::VEC</span>, <span class="ident">tag::VEC</span><span class="op">&gt;</span>())
         .<span class="ident">comp_tcp_server</span>::<span class="op">&lt;</span><span class="ident">ResponseLatRepr</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">server</span>);
 
@@ -330,7 +327,8 @@
         .<span class="ident">into_split</span>();
 
     <span class="kw">let</span> <span class="ident">read_comp</span> <span class="op">=</span> <span class="ident">TcpOp</span>::<span class="op">&lt;</span><span class="ident">ResponseLatRepr</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="ident">read</span>)
-        .<span class="ident">comp_debug</span>(<span class="string">&quot;read&quot;</span>);
+        .<span class="ident">comp_null</span>();
+        <span class="comment">// .comp_debug(&quot;read&quot;);</span>
 
     <span class="kw">let</span> <span class="ident">write_comp</span> <span class="op">=</span> <span class="ident">ReadOp::new</span>(<span class="ident">input_read</span>)
         .<span class="ident">morphism</span>(<span class="ident">ParseKvsOperation</span>)
