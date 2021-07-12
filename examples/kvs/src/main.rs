@@ -20,7 +20,7 @@ use spinach::lattice::set_union::SetUnionRepr;
 use spinach::lattice::dom_pair::DomPairRepr;
 use spinach::lattice::ord::MaxRepr;
 use spinach::lattice::pair::PairRepr;
-use spinach::op::{OpExt, ReadOp, TcpOp, TcpServerOp};
+use spinach::op::{BinaryOp, OpExt, ReadOp, TcpOp, TcpServerOp};
 use spinach::tag;
 use spinach::tcp_server::TcpServer;
 
@@ -98,9 +98,7 @@ async fn server(url: &str) -> Result<!, String> {
     let binary_func = HashPartitioned::<String, _>::new(
         TableProduct::<_, _, _, MapUnionRepr<tag::VEC, _, _>>::new());
 
-    let comp = op_reads
-        .binary(op_writes, binary_func)
-        // .debug("after binop")
+    let comp = BinaryOp::new(op_reads, op_writes, binary_func)
         .morphism_closure(|item| item.transpose::<tag::VEC, tag::VEC>())
         .comp_tcp_server::<ResponseLatRepr, _>(server);
 

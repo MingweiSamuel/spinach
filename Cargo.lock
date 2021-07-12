@@ -97,6 +97,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "dynamic_graph"
+version = "0.1.0"
+dependencies = [
+ "futures",
+ "spinach",
+]
+
+[[package]]
 name = "echo"
 version = "0.1.0"
 dependencies = [

@@ -3,5 +3,6 @@ members = [
     "lib",
     "examples/echo",
     "examples/kvs",
-    "examples/workload"
+    "examples/workload",
+    "dynamic_graph",
 ]
