@@ -11,6 +11,15 @@ pub struct OnceOp<Lr: LatticeRepr> {
     value: Cell<Option<Hide<Delta, Lr>>>,
 }
 
+impl<Lr: LatticeRepr> PartialEq for OnceOp<Lr> {
+    fn eq(&self, other: &Self) -> bool {
+        std::ptr::eq(self as *const Self, other as *const Self)
+    }
+}
+impl<Lr: LatticeRepr> Eq for OnceOp<Lr> {}
+
+
+
 impl<Lr: LatticeRepr> OnceOp<Lr> {
     pub fn new(value: Lr::Repr) -> Self {
         Self {
