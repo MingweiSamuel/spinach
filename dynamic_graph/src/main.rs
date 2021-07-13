@@ -12,7 +12,7 @@ use spinach::lattice::{ LatticeRepr, Merge };
 use spinach::lattice::set_union::SetUnionRepr;
 use spinach::lattice::map_union::MapUnionRepr;
 
-use futures::future::{ select_all };
+use futures::future::{ select_all, select, Either };
 
 pub trait In {
     type LatRepr: LatticeRepr;
@@ -27,43 +27,46 @@ pub trait Out {
 }
 
 
-pub type Graph<I: In + Eq + Hash, O: Out<LatRepr = I::LatRepr> + Eq + Hash> = MapUnionRepr<
-    tag::VEC, O, SetUnionRepr<tag::VEC, I>>;
+pub type Graph<I, O> = MapUnionRepr<tag::VEC, O, SetUnionRepr<tag::VEC, I>>;
 
 // pub type MySpecificGraph = Graph<dyn In, dyn Out<LatRepr = I::LatRepr>>
 
-pub async fn run<I, O, U>(graph: Hide<Value, Graph<I, O>>, updates: U)
+pub async fn run<I, O, U>(mut graph: Hide<Value, Graph<I, O>>, updates: U)
 where
-    I: In + Eq + Hash + Clone,
-    O: Out<LatRepr = I::LatRepr> + Eq + Hash + Clone,
-    U: Out<LatRepr = Graph<I, O>>,
+    I: In + Eq + Hash + Clone + 'static,
+    O: Out<LatRepr = I::LatRepr> + Eq + Hash + Clone + 'static,
+    U: Out<LatRepr = Graph<I, O>> + 'static,
 {
     loop {
-        // Future to update the graph.
-        let update_fut = async {
-            let update = OutFuture(&updates).await;
-            Merge::merge_hide(&mut graph, update);
-        };
-        // Future to push things around.
-        let tick_fut = async {
-            let graph = graph.reveal_ref(); // !!!!
-            // TODO: Use streams to not rebuild every time.
-            let futures = graph.iter().map(|(o, i)| o).map(OutFuture);
-            let (item, idx, _others) = select_all(futures).await;
-            for out in &graph[idx].1 {
-                out.push_delta(item.clone());
+        let update = {
+            // Future to update the graph.
+            let update_fut = OutFuture(&updates);
+            // Future to push things around.
+            let tick_fut = Box::pin(async {
+                let graph = graph.reveal_ref(); // !!!!
+                // TODO: Use streams to not rebuild every time.
+                let futures = graph.iter().map(|(o, _i)| o).map(OutFuture);
+                let (item, idx, _others) = select_all(futures).await;
+                for out in &graph[idx].1 {
+                    out.push_delta(item.clone());
+                }
+            });
+
+            // Run either.
+            match select(update_fut, tick_fut).await {
+                Either::Left((update, _)) => Some(update),
+                Either::Right(_) => None,
             }
         };
-        // Run either.
-        futures::select! {
-            _ = update_fut => {},
-            _ = tick_fut => {},
-        };
+
+        if let Some(update) = update {
+            Merge::merge_hide(&mut graph, update);
+        }
     }
 }
 
 pub fn main() {
-
+    // let graph = dyn
 }
 
 
