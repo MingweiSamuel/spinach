@@ -14,7 +14,7 @@
 #![feature(generic_associated_types)]
 #![feature(slice_as_chunks)]
 #![feature(try_blocks)]
-#![feature(min_type_alias_impl_trait)]
+#![feature(type_alias_impl_trait)]
 #![feature(never_type)]
 
 #![forbid(unsafe_code)]
