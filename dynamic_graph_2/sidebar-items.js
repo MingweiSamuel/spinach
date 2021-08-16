@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["X",""]],"fn":[["main",""]],"trait":[["CartProd",""],["CartProdHelper",""]],"type":[["MyCartProd",""],["TypeListA",""],["TypeListB",""]]});
