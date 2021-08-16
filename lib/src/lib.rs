@@ -3,7 +3,6 @@
 
 #![doc = include_str!("../../README.md")]
 
-#![feature(array_map)]
 #![feature(array_methods)]
 #![feature(array_zip)]
 #![feature(associated_type_defaults)]

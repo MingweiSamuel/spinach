@@ -5,4 +5,5 @@ members = [
     "examples/kvs",
     "examples/workload",
     "dynamic_graph",
+    "dynamic_graph_2",
 ]
