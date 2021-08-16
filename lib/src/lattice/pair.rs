@@ -1,6 +1,6 @@
 use std::cmp::Ordering;
 
-use super::{Lattice, LatticeRepr, Merge, Compare, Convert, Debottom};
+use super::{Lattice, LatticeRepr, Merge, Compare, Convert, Debottom, Top};
 use super::bottom::BottomRepr;
 
 use crate::tag;
@@ -73,6 +73,17 @@ impl<Ra: Debottom, Rb: Debottom> Debottom for PairRepr<Ra, Rb> {
         }
     }
 }
+
+impl<Ra: Top, Rb: Top> Top for PairRepr<Ra, Rb> {
+    fn is_top(this: &Self::Repr) -> bool {
+        Ra::is_top(&this.0) && Rb::is_top(&this.1)
+    }
+
+    fn top() -> Self::Repr {
+        (Ra::top(), Rb::top())
+    }
+}
+
 
 fn __assert_merges() {
     use static_assertions::{assert_impl_all, assert_not_impl_any};

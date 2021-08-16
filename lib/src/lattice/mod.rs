@@ -6,6 +6,7 @@ pub mod ord;
 pub mod pair;
 pub mod dom_pair;
 pub mod bottom;
+pub mod top;
 
 pub trait Lattice {}
 
@@ -40,4 +41,9 @@ pub trait Debottom: LatticeRepr {
 
     type DebottomLr: LatticeRepr<Lattice = Self::Lattice>;
     fn debottom(this: Self::Repr) -> Option<<Self::DebottomLr as LatticeRepr>::Repr>;
+}
+
+pub trait Top: LatticeRepr {
+    fn is_top(this: &Self::Repr) -> bool;
+    fn top() -> Self::Repr;
 }
