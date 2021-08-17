@@ -41,7 +41,7 @@ impl<O: Op> Splitter<O> {
 
         SplitOp {
             splitter: self.state.clone(),
-            split,
+            split: RefCell::new(Some(split)),
         }
     }
 }
@@ -66,14 +66,15 @@ impl<O: Op> Clone for Splitter<O> {
 
 pub struct SplitOp<O: Op> {
     splitter: Rc<SplitterState<O>>,
-    split: Rc<RefCell<SplitOpState<O>>>,
+    split: RefCell<Option<Rc<RefCell<SplitOpState<O>>>>>,
 }
 
 impl<O: Op> Op for SplitOp<O> {
     type LatRepr = O::LatRepr;
 
     fn propegate_saturation(&self) {
-        unimplemented!("TODO");
+        self.split.borrow_mut().take();
+        // TODO: somehow propegate when all splits are removed? Depending on if dynamic or not.
     }
 }
 
@@ -85,77 +86,82 @@ impl<O: OpDelta> OpDelta for SplitOp<O> {
             return Poll::Ready(None);
         }
 
-        // Check if we have a value waiting.
-        {
-            let mut split = self.split.borrow_mut();
-            match split.delta.take() {
-                Some(polled) => {
-                    return Poll::Ready(Some(polled));
-                }
-                None => {
-                    split.waker.replace(ctx.waker().clone());
-                }
-            }
-        }
+        let split = self.split.borrow();
+        match &*split {
+            None => Poll::Ready(None),
+            Some(split_rc) => {
+                let mut split = split_rc.borrow_mut();
 
-        // Remove any weak (removed) splits.
-        let mut splits = Vec::new();
-        {
-            self.splitter.splits.borrow_mut().retain(|split_weak| {
-                match split_weak.upgrade() {
-                    Some(split) => {
-                        splits.push(split);
-                        true
+                // Check if we have a value waiting.
+                match split.delta.take() {
+                    Some(polled) => {
+                        return Poll::Ready(Some(polled));
                     }
-                    None => false
-                }
-            });
-        }
-        // Get our index.
-        let index = splits.iter().enumerate().find_map(|(i, split)| {
-            if Rc::ptr_eq(&self.split, split) {
-                Some(i)
-            }
-            else {
-                None
-            }
-        }).expect("WE DONT EXIST :C");
-
-        // Iterate in circular order, so each successive split checks the next split.
-        let (splits_before, splits_after) = splits.split_at_mut(index);
-        let splits_after = &mut splits_after[1..]; // Skip self.
-
-        // Check if other splits are ready to receive a value.
-        for split in splits_after.iter().chain(splits_before.iter()) {
-            let split = split.borrow();
-            if let Some(_) = split.delta {
-                // If any split has it's value filled, wake it up and return pending.
-                if let Some(waker) = &split.waker {
-                    waker.wake_by_ref();
-                }
-                return Poll::Pending;
-            }
-        }
-
-        // Poll upstream.
-        match self.splitter.op.poll_delta(ctx) {
-            Poll::Ready(Some(delta)) => {
-                for split in splits_after.iter_mut().chain(splits_before.iter_mut()) {
-                    let mut split = split.borrow_mut();
-                    let old_delta_opt = split.delta.replace(delta.clone());
-                    assert!(old_delta_opt.is_none());
-
-                    if let Some(waker) = split.waker.take() {
-                        waker.wake();
+                    None => {
+                        split.waker.replace(ctx.waker().clone());
                     }
                 }
-                Poll::Ready(Some(delta))
+
+                // Remove any weak (removed) splits.
+                let mut splits = Vec::new();
+                {
+                    self.splitter.splits.borrow_mut().retain(|split_weak| {
+                        match split_weak.upgrade() {
+                            Some(split) => {
+                                splits.push(split);
+                                true
+                            }
+                            None => false
+                        }
+                    });
+                }
+                // Get our index.
+                let index = splits.iter().enumerate().find_map(|(i, split_other)| {
+                    if Rc::ptr_eq(&split_rc, split_other) {
+                        Some(i)
+                    }
+                    else {
+                        None
+                    }
+                }).expect("WE DONT EXIST :C");
+
+                // Iterate in circular order, so each successive split checks the next split.
+                let (splits_before, splits_after) = splits.split_at_mut(index);
+                let splits_after = &mut splits_after[1..]; // Skip self.
+
+                // Check if other splits are ready to receive a value.
+                for split in splits_after.iter().chain(splits_before.iter()) {
+                    let split = split.borrow();
+                    if let Some(_) = split.delta {
+                        // If any split has it's value filled, wake it up and return pending.
+                        if let Some(waker) = &split.waker {
+                            waker.wake_by_ref();
+                        }
+                        return Poll::Pending;
+                    }
+                }
+
+                // Poll upstream.
+                match self.splitter.op.poll_delta(ctx) {
+                    Poll::Ready(Some(delta)) => {
+                        for split in splits_after.iter_mut().chain(splits_before.iter_mut()) {
+                            let mut split = split.borrow_mut();
+                            let old_delta_opt = split.delta.replace(delta.clone());
+                            assert!(old_delta_opt.is_none());
+
+                            if let Some(waker) = split.waker.take() {
+                                waker.wake();
+                            }
+                        }
+                        Poll::Ready(Some(delta))
+                    }
+                    Poll::Ready(None) => {
+                        self.splitter.closed.replace(true);
+                        Poll::Ready(None)
+                    }
+                    Poll::Pending => Poll::Pending,
+                }
             }
-            Poll::Ready(None) => {
-                self.splitter.closed.replace(true);
-                Poll::Ready(None)
-            }
-            Poll::Pending => Poll::Pending,
         }
     }
 }

@@ -46,7 +46,9 @@ where
 
     fn poll_delta(&self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
         if self.at_top.get() {
-            Poll::Ready(Some(Hide::new(<Self::LatRepr as Top>::top())))
+            Poll::Ready(None)
+            // TODO?
+            // Poll::Ready(Some(Hide::new(<Self::LatRepr as Top>::top())))
         }
         else {
             match self.op.poll_delta(ctx) {

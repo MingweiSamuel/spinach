@@ -50,6 +50,9 @@ pub use readop::*;
 mod zipop;
 pub use zipop::*;
 
+mod channelop;
+pub use channelop::*;
+
 mod tcpop;
 pub use tcpop::*;
 
