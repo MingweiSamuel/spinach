@@ -28,6 +28,11 @@ where
     A::LatRepr: LatticeRepr<Lattice = <B::LatRepr as LatticeRepr>::Lattice>,
 {
     type LatRepr = A::LatRepr;
+
+    fn propegate_saturation(&self) {
+        self.op_a.propegate_saturation();
+        self.op_b.propegate_saturation()
+    }
 }
 
 pub struct MergeOrder<A: Order, B: Order>(std::marker::PhantomData<(A, B)>);

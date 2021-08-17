@@ -26,6 +26,10 @@ where
     O::LatRepr: Debottom,
 {
     type LatRepr = <O::LatRepr as Debottom>::DebottomLr;
+
+    fn propegate_saturation(&self) {
+        self.op.propegate_saturation()
+    }
 }
 
 impl<O: OpDelta> OpDelta for DebottomOp<O>

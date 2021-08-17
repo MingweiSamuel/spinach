@@ -30,6 +30,10 @@ where
     O::LatRepr: Convert<Lr>,
 {
     type LatRepr = Lr;
+
+    fn propegate_saturation(&self) {
+        self.op.propegate_saturation()
+    }
 }
 
 impl<O: OpDelta, Lr> OpDelta for BatchConvertOp<O, Lr>

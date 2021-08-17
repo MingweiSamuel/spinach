@@ -28,6 +28,10 @@ where
     <O::LatRepr as LatticeRepr>::Repr: Debug,
 {
     type LatRepr = O::LatRepr;
+
+    fn propegate_saturation(&self) {
+        self.op.propegate_saturation()
+    }
 }
 
 impl<O: OpDelta> OpDelta for DebugOp<O>

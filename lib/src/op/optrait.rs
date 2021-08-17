@@ -7,6 +7,9 @@ use crate::metadata::Order;
 pub trait Op {
     /// The output element type of this op.
     type LatRepr: LatticeRepr;
+
+    /// Top saturation.
+    fn propegate_saturation(&self);
 }
 
 pub trait OpDelta: Op {

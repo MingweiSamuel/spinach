@@ -41,6 +41,10 @@ impl<R: AsyncRead + Unpin> ReadOp<R> {
 
 impl<R: AsyncRead + Unpin> Op for ReadOp<R> {
     type LatRepr = SetUnionRepr<SINGLE, String>;
+
+    fn propegate_saturation(&self) {
+        unimplemented!("TODO?");
+    }
 }
 
 impl<R: AsyncRead + Unpin> OpDelta for ReadOp<R> {

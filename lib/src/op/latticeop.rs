@@ -45,6 +45,10 @@ where
     O::LatRepr: Convert<Lr>,
 {
     type LatRepr = Lr;
+
+    fn propegate_saturation(&self) {
+        self.op.propegate_saturation()
+    }
 }
 
 impl<O: OpDelta, Lr: LatticeRepr + Merge<O::LatRepr>> OpDelta for LatticeOp<O, Lr>

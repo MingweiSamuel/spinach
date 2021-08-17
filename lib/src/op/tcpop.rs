@@ -43,6 +43,10 @@ where
     Lr::Repr: DeserializeOwned,
 {
     type LatRepr = Lr;
+
+    fn propegate_saturation(&self) {
+        unimplemented!("TODO");
+    }
 }
 
 pub enum TcpOrder {}

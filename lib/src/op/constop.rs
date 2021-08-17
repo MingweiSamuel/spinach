@@ -17,6 +17,9 @@ impl<Lr: LatticeRepr> ConstOp<Lr> {
 
 impl<Lr: LatticeRepr> Op for ConstOp<Lr> {
     type LatRepr = Lr;
+
+    fn propegate_saturation(&self) {
+    }
 }
 
 impl<Lr: LatticeRepr> OpDelta for ConstOp<Lr> {

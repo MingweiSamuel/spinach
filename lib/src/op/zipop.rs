@@ -44,6 +44,11 @@ where
     <B::LatRepr as LatticeRepr>::Repr: IntoIterator<Item = U>,
 {
     type LatRepr = SetUnionRepr<tag::VEC, (T, U)>;
+
+    fn propegate_saturation(&self) {
+        self.op_a.propegate_saturation();
+        self.op_b.propegate_saturation()
+    }
 }
 
 impl<A: OpDelta, B: OpDelta<Ord = A::Ord>, T: Clone, U: Clone> OpDelta for ZipOp<A, B, T, U>

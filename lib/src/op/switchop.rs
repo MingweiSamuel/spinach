@@ -132,6 +132,10 @@ where
     O: Op<LatRepr = PairRepr<Ra, Rb>>,
 {
     type LatRepr = S::ThisLatRepr;
+
+    fn propegate_saturation(&self) {
+        unimplemented!("TODO");
+    }
 }
 
 impl<O: OpDelta, Ra: LatticeRepr, Rb: LatticeRepr, S: SwitchMode<Ra, Rb>> OpDelta for SwitchOp<O, Ra, Rb, S>

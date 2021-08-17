@@ -30,6 +30,9 @@ impl<Lr: LatticeRepr> OnceOp<Lr> {
 
 impl<Lr: LatticeRepr> Op for OnceOp<Lr> {
     type LatRepr = Lr;
+
+    fn propegate_saturation(&self) {
+    }
 }
 
 impl<Lr: LatticeRepr> OpDelta for OnceOp<Lr> {

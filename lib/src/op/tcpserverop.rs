@@ -42,6 +42,10 @@ where
     Lr::Repr: DeserializeOwned,
 {
     type LatRepr = MapUnionRepr<tag::SINGLE, SocketAddr, Lr>;
+
+    fn propegate_saturation(&self) {
+        unimplemented!("TODO");
+    }
 }
 
 pub enum TcpOrder {}

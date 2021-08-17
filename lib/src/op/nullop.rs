@@ -19,6 +19,9 @@ impl<Lr: LatticeRepr> NullOp<Lr> {
 
 impl<Lr: LatticeRepr> Op for NullOp<Lr> {
     type LatRepr = Lr;
+
+    fn propegate_saturation(&self) {
+    }
 }
 
 impl<Lr: LatticeRepr> OpDelta for NullOp<Lr> {

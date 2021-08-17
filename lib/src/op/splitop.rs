@@ -71,6 +71,10 @@ pub struct SplitOp<O: Op> {
 
 impl<O: Op> Op for SplitOp<O> {
     type LatRepr = O::LatRepr;
+
+    fn propegate_saturation(&self) {
+        unimplemented!("TODO");
+    }
 }
 
 impl<O: OpDelta> OpDelta for SplitOp<O> {

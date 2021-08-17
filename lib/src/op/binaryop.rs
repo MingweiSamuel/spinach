@@ -29,6 +29,11 @@ where
 F: BinaryMorphism<InLatReprA = A::LatRepr, InLatReprB = B::LatRepr>,
 {
     type LatRepr = F::OutLatRepr;
+
+    fn propegate_saturation(&self) {
+        self.op_a.propegate_saturation();
+        self.op_b.propegate_saturation()
+    }
 }
 
 pub struct BinaryOpOrder<A: Order, B: Order, F>(std::marker::PhantomData<(A, B, F)>);

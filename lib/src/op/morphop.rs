@@ -19,6 +19,10 @@ impl<O: Op, F: Morphism<InLatRepr = O::LatRepr>> MorphismOp<O, F> {
 
 impl<O: Op, F: Morphism<InLatRepr = O::LatRepr>> Op for MorphismOp<O, F> {
     type LatRepr = F::OutLatRepr;
+
+    fn propegate_saturation(&self) {
+        self.op.propegate_saturation()
+    }
 }
 
 impl<O: OpDelta, F: Morphism<InLatRepr = O::LatRepr>> OpDelta for MorphismOp<O, F> {
