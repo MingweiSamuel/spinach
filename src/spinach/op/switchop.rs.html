@@ -204,6 +204,10 @@
 <span id="204">204</span>
 <span id="205">205</span>
 <span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
 </pre><pre class="rust">
 <span class="kw">use</span> <span class="ident">std::cell</span>::{<span class="ident">RefCell</span>};
 <span class="kw">use</span> <span class="ident">std::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>, <span class="ident">Waker</span>};
@@ -339,6 +343,10 @@
     <span class="ident">O</span>: <span class="ident">Op</span><span class="op">&lt;</span><span class="ident">LatRepr</span> <span class="op">=</span> <span class="ident">PairRepr</span><span class="op">&lt;</span><span class="ident">Ra</span>, <span class="ident">Rb</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 {
     <span class="kw">type</span> <span class="ident">LatRepr</span> <span class="op">=</span> <span class="ident">S::ThisLatRepr</span>;
+
+    <span class="kw">fn</span> <span class="ident">propegate_saturation</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
+        <span class="macro">unimplemented!</span>(<span class="string">&quot;TODO&quot;</span>);
+    }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">O</span>: <span class="ident">OpDelta</span>, <span class="ident">Ra</span>: <span class="ident">LatticeRepr</span>, <span class="ident">Rb</span>: <span class="ident">LatticeRepr</span>, <span class="ident">S</span>: <span class="ident">SwitchMode</span><span class="op">&lt;</span><span class="ident">Ra</span>, <span class="ident">Rb</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">OpDelta</span> <span class="kw">for</span> <span class="ident">SwitchOp</span><span class="op">&lt;</span><span class="ident">O</span>, <span class="ident">Ra</span>, <span class="ident">Rb</span>, <span class="ident">S</span><span class="op">&gt;</span>

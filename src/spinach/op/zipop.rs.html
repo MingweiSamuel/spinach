@@ -90,6 +90,11 @@
 <span id="90">90</span>
 <span id="91">91</span>
 <span id="92">92</span>
+<span id="93">93</span>
+<span id="94">94</span>
+<span id="95">95</span>
+<span id="96">96</span>
+<span id="97">97</span>
 </pre><pre class="rust">
 <span class="kw">use</span> <span class="ident">std::cell::Cell</span>;
 <span class="kw">use</span> <span class="ident">std::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
@@ -137,6 +142,11 @@
     <span class="op">&lt;</span><span class="ident">B::LatRepr</span> <span class="kw">as</span> <span class="ident">LatticeRepr</span><span class="op">&gt;</span><span class="ident">::Repr</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">U</span><span class="op">&gt;</span>,
 {
     <span class="kw">type</span> <span class="ident">LatRepr</span> <span class="op">=</span> <span class="ident">SetUnionRepr</span><span class="op">&lt;</span><span class="ident">tag::VEC</span>, (<span class="ident">T</span>, <span class="ident">U</span>)<span class="op">&gt;</span>;
+
+    <span class="kw">fn</span> <span class="ident">propegate_saturation</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
+        <span class="self">self</span>.<span class="ident">op_a</span>.<span class="ident">propegate_saturation</span>();
+        <span class="self">self</span>.<span class="ident">op_b</span>.<span class="ident">propegate_saturation</span>()
+    }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">OpDelta</span>, <span class="ident">B</span>: <span class="ident">OpDelta</span><span class="op">&lt;</span><span class="ident">Ord</span> <span class="op">=</span> <span class="ident">A::Ord</span><span class="op">&gt;</span>, <span class="ident">T</span>: <span class="ident">Clone</span>, <span class="ident">U</span>: <span class="ident">Clone</span><span class="op">&gt;</span> <span class="ident">OpDelta</span> <span class="kw">for</span> <span class="ident">ZipOp</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span>, <span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>

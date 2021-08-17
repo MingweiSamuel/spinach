@@ -68,6 +68,11 @@
 <span id="68">68</span>
 <span id="69">69</span>
 <span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
 </pre><pre class="rust">
 <span class="kw">use</span> <span class="ident">std::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 
@@ -100,6 +105,11 @@
 <span class="ident">F</span>: <span class="ident">BinaryMorphism</span><span class="op">&lt;</span><span class="ident">InLatReprA</span> <span class="op">=</span> <span class="ident">A::LatRepr</span>, <span class="ident">InLatReprB</span> <span class="op">=</span> <span class="ident">B::LatRepr</span><span class="op">&gt;</span>,
 {
     <span class="kw">type</span> <span class="ident">LatRepr</span> <span class="op">=</span> <span class="ident">F::OutLatRepr</span>;
+
+    <span class="kw">fn</span> <span class="ident">propegate_saturation</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
+        <span class="self">self</span>.<span class="ident">op_a</span>.<span class="ident">propegate_saturation</span>();
+        <span class="self">self</span>.<span class="ident">op_b</span>.<span class="ident">propegate_saturation</span>()
+    }
 }
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BinaryOpOrder</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Order</span>, <span class="ident">B</span>: <span class="ident">Order</span>, <span class="ident">F</span><span class="op">&gt;</span>(<span class="ident">std::marker::PhantomData</span><span class="op">&lt;</span>(<span class="ident">A</span>, <span class="ident">B</span>, <span class="ident">F</span>)<span class="op">&gt;</span>);

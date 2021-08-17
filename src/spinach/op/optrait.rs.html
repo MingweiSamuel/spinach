@@ -19,6 +19,9 @@
 <span id="19">19</span>
 <span id="20">20</span>
 <span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
 </pre><pre class="rust">
 <span class="kw">use</span> <span class="ident">std::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 
@@ -29,6 +32,9 @@
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Op</span> {
     <span class="doccomment">/// The output element type of this op.</span>
     <span class="kw">type</span> <span class="ident">LatRepr</span>: <span class="ident">LatticeRepr</span>;
+
+    <span class="doccomment">/// Top saturation.</span>
+    <span class="kw">fn</span> <span class="ident">propegate_saturation</span>(<span class="kw-2">&amp;</span><span class="self">self</span>);
 }
 
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">OpDelta</span>: <span class="ident">Op</span> {
