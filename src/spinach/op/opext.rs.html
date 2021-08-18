@@ -118,6 +118,13 @@
 <span id="118">118</span>
 <span id="119">119</span>
 <span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
 </pre><pre class="rust">
 <span class="kw">use</span> <span class="ident">std::any::Any</span>;
 <span class="kw">use</span> <span class="ident">std::net::SocketAddr</span>;
@@ -128,7 +135,7 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::comp</span>::{<span class="ident">DebugComp</span>, <span class="ident">NullComp</span>, <span class="ident">TcpComp</span>, <span class="ident">TcpServerComp</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::func::unary</span>::{<span class="ident">Morphism</span>, <span class="ident">ClosureMorphism</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::func::binary::BinaryMorphism</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::lattice</span>::{<span class="ident">Convert</span>, <span class="ident">Debottom</span>, <span class="ident">LatticeRepr</span>, <span class="ident">Merge</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::lattice</span>::{<span class="ident">Convert</span>, <span class="ident">Debottom</span>, <span class="ident">LatticeRepr</span>, <span class="ident">Merge</span>, <span class="ident">Top</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::lattice::map_union</span>::{<span class="ident">MapTag</span>, <span class="ident">MapUnionRepr</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::lattice::pair::PairRepr</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::tcp_server::TcpServer</span>;
@@ -162,6 +169,13 @@
         <span class="ident">F</span>: <span class="ident">Fn</span>(<span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Delta</span>, <span class="ident"><span class="self">Self</span>::LatRepr</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Hide</span><span class="op">&lt;</span><span class="ident">Delta</span>, <span class="ident">Out</span><span class="op">&gt;</span>,
     {
         <span class="ident">MorphismOp::new</span>(<span class="self">self</span>, <span class="ident">ClosureMorphism::new</span>(<span class="ident">func</span>))
+    }
+
+    <span class="kw">fn</span> <span class="ident">topbox</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TopOp</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>
+    <span class="kw">where</span>
+        <span class="ident"><span class="self">Self</span>::LatRepr</span>: <span class="ident">Top</span>,
+    {
+        <span class="ident">TopOp::new</span>(<span class="self">self</span>)
     }
 
     <span class="kw">fn</span> <span class="ident">lattice</span><span class="op">&lt;</span><span class="ident">Lr</span>: <span class="ident">LatticeRepr</span> <span class="op">+</span> <span class="ident">Merge</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::LatRepr</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">bottom</span>: <span class="ident">Lr::Repr</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">LatticeOp</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Lr</span><span class="op">&gt;</span>
