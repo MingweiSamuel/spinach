@@ -78,3 +78,15 @@ impl<T: Ord + Clone> Convert<MinRepr<T>> for MinRepr<T> {
         this
     }
 }
+
+
+
+// TODO: use num traits for all variants of this.
+impl Top for MaxRepr<u64> {
+    fn is_top(this: &Self::Repr) -> bool {
+        &u64::MAX == this
+    }
+    fn top() -> Self::Repr {
+        u64::MAX
+    }
+}
