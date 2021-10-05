@@ -344,8 +344,7 @@
 <span id="344">344</span>
 <span id="345">345</span>
 <span id="346">346</span>
-</pre><pre class="rust">
-<span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;full&quot;</span>), <span class="ident">allow</span>(<span class="ident">dead_code</span>))]</span>
+</pre><pre class="rust"><code><span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;full&quot;</span>), <span class="ident">allow</span>(<span class="ident">dead_code</span>))]</span>
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::loom::sync::atomic::AtomicUsize</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::loom::sync</span>::{<span class="ident">Arc</span>, <span class="ident">Condvar</span>, <span class="ident">Mutex</span>};
@@ -691,7 +690,7 @@
     <span class="comment">// We don&#39;t actually own a reference to the unparker</span>
     <span class="ident">mem::forget</span>(<span class="ident">unparker</span>);
 }
-</pre></div>
+</code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script>
 </body></html>

@@ -23,19 +23,17 @@ involving time.</p>
 <h1 id="examples" class="section-header"><a href="#examples">Examples</a></h1>
 <p>Wait 100ms and print “100 ms have elapsed”</p>
 
-<div class="example-wrap"><pre class="rust rust-example-rendered">
-<span class="kw">use</span> <span class="ident">std::time::Duration</span>;
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">std::time::Duration</span>;
 <span class="kw">use</span> <span class="ident">tokio::time::sleep</span>;
 
 <span class="attribute">#[<span class="ident">tokio::main</span>]</span>
 <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">main</span>() {
     <span class="ident">sleep</span>(<span class="ident">Duration::from_millis</span>(<span class="number">100</span>)).<span class="kw">await</span>;
     <span class="macro">println!</span>(<span class="string">&quot;100 ms have elapsed&quot;</span>);
-}</pre></div>
+}</code></pre></div>
 <p>Require that an operation takes no more than 1s.</p>
 
-<div class="example-wrap"><pre class="rust rust-example-rendered">
-<span class="kw">use</span> <span class="ident">tokio::time</span>::{<span class="ident">timeout</span>, <span class="ident">Duration</span>};
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">tokio::time</span>::{<span class="ident">timeout</span>, <span class="ident">Duration</span>};
 
 <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">long_future</span>() {
     <span class="comment">// do work here</span>
@@ -45,7 +43,7 @@ involving time.</p>
 
 <span class="kw">if</span> <span class="ident">res</span>.<span class="ident">is_err</span>() {
     <span class="macro">println!</span>(<span class="string">&quot;operation timed out&quot;</span>);
-}</pre></div>
+}</code></pre></div>
 <p>A simple example using <a href="fn.interval.html"><code>interval</code></a> to execute a task every two seconds.</p>
 <p>The difference between <a href="fn.interval.html"><code>interval</code></a> and <a href="fn.sleep.html"><code>sleep</code></a> is that an <a href="fn.interval.html"><code>interval</code></a>
 measures the time since the last tick, which means that <code>.tick().await</code>
@@ -55,8 +53,7 @@ if some time has passed between calls to <code>.tick().await</code>.</p>
 would only be executed once every three seconds, and not every two
 seconds.</p>
 
-<div class="example-wrap"><pre class="rust rust-example-rendered">
-<span class="kw">use</span> <span class="ident">tokio::time</span>;
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">tokio::time</span>;
 
 <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">task_that_takes_a_second</span>() {
     <span class="macro">println!</span>(<span class="string">&quot;hello&quot;</span>);
@@ -70,7 +67,7 @@ seconds.</p>
         <span class="ident">interval</span>.<span class="ident">tick</span>().<span class="kw">await</span>;
         <span class="ident">task_that_takes_a_second</span>().<span class="kw">await</span>;
     }
-}</pre></div>
+}</code></pre></div>
 </div></details><h2 id="reexports" class="section-header"><a href="#reexports">Re-exports</a></h2>
 <div class="item-table"><div class="item-left import-item"><code>pub use std::time::<a class="struct" href="https://doc.rust-lang.org/nightly/core/time/struct.Duration.html" title="struct core::time::Duration">Duration</a>;</code></div><div class="item-right docblock-short"></div></div><h2 id="modules" class="section-header"><a href="#modules">Modules</a></h2>
 <div class="item-table"><div class="item-left module-item"><a class="mod" href="error/index.html" title="tokio::time::error mod">error</a></div><div class="item-right docblock-short"><p>Time error types.</p>

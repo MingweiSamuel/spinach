@@ -8,15 +8,13 @@ to any other proc-macro-hack macros.</p>
 your declaration crate and update the <code>#[proc_macro_hack]</code> re-export as
 follows.</p>
 
-<div class="example-wrap"><pre class="rust rust-example-rendered">
-<span class="comment">// Before</span>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="comment">// Before</span>
 <span class="attribute">#[<span class="ident">proc_macro_hack</span>]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">demo_hack_impl::add_one</span>;</pre></div>
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">demo_hack_impl::add_one</span>;</code></pre></div>
 
-<div class="example-wrap"><pre class="rust rust-example-rendered">
-<span class="comment">// After</span>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="comment">// After</span>
 <span class="attribute">#[<span class="ident">proc_macro_hack</span>(<span class="ident">support_nested</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">demo_hack_impl::add_one</span>;</pre></div>
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">demo_hack_impl::add_one</span>;</code></pre></div>
 <p>No change is required within your definition crate, only to the re-export in
 the declaration crate.</p>
 <h1 id="limitations" class="section-header"><a href="#limitations">Limitations</a></h1>

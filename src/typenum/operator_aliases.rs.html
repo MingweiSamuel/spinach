@@ -107,8 +107,7 @@
 <span id="107">107</span>
 <span id="108">108</span>
 <span id="109">109</span>
-</pre><pre class="rust">
-<span class="doccomment">//! Aliases for the type operators used in this crate.</span>
+</pre><pre class="rust"><code><span class="doccomment">//! Aliases for the type operators used in this crate.</span>
 
 <span class="doccomment">//! Their purpose is to increase the ergonomics of performing operations on the types defined</span>
 <span class="doccomment">//! here. For even more ergonomics, consider using the `op!` macro instead.</span>
@@ -217,7 +216,7 @@
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">NotEq</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">A</span> <span class="kw">as</span> <span class="ident">IsNotEqual</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::Output</span>;
 <span class="doccomment">/// Alias for the associated type of `Logarithm2`: `Log2&lt;A&gt; = &lt;A as Logarithm2&gt;::Output`</span>
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Log2</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">A</span> <span class="kw">as</span> <span class="ident">Logarithm2</span><span class="op">&gt;</span><span class="ident">::Output</span>;
-</pre></div>
+</code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="typenum" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script>
 </body></html>

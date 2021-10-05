@@ -218,8 +218,7 @@
 <span id="218">218</span>
 <span id="219">219</span>
 <span id="220">220</span>
-</pre><pre class="rust">
-<span class="doccomment">//! Contains utilities for stdout and stderr.</span>
+</pre><pre class="rust"><code><span class="doccomment">//! Contains utilities for stdout and stderr.</span>
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::io::AsyncWrite</span>;
 <span class="kw">use</span> <span class="ident">std::pin::Pin</span>;
 <span class="kw">use</span> <span class="ident">std::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
@@ -439,7 +438,7 @@
         <span class="macro">assert!</span>(<span class="ident">data</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="ident">writer</span>.<span class="ident">write_history</span>[<span class="number">0</span>] <span class="op">&lt;</span><span class="op">=</span> <span class="ident"><span class="kw">super</span>::MAX_BYTES_PER_CHAR</span> <span class="op">+</span> <span class="number">1</span>);
     }
 }
-</pre></div>
+</code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script>
 </body></html>

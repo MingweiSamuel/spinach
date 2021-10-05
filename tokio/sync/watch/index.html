@@ -9,8 +9,7 @@ value. The <strong>latest</strong> value stored in the channel is accessed with
 <a href="struct.Receiver.html#method.borrow"><code>Receiver::borrow()</code></a>. Awaiting <a href="struct.Receiver.html#method.changed"><code>Receiver::changed()</code></a> waits for a new
 value to sent by the <a href="struct.Sender.html"><code>Sender</code></a> half.</p>
 <h1 id="examples" class="section-header"><a href="#examples">Examples</a></h1>
-<div class="example-wrap"><pre class="rust rust-example-rendered">
-<span class="kw">use</span> <span class="ident">tokio::sync::watch</span>;
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">tokio::sync::watch</span>;
 
     <span class="kw">let</span> (<span class="ident">tx</span>, <span class="kw-2">mut</span> <span class="ident">rx</span>) <span class="op">=</span> <span class="ident">watch::channel</span>(<span class="string">&quot;hello&quot;</span>);
 
@@ -20,7 +19,7 @@ value to sent by the <a href="struct.Sender.html"><code>Sender</code></a> half.<
         }
     });
 
-    <span class="ident">tx</span>.<span class="ident">send</span>(<span class="string">&quot;world&quot;</span>)<span class="question-mark">?</span>;</pre></div>
+    <span class="ident">tx</span>.<span class="ident">send</span>(<span class="string">&quot;world&quot;</span>)<span class="question-mark">?</span>;</code></pre></div>
 <h1 id="closing" class="section-header"><a href="#closing">Closing</a></h1>
 <p><a href="struct.Sender.html#method.is_closed"><code>Sender::is_closed</code></a> and <a href="struct.Sender.html#method.closed"><code>Sender::closed</code></a> allow the producer to detect
 when all <a href="struct.Receiver.html"><code>Receiver</code></a> handles have been dropped. This indicates that there

@@ -97,8 +97,7 @@
 <span id="97">97</span>
 <span id="98">98</span>
 <span id="99">99</span>
-</pre><pre class="rust">
-<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::socket_addr</span>;
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">super</span>::socket_addr</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::net</span>::{<span class="ident">SocketAddr</span>, <span class="ident">UnixStream</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::sys::unix::net::new_socket</span>;
 <span class="kw">use</span> <span class="ident">std::os::unix::io</span>::{<span class="ident">AsRawFd</span>, <span class="ident">FromRawFd</span>};
@@ -197,7 +196,7 @@
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">local_addr</span>(<span class="ident">listener</span>: <span class="kw-2">&amp;</span><span class="ident">net::UnixListener</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io::Result</span><span class="op">&lt;</span><span class="ident">SocketAddr</span><span class="op">&gt;</span> {
     <span class="ident"><span class="kw">super</span>::local_addr</span>(<span class="ident">listener</span>.<span class="ident">as_raw_fd</span>())
 }
-</pre></div>
+</code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../../../" data-current-crate="mio" data-search-index-js="../../../../../search-index.js" data-search-js="../../../../../search.js"></div>
     <script src="../../../../../main.js"></script><script src="../../../../../source-script.js"></script><script src="../../../../../source-files.js"></script>
 </body></html>

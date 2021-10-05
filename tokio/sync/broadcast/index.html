@@ -41,8 +41,7 @@ with <a href="error/enum.RecvError.html#variant.Closed"><code>RecvError::Closed<
 <h1 id="examples" class="section-header"><a href="#examples">Examples</a></h1>
 <p>Basic usage</p>
 
-<div class="example-wrap"><pre class="rust rust-example-rendered">
-<span class="kw">use</span> <span class="ident">tokio::sync::broadcast</span>;
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">tokio::sync::broadcast</span>;
 
 <span class="attribute">#[<span class="ident">tokio::main</span>]</span>
 <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">main</span>() {
@@ -61,11 +60,10 @@ with <a href="error/enum.RecvError.html#variant.Closed"><code>RecvError::Closed<
 
     <span class="ident">tx</span>.<span class="ident">send</span>(<span class="number">10</span>).<span class="ident">unwrap</span>();
     <span class="ident">tx</span>.<span class="ident">send</span>(<span class="number">20</span>).<span class="ident">unwrap</span>();
-}</pre></div>
+}</code></pre></div>
 <p>Handling lag</p>
 
-<div class="example-wrap"><pre class="rust rust-example-rendered">
-<span class="kw">use</span> <span class="ident">tokio::sync::broadcast</span>;
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">tokio::sync::broadcast</span>;
 
 <span class="attribute">#[<span class="ident">tokio::main</span>]</span>
 <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">main</span>() {
@@ -82,7 +80,7 @@ with <a href="error/enum.RecvError.html#variant.Closed"><code>RecvError::Closed<
 
     <span class="macro">assert_eq!</span>(<span class="number">20</span>, <span class="ident">rx</span>.<span class="ident">recv</span>().<span class="kw">await</span>.<span class="ident">unwrap</span>());
     <span class="macro">assert_eq!</span>(<span class="number">30</span>, <span class="ident">rx</span>.<span class="ident">recv</span>().<span class="kw">await</span>.<span class="ident">unwrap</span>());
-}</pre></div>
+}</code></pre></div>
 </div></details><h2 id="modules" class="section-header"><a href="#modules">Modules</a></h2>
 <div class="item-table"><div class="item-left module-item"><a class="mod" href="error/index.html" title="tokio::sync::broadcast::error mod">error</a></div><div class="item-right docblock-short"><p>Broadcast error types</p>
 </div></div><h2 id="structs" class="section-header"><a href="#structs">Structs</a></h2>

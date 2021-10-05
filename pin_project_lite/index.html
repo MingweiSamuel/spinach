@@ -2,8 +2,7 @@
 <h1 id="examples" class="section-header"><a href="#examples">Examples</a></h1>
 <p><a href="macro.pin_project.html" title="pin_project!"><code>pin_project!</code></a> macro creates a projection type covering all the fields of struct.</p>
 
-<div class="example-wrap"><pre class="rust rust-example-rendered">
-<span class="kw">use</span> <span class="ident">std::pin::Pin</span>;
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">std::pin::Pin</span>;
 
 <span class="kw">use</span> <span class="ident">pin_project_lite::pin_project</span>;
 
@@ -21,12 +20,11 @@
         <span class="kw">let</span> <span class="kw">_</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">this</span>.<span class="ident">pinned</span>; <span class="comment">// Pinned reference to the field</span>
         <span class="kw">let</span> <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">U</span> <span class="op">=</span> <span class="ident">this</span>.<span class="ident">unpinned</span>; <span class="comment">// Normal reference to the field</span>
     }
-}</pre></div>
+}</code></pre></div>
 <p>To use <a href="macro.pin_project.html" title="pin_project!"><code>pin_project!</code></a> on enums, you need to name the projection type
 returned from the method.</p>
 
-<div class="example-wrap"><pre class="rust rust-example-rendered">
-<span class="kw">use</span> <span class="ident">std::pin::Pin</span>;
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">std::pin::Pin</span>;
 
 <span class="kw">use</span> <span class="ident">pin_project_lite::pin_project</span>;
 
@@ -46,7 +44,7 @@ returned from the method.</p>
             }
         }
     }
-}</pre></div>
+}</code></pre></div>
 <h1 id="pin-project-vs-pin-project-lite" class="section-header"><a href="#pin-project-vs-pin-project-lite">pin-project vs pin-project-lite</a></h1>
 <p>Here are some similarities and differences compared to <a href="https://github.com/taiki-e/pin-project">pin-project</a>.</p>
 <h2 id="similar-safety" class="section-header"><a href="#similar-safety">Similar: Safety</a></h2>

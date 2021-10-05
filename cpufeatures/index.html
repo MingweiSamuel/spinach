@@ -19,8 +19,7 @@ macros to <code>libcore</code> is implemented.</p>
 <p>If you would like detection support for a target feature which is not on
 this list, please <a href="https://github.com/RustCrypto/utils/issues/new?title=cpufeatures:%20requesting%20support%20for%20CHANGEME%20target%20feature">open a GitHub issue</a>.</p>
 <h1 id="example" class="section-header"><a href="#example">Example</a></h1>
-<div class="example-wrap"><pre class="rust rust-example-rendered">
-<span class="comment">// This macro creates `cpuid_aes_sha` module</span>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="comment">// This macro creates `cpuid_aes_sha` module</span>
 <span class="macro">cpufeatures::new!</span>(<span class="ident">cpuid_aes_sha</span>, <span class="string">&quot;aes&quot;</span>, <span class="string">&quot;sha&quot;</span>);
 
 <span class="comment">// `token` is a Zero Sized Type (ZST) value, which guarantees</span>
@@ -41,7 +40,7 @@ this list, please <a href="https://github.com/RustCrypto/utils/issues/new?title=
 
 <span class="comment">// Additionally you can get both token and value</span>
 <span class="kw">let</span> (<span class="ident">token</span>, <span class="ident">val</span>) <span class="op">=</span> <span class="ident">cpuid_aes_sha::init_get</span>();
-<span class="macro">assert_eq!</span>(<span class="ident">val</span>, <span class="ident">token</span>.<span class="ident">get</span>());</pre></div>
+<span class="macro">assert_eq!</span>(<span class="ident">val</span>, <span class="ident">token</span>.<span class="ident">get</span>());</code></pre></div>
 <p>Note that if all tested target features are enabled via compiler options
 (e.g. by using <code>RUSTFLAGS</code>), the <code>get</code> method will always return <code>true</code>
 and <code>init</code> will not use CPUID instruction. Such behavior allows

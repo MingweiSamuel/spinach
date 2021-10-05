@@ -59,8 +59,7 @@
 <span id="59">59</span>
 <span id="60">60</span>
 <span id="61">61</span>
-</pre><pre class="rust">
-<span class="kw">use</span> <span class="ident">futures_core::stream</span>::{<span class="ident">FusedStream</span>, <span class="ident">Stream</span>};
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">futures_core::stream</span>::{<span class="ident">FusedStream</span>, <span class="ident">Stream</span>};
 <span class="kw">use</span> <span class="ident">futures_core::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 <span class="kw">use</span> <span class="ident">pin_project_lite::pin_project</span>;
 <span class="kw">use</span> <span class="ident">std::any::Any</span>;
@@ -121,7 +120,7 @@
         <span class="self">self</span>.<span class="ident">caught_unwind</span> <span class="op">|</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">stream</span>.<span class="ident">is_terminated</span>()
     }
 }
-</pre></div>
+</code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="futures_util" data-search-index-js="../../../../search-index.js" data-search-js="../../../../search.js"></div>
     <script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script>
 </body></html>

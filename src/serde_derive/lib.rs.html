@@ -103,8 +103,7 @@
 <span id="103">103</span>
 <span id="104">104</span>
 <span id="105">105</span>
-</pre><pre class="rust">
-<span class="doccomment">//! This crate provides Serde&#39;s two derive macros.</span>
+</pre><pre class="rust"><code><span class="doccomment">//! This crate provides Serde&#39;s two derive macros.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! ```edition2018</span>
 <span class="doccomment">//! # use serde_derive::{Serialize, Deserialize};</span>
@@ -209,7 +208,7 @@
     <span class="kw">let</span> <span class="ident">compile_errors</span> <span class="op">=</span> <span class="ident">errors</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="ident">syn::Error::to_compile_error</span>);
     <span class="macro">quote!</span>(#(#<span class="ident">compile_errors</span>)<span class="kw-2">*</span>)
 }
-</pre></div>
+</code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="serde_derive" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script>
 </body></html>

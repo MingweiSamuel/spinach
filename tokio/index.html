@@ -20,14 +20,14 @@ section, we will take a brief tour of Tokio, summarizing the major APIs and
 their uses.</p>
 <p>The easiest way to get started is to enable all features. Do this by
 enabling the <code>full</code> feature flag:</p>
-<div class="example-wrap"><pre class="language-toml">tokio = { version = &quot;1&quot;, features = [&quot;full&quot;] }</pre></div><h3 id="authoring-applications" class="section-header"><a href="#authoring-applications">Authoring applications</a></h3>
+<div class="example-wrap"><pre class="language-toml"><code>tokio = { version = &quot;1&quot;, features = [&quot;full&quot;] }</code></pre></div><h3 id="authoring-applications" class="section-header"><a href="#authoring-applications">Authoring applications</a></h3>
 <p>Tokio is great for writing applications and most users in this case shouldn’t
 worry too much about what features they should pick. If you’re unsure, we suggest
 going with <code>full</code> to ensure that you don’t run into any road blocks while you’re
 building your application.</p>
 <h4 id="example" class="section-header"><a href="#example">Example</a></h4>
 <p>This example shows the quickest way to get started with Tokio.</p>
-<div class="example-wrap"><pre class="language-toml">tokio = { version = &quot;1&quot;, features = [&quot;full&quot;] }</pre></div><h3 id="authoring-libraries" class="section-header"><a href="#authoring-libraries">Authoring libraries</a></h3>
+<div class="example-wrap"><pre class="language-toml"><code>tokio = { version = &quot;1&quot;, features = [&quot;full&quot;] }</code></pre></div><h3 id="authoring-libraries" class="section-header"><a href="#authoring-libraries">Authoring libraries</a></h3>
 <p>As a library author your goal should be to provide the lightest weight crate
 that is based on Tokio. To achieve this you should ensure that you only enable
 the features you need. This allows users to pick up your crate without having
@@ -35,7 +35,7 @@ to enable unnecessary features.</p>
 <h4 id="example-1" class="section-header"><a href="#example-1">Example</a></h4>
 <p>This example shows how you may want to import features for a library that just
 needs to <code>tokio::spawn</code> and use a <code>TcpStream</code>.</p>
-<div class="example-wrap"><pre class="language-toml">tokio = { version = &quot;1&quot;, features = [&quot;rt&quot;, &quot;net&quot;] }</pre></div><h2 id="working-with-tasks" class="section-header"><a href="#working-with-tasks">Working With Tasks</a></h2>
+<div class="example-wrap"><pre class="language-toml"><code>tokio = { version = &quot;1&quot;, features = [&quot;rt&quot;, &quot;net&quot;] }</code></pre></div><h2 id="working-with-tasks" class="section-header"><a href="#working-with-tasks">Working With Tasks</a></h2>
 <p>Asynchronous programs in Rust are based around lightweight, non-blocking
 units of execution called <a href="#working-with-tasks"><em>tasks</em></a>. The <a href="task/index.html"><code>tokio::task</code></a> module provides
 important tools for working with tasks:</p>
@@ -91,8 +91,7 @@ can do with asynchronous code, the upper limit on the number of blocking
 threads is very large. These limits can be configured on the <a href="runtime/struct.Builder.html"><code>Builder</code></a>.</p>
 <p>To spawn a blocking task, you should use the <a href="task/fn.spawn_blocking.html"><code>spawn_blocking</code></a> function.</p>
 
-<div class="example-wrap"><pre class="rust rust-example-rendered">
-<span class="attribute">#[<span class="ident">tokio::main</span>]</span>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="attribute">#[<span class="ident">tokio::main</span>]</span>
 <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">main</span>() {
     <span class="comment">// This is running on a core thread.</span>
 
@@ -105,7 +104,7 @@ threads is very large. These limits can be configured on the <a href="runtime/st
     <span class="comment">// If the blocking task panics, the unwrap below will propagate the</span>
     <span class="comment">// panic.</span>
     <span class="ident">blocking_task</span>.<span class="kw">await</span>.<span class="ident">unwrap</span>();
-}</pre></div>
+}</code></pre></div>
 <p>If your code is CPU-bound and you wish to limit the number of threads used
 to run it, you should run it on another thread pool such as <a href="https://docs.rs/rayon">rayon</a>. You
 can use an <a href="sync/oneshot/index.html"><code>oneshot</code></a> channel to send the result back to Tokio when the
@@ -133,8 +132,7 @@ the “process” feature flag).</li>
 <h1 id="examples" class="section-header"><a href="#examples">Examples</a></h1>
 <p>A simple TCP echo server:</p>
 
-<div class="example-wrap"><pre class="rust rust-example-rendered">
-<span class="kw">use</span> <span class="ident">tokio::net::TcpListener</span>;
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">tokio::net::TcpListener</span>;
 <span class="kw">use</span> <span class="ident">tokio::io</span>::{<span class="ident">AsyncReadExt</span>, <span class="ident">AsyncWriteExt</span>};
 
 <span class="attribute">#[<span class="ident">tokio::main</span>]</span>
@@ -167,7 +165,7 @@ the “process” feature flag).</li>
             }
         });
     }
-}</pre></div>
+}</code></pre></div>
 <h2 id="feature-flags" class="section-header"><a href="#feature-flags">Feature flags</a></h2>
 <p>Tokio uses a set of <a href="https://doc.rust-lang.org/cargo/reference/manifest.html#the-features-section">feature flags</a> to reduce the amount of compiled code. It
 is possible to just enable certain features over others. By default, Tokio

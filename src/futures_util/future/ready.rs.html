@@ -80,8 +80,7 @@
 <span id="80">80</span>
 <span id="81">81</span>
 <span id="82">82</span>
-</pre><pre class="rust">
-<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::assert_future</span>;
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">super</span>::assert_future</span>;
 <span class="kw">use</span> <span class="ident">core::pin::Pin</span>;
 <span class="kw">use</span> <span class="ident">futures_core::future</span>::{<span class="ident">FusedFuture</span>, <span class="ident">Future</span>};
 <span class="kw">use</span> <span class="ident">futures_core::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
@@ -163,7 +162,7 @@
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">err</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">E</span><span class="op">&gt;</span>(<span class="ident">err</span>: <span class="ident">E</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Ready</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">E</span><span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="ident">Ready</span>(<span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(<span class="ident">err</span>)))
 }
-</pre></div>
+</code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="futures_util" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script>
 </body></html>

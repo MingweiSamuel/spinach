@@ -58,8 +58,7 @@
 <span id="58">58</span>
 <span id="59">59</span>
 <span id="60">60</span>
-</pre><pre class="rust">
-<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::assert_future</span>;
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">super</span>::assert_future</span>;
 <span class="kw">use</span> <span class="ident">core::pin::Pin</span>;
 <span class="kw">use</span> <span class="ident">futures_core::future</span>::{<span class="ident">FusedFuture</span>, <span class="ident">Future</span>};
 <span class="kw">use</span> <span class="ident">futures_core::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
@@ -119,7 +118,7 @@
         <span class="ident">Poll::Ready</span>((<span class="self">self</span>.<span class="ident">f</span>.<span class="ident">take</span>().<span class="ident">expect</span>(<span class="string">&quot;Lazy polled after completion&quot;</span>))(<span class="ident">cx</span>))
     }
 }
-</pre></div>
+</code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="futures_util" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script>
 </body></html>

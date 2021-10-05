@@ -8,8 +8,7 @@ a random value is to use <a href="fn.random.html" title="random()"><code>random(
 the <a href="distributions/index.html" title="distributions"><code>distributions</code></a> and <a href="seq/index.html" title="seq"><code>seq</code></a> modules provide further
 functionality on top of RNGs.</p>
 
-<div class="example-wrap"><pre class="rust rust-example-rendered">
-<span class="kw">use</span> <span class="ident">rand::prelude</span>::<span class="kw-2">*</span>;
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">rand::prelude</span>::<span class="kw-2">*</span>;
 
 <span class="kw">if</span> <span class="ident">rand::random</span>() { <span class="comment">// generates a boolean</span>
     <span class="comment">// Try printing a random unicode code point (probably a bad idea)!</span>
@@ -20,7 +19,7 @@ functionality on top of RNGs.</p>
 <span class="kw">let</span> <span class="ident">y</span>: <span class="ident">f64</span> <span class="op">=</span> <span class="ident">rng</span>.<span class="ident">gen</span>(); <span class="comment">// generates a float between 0 and 1</span>
 
 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">nums</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span> <span class="op">=</span> (<span class="number">1</span>..<span class="number">100</span>).<span class="ident">collect</span>();
-<span class="ident">nums</span>.<span class="ident">shuffle</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rng</span>);</pre></div>
+<span class="ident">nums</span>.<span class="ident">shuffle</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rng</span>);</code></pre></div>
 <h1 id="the-book" class="section-header"><a href="#the-book">The Book</a></h1>
 <p>For the user guide and further documentation, please read
 <a href="https://rust-random.github.io/book">The Rust Rand Book</a>.</p>

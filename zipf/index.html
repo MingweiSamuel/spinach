@@ -3,17 +3,15 @@
 <p>For a random variable <code>X</code> whose values are distributed according to this distribution, the
 probability mass function is given by</p>
 
-<div class='information'><div class='tooltip ignore'>ⓘ</div></div><div class="example-wrap"><pre class="rust rust-example-rendered ignore">
-<span class="ident">P</span>(<span class="ident">X</span> <span class="op">=</span> <span class="ident">k</span>) <span class="op">=</span> <span class="ident">H</span>(<span class="ident">N</span>,<span class="ident">s</span>) <span class="op">*</span> <span class="number">1</span> <span class="op">/</span> <span class="ident">k</span><span class="op">^</span><span class="ident">s</span> <span class="kw">for</span> <span class="ident">k</span> <span class="op">=</span> <span class="number">1</span>,<span class="number">2</span>,...,<span class="ident">N</span></pre></div>
+<div class='information'><div class='tooltip ignore'>ⓘ</div></div><div class="example-wrap"><pre class="rust rust-example-rendered ignore"><code><span class="ident">P</span>(<span class="ident">X</span> <span class="op">=</span> <span class="ident">k</span>) <span class="op">=</span> <span class="ident">H</span>(<span class="ident">N</span>,<span class="ident">s</span>) <span class="op">*</span> <span class="number">1</span> <span class="op">/</span> <span class="ident">k</span><span class="op">^</span><span class="ident">s</span> <span class="kw">for</span> <span class="ident">k</span> <span class="op">=</span> <span class="number">1</span>,<span class="number">2</span>,...,<span class="ident">N</span></code></pre></div>
 <p><code>H(N,s)</code> is the normalizing constant which corresponds to the generalized harmonic number
 of order <code>N</code> of <code>s</code>.</p>
 <h1 id="example" class="section-header"><a href="#example">Example</a></h1>
-<div class="example-wrap"><pre class="rust rust-example-rendered">
-<span class="kw">use</span> <span class="ident">rand::distributions::Distribution</span>;
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">rand::distributions::Distribution</span>;
 
 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rng</span> <span class="op">=</span> <span class="ident">rand::thread_rng</span>();
 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">zipf</span> <span class="op">=</span> <span class="ident">zipf::ZipfDistribution::new</span>(<span class="number">1000</span>, <span class="number">1.03</span>).<span class="ident">unwrap</span>();
-<span class="kw">let</span> <span class="ident">sample</span> <span class="op">=</span> <span class="ident">zipf</span>.<span class="ident">sample</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rng</span>);</pre></div>
+<span class="kw">let</span> <span class="ident">sample</span> <span class="op">=</span> <span class="ident">zipf</span>.<span class="ident">sample</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rng</span>);</code></pre></div>
 <p>This implementation is effectively a direct port of Apache Common’s
 <a href="https://github.com/apache/commons-rng/blob/6a1b0c16090912e8fc5de2c1fb5bd8490ac14699/commons-rng-sampling/src/main/java/org/apache/commons/rng/sampling/distribution/RejectionInversionZipfSampler.java">RejectionInversionZipfSampler</a>, written in Java. It is based on the method described by
 Wolfgang Hörmann and Gerhard Derflinger in <a href="https://dl.acm.org/citation.cfm?id=235029"><em>Rejection-inversion to generate variates from

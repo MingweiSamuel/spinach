@@ -3,14 +3,13 @@ Their purpose is to increase the ergonomics of performing operations on the type
 here. For even more ergonomics, consider using the <code>op!</code> macro instead.</p>
 <p>For example, type <code>X</code> and type <code>Y</code> are the same here:</p>
 
-<div class="example-wrap"><pre class="rust rust-example-rendered">
-<span class="kw">use</span> <span class="ident">std::ops::Mul</span>;
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">std::ops::Mul</span>;
 <span class="kw">use</span> <span class="ident">typenum</span>::{<span class="ident">Prod</span>, <span class="ident">P5</span>, <span class="ident">P7</span>};
 
 <span class="kw">type</span> <span class="ident">X</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">P7</span> <span class="kw">as</span> <span class="ident">Mul</span><span class="op">&lt;</span><span class="ident">P5</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::Output</span>;
 <span class="kw">type</span> <span class="ident">Y</span> <span class="op">=</span> <span class="ident">Prod</span><span class="op">&lt;</span><span class="ident">P7</span>, <span class="ident">P5</span><span class="op">&gt;</span>;
 
-<span class="macro">assert_type_eq!</span>(<span class="ident">X</span>, <span class="ident">Y</span>);</pre></div>
+<span class="macro">assert_type_eq!</span>(<span class="ident">X</span>, <span class="ident">Y</span>);</code></pre></div>
 </div></details><h2 id="types" class="section-header"><a href="#types">Type Definitions</a></h2>
 <div class="item-table"><div class="item-left module-item"><a class="type" href="type.AbsVal.html" title="typenum::operator_aliases::AbsVal type">AbsVal</a></div><div class="item-right docblock-short"><p>Alias for the associated type of <code>Abs</code>: <code>AbsVal&lt;A&gt; = &lt;A as Abs&gt;::Output</code></p>
 </div><div class="item-left module-item"><a class="type" href="type.Add1.html" title="typenum::operator_aliases::Add1 type">Add1</a></div><div class="item-right docblock-short"><p>Alias to make it easy to add 1: <code>Add1&lt;A&gt; = &lt;A as Add&lt;B1&gt;&gt;::Output</code></p>

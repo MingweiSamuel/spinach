@@ -405,8 +405,7 @@
 <span id="405">405</span>
 <span id="406">406</span>
 <span id="407">407</span>
-</pre><pre class="rust">
-<span class="kw">use</span> <span class="ident">futures_core::future</span>::{<span class="ident">FusedFuture</span>, <span class="ident">Future</span>};
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">futures_core::future</span>::{<span class="ident">FusedFuture</span>, <span class="ident">Future</span>};
 <span class="kw">use</span> <span class="ident">futures_core::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>, <span class="ident">Waker</span>};
 <span class="kw">use</span> <span class="ident">slab::Slab</span>;
 <span class="kw">use</span> <span class="ident">std::cell::UnsafeCell</span>;
@@ -813,7 +812,7 @@
     <span class="kw">let</span> <span class="ident">guard</span> <span class="op">=</span> <span class="ident">MutexGuard::map</span>(<span class="ident">guard</span>, <span class="op">|</span><span class="ident">n</span><span class="op">|</span> <span class="ident">n</span>);
     <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">guard</span>);
 }
-</pre></div>
+</code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="futures_util" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script>
 </body></html>

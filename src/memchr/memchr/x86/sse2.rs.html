@@ -789,8 +789,7 @@
 <span id="789">789</span>
 <span id="790">790</span>
 <span id="791">791</span>
-</pre><pre class="rust">
-<span class="kw">use</span> <span class="ident">core</span>::{<span class="ident">arch::x86_64</span>::<span class="kw-2">*</span>, <span class="ident">cmp</span>, <span class="ident">mem::size_of</span>};
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">core</span>::{<span class="ident">arch::x86_64</span>::<span class="kw-2">*</span>, <span class="ident">cmp</span>, <span class="ident">mem::size_of</span>};
 
 <span class="kw">const</span> <span class="ident">VECTOR_SIZE</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">__m128i</span><span class="op">&gt;</span>();
 <span class="kw">const</span> <span class="ident">VECTOR_ALIGN</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="ident">VECTOR_SIZE</span> <span class="op">-</span> <span class="number">1</span>;
@@ -1581,7 +1580,7 @@
     <span class="macro">debug_assert!</span>(<span class="ident">a</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">b</span>);
     (<span class="ident">a</span> <span class="kw">as</span> <span class="ident">usize</span>) <span class="op">-</span> (<span class="ident">b</span> <span class="kw">as</span> <span class="ident">usize</span>)
 }
-</pre></div>
+</code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="memchr" data-search-index-js="../../../../search-index.js" data-search-js="../../../../search.js"></div>
     <script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script>
 </body></html>

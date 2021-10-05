@@ -25,8 +25,7 @@
 <span id="25">25</span>
 <span id="26">26</span>
 <span id="27">27</span>
-</pre><pre class="rust">
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">BincodeByteOrder</span> {
+</pre><pre class="rust"><code><span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">BincodeByteOrder</span> {
     <span class="kw">type</span> <span class="ident">Endian</span>: <span class="ident">::byteorder::ByteOrder</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>;
 }
 
@@ -53,7 +52,7 @@
 <span class="kw">impl</span> <span class="ident">BincodeByteOrder</span> <span class="kw">for</span> <span class="ident">NativeEndian</span> {
     <span class="kw">type</span> <span class="ident">Endian</span> <span class="op">=</span> <span class="ident">::byteorder::NativeEndian</span>;
 }
-</pre></div>
+</code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="bincode" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script>
 </body></html>

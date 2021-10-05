@@ -369,8 +369,7 @@
 <span id="369">369</span>
 <span id="370">370</span>
 <span id="371">371</span>
-</pre><pre class="rust">
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::task</span>::{<span class="ident">waker_ref</span>, <span class="ident">ArcWake</span>};
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::task</span>::{<span class="ident">waker_ref</span>, <span class="ident">ArcWake</span>};
 <span class="kw">use</span> <span class="ident">futures_core::future</span>::{<span class="ident">FusedFuture</span>, <span class="ident">Future</span>};
 <span class="kw">use</span> <span class="ident">futures_core::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>, <span class="ident">Waker</span>};
 <span class="kw">use</span> <span class="ident">slab::Slab</span>;
@@ -741,7 +740,7 @@
         <span class="prelude-val">Some</span>(<span class="ident">Shared</span> { <span class="ident">inner</span>: <span class="prelude-val">Some</span>(<span class="self">self</span>.<span class="number">0</span>.<span class="ident">upgrade</span>()<span class="question-mark">?</span>), <span class="ident">waker_key</span>: <span class="ident">NULL_WAKER_KEY</span> })
     }
 }
-</pre></div>
+</code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="futures_util" data-search-index-js="../../../../search-index.js" data-search-js="../../../../search.js"></div>
     <script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script>
 </body></html>

@@ -167,8 +167,7 @@
 <span id="167">167</span>
 <span id="168">168</span>
 <span id="169">169</span>
-</pre><pre class="rust">
-<span class="kw">use</span> <span class="ident">std::io</span>;
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std::io</span>;
 <span class="kw">use</span> <span class="ident">std::mem::size_of</span>;
 <span class="kw">use</span> <span class="ident">std::net</span>::{<span class="ident">Ipv4Addr</span>, <span class="ident">Ipv6Addr</span>, <span class="ident">SocketAddr</span>, <span class="ident">SocketAddrV4</span>, <span class="ident">SocketAddrV6</span>};
 
@@ -235,7 +234,7 @@
 <span class="doccomment">/// type over using `libc::sockaddr_storage` is that this type is exactly as large as it</span>
 <span class="doccomment">/// needs to be and not a lot larger. And it can be initialized cleaner from Rust.</span>
 <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>)]</span>
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">union</span> <span class="ident">SocketAddrCRepr</span> {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">union</span> <span class="ident">SocketAddrCRepr</span> {
     <span class="ident">v4</span>: <span class="ident">libc::sockaddr_in</span>,
     <span class="ident">v6</span>: <span class="ident">libc::sockaddr_in6</span>,
 }
@@ -337,7 +336,7 @@
         <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">io::ErrorKind::InvalidInput</span>.<span class="ident">into</span>()),
     }
 }
-</pre></div>
+</code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="mio" data-search-index-js="../../../../search-index.js" data-search-js="../../../../search.js"></div>
     <script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script>
 </body></html>

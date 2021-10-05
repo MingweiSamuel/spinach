@@ -45,8 +45,7 @@
 <span id="45">45</span>
 <span id="46">46</span>
 <span id="47">47</span>
-</pre><pre class="rust">
-<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::read_line::read_line_internal</span>;
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">super</span>::read_line::read_line_internal</span>;
 <span class="kw">use</span> <span class="ident">futures_core::ready</span>;
 <span class="kw">use</span> <span class="ident">futures_core::stream::Stream</span>;
 <span class="kw">use</span> <span class="ident">futures_core::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
@@ -93,7 +92,7 @@
         <span class="ident">Poll::Ready</span>(<span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>(<span class="ident">mem::replace</span>(<span class="ident">this</span>.<span class="ident">buf</span>, <span class="ident">String::new</span>()))))
     }
 }
-</pre></div>
+</code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="futures_util" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script>
 </body></html>

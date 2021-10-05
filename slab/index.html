@@ -13,8 +13,7 @@ returned from future calls to <code>insert</code>.</p>
 <h1 id="examples" class="section-header"><a href="#examples">Examples</a></h1>
 <p>Basic storing and retrieval.</p>
 
-<div class="example-wrap"><pre class="rust rust-example-rendered">
-<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">slab</span> <span class="op">=</span> <span class="ident">Slab::new</span>();
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">slab</span> <span class="op">=</span> <span class="ident">Slab::new</span>();
 
 <span class="kw">let</span> <span class="ident">hello</span> <span class="op">=</span> <span class="ident">slab</span>.<span class="ident">insert</span>(<span class="string">&quot;hello&quot;</span>);
 <span class="kw">let</span> <span class="ident">world</span> <span class="op">=</span> <span class="ident">slab</span>.<span class="ident">insert</span>(<span class="string">&quot;world&quot;</span>);
@@ -23,12 +22,11 @@ returned from future calls to <code>insert</code>.</p>
 <span class="macro">assert_eq!</span>(<span class="ident">slab</span>[<span class="ident">world</span>], <span class="string">&quot;world&quot;</span>);
 
 <span class="ident">slab</span>[<span class="ident">world</span>] <span class="op">=</span> <span class="string">&quot;earth&quot;</span>;
-<span class="macro">assert_eq!</span>(<span class="ident">slab</span>[<span class="ident">world</span>], <span class="string">&quot;earth&quot;</span>);</pre></div>
+<span class="macro">assert_eq!</span>(<span class="ident">slab</span>[<span class="ident">world</span>], <span class="string">&quot;earth&quot;</span>);</code></pre></div>
 <p>Sometimes it is useful to be able to associate the key with the value being
 inserted in the slab. This can be done with the <code>vacant_entry</code> API as such:</p>
 
-<div class="example-wrap"><pre class="rust rust-example-rendered">
-<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">slab</span> <span class="op">=</span> <span class="ident">Slab::new</span>();
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">slab</span> <span class="op">=</span> <span class="ident">Slab::new</span>();
 
 <span class="kw">let</span> <span class="ident">hello</span> <span class="op">=</span> {
     <span class="kw">let</span> <span class="ident">entry</span> <span class="op">=</span> <span class="ident">slab</span>.<span class="ident">vacant_entry</span>();
@@ -39,14 +37,13 @@ inserted in the slab. This can be done with the <code>vacant_entry</code> API as
 };
 
 <span class="macro">assert_eq!</span>(<span class="ident">hello</span>, <span class="ident">slab</span>[<span class="ident">hello</span>].<span class="number">0</span>);
-<span class="macro">assert_eq!</span>(<span class="string">&quot;hello&quot;</span>, <span class="ident">slab</span>[<span class="ident">hello</span>].<span class="number">1</span>);</pre></div>
+<span class="macro">assert_eq!</span>(<span class="string">&quot;hello&quot;</span>, <span class="ident">slab</span>[<span class="ident">hello</span>].<span class="number">1</span>);</code></pre></div>
 <p>It is generally a good idea to specify the desired capacity of a slab at
 creation time. Note that <code>Slab</code> will grow the internal capacity when
 attempting to insert a new value once the existing capacity has been reached.
 To avoid this, add a check.</p>
 
-<div class="example-wrap"><pre class="rust rust-example-rendered">
-<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">slab</span> <span class="op">=</span> <span class="ident">Slab::with_capacity</span>(<span class="number">1024</span>);
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">slab</span> <span class="op">=</span> <span class="ident">Slab::with_capacity</span>(<span class="number">1024</span>);
 
 <span class="comment">// ... use the slab</span>
 
@@ -54,7 +51,7 @@ To avoid this, add a check.</p>
     <span class="macro">panic!</span>(<span class="string">&quot;slab full&quot;</span>);
 }
 
-<span class="ident">slab</span>.<span class="ident">insert</span>(<span class="string">&quot;the slab is not at capacity yet&quot;</span>);</pre></div>
+<span class="ident">slab</span>.<span class="ident">insert</span>(<span class="string">&quot;the slab is not at capacity yet&quot;</span>);</code></pre></div>
 <h1 id="capacity-and-reallocation" class="section-header"><a href="#capacity-and-reallocation">Capacity and reallocation</a></h1>
 <p>The capacity of a slab is the amount of space allocated for any future
 values that will be inserted in the slab. This is not to be confused with

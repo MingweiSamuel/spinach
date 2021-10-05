@@ -43,8 +43,7 @@
 <span id="43">43</span>
 <span id="44">44</span>
 <span id="45">45</span>
-</pre><pre class="rust">
-<span class="kw">use</span> <span class="ident">pin_project_lite::pin_project</span>;
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">pin_project_lite::pin_project</span>;
 <span class="kw">use</span> <span class="ident">std::future::Future</span>;
 <span class="kw">use</span> <span class="ident">std::pin::Pin</span>;
 <span class="kw">use</span> <span class="ident">std::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
@@ -89,7 +88,7 @@
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">unconstrained</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="ident">inner</span>: <span class="ident">F</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Unconstrained</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span> {
     <span class="ident">Unconstrained</span> { <span class="ident">inner</span> }
 }
-</pre></div>
+</code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script>
 </body></html>

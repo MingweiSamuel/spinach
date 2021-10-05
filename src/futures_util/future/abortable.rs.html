@@ -17,8 +17,7 @@
 <span id="17">17</span>
 <span id="18">18</span>
 <span id="19">19</span>
-</pre><pre class="rust">
-<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::assert_future</span>;
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">super</span>::assert_future</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::future</span>::{<span class="ident">AbortHandle</span>, <span class="ident">Abortable</span>, <span class="ident">Aborted</span>};
 <span class="kw">use</span> <span class="ident">futures_core::future::Future</span>;
 
@@ -37,7 +36,7 @@
     <span class="kw">let</span> <span class="ident">abortable</span> <span class="op">=</span> <span class="ident">assert_future</span>::<span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Fut::Output</span>, <span class="ident">Aborted</span><span class="op">&gt;</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">Abortable::new</span>(<span class="ident">future</span>, <span class="ident">reg</span>));
     (<span class="ident">abortable</span>, <span class="ident">handle</span>)
 }
-</pre></div>
+</code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="futures_util" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script>
 </body></html>

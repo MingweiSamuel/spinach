@@ -25,8 +25,7 @@
 <span id="25">25</span>
 <span id="26">26</span>
 <span id="27">27</span>
-</pre><pre class="rust">
-<span class="kw">use</span> <span class="ident">std::future::Future</span>;
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std::future::Future</span>;
 <span class="kw">use</span> <span class="ident">std::pin::Pin</span>;
 <span class="kw">use</span> <span class="ident">std::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
 
@@ -53,7 +52,7 @@
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">ok</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">E</span><span class="op">&gt;</span>(<span class="ident">t</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Ready</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">E</span><span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="ident">Ready</span>(<span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>(<span class="ident">t</span>)))
 }
-</pre></div>
+</code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script>
 </body></html>
