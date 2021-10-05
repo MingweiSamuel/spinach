@@ -25,9 +25,12 @@ impl<Lr: LatticeRepr, Ord: Order> Op for DynOpDelta<Lr, Ord> {
 }
 
 impl<Lr: LatticeRepr, Ord: Order> OpDelta for DynOpDelta<Lr, Ord> {
-    type Ord = Ord;
+    type Ord = ErasedOrd;
 
     fn poll_delta(&self, ctx: &mut Context<'_>) -> Poll<Option<Hide<Delta, Self::LatRepr>>> {
         self.op.poll_delta(ctx)
     }
 }
+
+pub enum ErasedOrd {}
+impl Order for ErasedOrd {}
