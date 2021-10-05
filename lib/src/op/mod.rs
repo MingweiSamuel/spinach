@@ -26,6 +26,9 @@ pub use debugop::*;
 mod debottomop;
 pub use debottomop::*;
 
+mod dynop;
+pub use dynop::*;
+
 mod latticeop;
 pub use latticeop::*;
 
